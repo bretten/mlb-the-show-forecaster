@@ -4,9 +4,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FC3388A5-780
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Core", "src\com.brettnamba.MlbTheShowForecaster.Core\com.brettnamba.MlbTheShowForecaster.Core.csproj", "{A343247B-BF0D-4BBB-97BA-793C01D5AD87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Core.Tests", "test\com.brettnamba.MlbTheShowForecaster.Core.Tests\com.brettnamba.MlbTheShowForecaster.Core.Tests.csproj", "{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A343247B-BF0D-4BBB-97BA-793C01D5AD87} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
+		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A343247B-BF0D-4BBB-97BA-793C01D5AD87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A343247B-BF0D-4BBB-97BA-793C01D5AD87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A343247B-BF0D-4BBB-97BA-793C01D5AD87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A343247B-BF0D-4BBB-97BA-793C01D5AD87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
