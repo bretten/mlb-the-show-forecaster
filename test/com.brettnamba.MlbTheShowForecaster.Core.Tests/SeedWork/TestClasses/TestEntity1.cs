@@ -3,7 +3,7 @@
 namespace com.brettnamba.MlbTheShowForecaster.Core.Tests.SeedWork.TestClasses;
 
 /// <summary>
-/// Anemic entity for testing purposes only. 
+/// Anemic entity for testing purposes only
 /// </summary>
 public sealed class TestEntity1 : Entity
 {
