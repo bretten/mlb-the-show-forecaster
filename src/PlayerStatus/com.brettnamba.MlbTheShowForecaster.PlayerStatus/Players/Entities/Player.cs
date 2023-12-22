@@ -126,6 +126,20 @@ public sealed class Player : AggregateRoot
         Team = null;
     }
 
+    /// <summary>
+    /// Creates a <see cref="Player"/>
+    /// </summary>
+    /// <param name="mlbId">MLB ID</param>
+    /// <param name="firstName">First name</param>
+    /// <param name="lastName">Last name</param>
+    /// <param name="birthdate">Birthdate</param>
+    /// <param name="position">Primary position</param>
+    /// <param name="mlbDebutDate">MLB debut date</param>
+    /// <param name="batSide">The side the Player bats on</param>
+    /// <param name="throwArm">The arm the Player throws with</param>
+    /// <param name="team">The Player's Team</param>
+    /// <param name="active">True if the Player is active in the MLB, otherwise false</param>
+    /// <returns>The created <see cref="Player"/></returns>
     public static Player Create(MlbId mlbId, PersonName firstName, PersonName lastName, DateTime birthdate,
         Position position, DateTime mlbDebutDate, BatSide batSide, ThrowArm throwArm, Team? team,
         bool active)

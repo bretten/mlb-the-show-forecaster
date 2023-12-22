@@ -7,7 +7,18 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Players.Enums;
 /// </summary>
 public enum BatSide
 {
+    /// <summary>
+    /// The player bats on the right side
+    /// </summary>
     [Display(Name = "R")] Right,
+
+    /// <summary>
+    /// The player bats on the left side
+    /// </summary>
     [Display(Name = "L")] Left,
+
+    /// <summary>
+    /// The player can bat on the right or left side
+    /// </summary>
     [Display(Name = "S")] Switch
 }

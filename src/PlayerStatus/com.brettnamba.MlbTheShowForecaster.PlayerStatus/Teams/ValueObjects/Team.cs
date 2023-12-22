@@ -7,8 +7,10 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Teams.ValueObjects;
 /// <summary>
 /// Represents a MLB team
 ///
+/// <para>
 /// Currently, we will not consider a Team an entity as the domain is only focusing on
 /// the perspective of the <see cref="Player"/>
+/// </para>
 /// </summary>
 public sealed class Team : ValueObject
 {
@@ -40,6 +42,13 @@ public sealed class Team : ValueObject
         Abbreviation = abbreviation;
     }
 
+    /// <summary>
+    /// Creates a <see cref="Team"/>
+    /// </summary>
+    /// <param name="mlbId">The MLB ID</param>
+    /// <param name="name">The Team's name</param>
+    /// <param name="abbreviation">The Team's abbreviation</param>
+    /// <returns>The created <see cref="Team"/></returns>
     public static Team Create(MlbId mlbId, TeamName name, TeamAbbreviation abbreviation)
     {
         return new Team(mlbId, name, abbreviation);

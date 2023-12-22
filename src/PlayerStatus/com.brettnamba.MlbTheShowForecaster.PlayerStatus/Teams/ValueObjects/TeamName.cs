@@ -22,6 +22,12 @@ public sealed class TeamName : ValueObject
         Value = value;
     }
 
+    /// <summary>
+    /// Creates a <see cref="TeamName"/>
+    /// </summary>
+    /// <param name="name">The underlying name value</param>
+    /// <returns>The created <see cref="TeamName"/></returns>
+    /// <exception cref="EmptyTeamNameException">Thrown if the name value is empty</exception>
     public static TeamName Create(string name)
     {
         if (string.IsNullOrWhiteSpace(name))

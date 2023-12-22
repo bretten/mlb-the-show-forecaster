@@ -22,6 +22,12 @@ public sealed class MlbId : ValueObject
         Value = value;
     }
 
+    /// <summary>
+    /// Creates a <see cref="MlbId"/>
+    /// </summary>
+    /// <param name="mlbId">The underlying MLB ID value</param>
+    /// <returns>The created <see cref="MlbId"/></returns>
+    /// <exception cref="InvalidMlbIdException">Thrown if the specified value is invalid (less than 1)</exception>
     public static MlbId Create(int mlbId)
     {
         if (mlbId < 1)

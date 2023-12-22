@@ -22,6 +22,12 @@ public sealed class PersonName : ValueObject
         Value = value;
     }
 
+    /// <summary>
+    /// Creates a <see cref="PersonName"/>
+    /// </summary>
+    /// <param name="name">The underlying name value</param>
+    /// <returns>The <see cref="PersonName"/></returns>
+    /// <exception cref="EmptyPersonNameException">Thrown if the underlying name value is empty</exception>
     public static PersonName Create(string name)
     {
         if (string.IsNullOrWhiteSpace(name))

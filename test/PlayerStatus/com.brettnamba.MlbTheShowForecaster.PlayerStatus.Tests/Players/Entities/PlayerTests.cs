@@ -39,4 +39,72 @@ public class PlayerTests
         Assert.Equal(2, actual.Team?.MlbId.Value);
         Assert.True(actual.Active);
     }
+
+    [Fact]
+    public void SignContractWithTeam_NoPreviousTeam_SignsWithNewTeam()
+    {
+        // Arrange
+        Team? currentTeam = null;
+        var newTeam = Team.Create(MlbId.Create(2), TeamName.Create("Seattle Mariners"), TeamAbbreviation.Create("SEA"));
+        var player = CreatePlayer(team: currentTeam);
+
+        // Act
+        player.SignContractWithTeam(newTeam);
+
+        // Assert
+        Assert.NotNull(player.Team);
+        Assert.Equal(newTeam, player.Team);
+    }
+
+    [Fact]
+    public void SignContractWithTeam_PlayerOnAnotherTeam_LeavesCurrentTeamAndSignsWithNewTeam()
+    {
+        // Arrange
+        var currentTeam = Team.Create(MlbId.Create(2), TeamName.Create("Seattle Mariners"),
+            TeamAbbreviation.Create("SEA"));
+        var newTeam = Team.Create(MlbId.Create(3), TeamName.Create("New York Yankees"),
+            TeamAbbreviation.Create("NYY"));
+        var player = CreatePlayer(team: currentTeam);
+
+        // Act
+        player.SignContractWithTeam(newTeam);
+
+        // Assert
+        Assert.NotNull(player.Team);
+        Assert.Equal(newTeam, player.Team);
+    }
+
+    [Fact]
+    public void EnterFreeAgency_PlayerOnATeam_LeavesTeam()
+    {
+        // Arrange
+        var currentTeam = Team.Create(MlbId.Create(2), TeamName.Create("Seattle Mariners"),
+            TeamAbbreviation.Create("SEA"));
+        var player = CreatePlayer(team: currentTeam);
+
+        // Act
+        player.EnterFreeAgency();
+
+        // Assert
+        Assert.Null(player.Team);
+        Assert.NotEqual(currentTeam, player.Team);
+    }
+
+    private Player CreatePlayer(MlbId? mlbId = null, PersonName? firstName = null, PersonName? lastName = null,
+        DateTime birthdate = default, Position position = Position.Catcher, DateTime mlbDebutDate = default,
+        BatSide batSide = BatSide.Left, ThrowArm throwArm = ThrowArm.Left, Team? team = null, bool active = false)
+    {
+        return Player.Create(
+            mlbId == null ? MlbId.Create(1) : mlbId,
+            firstName == null ? PersonName.Create("First") : firstName,
+            lastName == null ? PersonName.Create("Last") : lastName,
+            birthdate == default ? new DateTime(1990, 1, 1) : birthdate,
+            position,
+            mlbDebutDate == default ? new DateTime(2010, 1, 1) : mlbDebutDate,
+            batSide,
+            throwArm,
+            team,
+            active
+        );
+    }
 }

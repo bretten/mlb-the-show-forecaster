@@ -22,6 +22,12 @@ public sealed class TeamAbbreviation : ValueObject
         Value = value;
     }
 
+    /// <summary>
+    /// Creates a <see cref="TeamAbbreviation"/>
+    /// </summary>
+    /// <param name="abbreviation">The underlying abbreviation value</param>
+    /// <returns>The created <see cref="TeamAbbreviation"/></returns>
+    /// <exception cref="InvalidTeamAbbreviationException">Thrown if the abbreviation is not two or three characters</exception>
     public static TeamAbbreviation Create(string abbreviation)
     {
         if (abbreviation.Length < 2 || abbreviation.Length > 3)
