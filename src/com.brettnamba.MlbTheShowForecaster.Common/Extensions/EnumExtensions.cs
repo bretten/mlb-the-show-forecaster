@@ -15,7 +15,7 @@ public static class EnumExtensions
     /// <param name="enumValue">The enum member</param>
     /// <returns>The <see cref="DisplayAttribute"/> name value</returns>
     /// <exception cref="EnumDisplayNameNotFoundException">Thrown if there is no <see cref="DisplayAttribute"/></exception>
-    public static string? GetDisplayName(this Enum enumValue)
+    public static string GetDisplayName(this Enum enumValue)
     {
         var displayAttribute = enumValue.GetType()
             .GetMember(enumValue.ToString())
@@ -26,6 +26,7 @@ public static class EnumExtensions
             throw new EnumDisplayNameNotFoundException($"Display attribute not found for Enum {enumValue}");
         }
 
-        return displayAttribute.GetName();
+        return displayAttribute.GetName() ??
+               throw new UndefinedEnumDisplayNameException($"No display name defined for {enumValue.ToString()}");
     }
 }

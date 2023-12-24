@@ -7,7 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Tests.Converters;
 public class EnumDisplayNameConverterTests
 {
     [Fact]
-    public void ConvertFrom_StringThatMatchesEnumMemberDisplayAttribute_ReturnsCorrespondingEnumMember()
+    public void ConvertFrom_StringThatMatchesDisplayAttribute_ReturnsCorrespondingEnumMember()
     {
         // Arrange
         var converter = TypeDescriptor.GetConverter(typeof(TestDisplayNameEnum));
@@ -21,7 +21,7 @@ public class EnumDisplayNameConverterTests
     }
 
     [Fact]
-    public void ConvertFrom_StringThatHasNoMatchingEnumMemberDisplayAttribute_ThrowsException()
+    public void ConvertFrom_StringThatHasNoMatchingDisplayAttribute_ThrowsException()
     {
         // Arrange
         var converter = TypeDescriptor.GetConverter(typeof(TestDisplayNameEnum));
