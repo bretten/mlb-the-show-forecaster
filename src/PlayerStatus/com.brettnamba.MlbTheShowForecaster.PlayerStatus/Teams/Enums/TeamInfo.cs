@@ -11,7 +11,8 @@ public enum TeamInfo
 {
     [Display(Name = "Atlanta Braves")] ATL = 144,
 
-    [Display(Name = "Arizona Diamondbacks")] AZ = 109,
+    [Display(Name = "Arizona Diamondbacks")]
+    AZ = 109,
 
     [Display(Name = "Baltimore Orioles")] BAL = 110,
 
@@ -21,7 +22,8 @@ public enum TeamInfo
 
     [Display(Name = "Cincinnati Reds")] CIN = 113,
 
-    [Display(Name = "Cleveland Guardians")] CLE = 114,
+    [Display(Name = "Cleveland Guardians")]
+    CLE = 114,
 
     [Display(Name = "Colorado Rockies")] COL = 115,
 
@@ -35,7 +37,8 @@ public enum TeamInfo
 
     [Display(Name = "Los Angeles Angels")] LAA = 108,
 
-    [Display(Name = "Los Angeles Dodgers")] LAD = 119,
+    [Display(Name = "Los Angeles Dodgers")]
+    LAD = 119,
 
     [Display(Name = "Miami Marlins")] MIA = 146,
 
@@ -49,7 +52,8 @@ public enum TeamInfo
 
     [Display(Name = "Oakland Athletics")] OAK = 133,
 
-    [Display(Name = "Philadelphia Phillies")] PHI = 143,
+    [Display(Name = "Philadelphia Phillies")]
+    PHI = 143,
 
     [Display(Name = "Pittsburgh Pirates")] PIT = 134,
 
@@ -57,9 +61,11 @@ public enum TeamInfo
 
     [Display(Name = "Seattle Mariners")] SEA = 136,
 
-    [Display(Name = "San Francisco Giants")] SF = 137,
+    [Display(Name = "San Francisco Giants")]
+    SF = 137,
 
-    [Display(Name = "St. Louis Cardinals")] STL = 138,
+    [Display(Name = "St. Louis Cardinals")]
+    STL = 138,
 
     [Display(Name = "Tampa Bay Rays")] TB = 139,
 
@@ -67,5 +73,6 @@ public enum TeamInfo
 
     [Display(Name = "Toronto Blue Jays")] TOR = 141,
 
-    [Display(Name = "Washington Nationals")] WSH = 120
+    [Display(Name = "Washington Nationals")]
+    WSH = 120
 }
