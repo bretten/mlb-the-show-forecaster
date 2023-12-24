@@ -8,9 +8,17 @@ public abstract class ValueObject : IEquatable<ValueObject>
 {
     /// <summary>
     /// The nested values that make up the whole ValueObject
+    ///
+    /// The values are used to determine equality to another ValueObject by comparing each ValueObject's
+    /// collection of nested values
     /// </summary>
     /// <returns>The values</returns>
-    public abstract IEnumerable<object> GetNestedValues();
+    protected virtual IEnumerable<object?> GetNestedValues()
+    {
+        return GetType()
+            .GetProperties()
+            .Select(x => x.GetValue(this));
+    }
 
     /// <summary>
     /// Determines if the other ValueObject is equal to this one by comparing their nested values

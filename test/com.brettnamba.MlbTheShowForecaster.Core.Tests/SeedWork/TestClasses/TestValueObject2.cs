@@ -7,9 +7,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Core.Tests.SeedWork.TestClasses;
 /// </summary>
 public sealed class TestValueObject2 : ValueObject
 {
-    public int IntegerValue { get; private set; }
+    public int IntegerValue { get; }
 
-    public string StringValue { get; private set; }
+    public string StringValue { get; }
 
     private TestValueObject2(int integerValue, string stringValue)
     {
@@ -17,7 +17,7 @@ public sealed class TestValueObject2 : ValueObject
         StringValue = stringValue;
     }
 
-    public override IEnumerable<object> GetNestedValues()
+    protected override IEnumerable<object?> GetNestedValues()
     {
         yield return IntegerValue;
         yield return StringValue;
