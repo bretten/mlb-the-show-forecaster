@@ -22,16 +22,18 @@ public class EnumExtensionsTests
     }
 
     [Fact]
-    public void GetDisplayName_EnumWithDisplayAttribute_ReturnsNull()
+    public void GetDisplayName_EnumWithDisplayAttribute_ThrowsException()
     {
         // Arrange
         var enumMember = TestGetDisplayNameEnum.EnumWithDisplayAttribute;
+        var action = () => enumMember.GetDisplayName();
 
         // Act
-        var actual = enumMember.GetDisplayName();
+        var actual = Record.Exception(action);
 
         // Assert
-        Assert.Null(actual);
+        Assert.NotNull(actual);
+        Assert.IsType<UndefinedEnumDisplayNameException>(actual);
     }
 
     [Fact]
