@@ -1,0 +1,75 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+env:
+  MINIMUM_COVERAGE: ${{ vars.MINIMUM_COVERAGE }}
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 7.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore
+
+      - name: Test and Collect Code Coverage
+        run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage"
+
+      - name: Generate report with combined coverage results from all .NET projects
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.2.0
+        with:
+          reports: '**/coverage.cobertura.xml'
+          targetdir: 'coveragereport'
+          reporttypes: 'Cobertura'
+          verbosity: 'Info'
+          toolpath: 'reportgeneratortool'
+
+      - name: Install xmllint for parsing code coverage amount from report
+        shell: bash
+        run: |
+          sudo apt update
+          sudo apt install -y libxml2-utils
+
+      - name: Parse code coverage amount from report
+        id: parse-code-coverage
+        run: |
+          echo "coverage_amount=$(xmllint --xpath 'string(/coverage/@line-rate)' coveragereport/Cobertura.xml)" >> $GITHUB_OUTPUT
+
+      - name: Check if minimum code coverage requirement was met
+        id: check-code-coverage
+        shell: bash
+        run: |
+          result=$(echo "${{ steps.parse-code-coverage.outputs.coverage_amount }} > $MINIMUM_COVERAGE" | bc)
+          minimum_coverage=$(echo "$MINIMUM_COVERAGE * 100" | bc)
+          actual_coverage=$(echo "${{ steps.parse-code-coverage.outputs.coverage_amount }} * 100" | bc)
+          if (($result == 1)); then
+            message=$(echo "Code Coverage requirement passed with $actual_coverage%. Minimum is $minimum_coverage%")
+            echo "::notice title=Code Coverage Check::$message"
+          else
+            message=$(echo "Code Coverage requirement failed with $actual_coverage%. A minimum of $minimum_coverage% is required.")
+            echo "::error title=Code Coverage Check::$message"
+          fi
+          echo "message=$message" >> $GITHUB_OUTPUT
+          echo "coverage_passed=$result" >> $GITHUB_OUTPUT
+
+      - name: Coverage check - ${{ steps.check-code-coverage.outputs.message }}
+        if: ${{ steps.check-code-coverage.outputs.coverage_passed != '1' }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.setFailed('${{ steps.check-code-coverage.outputs.message }}')
