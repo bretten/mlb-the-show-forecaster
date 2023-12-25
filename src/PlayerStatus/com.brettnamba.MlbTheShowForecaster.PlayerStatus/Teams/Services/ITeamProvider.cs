@@ -12,13 +12,13 @@ public interface ITeamProvider
     /// Gets a <see cref="Team"/> by <see cref="MlbId"/>
     /// </summary>
     /// <param name="mlbId">The <see cref="MlbId"/></param>
-    /// <returns>The <see cref="Team"/> with the <see cref="MlbId"/>, otherwise null</returns>
-    Team? GetBy(MlbId mlbId);
+    /// <returns>The corresponding <see cref="Team"/></returns>
+    Team GetBy(MlbId mlbId);
 
     /// <summary>
     /// Gets a <see cref="Team"/> by <see cref="TeamAbbreviation"/>
     /// </summary>
     /// <param name="abbreviation">The <see cref="TeamAbbreviation"/></param>
-    /// <returns>The <see cref="Team"/> with the <see cref="TeamAbbreviation"/>, otherwise null</returns>
-    Team? GetBy(TeamAbbreviation abbreviation);
+    /// <returns>The corresponding <see cref="Team"/></returns>
+    Team GetBy(TeamAbbreviation abbreviation);
 }

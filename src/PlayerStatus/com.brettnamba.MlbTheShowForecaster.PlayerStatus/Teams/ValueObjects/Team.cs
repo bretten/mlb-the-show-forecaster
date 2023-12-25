@@ -1,6 +1,8 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
+using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Common.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Players.Entities;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Teams.Enums;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Teams.ValueObjects;
 
@@ -52,5 +54,16 @@ public sealed class Team : ValueObject
     public static Team Create(MlbId mlbId, TeamName name, TeamAbbreviation abbreviation)
     {
         return new Team(mlbId, name, abbreviation);
+    }
+
+    /// <summary>
+    /// Creates a <see cref="Team"/>
+    /// </summary>
+    /// <param name="teamInfo">A <see cref="TeamInfo"/> enum</param>
+    /// <returns>The created <see cref="Team"/></returns>
+    public static Team Create(TeamInfo teamInfo)
+    {
+        return new Team(MlbId.Create((int)teamInfo), TeamName.Create(teamInfo.GetDisplayName()),
+            TeamAbbreviation.Create(teamInfo.ToString()));
     }
 }

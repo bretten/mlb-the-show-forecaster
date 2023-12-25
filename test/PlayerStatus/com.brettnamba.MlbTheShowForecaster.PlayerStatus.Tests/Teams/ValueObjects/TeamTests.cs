@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Common.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Teams.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Teams.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Tests.Teams.ValueObjects;
@@ -18,6 +19,21 @@ public class TeamTests
 
         // Assert
         Assert.Equal(1, actual.MlbId.Value);
+        Assert.Equal("Seattle Mariners", actual.Name.Value);
+        Assert.Equal("SEA", actual.Abbreviation.Value);
+    }
+
+    [Fact]
+    public void Create_TeamInfo_Created()
+    {
+        // Arrange
+        var teamInfo = TeamInfo.SEA;
+
+        // Act
+        var actual = Team.Create(teamInfo);
+
+        // Assert
+        Assert.Equal(136, actual.MlbId.Value);
         Assert.Equal("Seattle Mariners", actual.Name.Value);
         Assert.Equal("SEA", actual.Abbreviation.Value);
     }
