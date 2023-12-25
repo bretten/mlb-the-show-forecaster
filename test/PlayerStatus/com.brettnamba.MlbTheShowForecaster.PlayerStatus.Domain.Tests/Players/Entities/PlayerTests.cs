@@ -3,6 +3,8 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.Entities;
 
@@ -20,7 +22,7 @@ public class PlayerTests
         var mlbDebutDate = new DateTime(2010, 1, 1);
         var batSide = BatSide.Left;
         var throwArm = ThrowArm.Right;
-        var team = Team.Create(MlbId.Create(2), TeamName.Create("Mariners"), TeamAbbreviation.Create("SEA"));
+        var team = TeamMocker.Mock();
         var active = true;
 
         // Act
@@ -36,7 +38,9 @@ public class PlayerTests
         Assert.Equal(new DateTime(2010, 1, 1), actual.MlbDebutDate);
         Assert.Equal(BatSide.Left, actual.BatSide);
         Assert.Equal(ThrowArm.Right, actual.ThrowArm);
-        Assert.Equal(2, actual.Team?.MlbId.Value);
+        Assert.Equal(TeamMocker.DefaultMlbId, actual.Team?.MlbId.Value);
+        Assert.Equal(TeamMocker.DefaultTeamName, actual.Team?.Name.Value);
+        Assert.Equal(TeamMocker.DefaultTeamAbbreviation, actual.Team?.Abbreviation.Value);
         Assert.True(actual.Active);
     }
 
@@ -45,8 +49,8 @@ public class PlayerTests
     {
         // Arrange
         Team? currentTeam = null;
-        var newTeam = Team.Create(MlbId.Create(2), TeamName.Create("Seattle Mariners"), TeamAbbreviation.Create("SEA"));
-        var player = CreatePlayer(team: currentTeam);
+        var newTeam = TeamMocker.Mock();
+        var player = PlayerMocker.Mock(team: currentTeam);
 
         // Act
         player.SignContractWithTeam(newTeam);
@@ -60,11 +64,9 @@ public class PlayerTests
     public void SignContractWithTeam_PlayerOnAnotherTeam_LeavesCurrentTeamAndSignsWithNewTeam()
     {
         // Arrange
-        var currentTeam = Team.Create(MlbId.Create(2), TeamName.Create("Seattle Mariners"),
-            TeamAbbreviation.Create("SEA"));
-        var newTeam = Team.Create(MlbId.Create(3), TeamName.Create("New York Yankees"),
-            TeamAbbreviation.Create("NYY"));
-        var player = CreatePlayer(team: currentTeam);
+        var currentTeam = TeamMocker.Mock();
+        var newTeam = TeamMocker.Mock(1000, "New Team", "NEW");
+        var player = PlayerMocker.Mock(team: currentTeam);
 
         // Act
         player.SignContractWithTeam(newTeam);
@@ -78,9 +80,8 @@ public class PlayerTests
     public void EnterFreeAgency_PlayerOnATeam_LeavesTeam()
     {
         // Arrange
-        var currentTeam = Team.Create(MlbId.Create(2), TeamName.Create("Seattle Mariners"),
-            TeamAbbreviation.Create("SEA"));
-        var player = CreatePlayer(team: currentTeam);
+        var currentTeam = TeamMocker.Mock();
+        var player = PlayerMocker.Mock(team: currentTeam);
 
         // Act
         player.EnterFreeAgency();
@@ -88,23 +89,5 @@ public class PlayerTests
         // Assert
         Assert.Null(player.Team);
         Assert.NotEqual(currentTeam, player.Team);
-    }
-
-    private Player CreatePlayer(MlbId? mlbId = null, PersonName? firstName = null, PersonName? lastName = null,
-        DateTime birthdate = default, Position position = Position.Catcher, DateTime mlbDebutDate = default,
-        BatSide batSide = BatSide.Left, ThrowArm throwArm = ThrowArm.Left, Team? team = null, bool active = false)
-    {
-        return Player.Create(
-            mlbId == null ? MlbId.Create(1) : mlbId,
-            firstName == null ? PersonName.Create("First") : firstName,
-            lastName == null ? PersonName.Create("Last") : lastName,
-            birthdate == default ? new DateTime(1990, 1, 1) : birthdate,
-            position,
-            mlbDebutDate == default ? new DateTime(2010, 1, 1) : mlbDebutDate,
-            batSide,
-            throwArm,
-            team,
-            active
-        );
     }
 }
