@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\com.brettnamba.MlbTheShowForecaster.Common\com.brettnamba.MlbTheShowForecaster.Common.csproj" />
+    </ItemGroup>
+
 </Project>
