@@ -10,11 +10,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowFo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlayerStatus", "PlayerStatus", "{E0CD3F64-1872-49E2-BB7C-FDD30EDA7EA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.PlayerStatus", "src\PlayerStatus\com.brettnamba.MlbTheShowForecaster.PlayerStatus\com.brettnamba.MlbTheShowForecaster.PlayerStatus.csproj", "{53796898-4128-4E59-B0B7-10086DDEA73C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain", "src\PlayerStatus\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.csproj", "{53796898-4128-4E59-B0B7-10086DDEA73C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlayerStatus", "PlayerStatus", "{27F9BB13-E7CD-4F5E-B5CE-1ECF34BE9815}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.PlayerStatus.Tests", "test\PlayerStatus\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Tests\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Tests.csproj", "{A6398B0E-7F63-4E1E-87B3-34EEE022DAAC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests", "test\PlayerStatus\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.csproj", "{A6398B0E-7F63-4E1E-87B3-34EEE022DAAC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Common", "src\com.brettnamba.MlbTheShowForecaster.Common\com.brettnamba.MlbTheShowForecaster.Common.csproj", "{CA9C0A15-03BB-4669-98C8-F2569D499DCE}"
 EndProject
