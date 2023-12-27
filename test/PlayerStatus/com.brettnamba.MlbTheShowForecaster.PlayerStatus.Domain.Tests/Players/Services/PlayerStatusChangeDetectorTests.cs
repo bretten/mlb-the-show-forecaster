@@ -68,23 +68,6 @@ public class PlayerStatusChangeDetectorTests
         var actual = detector.DetectChanges(player, mlbReportedActiveStatus, mlbReportedTeam);
 
         // Assert
-        Assert.Contains(PlayerStatusChangeType.SignedWithNewTeam, actual.Changes);
-    }
-
-    [Fact]
-    public void DetectChanges_PlayerOnTeamReportedOnDifferentTeam_DetectsTrade()
-    {
-        // Arrange
-        var detector = new PlayerStatusChangeDetector();
-        var currentTeam = TeamMocker.Mock();
-        var player = PlayerMocker.Mock(team: currentTeam);
-        var mlbReportedActiveStatus = true;
-        var mlbReportedTeam = TeamMocker.Mock(1000, "New Team", "NEW");
-
-        // Act
-        var actual = detector.DetectChanges(player, mlbReportedActiveStatus, mlbReportedTeam);
-
-        // Assert
-        Assert.Contains(PlayerStatusChangeType.Traded, actual.Changes);
+        Assert.Contains(PlayerStatusChangeType.SignedContractWithTeam, actual.Changes);
     }
 }

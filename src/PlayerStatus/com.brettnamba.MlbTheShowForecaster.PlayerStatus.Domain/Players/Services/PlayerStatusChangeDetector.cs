@@ -66,11 +66,7 @@ public sealed class PlayerStatusChangeDetector : IPlayerStatusChangeDetector
         }
         else if (player.IsFreeAgent() && mlbReportedTeam != null)
         {
-            changes.Add(PlayerStatusChangeType.SignedWithNewTeam);
-        }
-        else if (player.Team != mlbReportedTeam)
-        {
-            changes.Add(PlayerStatusChangeType.Traded);
+            changes.Add(PlayerStatusChangeType.SignedContractWithTeam);
         }
     }
 }

@@ -10,4 +10,26 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueO
 /// </summary>
 /// <param name="Changes">All the status changes for the <see cref="Player"/></param>
 /// <param name="NewTeam">The <see cref="Team"/> if the status change involves a new <see cref="Team"/></param>
-public readonly record struct PlayerStatusChanges(List<PlayerStatusChangeType> Changes, Team? NewTeam);
+public readonly record struct PlayerStatusChanges(List<PlayerStatusChangeType> Changes, Team? NewTeam)
+{
+    /// <summary>
+    /// True if the player signed a contract with a team, otherwise false
+    /// </summary>
+    public bool SignedContractWithTeam =>
+        NewTeam != null && Changes.Contains(PlayerStatusChangeType.SignedContractWithTeam);
+
+    /// <summary>
+    /// True if the player entered free agency, otherwise false
+    /// </summary>
+    public bool EnteredFreeAgency => Changes.Contains(PlayerStatusChangeType.EnteredFreeAgency);
+
+    /// <summary>
+    /// True if the player was activated, otherwise false
+    /// </summary>
+    public bool Activated => Changes.Contains(PlayerStatusChangeType.Activated);
+
+    /// <summary>
+    /// True if the player was inactivated
+    /// </summary>
+    public bool Inactivated => Changes.Contains(PlayerStatusChangeType.Inactivated);
+};
