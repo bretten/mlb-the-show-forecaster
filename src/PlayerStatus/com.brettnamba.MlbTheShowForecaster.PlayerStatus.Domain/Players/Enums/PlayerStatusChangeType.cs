@@ -7,9 +7,23 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 /// </summary>
 public enum PlayerStatusChangeType
 {
+    /// <summary>
+    /// When a player signs a contract with a team
+    /// </summary>
+    SignedContractWithTeam,
+
+    /// <summary>
+    /// When a player enters free agency and is no longer on a team
+    /// </summary>
     EnteredFreeAgency,
-    SignedWithNewTeam,
-    Traded,
+
+    /// <summary>
+    /// When a player is activated in the MLB
+    /// </summary>
     Activated,
+
+    /// <summary>
+    /// When a player is inactivated in the MLB
+    /// </summary>
     Inactivated
 }
