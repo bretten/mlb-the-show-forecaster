@@ -7,15 +7,15 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
 
 /// <summary>
-/// Mocks a Player
+/// Fakes a Player
 /// </summary>
-public static class PlayerMocker
+public static class PlayerFaker
 {
     public const int DefaultMlbId = 1;
     public const string DefaultFirstName = "First";
     public const string DefaultLastName = "Last";
 
-    public static Player Mock(int? mlbId = null, string? firstName = null, string? lastName = null,
+    public static Player Fake(int? mlbId = null, string? firstName = null, string? lastName = null,
         DateTime birthdate = default, Position position = Position.Catcher, DateTime mlbDebutDate = default,
         BatSide batSide = BatSide.Left, ThrowArm throwArm = ThrowArm.Left, Team? team = null, bool active = false)
     {

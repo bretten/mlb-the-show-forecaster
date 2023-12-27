@@ -22,7 +22,7 @@ public class PlayerTests
         var mlbDebutDate = new DateTime(2010, 1, 1);
         var batSide = BatSide.Left;
         var throwArm = ThrowArm.Right;
-        var team = TeamMocker.Mock();
+        var team = TeamFaker.Fake();
         var active = true;
 
         // Act
@@ -38,9 +38,9 @@ public class PlayerTests
         Assert.Equal(new DateTime(2010, 1, 1), actual.MlbDebutDate);
         Assert.Equal(BatSide.Left, actual.BatSide);
         Assert.Equal(ThrowArm.Right, actual.ThrowArm);
-        Assert.Equal(TeamMocker.DefaultMlbId, actual.Team?.MlbId.Value);
-        Assert.Equal(TeamMocker.DefaultTeamName, actual.Team?.Name.Value);
-        Assert.Equal(TeamMocker.DefaultTeamAbbreviation, actual.Team?.Abbreviation.Value);
+        Assert.Equal(TeamFaker.DefaultMlbId, actual.Team?.MlbId.Value);
+        Assert.Equal(TeamFaker.DefaultTeamName, actual.Team?.Name.Value);
+        Assert.Equal(TeamFaker.DefaultTeamAbbreviation, actual.Team?.Abbreviation.Value);
         Assert.True(actual.Active);
     }
 
@@ -49,8 +49,8 @@ public class PlayerTests
     {
         // Arrange
         Team? currentTeam = null;
-        var newTeam = TeamMocker.Mock();
-        var player = PlayerMocker.Mock(team: currentTeam);
+        var newTeam = TeamFaker.Fake();
+        var player = PlayerFaker.Fake(team: currentTeam);
 
         // Act
         player.SignContractWithTeam(newTeam);
@@ -64,9 +64,9 @@ public class PlayerTests
     public void SignContractWithTeam_PlayerOnAnotherTeam_LeavesCurrentTeamAndSignsWithNewTeam()
     {
         // Arrange
-        var currentTeam = TeamMocker.Mock();
-        var newTeam = TeamMocker.Mock(1000, "New Team", "NEW");
-        var player = PlayerMocker.Mock(team: currentTeam);
+        var currentTeam = TeamFaker.Fake();
+        var newTeam = TeamFaker.Fake(1000, "New Team", "NEW");
+        var player = PlayerFaker.Fake(team: currentTeam);
 
         // Act
         player.SignContractWithTeam(newTeam);
@@ -80,8 +80,8 @@ public class PlayerTests
     public void EnterFreeAgency_PlayerOnATeam_LeavesTeam()
     {
         // Arrange
-        var currentTeam = TeamMocker.Mock();
-        var player = PlayerMocker.Mock(team: currentTeam);
+        var currentTeam = TeamFaker.Fake();
+        var player = PlayerFaker.Fake(team: currentTeam);
 
         // Act
         player.EnterFreeAgency();
@@ -95,7 +95,7 @@ public class PlayerTests
     public void Activate_InactivePlayer_NowActive()
     {
         // Arrange
-        var player = PlayerMocker.Mock(active: false);
+        var player = PlayerFaker.Fake(active: false);
 
         // Act
         player.Activate();
@@ -108,7 +108,7 @@ public class PlayerTests
     public void Inactivate_ActivePlayer_NowInactive()
     {
         // Arrange
-        var player = PlayerMocker.Mock(active: true);
+        var player = PlayerFaker.Fake(active: true);
 
         // Act
         player.Inactivate();
