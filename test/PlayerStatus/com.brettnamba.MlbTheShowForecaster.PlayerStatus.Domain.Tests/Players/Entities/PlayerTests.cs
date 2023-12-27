@@ -90,4 +90,30 @@ public class PlayerTests
         Assert.Null(player.Team);
         Assert.NotEqual(currentTeam, player.Team);
     }
+
+    [Fact]
+    public void Activate_InactivePlayer_NowActive()
+    {
+        // Arrange
+        var player = PlayerMocker.Mock(active: false);
+
+        // Act
+        player.Activate();
+
+        // Assert
+        Assert.True(player.Active);
+    }
+
+    [Fact]
+    public void Inactivate_ActivePlayer_NowInactive()
+    {
+        // Arrange
+        var player = PlayerMocker.Mock(active: true);
+
+        // Act
+        player.Inactivate();
+
+        // Assert
+        Assert.False(player.Active);
+    }
 }
