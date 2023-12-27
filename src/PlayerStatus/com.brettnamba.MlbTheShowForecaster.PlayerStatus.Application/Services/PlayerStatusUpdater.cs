@@ -62,7 +62,7 @@ public sealed class PlayerStatusUpdater : IPlayerStatusUpdater
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task UpdatePlayerStatuses(CancellationToken cancellationToken = default)
     {
-        var playerStatuses = await _playerRoster.GetPlayerStatuses();
+        var playerStatuses = await _playerRoster.GetPlayerStatuses(cancellationToken);
 
         foreach (var playerStatus in playerStatuses)
         {

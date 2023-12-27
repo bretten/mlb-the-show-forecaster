@@ -37,5 +37,5 @@ public readonly record struct PlayerStatusChanges(List<PlayerStatusChangeType> C
     /// Checks if there are any changes
     /// </summary>
     /// <returns>True if there are changes, otherwise false</returns>
-    public bool Any() => Changes.Any();
+    public bool Any() => Changes != null && Changes.Any();
 };

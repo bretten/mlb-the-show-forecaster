@@ -8,6 +8,7 @@ public interface IPlayerRoster
     /// <summary>
     /// Returns the status of all players in the MLB
     /// </summary>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The status of all MLB players</returns>
-    Task<IEnumerable<Dtos.PlayerStatus>> GetPlayerStatuses();
+    Task<IEnumerable<Dtos.PlayerStatus>> GetPlayerStatuses(CancellationToken cancellationToken = default);
 }
