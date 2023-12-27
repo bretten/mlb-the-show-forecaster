@@ -32,4 +32,10 @@ public readonly record struct PlayerStatusChanges(List<PlayerStatusChangeType> C
     /// True if the player was inactivated
     /// </summary>
     public bool Inactivated => Changes.Contains(PlayerStatusChangeType.Inactivated);
+
+    /// <summary>
+    /// Checks if there are any changes
+    /// </summary>
+    /// <returns>True if there are changes, otherwise false</returns>
+    public bool Any() => Changes.Any();
 };

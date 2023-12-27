@@ -121,4 +121,33 @@ public class PlayerStatusChangesTests
         // Assert
         Assert.False(actual);
     }
+
+    [Fact]
+    public void Any_Changes_ReturnsTrue()
+    {
+        // Arrange
+        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>()
+        {
+            PlayerStatusChangeType.Activated
+        }, TeamMocker.NoTeam);
+
+        // Act
+        var actual = statusChanges.Any();
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void Any_NoChanges_ReturnsFalse()
+    {
+        // Arrange
+        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamMocker.NoTeam);
+
+        // Act
+        var actual = statusChanges.Any();
+
+        // Assert
+        Assert.False(actual);
+    }
 }
