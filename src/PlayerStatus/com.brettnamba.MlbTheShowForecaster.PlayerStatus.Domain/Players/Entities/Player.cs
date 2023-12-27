@@ -119,6 +119,22 @@ public sealed class Player : AggregateRoot
     }
 
     /// <summary>
+    /// Activates the Player
+    /// </summary>
+    public void Activate()
+    {
+        Active = true;
+    }
+
+    /// <summary>
+    /// Inactivates a Player
+    /// </summary>
+    public void Inactivate()
+    {
+        Active = false;
+    }
+
+    /// <summary>
     /// Ends the Player's current Team contract
     /// </summary>
     private void EndCurrentTeamContract()
