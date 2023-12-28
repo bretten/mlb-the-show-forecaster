@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
@@ -59,11 +60,11 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     /// <returns>The completed task</returns>
     public async Task Handle(CreatePlayerCommand command, CancellationToken cancellationToken = default)
     {
-        var player = _objectMapper.Map<Dtos.PlayerStatus, Player>(command.PlayerStatus);
+        var player = _objectMapper.Map<RosterEntry, Player>(command.RosterEntry);
 
         // The player is new, so they are being activated and signing with a team
         player.Activate();
-        player.SignContractWithTeam(_teamProvider.GetBy(command.PlayerStatus.CurrentTeamMlbId));
+        player.SignContractWithTeam(_teamProvider.GetBy(command.RosterEntry.CurrentTeamMlbId));
 
         await _playerRepository.Add(player);
 

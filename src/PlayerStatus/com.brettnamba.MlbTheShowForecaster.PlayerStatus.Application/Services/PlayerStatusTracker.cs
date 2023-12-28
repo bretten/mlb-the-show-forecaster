@@ -11,7 +11,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 /// <summary>
 /// Updates the status of all <see cref="Player"/>s
 /// </summary>
-public sealed class PlayerStatusUpdater : IPlayerStatusUpdater
+public sealed class PlayerStatusTracker : IPlayerStatusTracker
 {
     /// <summary>
     /// The roster provides a list of MLB players
@@ -46,7 +46,7 @@ public sealed class PlayerStatusUpdater : IPlayerStatusUpdater
     /// <param name="commandSender">Sends commands to mutate the system</param>
     /// <param name="playerStatusChangeDetector">Detects if there are any changes in a player's status</param>
     /// <param name="teamProvider">Provides information on teams</param>
-    public PlayerStatusUpdater(IPlayerRoster playerRoster, IQuerySender querySender, ICommandSender commandSender,
+    public PlayerStatusTracker(IPlayerRoster playerRoster, IQuerySender querySender, ICommandSender commandSender,
         IPlayerStatusChangeDetector playerStatusChangeDetector, ITeamProvider teamProvider)
     {
         _playerRoster = playerRoster;
@@ -57,29 +57,29 @@ public sealed class PlayerStatusUpdater : IPlayerStatusUpdater
     }
 
     /// <summary>
-    /// Updates player statuses
+    /// Updates players
     /// </summary>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    public async Task UpdatePlayerStatuses(CancellationToken cancellationToken = default)
+    public async Task TrackPlayers(CancellationToken cancellationToken = default)
     {
-        var playerStatuses = await _playerRoster.GetPlayerStatuses(cancellationToken);
+        var rosterEntries = await _playerRoster.GetRosterEntries(cancellationToken);
 
-        foreach (var playerStatus in playerStatuses)
+        foreach (var rosterEntry in rosterEntries)
         {
-            // Check if the player exists
+            // Check if the player exists for the roster entry
             var existingPlayer =
-                await _querySender.Send(new GetPlayerByMlbIdQuery(playerStatus.MlbId), cancellationToken);
+                await _querySender.Send(new GetPlayerByMlbIdQuery(rosterEntry.MlbId), cancellationToken);
 
-            // Create the player if there is no existing status
+            // Create the player if they don't exist
             if (existingPlayer == null)
             {
-                await _commandSender.Send(new CreatePlayerCommand(playerStatus), cancellationToken);
+                await _commandSender.Send(new CreatePlayerCommand(rosterEntry), cancellationToken);
                 continue;
             }
 
             // The player exists, so see if there are any status changes
-            var detectedChanges = _playerStatusChangeDetector.DetectChanges(existingPlayer, playerStatus.Active,
-                _teamProvider.GetBy(playerStatus.CurrentTeamMlbId));
+            var detectedChanges = _playerStatusChangeDetector.DetectChanges(existingPlayer, rosterEntry.Active,
+                _teamProvider.GetBy(rosterEntry.CurrentTeamMlbId));
             if (detectedChanges.Any())
             {
                 await _commandSender.Send(new UpdatePlayerCommand(existingPlayer, detectedChanges), cancellationToken);

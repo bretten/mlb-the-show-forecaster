@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.CreatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Queries.GetPlayerByMlbId;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Dtos;
@@ -17,7 +18,7 @@ using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Services;
 
-public class PlayerStatusUpdaterTests
+public class PlayerStatusTrackerTests
 {
     [Fact]
     public async Task UpdatePlayerStatuses_NewAndExistingPlayers_CreatesAndUpdates()
@@ -25,15 +26,15 @@ public class PlayerStatusUpdaterTests
         // Arrange
         var scenario = new TestScenario();
         var stubPlayerRoster = scenario.StubPlayerRoster;
-        var stubPlayerStatusDetector = scenario.StubPlayerStatusDetector;
+        var stubPlayerStatusDetector = scenario.StubPlayerStatusChangeDetector;
         var mockQuerySender = scenario.MockQuerySender;
         var mockCommandSender = scenario.MockCommandSender;
 
-        var playerStatusUpdater = new PlayerStatusUpdater(stubPlayerRoster, mockQuerySender.Object,
+        var tracker = new PlayerStatusTracker(stubPlayerRoster, mockQuerySender.Object,
             mockCommandSender.Object, stubPlayerStatusDetector.Object, scenario.StubTeamProvider);
 
         // Act
-        await playerStatusUpdater.UpdatePlayerStatuses(scenario.CancellationToken);
+        await tracker.TrackPlayers(scenario.CancellationToken);
 
         /*
          * Assert
@@ -45,13 +46,13 @@ public class PlayerStatusUpdaterTests
 
         // No create command for Player1
         mockCommandSender.Verify(
-            x => x.Send(It.Is<CreatePlayerCommand>(c => c.PlayerStatus.MlbId == TestScenario.Player1MlbId),
+            x => x.Send(It.Is<CreatePlayerCommand>(c => c.RosterEntry.MlbId == TestScenario.Player1MlbId),
                 scenario.CancellationToken), Times.Never);
         // One create command for Player2
         mockCommandSender.Verify(x => x.Send(scenario.CreatePlayer2Command, scenario.CancellationToken), Times.Once);
         // No create command for Player3
         mockCommandSender.Verify(
-            x => x.Send(It.Is<CreatePlayerCommand>(c => c.PlayerStatus.MlbId == TestScenario.Player3MlbId),
+            x => x.Send(It.Is<CreatePlayerCommand>(c => c.RosterEntry.MlbId == TestScenario.Player3MlbId),
                 scenario.CancellationToken), Times.Never);
 
         // No update command for Player1
@@ -86,7 +87,7 @@ public class PlayerStatusUpdaterTests
         /// <summary>
         /// Detects the changes in player state between the system and the MLB
         /// </summary>
-        public Mock<IPlayerStatusChangeDetector> StubPlayerStatusDetector { get; private set; } = null!;
+        public Mock<IPlayerStatusChangeDetector> StubPlayerStatusChangeDetector { get; private set; } = null!;
 
         /// <summary>
         /// Sends queries
@@ -137,7 +138,7 @@ public class PlayerStatusUpdaterTests
         private void Setup()
         {
             // Fake Team
-            var team = TeamFaker.Fake(PlayerStatusFaker.DefaultTeamMlbId);
+            var team = TeamFaker.Fake(RosterEntryFaker.DefaultTeamMlbId);
             var otherTeam = TeamFaker.Fake(999);
 
             // Team Provider
@@ -151,7 +152,7 @@ public class PlayerStatusUpdaterTests
                 PlayerFaker.Fake(Player3MlbId.Value, active: false, team: otherTeam); // Player will be updated
 
             // Roster
-            var (playerStatus1, playerStatus2, playerStatus3) = SetupPlayerStatuses(team);
+            var (rosterEntry1, rosterEntry2, rosterEntry3) = SetupRosterEntries(team);
 
             // Queries
             SetupQuerySenderAndExpectedQueries(player1, player2, player3);
@@ -160,31 +161,31 @@ public class PlayerStatusUpdaterTests
             var (player1Changes, player3Changes) = SetupPlayerChanges(team);
 
             // Status change detections
-            SetupStubPlayerStatusDetector(player1, player3, team, playerStatus1, playerStatus3, player1Changes,
+            SetupStubPlayerStatusDetector(player1, player3, team, rosterEntry1, rosterEntry3, player1Changes,
                 player3Changes);
 
             // Commands
-            SetupCommandSenderAndExpectedCommands(playerStatus2, player3, player3Changes);
+            SetupCommandSenderAndExpectedCommands(rosterEntry2, player3, player3Changes);
         }
 
         /// <summary>
-        /// Sets up the statuses that are reported from the MLB, or the <see cref="IPlayerRoster"/>
+        /// Sets up the roster entries that are reported from the <see cref="IPlayerRoster"/>
         /// </summary>
-        private (Application.Dtos.PlayerStatus playerStatus1, Application.Dtos.PlayerStatus playerStatus2,
-            Application.Dtos.PlayerStatus playerStatus3) SetupPlayerStatuses(Team team)
+        private (RosterEntry rosterEntry1, RosterEntry rosterEntry2, RosterEntry rosterEntry3)
+            SetupRosterEntries(Team team)
         {
-            var playerStatus1 = PlayerStatusFaker.Fake(Player1MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
-            var playerStatus2 = PlayerStatusFaker.Fake(Player2MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
-            var playerStatus3 = PlayerStatusFaker.Fake(Player3MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
-            var playerStatuses = new List<Application.Dtos.PlayerStatus>
+            var rosterEntry1 = RosterEntryFaker.Fake(Player1MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
+            var rosterEntry2 = RosterEntryFaker.Fake(Player2MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
+            var rosterEntry3 = RosterEntryFaker.Fake(Player3MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
+            var rosterEntries = new List<RosterEntry>
             {
-                playerStatus1,
-                playerStatus2,
-                playerStatus3,
+                rosterEntry1,
+                rosterEntry2,
+                rosterEntry3,
             };
             StubPlayerRoster = Mock.Of<IPlayerRoster>(x =>
-                x.GetPlayerStatuses(CancellationToken) == Task.FromResult(playerStatuses.AsEnumerable()));
-            return (playerStatus1, playerStatus2, playerStatus3);
+                x.GetRosterEntries(CancellationToken) == Task.FromResult(rosterEntries.AsEnumerable()));
+            return (rosterEntry1, rosterEntry2, rosterEntry3);
         }
 
         /// <summary>
@@ -204,14 +205,13 @@ public class PlayerStatusUpdaterTests
         /// <summary>
         /// Sets up how the Stub <see cref="IPlayerStatusChangeDetector"/> will behave
         /// </summary>
-        private void SetupStubPlayerStatusDetector(Player player1, Player player3, Team team,
-            Application.Dtos.PlayerStatus playerStatus1, Application.Dtos.PlayerStatus playerStatus3,
-            PlayerStatusChanges player1Changes, PlayerStatusChanges player3Changes)
+        private void SetupStubPlayerStatusDetector(Player player1, Player player3, Team team, RosterEntry rosterEntry1,
+            RosterEntry rosterEntry3, PlayerStatusChanges player1Changes, PlayerStatusChanges player3Changes)
         {
-            StubPlayerStatusDetector = new Mock<IPlayerStatusChangeDetector>();
-            StubPlayerStatusDetector.Setup(x => x.DetectChanges(player1, playerStatus1.Active, team))
+            StubPlayerStatusChangeDetector = new Mock<IPlayerStatusChangeDetector>();
+            StubPlayerStatusChangeDetector.Setup(x => x.DetectChanges(player1, rosterEntry1.Active, team))
                 .Returns(player1Changes);
-            StubPlayerStatusDetector.Setup(x => x.DetectChanges(player3, playerStatus3.Active, team))
+            StubPlayerStatusChangeDetector.Setup(x => x.DetectChanges(player3, rosterEntry3.Active, team))
                 .Returns(player3Changes);
         }
 
@@ -232,11 +232,11 @@ public class PlayerStatusUpdaterTests
         /// <summary>
         /// Sets up how the <see cref="ICommandSender"/> will behave
         /// </summary>
-        private void SetupCommandSenderAndExpectedCommands(Application.Dtos.PlayerStatus playerStatus2, Player player3,
+        private void SetupCommandSenderAndExpectedCommands(RosterEntry rosterEntry2, Player player3,
             PlayerStatusChanges player3Changes)
         {
             MockCommandSender = new Mock<ICommandSender>();
-            CreatePlayer2Command = new CreatePlayerCommand(playerStatus2);
+            CreatePlayer2Command = new CreatePlayerCommand(rosterEntry2);
             UpdatePlayer3Command = new UpdatePlayerCommand(player3, player3Changes);
         }
     }

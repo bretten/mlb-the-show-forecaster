@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.CreatePlayer;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
@@ -18,14 +19,13 @@ public class CreatePlayerCommandHandlerTests
     {
         // Arrange
         var fakeTeam = TeamFaker.Fake();
-        var fakePlayerStatus = PlayerStatusFaker.Fake(teamMlbId: fakeTeam.MlbId.Value);
+        var fakePlayerStatus = RosterEntryFaker.Fake(teamMlbId: fakeTeam.MlbId.Value);
         var fakePlayer = PlayerFaker.Fake(active: false, team: null);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
         var mockUnitOfWork = Mock.Of<IUnitOfWork>();
 
-        var stubObjectMapper = Mock.Of<IObjectMapper>(x =>
-            x.Map<Application.Dtos.PlayerStatus, Player>(fakePlayerStatus) == fakePlayer);
+        var stubObjectMapper = Mock.Of<IObjectMapper>(x => x.Map<RosterEntry, Player>(fakePlayerStatus) == fakePlayer);
 
         var stubTeamProvider = new Mock<ITeamProvider>();
         stubTeamProvider.Setup(x => x.GetBy(fakeTeam.MlbId))
