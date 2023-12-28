@@ -10,7 +10,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Queries.G
 ///
 /// <para>Returns a <see cref="Player"/> based on their <see cref="MlbId"/></para>
 /// </summary>
-public sealed class GetPlayerByMlbIdQueryHandler : IQueryHandler<GetPlayerByMlbIdQuery, Player>
+internal sealed class GetPlayerByMlbIdQueryHandler : IQueryHandler<GetPlayerByMlbIdQuery, Player>
 {
     /// <summary>
     /// The <see cref="Player"/> repository

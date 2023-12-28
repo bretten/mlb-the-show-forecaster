@@ -14,7 +14,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.
 /// <para>Updates an existing <see cref="Player"/> by applying any status changes that the player has had
 /// since the past update. All status updates are bundled as a single unit of work</para>
 /// </summary>
-public sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerCommand>
+internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerCommand>
 {
     /// <summary>
     /// The <see cref="Player"/> repository

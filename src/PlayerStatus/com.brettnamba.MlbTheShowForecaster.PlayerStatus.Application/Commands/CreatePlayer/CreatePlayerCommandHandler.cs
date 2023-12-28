@@ -13,7 +13,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.
 /// <para>Creates a new <see cref="Player"/> by adding it to the repository and wrapping the whole
 /// command as a single unit of work</para>
 /// </summary>
-public sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerCommand>
+internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerCommand>
 {
     /// <summary>
     /// The <see cref="Player"/> repository
@@ -61,7 +61,8 @@ public sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerCom
     {
         var player = _objectMapper.Map<Dtos.PlayerStatus, Player>(command.PlayerStatus);
 
-        // The player is new, so they are signing with a team
+        // The player is new, so they are being activated and signing with a team
+        player.Activate();
         player.SignContractWithTeam(_teamProvider.GetBy(command.PlayerStatus.CurrentTeamMlbId));
 
         await _playerRepository.Add(player);

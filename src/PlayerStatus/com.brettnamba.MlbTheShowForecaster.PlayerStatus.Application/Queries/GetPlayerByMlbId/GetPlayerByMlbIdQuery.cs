@@ -8,4 +8,4 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Queries.G
 /// Query that retrieves a <see cref="Player"/> by their MLB issued <see cref="MlbId"/>
 /// </summary>
 /// <param name="MlbId">The <see cref="Player"/>'s <see cref="MlbId"/></param>
-public readonly record struct GetPlayerByMlbIdQuery(MlbId MlbId) : IQuery<Player>;
+internal readonly record struct GetPlayerByMlbIdQuery(MlbId MlbId) : IQuery<Player>;

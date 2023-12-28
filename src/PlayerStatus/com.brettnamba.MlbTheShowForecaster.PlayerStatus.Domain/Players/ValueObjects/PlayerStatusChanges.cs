@@ -15,8 +15,7 @@ public readonly record struct PlayerStatusChanges(List<PlayerStatusChangeType> C
     /// <summary>
     /// True if the player signed a contract with a team, otherwise false
     /// </summary>
-    public bool SignedContractWithTeam =>
-        NewTeam != null && Changes.Contains(PlayerStatusChangeType.SignedContractWithTeam);
+    public bool SignedContractWithTeam => Changes.Contains(PlayerStatusChangeType.SignedContractWithTeam);
 
     /// <summary>
     /// True if the player entered free agency, otherwise false

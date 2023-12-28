@@ -9,4 +9,4 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.
 /// </summary>
 /// <param name="Player">The <see cref="Player"/> to update</param>
 /// <param name="PlayerStatusChanges">The status changes for the <see cref="Player"/></param>
-public readonly record struct UpdatePlayerCommand(Player Player, PlayerStatusChanges PlayerStatusChanges) : ICommand;
+internal readonly record struct UpdatePlayerCommand(Player Player, PlayerStatusChanges PlayerStatusChanges) : ICommand;

@@ -11,4 +11,8 @@
       <ProjectReference Include="..\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <InternalsVisibleTo Include="com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests" />
+    </ItemGroup>
+
 </Project>
