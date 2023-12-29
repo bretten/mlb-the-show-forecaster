@@ -13,7 +13,7 @@ public class PlayerStatusChangesTests
         var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>()
         {
             PlayerStatusChangeType.SignedContractWithTeam
-        }, TeamMocker.Mock());
+        }, TeamFaker.Fake());
 
         // Act
         var actual = statusChanges.SignedContractWithTeam;
@@ -26,7 +26,7 @@ public class PlayerStatusChangesTests
     public void SignedContractWithTeam_NoChanges_ReturnsFalse()
     {
         // Arrange
-        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamMocker.NoTeam);
+        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamFaker.NoTeam);
 
         // Act
         var actual = statusChanges.SignedContractWithTeam;
@@ -42,7 +42,7 @@ public class PlayerStatusChangesTests
         var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>()
         {
             PlayerStatusChangeType.EnteredFreeAgency
-        }, TeamMocker.NoTeam);
+        }, TeamFaker.NoTeam);
 
         // Act
         var actual = statusChanges.EnteredFreeAgency;
@@ -55,7 +55,7 @@ public class PlayerStatusChangesTests
     public void EnteredFreeAgency_NoChanges_ReturnsFalse()
     {
         // Arrange
-        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamMocker.NoTeam);
+        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamFaker.NoTeam);
 
         // Act
         var actual = statusChanges.EnteredFreeAgency;
@@ -71,7 +71,7 @@ public class PlayerStatusChangesTests
         var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>()
         {
             PlayerStatusChangeType.Activated
-        }, TeamMocker.NoTeam);
+        }, TeamFaker.NoTeam);
 
         // Act
         var actual = statusChanges.Activated;
@@ -84,7 +84,7 @@ public class PlayerStatusChangesTests
     public void Activated_NoChanges_ReturnsFalse()
     {
         // Arrange
-        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamMocker.NoTeam);
+        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamFaker.NoTeam);
 
         // Act
         var actual = statusChanges.Activated;
@@ -100,7 +100,7 @@ public class PlayerStatusChangesTests
         var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>()
         {
             PlayerStatusChangeType.Inactivated
-        }, TeamMocker.NoTeam);
+        }, TeamFaker.NoTeam);
 
         // Act
         var actual = statusChanges.Inactivated;
@@ -113,10 +113,39 @@ public class PlayerStatusChangesTests
     public void Inactivated_NoChanges_ReturnsFalse()
     {
         // Arrange
-        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamMocker.NoTeam);
+        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamFaker.NoTeam);
 
         // Act
         var actual = statusChanges.Inactivated;
+
+        // Assert
+        Assert.False(actual);
+    }
+
+    [Fact]
+    public void Any_Changes_ReturnsTrue()
+    {
+        // Arrange
+        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>()
+        {
+            PlayerStatusChangeType.Activated
+        }, TeamFaker.NoTeam);
+
+        // Act
+        var actual = statusChanges.Any();
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void Any_NoChanges_ReturnsFalse()
+    {
+        // Arrange
+        var statusChanges = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamFaker.NoTeam);
+
+        // Act
+        var actual = statusChanges.Any();
 
         // Assert
         Assert.False(actual);

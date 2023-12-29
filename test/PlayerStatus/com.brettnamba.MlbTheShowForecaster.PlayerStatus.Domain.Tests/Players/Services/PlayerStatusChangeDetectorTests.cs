@@ -12,7 +12,7 @@ public class PlayerStatusChangeDetectorTests
     {
         // Arrange
         var detector = new PlayerStatusChangeDetector();
-        var player = PlayerMocker.Mock(active: false);
+        var player = PlayerFaker.Fake(active: false);
         var mlbReportedActiveStatus = true;
 
         // Act
@@ -27,7 +27,7 @@ public class PlayerStatusChangeDetectorTests
     {
         // Arrange
         var detector = new PlayerStatusChangeDetector();
-        var player = PlayerMocker.Mock(active: true);
+        var player = PlayerFaker.Fake(active: true);
         var mlbReportedActiveStatus = false;
 
         // Act
@@ -42,10 +42,10 @@ public class PlayerStatusChangeDetectorTests
     {
         // Arrange
         var detector = new PlayerStatusChangeDetector();
-        var currentTeam = TeamMocker.Mock();
-        var player = PlayerMocker.Mock(team: currentTeam);
+        var currentTeam = TeamFaker.Fake();
+        var player = PlayerFaker.Fake(team: currentTeam);
         var mlbReportedActiveStatus = true;
-        var mlbReportedTeam = TeamMocker.NoTeam;
+        var mlbReportedTeam = TeamFaker.NoTeam;
 
         // Act
         var actual = detector.DetectChanges(player, mlbReportedActiveStatus, mlbReportedTeam);
@@ -59,10 +59,10 @@ public class PlayerStatusChangeDetectorTests
     {
         // Arrange
         var detector = new PlayerStatusChangeDetector();
-        var currentTeam = TeamMocker.NoTeam;
-        var player = PlayerMocker.Mock(team: currentTeam);
+        var currentTeam = TeamFaker.NoTeam;
+        var player = PlayerFaker.Fake(team: currentTeam);
         var mlbReportedActiveStatus = true;
-        var mlbReportedTeam = TeamMocker.Mock();
+        var mlbReportedTeam = TeamFaker.Fake();
 
         // Act
         var actual = detector.DetectChanges(player, mlbReportedActiveStatus, mlbReportedTeam);
