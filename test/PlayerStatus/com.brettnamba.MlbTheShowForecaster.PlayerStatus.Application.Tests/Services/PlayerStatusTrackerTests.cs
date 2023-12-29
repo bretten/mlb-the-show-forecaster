@@ -4,7 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.Upda
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Queries.GetPlayerByMlbId;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Dtos;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
@@ -12,7 +12,6 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 using Moq;
 
@@ -138,18 +137,18 @@ public class PlayerStatusTrackerTests
         private void Setup()
         {
             // Fake Team
-            var team = TeamFaker.Fake(RosterEntryFaker.DefaultTeamMlbId);
-            var otherTeam = TeamFaker.Fake(999);
+            var team = Faker.FakeTeam(Faker.DefaultTeamMlbId);
+            var otherTeam = Faker.FakeTeam(999);
 
             // Team Provider
             StubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(team.MlbId) == team);
 
             // Fake Players in the system
             Player player1 =
-                PlayerFaker.Fake(Player1MlbId.Value, active: true, team: team); // Player has no status updates
+                Faker.FakePlayer(Player1MlbId.Value, active: true, team: team); // Player has no status updates
             Player? player2 = null; // Player doesn't exist, so will be created
             Player player3 =
-                PlayerFaker.Fake(Player3MlbId.Value, active: false, team: otherTeam); // Player will be updated
+                Faker.FakePlayer(Player3MlbId.Value, active: false, team: otherTeam); // Player will be updated
 
             // Roster
             var (rosterEntry1, rosterEntry2, rosterEntry3) = SetupRosterEntries(team);
@@ -174,9 +173,9 @@ public class PlayerStatusTrackerTests
         private (RosterEntry rosterEntry1, RosterEntry rosterEntry2, RosterEntry rosterEntry3)
             SetupRosterEntries(Team team)
         {
-            var rosterEntry1 = RosterEntryFaker.Fake(Player1MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
-            var rosterEntry2 = RosterEntryFaker.Fake(Player2MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
-            var rosterEntry3 = RosterEntryFaker.Fake(Player3MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
+            var rosterEntry1 = Faker.Fake(Player1MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
+            var rosterEntry2 = Faker.Fake(Player2MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
+            var rosterEntry3 = Faker.Fake(Player3MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
             var rosterEntries = new List<RosterEntry>
             {
                 rosterEntry1,

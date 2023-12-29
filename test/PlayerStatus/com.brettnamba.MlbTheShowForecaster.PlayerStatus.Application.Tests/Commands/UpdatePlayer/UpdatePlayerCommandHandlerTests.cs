@@ -1,10 +1,10 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 using Moq;
 
@@ -16,8 +16,8 @@ public class UpdatePlayerCommandHandlerTests
     public async Task Handle_InactiveFreeAgentUpdatePlayerCommand_UpdatesPlayer()
     {
         // Arrange
-        var fakeTeam = TeamFaker.Fake();
-        var fakePlayer = PlayerFaker.Fake(active: true, team: fakeTeam); // Player's initial state
+        var fakeTeam = Faker.FakeTeam();
+        var fakePlayer = Faker.FakePlayer(active: true, team: fakeTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
         {
             PlayerStatusChangeType.Inactivated,
@@ -46,8 +46,8 @@ public class UpdatePlayerCommandHandlerTests
     public async Task Handle_ActiveNewTeamUpdatePlayerCommand_UpdatesPlayer()
     {
         // Arrange
-        var fakeTeam = TeamFaker.Fake();
-        var fakePlayer = PlayerFaker.Fake(active: false, team: TeamFaker.NoTeam); // Player's initial state
+        var fakeTeam = Faker.FakeTeam();
+        var fakePlayer = Faker.FakePlayer(active: false, team: TeamFaker.NoTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
         {
             PlayerStatusChangeType.Activated,
@@ -77,7 +77,7 @@ public class UpdatePlayerCommandHandlerTests
     public async Task Handle_NoTeamForSigningUpdatePlayerCommand_ThrowsException()
     {
         // Arrange
-        var fakePlayer = PlayerFaker.Fake(active: false, team: TeamFaker.NoTeam); // Player's initial state
+        var fakePlayer = Faker.FakePlayer(active: false, team: TeamFaker.NoTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
         {
             PlayerStatusChangeType.Activated,

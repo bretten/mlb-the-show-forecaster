@@ -2,12 +2,10 @@
 using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.CreatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Dtos;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Commands.CreatePlayer;
@@ -18,9 +16,9 @@ public class CreatePlayerCommandHandlerTests
     public async Task Handle_CreatePlayerCommand_CreatesPlayer()
     {
         // Arrange
-        var fakeTeam = TeamFaker.Fake();
-        var fakePlayerStatus = RosterEntryFaker.Fake(teamMlbId: fakeTeam.MlbId.Value);
-        var fakePlayer = PlayerFaker.Fake(active: false, team: null);
+        var fakeTeam = Faker.FakeTeam();
+        var fakePlayerStatus = Faker.Fake(teamMlbId: fakeTeam.MlbId.Value);
+        var fakePlayer = Faker.FakePlayer(active: false, team: null);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
         var mockUnitOfWork = Mock.Of<IUnitOfWork>();
