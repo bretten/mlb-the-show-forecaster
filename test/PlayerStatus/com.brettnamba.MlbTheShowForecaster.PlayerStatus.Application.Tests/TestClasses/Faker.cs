@@ -19,7 +19,7 @@ public static class Faker
     public const string DefaultFirstName = "First";
     public const string DefaultLastName = "Last";
 
-    public static RosterEntry Fake(int? mlbId = null, string? firstName = null, string? lastName = null,
+    public static RosterEntry FakeRosterEntry(int? mlbId = null, string? firstName = null, string? lastName = null,
         DateTime birthdate = default, Position position = Position.Catcher, DateTime mlbDebutDate = default,
         BatSide batSide = BatSide.Left, ThrowArm throwArm = ThrowArm.Left, int? teamMlbId = null, bool active = false)
     {

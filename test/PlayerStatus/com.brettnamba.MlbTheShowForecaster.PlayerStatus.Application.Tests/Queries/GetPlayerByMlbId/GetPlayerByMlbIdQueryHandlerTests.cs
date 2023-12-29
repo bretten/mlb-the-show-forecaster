@@ -2,7 +2,6 @@
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Queries.GetPlayerByMlbId;
@@ -13,7 +12,7 @@ public class GetPlayerByMlbIdQueryHandlerTests
     public async Task Handle_GetByMlbIdQuery_ReturnsPlayer()
     {
         // Arrange
-        var mlbId = MlbId.Create(PlayerFaker.DefaultMlbId);
+        var mlbId = MlbId.Create(Faker.DefaultMlbId);
         var fakePlayer = Faker.FakePlayer(mlbId: mlbId.Value);
         var mockPlayerRepository = new Mock<IPlayerRepository>();
         mockPlayerRepository.Setup(x => x.GetByMlbId(mlbId))

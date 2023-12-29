@@ -12,7 +12,6 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Services;
@@ -173,9 +172,9 @@ public class PlayerStatusTrackerTests
         private (RosterEntry rosterEntry1, RosterEntry rosterEntry2, RosterEntry rosterEntry3)
             SetupRosterEntries(Team team)
         {
-            var rosterEntry1 = Faker.Fake(Player1MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
-            var rosterEntry2 = Faker.Fake(Player2MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
-            var rosterEntry3 = Faker.Fake(Player3MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
+            var rosterEntry1 = Faker.FakeRosterEntry(Player1MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
+            var rosterEntry2 = Faker.FakeRosterEntry(Player2MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
+            var rosterEntry3 = Faker.FakeRosterEntry(Player3MlbId.Value, active: true, teamMlbId: team.MlbId.Value);
             var rosterEntries = new List<RosterEntry>
             {
                 rosterEntry1,
@@ -192,7 +191,7 @@ public class PlayerStatusTrackerTests
         /// </summary>
         private (PlayerStatusChanges player1Changes, PlayerStatusChanges player3Changes) SetupPlayerChanges(Team team)
         {
-            var player1Changes = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), TeamFaker.NoTeam);
+            var player1Changes = new PlayerStatusChanges(new List<PlayerStatusChangeType>(), Faker.NoTeam);
             var player3Changes = new PlayerStatusChanges(new List<PlayerStatusChangeType>
             {
                 PlayerStatusChangeType.Activated,

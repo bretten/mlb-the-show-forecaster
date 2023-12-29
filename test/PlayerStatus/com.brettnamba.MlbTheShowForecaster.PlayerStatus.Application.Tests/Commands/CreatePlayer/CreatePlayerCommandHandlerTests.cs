@@ -17,20 +17,20 @@ public class CreatePlayerCommandHandlerTests
     {
         // Arrange
         var fakeTeam = Faker.FakeTeam();
-        var fakePlayerStatus = Faker.Fake(teamMlbId: fakeTeam.MlbId.Value);
+        var fakeRosterEntry = Faker.FakeRosterEntry(teamMlbId: fakeTeam.MlbId.Value);
         var fakePlayer = Faker.FakePlayer(active: false, team: null);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
         var mockUnitOfWork = Mock.Of<IUnitOfWork>();
 
-        var stubObjectMapper = Mock.Of<IObjectMapper>(x => x.Map<RosterEntry, Player>(fakePlayerStatus) == fakePlayer);
+        var stubObjectMapper = Mock.Of<IObjectMapper>(x => x.Map<RosterEntry, Player>(fakeRosterEntry) == fakePlayer);
 
         var stubTeamProvider = new Mock<ITeamProvider>();
         stubTeamProvider.Setup(x => x.GetBy(fakeTeam.MlbId))
             .Returns(fakeTeam);
 
         var cToken = CancellationToken.None;
-        var command = new CreatePlayerCommand(fakePlayerStatus);
+        var command = new CreatePlayerCommand(fakeRosterEntry);
         var handler = new CreatePlayerCommandHandler(mockPlayerRepository, mockUnitOfWork,
             stubObjectMapper, stubTeamProvider.Object);
 

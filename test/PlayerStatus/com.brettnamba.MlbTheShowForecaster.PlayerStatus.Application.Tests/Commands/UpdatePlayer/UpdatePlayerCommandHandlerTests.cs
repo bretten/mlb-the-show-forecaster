@@ -5,7 +5,6 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestCla
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Commands.UpdatePlayer;
@@ -22,7 +21,7 @@ public class UpdatePlayerCommandHandlerTests
         {
             PlayerStatusChangeType.Inactivated,
             PlayerStatusChangeType.EnteredFreeAgency
-        }, TeamFaker.NoTeam);
+        }, Faker.NoTeam);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
         var mockUnitOfWork = Mock.Of<IUnitOfWork>();
@@ -47,7 +46,7 @@ public class UpdatePlayerCommandHandlerTests
     {
         // Arrange
         var fakeTeam = Faker.FakeTeam();
-        var fakePlayer = Faker.FakePlayer(active: false, team: TeamFaker.NoTeam); // Player's initial state
+        var fakePlayer = Faker.FakePlayer(active: false, team: Faker.NoTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
         {
             PlayerStatusChangeType.Activated,
@@ -77,12 +76,12 @@ public class UpdatePlayerCommandHandlerTests
     public async Task Handle_NoTeamForSigningUpdatePlayerCommand_ThrowsException()
     {
         // Arrange
-        var fakePlayer = Faker.FakePlayer(active: false, team: TeamFaker.NoTeam); // Player's initial state
+        var fakePlayer = Faker.FakePlayer(active: false, team: Faker.NoTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
         {
             PlayerStatusChangeType.Activated,
             PlayerStatusChangeType.SignedContractWithTeam
-        }, TeamFaker.NoTeam); // <-- Cause of exception = No team specified in the status change
+        }, Faker.NoTeam); // <-- Cause of exception = No team specified in the status change
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
         var mockUnitOfWork = Mock.Of<IUnitOfWork>();
