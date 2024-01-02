@@ -4,23 +4,22 @@ using MediatR;
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
 
 /// <summary>
-/// MediatR implementation for <see cref="ICommandSender"/>
+/// MediatR implementation of <see cref="ICommandSender"/>
 ///
-/// <para>This command sender wraps the <see cref="ICommand"/> in a generic MediatR <see cref="IRequest"/> of type
-/// <see cref="MediatRCommand{TCommand}"/>. The MediatR request handler then does the delegating to the actual
-/// command handler and prevents inner layers of the system from requiring external dependencies such as MediatR</para>
+/// <para>This command sender uses MediatR to handle the actual delegating of the <see cref="ICommand"/> to the
+/// appropriate handler</para>
 /// </summary>
 public sealed class MediatRCommandSender : ICommandSender
 {
     /// <summary>
-    /// The underlying <see cref="IMediator"/> that sends the wrapped <see cref="ICommand"/>
+    /// The MediatR instance that does the delegating
     /// </summary>
     private readonly IMediator _mediator;
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="mediator">The underlying <see cref="IMediator"/> that sends the wrapped <see cref="ICommand"/></param>
+    /// <param name="mediator">The MediatR instance that does the delegating</param>
     public MediatRCommandSender(IMediator mediator)
     {
         _mediator = mediator;

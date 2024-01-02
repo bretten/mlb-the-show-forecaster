@@ -14,13 +14,13 @@ public class MediatRCommandHandlerTests
         var underlyingCommand = new TestCommand();
         var mockUnderlyingHandler = Mock.Of<ICommandHandler<TestCommand>>();
 
-        var wrappedCommand = new MediatRCommand<TestCommand>(underlyingCommand);
-        var wrappedHandler = new MediatRCommandHandler<TestCommand>(mockUnderlyingHandler);
+        var commandWrapper = new MediatRCommand<TestCommand>(underlyingCommand);
+        var handlerWrapper = new MediatRCommandHandler<TestCommand>(mockUnderlyingHandler);
 
         var cToken = CancellationToken.None;
 
         // Act
-        await wrappedHandler.Handle(wrappedCommand, cToken);
+        await handlerWrapper.Handle(commandWrapper, cToken);
 
         // Assert
         Mock.Get(mockUnderlyingHandler).Verify(x => x.Handle(underlyingCommand, cToken), Times.Once);

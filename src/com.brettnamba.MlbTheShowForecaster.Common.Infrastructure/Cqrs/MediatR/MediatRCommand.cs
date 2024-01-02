@@ -6,20 +6,6 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR
 /// <summary>
 /// Wraps <see cref="ICommand"/> in a MediatR request
 /// </summary>
+/// <param name="Command"><see cref="ICommand"/></param>
 /// <typeparam name="TCommand"><see cref="ICommand"/></typeparam>
-public readonly record struct MediatRCommand<TCommand> : IRequest where TCommand : ICommand
-{
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="command">The <see cref="ICommand"/> to wrap in a MediatR request</param>
-    public MediatRCommand(TCommand command)
-    {
-        Command = command;
-    }
-
-    /// <summary>
-    /// The underlying command
-    /// </summary>
-    public TCommand Command { get; }
-}
+public readonly record struct MediatRCommand<TCommand>(TCommand Command) : IRequest where TCommand : ICommand;
