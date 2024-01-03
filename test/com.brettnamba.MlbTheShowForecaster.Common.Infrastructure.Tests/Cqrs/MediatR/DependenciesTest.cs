@@ -32,7 +32,7 @@ public class DependenciesTest
             x.ImplementationType == typeof(MediatRCommandSender) &&
             x.Lifetime == ServiceLifetime.Transient)), Times.Once);
 
-        // Concrete ICommandHandler<TestCommand> registered as TestCommandHandler
+        // ICommandHandler<TestCommand> registered as concrete TestCommandHandler
         Mock.Get(mockServices).Verify(s => s.Add(It.Is<ServiceDescriptor>(x =>
             x.ServiceType == typeof(ICommandHandler<TestCommand>) &&
             x.ImplementationType == typeof(TestCommandHandler) &&
@@ -50,7 +50,7 @@ public class DependenciesTest
             x.ImplementationType == typeof(MediatRQuerySender) &&
             x.Lifetime == ServiceLifetime.Transient)), Times.Once);
 
-        // Concrete IQueryHandler<TestQuery, TestResponse> registered as TestQueryHandler
+        // IQueryHandler<TestQuery, TestResponse> registered as concrete TestQueryHandler
         Mock.Get(mockServices).Verify(s => s.Add(It.Is<ServiceDescriptor>(x =>
             x.ServiceType == typeof(IQueryHandler<TestQuery, TestResponse>) &&
             x.ImplementationType == typeof(TestQueryHandler) &&

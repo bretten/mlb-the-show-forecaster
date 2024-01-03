@@ -21,6 +21,6 @@ public class MediatRCommandSenderTests
         await commandSender.Send(command, cToken);
 
         // Assert
-        Mock.Get(mockMediatR).Verify(x => x.Send(new MediatRCommand<TestCommand>(command), cToken));
+        Mock.Get(mockMediatR).Verify(x => x.Send(new MediatRCommand<TestCommand>(command), cToken), Times.Once);
     }
 }
