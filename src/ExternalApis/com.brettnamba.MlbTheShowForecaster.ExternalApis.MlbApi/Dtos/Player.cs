@@ -38,7 +38,7 @@ public readonly record struct Player
     public Position Position { get; init; }
 
     /// <summary>
-    /// The players MLB debut date
+    /// The player's MLB debut date
     /// </summary>
     [JsonPropertyName("mlbDebutDate")]
     public DateTime MlbDebutDate { get; init; }
