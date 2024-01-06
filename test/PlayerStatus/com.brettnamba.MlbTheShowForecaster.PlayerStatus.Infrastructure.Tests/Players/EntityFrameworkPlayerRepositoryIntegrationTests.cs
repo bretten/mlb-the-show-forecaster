@@ -9,10 +9,18 @@ using Testcontainers.PostgreSql;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.Players;
 
+/// <summary>
+/// Integration tests that use TestContainers to spin up database containers for the tests. Requires Docker to be
+/// running for these tests
+/// </summary>
 public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container;
 
+    /// <summary>
+    /// Configures the container options that will be used for each test
+    /// </summary>
+    /// <exception cref="DockerNotRunningException">Thrown if Docker is not running</exception>
     public EntityFrameworkPlayerRepositoryIntegrationTests()
     {
         try
@@ -107,7 +115,6 @@ public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
 
         // Act
         var actual = await repo.GetByMlbId(fakePlayer.MlbId);
-        await dbContext.SaveChangesAsync();
 
         // Assert
         Assert.Equal(fakePlayer, actual);
