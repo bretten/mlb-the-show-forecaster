@@ -18,10 +18,10 @@ public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
         try
         {
             _container = new PostgreSqlBuilder()
-                .WithName(GetType().Name)
+                .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
-                .WithUsername("password99")
-                .WithPortBinding(54320, 5432)
+                .WithPassword("password99")
+                .WithPortBinding(54321, 5432)
                 .Build();
         }
         catch (ArgumentException e)
@@ -37,12 +37,12 @@ public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async Task Add_Player_PlayerIsAddedToRepository()
+    public async Task Add_Player_AddsPlayerToDbContextSet()
     {
         // Arrange
         var fakeTeam = Faker.FakeTeam();
         var fakePlayer = Faker.FakePlayer(team: fakeTeam);
-        var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.MlbId) == fakeTeam);
+        var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.Abbreviation) == fakeTeam);
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection, stubTeamProvider);
@@ -51,11 +51,66 @@ public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
 
         // Act
         await repo.Add(fakePlayer);
+        await dbContext.SaveChangesAsync();
 
         // Assert
         Assert.NotNull(dbContext.Players);
         Assert.Equal(1, dbContext.Players.Count());
         Assert.Equal(fakePlayer, dbContext.Players.First());
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task Update_ExistingPlayer_UpdatesPlayerInDbContextSet()
+    {
+        // Arrange
+        var fakeTeam = Faker.FakeTeam();
+        var fakePlayer = Faker.FakePlayer(active: false, team: fakeTeam);
+        var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.Abbreviation) == fakeTeam);
+
+        await using var connection = await GetDbConnection();
+        await using var dbContext = GetDbContext(connection, stubTeamProvider);
+        await dbContext.Database.MigrateAsync();
+
+        await dbContext.AddAsync(fakePlayer);
+        await dbContext.SaveChangesAsync();
+
+        var repo = new EntityFrameworkPlayerRepository(dbContext);
+
+        // Act
+        fakePlayer.Activate();
+        await repo.Update(fakePlayer);
+        await dbContext.SaveChangesAsync();
+
+        // Assert
+        Assert.Equal(fakePlayer, dbContext.Players.First());
+        Assert.True(fakePlayer.Active);
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task GetByMlbId_PlayerMlbId_ReturnsPlayerFromDbContextSet()
+    {
+        // Arrange
+        var fakeTeam = Faker.FakeTeam();
+        var fakePlayer = Faker.FakePlayer(team: fakeTeam);
+        var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.Abbreviation) == fakeTeam);
+
+        await using var connection = await GetDbConnection();
+        await using var dbContext = GetDbContext(connection, stubTeamProvider);
+        await dbContext.Database.MigrateAsync();
+
+        await dbContext.AddAsync(fakePlayer);
+        await dbContext.SaveChangesAsync();
+
+        var repo = new EntityFrameworkPlayerRepository(dbContext);
+
+        // Act
+        var actual = await repo.GetByMlbId(fakePlayer.MlbId);
+        await dbContext.SaveChangesAsync();
+
+        // Assert
+        Assert.Equal(fakePlayer, actual);
     }
 
     public async Task InitializeAsync() => await _container.StartAsync();
@@ -64,7 +119,7 @@ public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
 
     private async Task<DbConnection> GetDbConnection()
     {
-        NpgsqlConnection connection = new(_container.GetConnectionString());
+        NpgsqlConnection connection = new(_container.GetConnectionString() + ";Pooling=false;");
         await connection.OpenAsync();
         return connection;
     }
