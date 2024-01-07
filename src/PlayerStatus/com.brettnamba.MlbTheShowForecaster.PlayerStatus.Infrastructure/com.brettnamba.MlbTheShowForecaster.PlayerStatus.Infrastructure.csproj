@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\ExternalApis\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.csproj" />
       <ProjectReference Include="..\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.csproj" />
     </ItemGroup>
 

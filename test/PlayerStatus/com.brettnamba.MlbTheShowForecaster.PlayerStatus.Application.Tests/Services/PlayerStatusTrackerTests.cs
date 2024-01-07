@@ -32,7 +32,7 @@ public class PlayerStatusTrackerTests
             mockCommandSender.Object, stubPlayerStatusDetector.Object, scenario.StubTeamProvider);
 
         // Act
-        await tracker.TrackPlayers(scenario.CancellationToken);
+        await tracker.TrackPlayers(TestScenario.SeasonYear, scenario.CancellationToken);
 
         /*
          * Assert
@@ -71,6 +71,7 @@ public class PlayerStatusTrackerTests
         public static readonly MlbId Player1MlbId = MlbId.Create(1);
         public static readonly MlbId Player2MlbId = MlbId.Create(2);
         public static readonly MlbId Player3MlbId = MlbId.Create(3);
+        public const int SeasonYear = 2023;
 
         /// <summary>
         /// Provides a team when invoked
@@ -182,7 +183,7 @@ public class PlayerStatusTrackerTests
                 rosterEntry3,
             };
             StubPlayerRoster = Mock.Of<IPlayerRoster>(x =>
-                x.GetRosterEntries(CancellationToken) == Task.FromResult(rosterEntries.AsEnumerable()));
+                x.GetRosterEntries(SeasonYear, CancellationToken) == Task.FromResult(rosterEntries.AsEnumerable()));
             return (rosterEntry1, rosterEntry2, rosterEntry3);
         }
 

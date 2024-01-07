@@ -10,7 +10,8 @@ public interface IPlayerStatusTracker
     /// <summary>
     /// Updates the status of all players
     /// </summary>
+    /// <param name="seasonYear">The season that the players participated in</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The completed task</returns>
-    Task TrackPlayers(CancellationToken cancellationToken = default);
+    Task TrackPlayers(int seasonYear, CancellationToken cancellationToken = default);
 }
