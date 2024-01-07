@@ -5,7 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
-using Position = com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Position;
+using Position = com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums.Position;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping.AutoMapper;
 

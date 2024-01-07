@@ -4,7 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObject
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
-using Position = com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums.Position;
+using Position = com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Position;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
 
@@ -20,27 +20,29 @@ public static class Faker
     public const string DefaultFirstName = "First";
     public const string DefaultLastName = "Last";
 
-    public static Player FakePlayerDto(int? mlbId = null, CurrentTeam? team = null,
-        bool active = false)
+    public static Player FakePlayerDto(int? mlbId = null, string? firstName = null, string? lastName = null,
+        DateTime birthdate = default, Position? position = null, DateTime mlbDebutDate = default,
+        ArmSide? batSide = null, ArmSide? throwArm = null, CurrentTeam? team = null, bool active = false)
     {
         return new Player()
         {
             Id = mlbId ?? DefaultMlbId,
-            FirstName = DefaultFirstName,
-            LastName = DefaultLastName,
-            Birthdate = new DateTime(1990, 1, 1),
-            Position = new ExternalApis.MlbApi.Dtos.Position("Catcher", "C"),
-            MlbDebutDate = new DateTime(2010, 1, 1),
-            BatSide = new ArmSide("L", "Left"),
-            ThrowArm = new ArmSide("L", "Left"),
+            FirstName = firstName ?? DefaultFirstName,
+            LastName = lastName ?? DefaultLastName,
+            Birthdate = birthdate == default ? new DateTime(1990, 1, 1) : birthdate,
+            Position = position ?? new Position("Catcher", "C"),
+            MlbDebutDate = mlbDebutDate == default ? new DateTime(2010, 1, 1) : mlbDebutDate,
+            BatSide = batSide ?? new ArmSide("L", "Left"),
+            ThrowArm = throwArm ?? new ArmSide("L", "Left"),
             CurrentTeam = team ?? new CurrentTeam(DefaultTeamMlbId),
             Active = active
         };
     }
 
     public static RosterEntry FakeRosterEntry(int? mlbId = null, string? firstName = null, string? lastName = null,
-        DateTime birthdate = default, Position position = Position.Catcher, DateTime mlbDebutDate = default,
-        BatSide batSide = BatSide.Left, ThrowArm throwArm = ThrowArm.Left, int? teamMlbId = null, bool active = false)
+        DateTime birthdate = default, Domain.Players.Enums.Position position = Domain.Players.Enums.Position.Catcher,
+        DateTime mlbDebutDate = default, BatSide batSide = BatSide.Left, ThrowArm throwArm = ThrowArm.Left,
+        int? teamMlbId = null, bool active = false)
     {
         return new RosterEntry(
             mlbId == null ? MlbId.Create(DefaultMlbId) : MlbId.Create(mlbId.Value),
@@ -63,7 +65,7 @@ public static class Faker
             PersonName.Create(DefaultFirstName),
             PersonName.Create(DefaultLastName),
             new DateTime(1990, 1, 1),
-            Position.Catcher,
+            Domain.Players.Enums.Position.Catcher,
             new DateTime(2010, 1, 1),
             BatSide.Left,
             ThrowArm.Left,

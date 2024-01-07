@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using com.brettnamba.MlbTheShowForecaster.Common.Converters;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 
 /// <summary>
 /// MLB player positions
 /// </summary>
+[TypeConverter(typeof(EnumDisplayNameConverter))]
 public enum Position
 {
     /// <summary>
