@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Enums;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Requests;
 using Refit;
 
@@ -12,16 +14,15 @@ public class MlbApiIntegrationTests
     public async Task GetPlayersBySeason_2023RegularSeason_RequestsAllPlayers()
     {
         // Arrange
-        var request = new GetPlayersBySeasonRequest()
-        {
-            Season = 2023,
-            GameType = "R"
-        };
+        var request = new GetPlayersBySeasonRequest(2023, GameType.RegularSeason);
         var mlbApi = RestService.For<IMlbApi>(Constants.BaseUrl,
             new RefitSettings
             {
                 ContentSerializer = new SystemTextJsonContentSerializer(
                     new JsonSerializerOptions()
+                    {
+                        Converters = { new JsonStringEnumConverter() }
+                    }
                 )
             });
 
