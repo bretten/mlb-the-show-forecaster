@@ -7,11 +7,5 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
 /// <summary>
 /// Response for <see cref="GetPlayersBySeasonRequest"/>
 /// </summary>
-public sealed class GetPlayersBySeasonResponse
-{
-    /// <summary>
-    /// The players for the requested season
-    /// </summary>
-    [JsonPropertyName("people")]
-    public List<Player>? Players { get; init; }
-}
+/// <param name="Players">The players for the requested season</param>
+public sealed record GetPlayersBySeasonResponse([property: JsonPropertyName("people")] List<Player>? Players);
