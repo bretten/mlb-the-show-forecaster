@@ -53,6 +53,6 @@ public sealed class MlbApiPlayerRoster : IPlayerRoster
             throw new EmptyRosterException($"{GetType().Name} - MLB API roster had no players for season {seasonYear}");
         }
 
-        return response.Players.Select(x => _objectMapper.Map<Player, RosterEntry>(x)).ToList();
+        return response.Players.Select(x => _objectMapper.Map<PlayerDto, RosterEntry>(x)).ToList();
     }
 }

@@ -21,7 +21,7 @@ public class MlbApiPlayerRosterTests
         var cToken = CancellationToken.None;
         int seasonYear = 2023;
         var fakeMlbApiRequest = new GetPlayersBySeasonRequest(seasonYear, GameType.RegularSeason);
-        var fakeMlbApiResponse = new GetPlayersBySeasonResponse(new List<Player>());
+        var fakeMlbApiResponse = new GetPlayersBySeasonResponse(new List<PlayerDto>());
         var mockMlbApi = Mock.Of<IMlbApi>(x =>
             x.GetPlayersBySeason(fakeMlbApiRequest) == Task.FromResult(fakeMlbApiResponse));
         var stubObjectMapper = Mock.Of<IObjectMapper>();
@@ -56,7 +56,7 @@ public class MlbApiPlayerRosterTests
         var fakePlayer1 = Faker.FakePlayerDto(1);
         var fakePlayer2 = Faker.FakePlayerDto(2);
         var fakePlayer3 = Faker.FakePlayerDto(3);
-        var players = new List<Player>() { fakePlayer1, fakePlayer2, fakePlayer3 };
+        var players = new List<PlayerDto>() { fakePlayer1, fakePlayer2, fakePlayer3 };
 
         // Mock MLB API behavior to return the players
         var fakeMlbApiRequest = new GetPlayersBySeasonRequest(seasonYear, GameType.RegularSeason);
@@ -66,9 +66,9 @@ public class MlbApiPlayerRosterTests
 
         // Mock mapping of player to roster entry
         var mockObjectMapper = new Mock<IObjectMapper>();
-        mockObjectMapper.Setup(x => x.Map<Player, RosterEntry>(fakePlayer1)).Returns(fakeRosterEntry1);
-        mockObjectMapper.Setup(x => x.Map<Player, RosterEntry>(fakePlayer2)).Returns(fakeRosterEntry2);
-        mockObjectMapper.Setup(x => x.Map<Player, RosterEntry>(fakePlayer3)).Returns(fakeRosterEntry3);
+        mockObjectMapper.Setup(x => x.Map<PlayerDto, RosterEntry>(fakePlayer1)).Returns(fakeRosterEntry1);
+        mockObjectMapper.Setup(x => x.Map<PlayerDto, RosterEntry>(fakePlayer2)).Returns(fakeRosterEntry2);
+        mockObjectMapper.Setup(x => x.Map<PlayerDto, RosterEntry>(fakePlayer3)).Returns(fakeRosterEntry3);
 
         // Service under test
         var roster = new MlbApiPlayerRoster(mockMlbApi, mockObjectMapper.Object);
@@ -84,9 +84,9 @@ public class MlbApiPlayerRosterTests
         // Verify the MLB API was invoked
         Mock.Get(mockMlbApi).Verify(x => x.GetPlayersBySeason(fakeMlbApiRequest), Times.Once);
         // Verify mapping took place
-        mockObjectMapper.Verify(x => x.Map<Player, RosterEntry>(fakePlayer1), Times.Once);
-        mockObjectMapper.Verify(x => x.Map<Player, RosterEntry>(fakePlayer2), Times.Once);
-        mockObjectMapper.Verify(x => x.Map<Player, RosterEntry>(fakePlayer3), Times.Once);
+        mockObjectMapper.Verify(x => x.Map<PlayerDto, RosterEntry>(fakePlayer1), Times.Once);
+        mockObjectMapper.Verify(x => x.Map<PlayerDto, RosterEntry>(fakePlayer2), Times.Once);
+        mockObjectMapper.Verify(x => x.Map<PlayerDto, RosterEntry>(fakePlayer3), Times.Once);
         // Verify the roster entries were returned
         Assert.NotNull(actual);
         Assert.Equal(expectedRosterEntries, actual);

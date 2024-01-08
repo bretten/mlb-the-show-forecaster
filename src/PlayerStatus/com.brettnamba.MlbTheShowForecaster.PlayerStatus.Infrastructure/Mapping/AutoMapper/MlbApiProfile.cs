@@ -5,7 +5,6 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
-using Position = com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums.Position;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping.AutoMapper;
 
@@ -19,7 +18,7 @@ public sealed class MlbApiProfile : Profile
     /// </summary>
     public MlbApiProfile()
     {
-        CreateMap<Player, RosterEntry>()
+        CreateMap<PlayerDto, RosterEntry>()
             .ForMember(dest => dest.MlbId, opt => opt.MapFrom(src => MlbId.Create(src.Id)))
             .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => PersonName.Create(src.FirstName)))
             .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => PersonName.Create(src.LastName)))

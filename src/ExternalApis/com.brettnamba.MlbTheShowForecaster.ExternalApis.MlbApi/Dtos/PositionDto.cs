@@ -7,6 +7,6 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
 /// </summary>
 /// <param name="Name">The name of their position</param>
 /// <param name="Abbreviation">An abbreviation of their position</param>
-public readonly record struct Position([property: JsonPropertyName("name")] string Name,
+public readonly record struct PositionDto([property: JsonPropertyName("name")] string Name,
     [property: JsonPropertyName("abbreviation")]
     string Abbreviation);

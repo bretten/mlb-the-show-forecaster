@@ -37,11 +37,11 @@ public class MlbApiIntegrationTests
         Assert.Equal("Julio", actualPlayer.FirstName);
         Assert.Equal("Rodríguez", actualPlayer.LastName);
         Assert.Equal(new DateTime(2000, 12, 29), actualPlayer.Birthdate);
-        Assert.Equal(new Position("Outfielder", "CF"), actualPlayer.Position);
+        Assert.Equal(new PositionDto("Outfielder", "CF"), actualPlayer.Position);
         Assert.Equal(new DateTime(2022, 4, 8), actualPlayer.MlbDebutDate);
-        Assert.Equal(new ArmSide("R", "Right"), actualPlayer.BatSide);
-        Assert.Equal(new ArmSide("R", "Right"), actualPlayer.ThrowArm);
-        Assert.Equal(new CurrentTeam(136), actualPlayer.CurrentTeam);
+        Assert.Equal(new ArmSideDto("R", "Right"), actualPlayer.BatSide);
+        Assert.Equal(new ArmSideDto("R", "Right"), actualPlayer.ThrowArm);
+        Assert.Equal(new CurrentTeamDto(136), actualPlayer.CurrentTeam);
         Assert.True(actualPlayer.Active);
     }
 }
