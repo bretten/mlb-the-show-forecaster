@@ -59,10 +59,11 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
     /// <summary>
     /// Updates players
     /// </summary>
+    /// <param name="seasonYear">The season that the players participated in</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    public async Task TrackPlayers(CancellationToken cancellationToken = default)
+    public async Task TrackPlayers(int seasonYear, CancellationToken cancellationToken = default)
     {
-        var rosterEntries = await _playerRoster.GetRosterEntries(cancellationToken);
+        var rosterEntries = await _playerRoster.GetRosterEntries(seasonYear, cancellationToken);
 
         foreach (var rosterEntry in rosterEntries)
         {

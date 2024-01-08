@@ -8,9 +8,10 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 public interface IPlayerRoster
 {
     /// <summary>
-    /// Returns information on all players in the MLB
+    /// Returns roster information on all players in the MLB for the specified season year
     /// </summary>
+    /// <param name="seasonYear">The season to get roster entries for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    /// <returns>Information on all players in the MLB</returns>
-    Task<IEnumerable<RosterEntry>> GetRosterEntries(CancellationToken cancellationToken = default);
+    /// <returns>Roster information on all players in the MLB for the specified season year</returns>
+    Task<IEnumerable<RosterEntry>> GetRosterEntries(int seasonYear, CancellationToken cancellationToken = default);
 }

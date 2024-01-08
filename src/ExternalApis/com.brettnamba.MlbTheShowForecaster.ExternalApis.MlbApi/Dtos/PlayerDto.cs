@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
 /// <summary>
 /// Represents a MLB player
 /// </summary>
-public readonly record struct Player
+public readonly record struct PlayerDto
 {
     /// <summary>
     /// The player's MLB ID
@@ -35,7 +35,7 @@ public readonly record struct Player
     /// The player's primary position
     /// </summary>
     [JsonPropertyName("primaryPosition")]
-    public Position Position { get; init; }
+    public PositionDto Position { get; init; }
 
     /// <summary>
     /// The player's MLB debut date
@@ -47,19 +47,19 @@ public readonly record struct Player
     /// The side the player bats on
     /// </summary>
     [JsonPropertyName("batSide")]
-    public ArmSide BatSide { get; init; }
+    public ArmSideDto BatSide { get; init; }
 
     /// <summary>
     /// The arm the player throws with
     /// </summary>
     [JsonPropertyName("pitchHand")]
-    public ArmSide ThrowArm { get; init; }
+    public ArmSideDto ThrowArm { get; init; }
 
     /// <summary>
     /// The player's current team
     /// </summary>
     [JsonPropertyName("currentTeam")]
-    public CurrentTeam CurrentTeam { get; init; }
+    public CurrentTeamDto CurrentTeam { get; init; }
 
     /// <summary>
     /// True if the player is active, otherwise false
