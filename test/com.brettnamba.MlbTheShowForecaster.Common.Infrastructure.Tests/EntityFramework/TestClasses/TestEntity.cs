@@ -1,11 +1,8 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.Events;
-using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFramework.TestClasses;
 
-namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFramework.TestClasses;
-
-public class TestEntity : Entity
+public class TestEntity
 {
-    private TestEntity(int integerValue, string stringValue) : base(new Guid())
+    private TestEntity(int integerValue, string stringValue)
     {
         IntegerValue = integerValue;
         StringValue = stringValue;
@@ -14,11 +11,6 @@ public class TestEntity : Entity
     public int IntegerValue { get; private set; }
 
     public string StringValue { get; private set; }
-
-    public void AddDomainEvent(IDomainEvent domainEvent)
-    {
-        RaiseDomainEvent(domainEvent);
-    }
 
     public static TestEntity Create(int integerValue, string stringValue)
     {
