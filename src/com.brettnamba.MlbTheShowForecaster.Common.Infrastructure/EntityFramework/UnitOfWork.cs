@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Core.Events;
+using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
 using Microsoft.EntityFrameworkCore;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFramework;
@@ -16,12 +17,19 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork, IDisposable, IAsyncDis
     private readonly TDbContext _dbContext;
 
     /// <summary>
+    /// Publishes all domain events that were raised by any <see cref="Entity"/> that was changed
+    /// </summary>
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="dbContext">The DB context</param>
-    public UnitOfWork(TDbContext dbContext)
+    /// <param name="domainEventDispatcher">Publishes all domain events that were raised by any <see cref="Entity"/> that was changed</param>
+    public UnitOfWork(TDbContext dbContext, IDomainEventDispatcher domainEventDispatcher)
     {
         _dbContext = dbContext;
+        _domainEventDispatcher = domainEventDispatcher;
     }
 
     /// <summary>
@@ -33,6 +41,8 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork, IDisposable, IAsyncDis
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task CommitAsync(CancellationToken cancellationToken = default)
     {
+        PublishDomainEvents();
+
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
@@ -50,5 +60,26 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork, IDisposable, IAsyncDis
     public async ValueTask DisposeAsync()
     {
         await _dbContext.DisposeAsync();
+    }
+
+    /// <summary>
+    /// Checks for any Entities that were modified in the DB context and publishes their domain events
+    /// </summary>
+    private void PublishDomainEvents()
+    {
+        var domainEventsToPublish = new List<IDomainEvent>();
+
+        // Look for any Entities that were modified and get their domain events
+        _dbContext.ChangeTracker
+            .Entries<Entity>()
+            .Select(x => x.Entity)
+            .ToList()
+            .ForEach(x =>
+            {
+                domainEventsToPublish.AddRange(x.DomainEvents);
+                x.ClearDomainEvents();
+            });
+
+        _domainEventDispatcher.Dispatch(domainEventsToPublish);
     }
 }
