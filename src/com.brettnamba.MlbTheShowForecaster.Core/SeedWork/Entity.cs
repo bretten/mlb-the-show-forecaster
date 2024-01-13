@@ -1,4 +1,6 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Core.Events;
+
+namespace com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
 
 /// <summary>
 /// Represents a uniquely identifiable entity
@@ -6,9 +8,19 @@
 public abstract class Entity : IEquatable<Entity>
 {
     /// <summary>
+    /// Internal collection of domain events raised by this Entity
+    /// </summary>
+    private readonly List<IDomainEvent> _domainEvents = new();
+
+    /// <summary>
     /// Unique ID
     /// </summary>
     public Guid Id { get; private init; }
+
+    /// <summary>
+    /// Returns the domain events raised by this entity as a read-only collection
+    /// </summary>
+    public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     /// <summary>
     /// Constructor
@@ -17,6 +29,23 @@ public abstract class Entity : IEquatable<Entity>
     protected Entity(Guid id)
     {
         Id = id;
+    }
+
+    /// <summary>
+    /// Raises a domain event
+    /// </summary>
+    /// <param name="domainEvent">The domain event to raise</param>
+    protected void RaiseDomainEvent(IDomainEvent domainEvent)
+    {
+        _domainEvents.Add(domainEvent);
+    }
+
+    /// <summary>
+    /// Clears all domain events
+    /// </summary>
+    public void ClearDomainEvents()
+    {
+        _domainEvents.Clear();
     }
 
     /// <summary>

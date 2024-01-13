@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Core.Events;
+using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
 
 namespace com.brettnamba.MlbTheShowForecaster.Core.Tests.SeedWork.TestClasses;
 
@@ -16,6 +17,11 @@ public sealed class TestEntity1 : Entity
     public int IntegerValue { get; private set; }
 
     public string StringValue { get; private set; }
+
+    public void AddDomainEvent(IDomainEvent domainEvent)
+    {
+        RaiseDomainEvent(domainEvent);
+    }
 
     public static TestEntity1 Create(Guid guid, int integerValue, string stringValue)
     {

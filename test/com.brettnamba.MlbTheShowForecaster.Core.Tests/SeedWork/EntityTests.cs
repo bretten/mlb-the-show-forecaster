@@ -5,6 +5,39 @@ namespace com.brettnamba.MlbTheShowForecaster.Core.Tests.SeedWork;
 public class EntityTests
 {
     [Fact]
+    public void DomainEvents_RaiseDomainEvent_ReturnsRaisedEvent()
+    {
+        // Assemble
+        var guid = Guid.Parse("00000000-0000-0000-0000-000000000000");
+        var entity = TestEntity1.Create(guid, 1, "a");
+        var domainEvent = new TestEntity1DomainEvent();
+        entity.AddDomainEvent(domainEvent);
+
+        // Act
+        var actual = entity.DomainEvents;
+
+        // Assert
+        Assert.Equal(1, actual.Count);
+        Assert.Equal(domainEvent, actual[0]);
+    }
+
+    [Fact]
+    public void ClearDomainEvents_EntityHasEvents_EventsAreCleared()
+    {
+        // Assemble
+        var guid = Guid.Parse("00000000-0000-0000-0000-000000000000");
+        var entity = TestEntity1.Create(guid, 1, "a");
+        var domainEvent = new TestEntity1DomainEvent();
+        entity.AddDomainEvent(domainEvent);
+
+        // Act
+        entity.ClearDomainEvents();
+
+        // Assert
+        Assert.Equal(0, entity.DomainEvents.Count);
+    }
+
+    [Fact]
     public void Equals_NullComparison_ReturnsFalse()
     {
         // Assemble
