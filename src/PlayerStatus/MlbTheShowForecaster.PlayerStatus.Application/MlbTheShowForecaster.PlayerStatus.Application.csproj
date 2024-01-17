@@ -13,7 +13,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <InternalsVisibleTo Include="com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests" />
+      <InternalsVisibleTo Include="MlbTheShowForecaster.PlayerStatus.Application.Tests" />
     </ItemGroup>
 
 </Project>
