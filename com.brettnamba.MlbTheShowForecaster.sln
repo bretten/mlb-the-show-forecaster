@@ -20,13 +20,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Common.Tests", "test\com.brettnamba.MlbTheShowForecaster.Common.Tests\com.brettnamba.MlbTheShowForecaster.Common.Tests.csproj", "{F697EF93-E159-4273-A35B-CBAE0934D40E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Common.Application", "src\com.brettnamba.MlbTheShowForecaster.Common.Application\com.brettnamba.MlbTheShowForecaster.Common.Application.csproj", "{C3A012F0-6FF1-4421-96E3-68E8FD085F02}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Application", "src\MlbTheShowForecaster.Common.Application\MlbTheShowForecaster.Common.Application.csproj", "{C3A012F0-6FF1-4421-96E3-68E8FD085F02}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.PlayerStatus.Application", "src\PlayerStatus\MlbTheShowForecaster.PlayerStatus.Application\MlbTheShowForecaster.PlayerStatus.Application.csproj", "{6DDC7BBA-9362-4029-BB86-D0F0D9AE23E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests", "test\PlayerStatus\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.csproj", "{AFF39414-F7C6-43D5-A7B1-4CA904261EFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Common.Infrastructure", "src\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.csproj", "{9C44565E-E2FF-4F3F-83FB-A6D7B602AF6C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Infrastructure", "src\MlbTheShowForecaster.Common.Infrastructure\MlbTheShowForecaster.Common.Infrastructure.csproj", "{9C44565E-E2FF-4F3F-83FB-A6D7B602AF6C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests", "test\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.csproj", "{7174FD64-D5C9-4A19-AD26-E306D0655088}"
 EndProject

@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\MlbTheShowForecaster.Common.Infrastructure\MlbTheShowForecaster.Common.Infrastructure.csproj" />
       <ProjectReference Include="..\..\ExternalApis\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.csproj" />
       <ProjectReference Include="..\MlbTheShowForecaster.PlayerStatus.Application\MlbTheShowForecaster.PlayerStatus.Application.csproj" />
     </ItemGroup>
