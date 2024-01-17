@@ -24,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\src\PlayerStatus\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.csproj" />
+      <ProjectReference Include="..\..\..\src\PlayerStatus\MlbTheShowForecaster.PlayerStatus.Application\MlbTheShowForecaster.PlayerStatus.Application.csproj" />
     </ItemGroup>
 
 </Project>

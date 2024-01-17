@@ -23,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\src\PlayerStatus\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.csproj" />
+      <ProjectReference Include="..\..\..\src\PlayerStatus\MlbTheShowForecaster.PlayerStatus.Domain\MlbTheShowForecaster.PlayerStatus.Domain.csproj" />
     </ItemGroup>
 
 </Project>

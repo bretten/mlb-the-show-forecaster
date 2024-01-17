@@ -4,11 +4,12 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\com.brettnamba.MlbTheShowForecaster.Common.Application\com.brettnamba.MlbTheShowForecaster.Common.Application.csproj" />
-      <ProjectReference Include="..\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.csproj" />
+      <ProjectReference Include="..\MlbTheShowForecaster.PlayerStatus.Domain\MlbTheShowForecaster.PlayerStatus.Domain.csproj" />
     </ItemGroup>
 
     <ItemGroup>
