@@ -4,12 +4,13 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure\com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.csproj" />
-      <ProjectReference Include="..\..\ExternalApis\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.csproj" />
-      <ProjectReference Include="..\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.csproj" />
+      <ProjectReference Include="..\..\MlbTheShowForecaster.Common.Infrastructure\MlbTheShowForecaster.Common.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\ExternalApis\MlbTheShowForecaster.ExternalApis.MlbApi\MlbTheShowForecaster.ExternalApis.MlbApi.csproj" />
+      <ProjectReference Include="..\MlbTheShowForecaster.PlayerStatus.Application\MlbTheShowForecaster.PlayerStatus.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>

@@ -7,6 +7,7 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <RootNamespace>com.brettnamba.MlbTheShowForecaster.Core.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,7 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\src\ExternalApis\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.csproj" />
+      <ProjectReference Include="..\..\src\MlbTheShowForecaster.Core\MlbTheShowForecaster.Core.csproj" />
     </ItemGroup>
 
 </Project>
