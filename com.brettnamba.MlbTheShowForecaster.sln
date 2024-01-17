@@ -36,7 +36,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Extern
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalApis", "ExternalApis", "{75C019AA-BBCD-490D-AAE8-F55690F42C22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Tests", "test\ExternalApis\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Tests\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Tests.csproj", "{5647523F-4480-43B9-9FB6-8D3A3A17A0B7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.ExternalApis.MlbApi.Tests", "test\ExternalApis\MlbTheShowForecaster.ExternalApis.MlbApi.Tests\MlbTheShowForecaster.ExternalApis.MlbApi.Tests.csproj", "{5647523F-4480-43B9-9FB6-8D3A3A17A0B7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.PlayerStatus.Infrastructure", "src\PlayerStatus\MlbTheShowForecaster.PlayerStatus.Infrastructure\MlbTheShowForecaster.PlayerStatus.Infrastructure.csproj", "{A31F6ED5-20F8-440E-9A48-EF54EF104CF6}"
 EndProject
