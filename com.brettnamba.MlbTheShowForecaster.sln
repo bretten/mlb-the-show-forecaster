@@ -32,7 +32,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowFo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalApis", "ExternalApis", "{E3BEAE51-5711-4CF5-A0E6-F45C52359C31}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi", "src\ExternalApis\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi\com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.csproj", "{0AFC826D-2B25-40DF-9874-1FD980ACB4EC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.ExternalApis.MlbApi", "src\ExternalApis\MlbTheShowForecaster.ExternalApis.MlbApi\MlbTheShowForecaster.ExternalApis.MlbApi.csproj", "{0AFC826D-2B25-40DF-9874-1FD980ACB4EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalApis", "ExternalApis", "{75C019AA-BBCD-490D-AAE8-F55690F42C22}"
 EndProject
