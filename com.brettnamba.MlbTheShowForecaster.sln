@@ -4,7 +4,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FC3388A5-780
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Core", "src\com.brettnamba.MlbTheShowForecaster.Core\com.brettnamba.MlbTheShowForecaster.Core.csproj", "{A343247B-BF0D-4BBB-97BA-793C01D5AD87}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Core", "src\MlbTheShowForecaster.Core\MlbTheShowForecaster.Core.csproj", "{A343247B-BF0D-4BBB-97BA-793C01D5AD87}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Core.Tests", "test\com.brettnamba.MlbTheShowForecaster.Core.Tests\com.brettnamba.MlbTheShowForecaster.Core.Tests.csproj", "{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}"
 EndProject
@@ -16,7 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlayerStatus", "PlayerStatu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests", "test\PlayerStatus\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests\com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.csproj", "{A6398B0E-7F63-4E1E-87B3-34EEE022DAAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Common", "src\com.brettnamba.MlbTheShowForecaster.Common\com.brettnamba.MlbTheShowForecaster.Common.csproj", "{CA9C0A15-03BB-4669-98C8-F2569D499DCE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common", "src\MlbTheShowForecaster.Common\MlbTheShowForecaster.Common.csproj", "{CA9C0A15-03BB-4669-98C8-F2569D499DCE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "com.brettnamba.MlbTheShowForecaster.Common.Tests", "test\com.brettnamba.MlbTheShowForecaster.Common.Tests\com.brettnamba.MlbTheShowForecaster.Common.Tests.csproj", "{F697EF93-E159-4273-A35B-CBAE0934D40E}"
 EndProject
