@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
@@ -58,6 +59,8 @@ public class PlayerTests
         // Assert
         Assert.NotNull(player.Team);
         Assert.Equal(newTeam, player.Team);
+        Assert.Equal(1, player.DomainEvents.Count);
+        Assert.Equal(new PlayerSignedContractWithTeamEvent(player.MlbId, newTeam.MlbId), player.DomainEvents[0]);
     }
 
     [Fact]
@@ -74,6 +77,8 @@ public class PlayerTests
         // Assert
         Assert.NotNull(player.Team);
         Assert.Equal(newTeam, player.Team);
+        Assert.Equal(1, player.DomainEvents.Count);
+        Assert.Equal(new PlayerSignedContractWithTeamEvent(player.MlbId, newTeam.MlbId), player.DomainEvents[0]);
     }
 
     [Fact]
@@ -89,6 +94,8 @@ public class PlayerTests
         // Assert
         Assert.Null(player.Team);
         Assert.NotEqual(currentTeam, player.Team);
+        Assert.Equal(1, player.DomainEvents.Count);
+        Assert.Equal(new PlayerEnteredFreeAgencyEvent(player.MlbId), player.DomainEvents[0]);
     }
 
     [Fact]
@@ -102,6 +109,8 @@ public class PlayerTests
 
         // Assert
         Assert.True(player.Active);
+        Assert.Equal(1, player.DomainEvents.Count);
+        Assert.Equal(new PlayerActivatedEvent(player.MlbId), player.DomainEvents[0]);
     }
 
     [Fact]
@@ -115,5 +124,7 @@ public class PlayerTests
 
         // Assert
         Assert.False(player.Active);
+        Assert.Equal(1, player.DomainEvents.Count);
+        Assert.Equal(new PlayerInactivatedEvent(player.MlbId), player.DomainEvents[0]);
     }
 }

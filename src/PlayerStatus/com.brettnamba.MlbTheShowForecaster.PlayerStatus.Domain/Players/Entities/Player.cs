@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
 
@@ -108,6 +109,7 @@ public sealed class Player : AggregateRoot
         }
 
         Team = team;
+        RaiseDomainEvent(new PlayerSignedContractWithTeamEvent(MlbId, team.MlbId));
     }
 
     /// <summary>
@@ -116,6 +118,8 @@ public sealed class Player : AggregateRoot
     public void EnterFreeAgency()
     {
         EndCurrentTeamContract();
+
+        RaiseDomainEvent(new PlayerEnteredFreeAgencyEvent(MlbId));
     }
 
     /// <summary>
@@ -124,6 +128,8 @@ public sealed class Player : AggregateRoot
     public void Activate()
     {
         Active = true;
+
+        RaiseDomainEvent(new PlayerActivatedEvent(MlbId));
     }
 
     /// <summary>
@@ -132,6 +138,8 @@ public sealed class Player : AggregateRoot
     public void Inactivate()
     {
         Active = false;
+
+        RaiseDomainEvent(new PlayerInactivatedEvent(MlbId));
     }
 
     /// <summary>
