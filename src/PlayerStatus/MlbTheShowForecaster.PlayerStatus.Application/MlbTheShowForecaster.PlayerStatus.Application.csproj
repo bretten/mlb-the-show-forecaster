@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\MlbTheShowForecaster.Common.Application\MlbTheShowForecaster.Common.Application.csproj" />
+      <ProjectReference Include="..\MlbTheShowForecaster.PlayerStatus.Domain\MlbTheShowForecaster.PlayerStatus.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <InternalsVisibleTo Include="MlbTheShowForecaster.PlayerStatus.Application.Tests" />
+    </ItemGroup>
+
+</Project>
