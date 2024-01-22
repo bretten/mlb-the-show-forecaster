@@ -1,6 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.Tests.SeedWork.TestClasses;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Tests.SeedWork.TestClasses;
 
-namespace com.brettnamba.MlbTheShowForecaster.Core.Tests.SeedWork;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.Tests.SeedWork;
 
 public class ValueObjectTests
 {

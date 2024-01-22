@@ -42,7 +42,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{EBC533
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Tests", "tests\Common\MlbTheShowForecaster.Common.Tests\MlbTheShowForecaster.Common.Tests.csproj", "{7F2169EC-D5E0-416D-A123-F2978F271697}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Core.Tests", "tests\Common\MlbTheShowForecaster.Core.Tests\MlbTheShowForecaster.Core.Tests.csproj", "{957D0290-8C53-4A45-BBFE-DD687A98638E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Domain.Tests", "tests\Common\MlbTheShowForecaster.Common.Domain.Tests\MlbTheShowForecaster.Common.Domain.Tests.csproj", "{957D0290-8C53-4A45-BBFE-DD687A98638E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Infrastructure.Tests", "tests\Common\MlbTheShowForecaster.Common.Infrastructure.Tests\MlbTheShowForecaster.Common.Infrastructure.Tests.csproj", "{97C77312-D79C-4B3E-BDEF-B2A2644EC885}"
 EndProject

@@ -1,17 +1,17 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
-namespace com.brettnamba.MlbTheShowForecaster.Core.Tests.SeedWork.TestClasses;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.Tests.SeedWork.TestClasses;
 
 /// <summary>
 /// For testing
 /// </summary>
-public sealed class TestValueObject2 : ValueObject
+public sealed class TestValueObject1 : ValueObject
 {
     public int IntegerValue { get; }
 
     public string StringValue { get; }
 
-    private TestValueObject2(int integerValue, string stringValue)
+    private TestValueObject1(int integerValue, string stringValue)
     {
         IntegerValue = integerValue;
         StringValue = stringValue;
@@ -23,8 +23,8 @@ public sealed class TestValueObject2 : ValueObject
         yield return StringValue;
     }
 
-    public static TestValueObject2 Create(int integerValue, string stringValue)
+    public static TestValueObject1 Create(int integerValue, string stringValue)
     {
-        return new TestValueObject2(integerValue, stringValue);
+        return new TestValueObject1(integerValue, stringValue);
     }
 }

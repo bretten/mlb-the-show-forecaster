@@ -1,7 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
-namespace com.brettnamba.MlbTheShowForecaster.Core.Tests.SeedWork.TestClasses;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.Tests.SeedWork.TestClasses;
 
 /// <summary>
 /// Anemic entity for testing purposes only
