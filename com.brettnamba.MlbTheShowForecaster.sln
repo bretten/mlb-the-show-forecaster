@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Infrastructure.Tests", "tests\Common\MlbTheShowForecaster.Common.Infrastructure.Tests\MlbTheShowForecaster.Common.Infrastructure.Tests.csproj", "{97C77312-D79C-4B3E-BDEF-B2A2644EC885}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Application.Tests", "tests\Common\MlbTheShowForecaster.Common.Application.Tests\MlbTheShowForecaster.Common.Application.Tests.csproj", "{7CB3EEEF-6050-4BF1-8F80-828801271F56}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,7 @@ Global
 		{7F2169EC-D5E0-416D-A123-F2978F271697} = {EBC5336B-0DCF-4965-8098-2A4CF41D13AB}
 		{957D0290-8C53-4A45-BBFE-DD687A98638E} = {EBC5336B-0DCF-4965-8098-2A4CF41D13AB}
 		{97C77312-D79C-4B3E-BDEF-B2A2644EC885} = {EBC5336B-0DCF-4965-8098-2A4CF41D13AB}
+		{7CB3EEEF-6050-4BF1-8F80-828801271F56} = {EBC5336B-0DCF-4965-8098-2A4CF41D13AB}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{53796898-4128-4E59-B0B7-10086DDEA73C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -135,5 +138,9 @@ Global
 		{97C77312-D79C-4B3E-BDEF-B2A2644EC885}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97C77312-D79C-4B3E-BDEF-B2A2644EC885}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97C77312-D79C-4B3E-BDEF-B2A2644EC885}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CB3EEEF-6050-4BF1-8F80-828801271F56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CB3EEEF-6050-4BF1-8F80-828801271F56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CB3EEEF-6050-4BF1-8F80-828801271F56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CB3EEEF-6050-4BF1-8F80-828801271F56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
