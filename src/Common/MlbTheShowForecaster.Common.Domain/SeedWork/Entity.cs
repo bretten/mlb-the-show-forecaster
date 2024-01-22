@@ -1,6 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.Events;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 
-namespace com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
 /// <summary>
 /// Represents a uniquely identifiable entity

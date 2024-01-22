@@ -1,5 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.Events;
-using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using Microsoft.EntityFrameworkCore;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFramework;

@@ -1,6 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFramework;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFramework;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFramework.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.Core.Events;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 

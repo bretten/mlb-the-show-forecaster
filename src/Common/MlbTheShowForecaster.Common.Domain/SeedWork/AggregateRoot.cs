@@ -1,4 +1,4 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
 /// <summary>
 /// Represents an Entity that other Entities depend on. In order to edit a contained Entity,

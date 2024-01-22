@@ -1,4 +1,4 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
 /// <summary>
 /// Defined by its nested value(s) and is immutable. It is equal to another ValueObject if all the contained values

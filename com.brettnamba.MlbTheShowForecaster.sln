@@ -32,7 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{986AA8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common", "src\Common\MlbTheShowForecaster.Common\MlbTheShowForecaster.Common.csproj", "{E3CCB27E-9BA0-4DDC-8070-80562A546F56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Core", "src\Common\MlbTheShowForecaster.Core\MlbTheShowForecaster.Core.csproj", "{359C343B-DA39-4AEA-90B6-A21E372F3AC9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Domain", "src\Common\MlbTheShowForecaster.Common.Domain\MlbTheShowForecaster.Common.Domain.csproj", "{359C343B-DA39-4AEA-90B6-A21E372F3AC9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Application", "src\Common\MlbTheShowForecaster.Common.Application\MlbTheShowForecaster.Common.Application.csproj", "{B657538F-BB28-47B1-B452-F0D18A95D53F}"
 EndProject

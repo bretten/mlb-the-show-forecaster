@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Common\MlbTheShowForecaster.Core\MlbTheShowForecaster.Core.csproj" />
+      <ProjectReference Include="..\..\Common\MlbTheShowForecaster.Common.Domain\MlbTheShowForecaster.Common.Domain.csproj" />
     </ItemGroup>
 
 </Project>

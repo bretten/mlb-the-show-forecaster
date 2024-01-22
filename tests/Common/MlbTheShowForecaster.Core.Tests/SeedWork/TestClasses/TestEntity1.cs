@@ -1,5 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.Events;
-using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
 namespace com.brettnamba.MlbTheShowForecaster.Core.Tests.SeedWork.TestClasses;
 

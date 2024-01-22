@@ -1,4 +1,4 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
 /// <summary>
 /// Represents a set of mutations on the system that depend on each other and must be committed together.

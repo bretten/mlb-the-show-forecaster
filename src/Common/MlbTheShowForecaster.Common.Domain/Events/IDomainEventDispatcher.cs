@@ -1,4 +1,4 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.Core.Events;
+﻿namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 
 /// <summary>
 /// Dispatches domain events
