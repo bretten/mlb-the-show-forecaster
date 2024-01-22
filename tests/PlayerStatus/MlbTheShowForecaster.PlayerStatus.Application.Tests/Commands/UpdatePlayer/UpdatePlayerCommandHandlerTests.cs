@@ -1,4 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;

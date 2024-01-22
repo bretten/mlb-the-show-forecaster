@@ -1,4 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.Events;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;

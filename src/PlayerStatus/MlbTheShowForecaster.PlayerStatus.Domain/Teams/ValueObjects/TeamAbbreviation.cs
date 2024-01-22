@@ -1,4 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Core.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
