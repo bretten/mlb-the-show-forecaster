@@ -1,5 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;

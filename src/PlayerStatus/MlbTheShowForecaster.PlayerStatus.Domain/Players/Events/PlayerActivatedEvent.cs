@@ -1,5 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
 

@@ -1,7 +1,7 @@
-﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Exceptions;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Common.ValueObjects;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.Tests.ValueObjects;
 
 public class MlbIdTests
 {

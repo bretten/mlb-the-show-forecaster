@@ -1,4 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Exceptions;
