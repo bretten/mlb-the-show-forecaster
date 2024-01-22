@@ -4,10 +4,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FC3388A5-780
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Core", "src\MlbTheShowForecaster.Core\MlbTheShowForecaster.Core.csproj", "{A343247B-BF0D-4BBB-97BA-793C01D5AD87}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Core.Tests", "tests\MlbTheShowForecaster.Core.Tests\MlbTheShowForecaster.Core.Tests.csproj", "{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlayerStatus", "PlayerStatus", "{E0CD3F64-1872-49E2-BB7C-FDD30EDA7EA8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.PlayerStatus.Domain", "src\PlayerStatus\MlbTheShowForecaster.PlayerStatus.Domain\MlbTheShowForecaster.PlayerStatus.Domain.csproj", "{53796898-4128-4E59-B0B7-10086DDEA73C}"
@@ -16,19 +12,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PlayerStatus", "PlayerStatu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.PlayerStatus.Domain.Tests", "tests\PlayerStatus\MlbTheShowForecaster.PlayerStatus.Domain.Tests\MlbTheShowForecaster.PlayerStatus.Domain.Tests.csproj", "{A6398B0E-7F63-4E1E-87B3-34EEE022DAAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common", "src\MlbTheShowForecaster.Common\MlbTheShowForecaster.Common.csproj", "{CA9C0A15-03BB-4669-98C8-F2569D499DCE}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Tests", "tests\MlbTheShowForecaster.Common.Tests\MlbTheShowForecaster.Common.Tests.csproj", "{F697EF93-E159-4273-A35B-CBAE0934D40E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Application", "src\MlbTheShowForecaster.Common.Application\MlbTheShowForecaster.Common.Application.csproj", "{C3A012F0-6FF1-4421-96E3-68E8FD085F02}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.PlayerStatus.Application", "src\PlayerStatus\MlbTheShowForecaster.PlayerStatus.Application\MlbTheShowForecaster.PlayerStatus.Application.csproj", "{6DDC7BBA-9362-4029-BB86-D0F0D9AE23E8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.PlayerStatus.Application.Tests", "tests\PlayerStatus\MlbTheShowForecaster.PlayerStatus.Application.Tests\MlbTheShowForecaster.PlayerStatus.Application.Tests.csproj", "{AFF39414-F7C6-43D5-A7B1-4CA904261EFA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Infrastructure", "src\MlbTheShowForecaster.Common.Infrastructure\MlbTheShowForecaster.Common.Infrastructure.csproj", "{9C44565E-E2FF-4F3F-83FB-A6D7B602AF6C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Infrastructure.Tests", "tests\MlbTheShowForecaster.Common.Infrastructure.Tests\MlbTheShowForecaster.Common.Infrastructure.Tests.csproj", "{7174FD64-D5C9-4A19-AD26-E306D0655088}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ExternalApis", "ExternalApis", "{E3BEAE51-5711-4CF5-A0E6-F45C52359C31}"
 EndProject
@@ -42,41 +28,53 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Player
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests", "tests\PlayerStatus\MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests\MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.csproj", "{F07E652D-F053-42B8-BEAF-6CEB407EC201}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{986AA833-D26D-49CA-8A4B-DA2D90080988}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common", "src\Common\MlbTheShowForecaster.Common\MlbTheShowForecaster.Common.csproj", "{E3CCB27E-9BA0-4DDC-8070-80562A546F56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Core", "src\Common\MlbTheShowForecaster.Core\MlbTheShowForecaster.Core.csproj", "{359C343B-DA39-4AEA-90B6-A21E372F3AC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Application", "src\Common\MlbTheShowForecaster.Common.Application\MlbTheShowForecaster.Common.Application.csproj", "{B657538F-BB28-47B1-B452-F0D18A95D53F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Infrastructure", "src\Common\MlbTheShowForecaster.Common.Infrastructure\MlbTheShowForecaster.Common.Infrastructure.csproj", "{74599B06-D2F5-4A9E-9FD0-DA5F0F51C340}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{EBC5336B-0DCF-4965-8098-2A4CF41D13AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Tests", "tests\Common\MlbTheShowForecaster.Common.Tests\MlbTheShowForecaster.Common.Tests.csproj", "{7F2169EC-D5E0-416D-A123-F2978F271697}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Core.Tests", "tests\Common\MlbTheShowForecaster.Core.Tests\MlbTheShowForecaster.Core.Tests.csproj", "{957D0290-8C53-4A45-BBFE-DD687A98638E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Common.Infrastructure.Tests", "tests\Common\MlbTheShowForecaster.Common.Infrastructure.Tests\MlbTheShowForecaster.Common.Infrastructure.Tests.csproj", "{97C77312-D79C-4B3E-BDEF-B2A2644EC885}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{A343247B-BF0D-4BBB-97BA-793C01D5AD87} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
-		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
 		{E0CD3F64-1872-49E2-BB7C-FDD30EDA7EA8} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
 		{53796898-4128-4E59-B0B7-10086DDEA73C} = {E0CD3F64-1872-49E2-BB7C-FDD30EDA7EA8}
 		{27F9BB13-E7CD-4F5E-B5CE-1ECF34BE9815} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
 		{A6398B0E-7F63-4E1E-87B3-34EEE022DAAC} = {27F9BB13-E7CD-4F5E-B5CE-1ECF34BE9815}
-		{CA9C0A15-03BB-4669-98C8-F2569D499DCE} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
-		{F697EF93-E159-4273-A35B-CBAE0934D40E} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
-		{C3A012F0-6FF1-4421-96E3-68E8FD085F02} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
 		{6DDC7BBA-9362-4029-BB86-D0F0D9AE23E8} = {E0CD3F64-1872-49E2-BB7C-FDD30EDA7EA8}
 		{AFF39414-F7C6-43D5-A7B1-4CA904261EFA} = {27F9BB13-E7CD-4F5E-B5CE-1ECF34BE9815}
-		{9C44565E-E2FF-4F3F-83FB-A6D7B602AF6C} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
-		{7174FD64-D5C9-4A19-AD26-E306D0655088} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
 		{E3BEAE51-5711-4CF5-A0E6-F45C52359C31} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
 		{0AFC826D-2B25-40DF-9874-1FD980ACB4EC} = {E3BEAE51-5711-4CF5-A0E6-F45C52359C31}
 		{75C019AA-BBCD-490D-AAE8-F55690F42C22} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
 		{5647523F-4480-43B9-9FB6-8D3A3A17A0B7} = {75C019AA-BBCD-490D-AAE8-F55690F42C22}
 		{A31F6ED5-20F8-440E-9A48-EF54EF104CF6} = {E0CD3F64-1872-49E2-BB7C-FDD30EDA7EA8}
 		{F07E652D-F053-42B8-BEAF-6CEB407EC201} = {27F9BB13-E7CD-4F5E-B5CE-1ECF34BE9815}
+		{986AA833-D26D-49CA-8A4B-DA2D90080988} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
+		{E3CCB27E-9BA0-4DDC-8070-80562A546F56} = {986AA833-D26D-49CA-8A4B-DA2D90080988}
+		{359C343B-DA39-4AEA-90B6-A21E372F3AC9} = {986AA833-D26D-49CA-8A4B-DA2D90080988}
+		{B657538F-BB28-47B1-B452-F0D18A95D53F} = {986AA833-D26D-49CA-8A4B-DA2D90080988}
+		{74599B06-D2F5-4A9E-9FD0-DA5F0F51C340} = {986AA833-D26D-49CA-8A4B-DA2D90080988}
+		{EBC5336B-0DCF-4965-8098-2A4CF41D13AB} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
+		{7F2169EC-D5E0-416D-A123-F2978F271697} = {EBC5336B-0DCF-4965-8098-2A4CF41D13AB}
+		{957D0290-8C53-4A45-BBFE-DD687A98638E} = {EBC5336B-0DCF-4965-8098-2A4CF41D13AB}
+		{97C77312-D79C-4B3E-BDEF-B2A2644EC885} = {EBC5336B-0DCF-4965-8098-2A4CF41D13AB}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A343247B-BF0D-4BBB-97BA-793C01D5AD87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A343247B-BF0D-4BBB-97BA-793C01D5AD87}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A343247B-BF0D-4BBB-97BA-793C01D5AD87}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A343247B-BF0D-4BBB-97BA-793C01D5AD87}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F0A8271-3FE1-4F6A-A818-671ACE395BA5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{53796898-4128-4E59-B0B7-10086DDEA73C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{53796898-4128-4E59-B0B7-10086DDEA73C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53796898-4128-4E59-B0B7-10086DDEA73C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -85,18 +83,6 @@ Global
 		{A6398B0E-7F63-4E1E-87B3-34EEE022DAAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6398B0E-7F63-4E1E-87B3-34EEE022DAAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6398B0E-7F63-4E1E-87B3-34EEE022DAAC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA9C0A15-03BB-4669-98C8-F2569D499DCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA9C0A15-03BB-4669-98C8-F2569D499DCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA9C0A15-03BB-4669-98C8-F2569D499DCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA9C0A15-03BB-4669-98C8-F2569D499DCE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F697EF93-E159-4273-A35B-CBAE0934D40E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F697EF93-E159-4273-A35B-CBAE0934D40E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F697EF93-E159-4273-A35B-CBAE0934D40E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F697EF93-E159-4273-A35B-CBAE0934D40E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3A012F0-6FF1-4421-96E3-68E8FD085F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3A012F0-6FF1-4421-96E3-68E8FD085F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3A012F0-6FF1-4421-96E3-68E8FD085F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3A012F0-6FF1-4421-96E3-68E8FD085F02}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6DDC7BBA-9362-4029-BB86-D0F0D9AE23E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6DDC7BBA-9362-4029-BB86-D0F0D9AE23E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DDC7BBA-9362-4029-BB86-D0F0D9AE23E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -105,14 +91,6 @@ Global
 		{AFF39414-F7C6-43D5-A7B1-4CA904261EFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFF39414-F7C6-43D5-A7B1-4CA904261EFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFF39414-F7C6-43D5-A7B1-4CA904261EFA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9C44565E-E2FF-4F3F-83FB-A6D7B602AF6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C44565E-E2FF-4F3F-83FB-A6D7B602AF6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C44565E-E2FF-4F3F-83FB-A6D7B602AF6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C44565E-E2FF-4F3F-83FB-A6D7B602AF6C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7174FD64-D5C9-4A19-AD26-E306D0655088}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7174FD64-D5C9-4A19-AD26-E306D0655088}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7174FD64-D5C9-4A19-AD26-E306D0655088}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7174FD64-D5C9-4A19-AD26-E306D0655088}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0AFC826D-2B25-40DF-9874-1FD980ACB4EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0AFC826D-2B25-40DF-9874-1FD980ACB4EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0AFC826D-2B25-40DF-9874-1FD980ACB4EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -129,5 +107,33 @@ Global
 		{F07E652D-F053-42B8-BEAF-6CEB407EC201}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F07E652D-F053-42B8-BEAF-6CEB407EC201}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F07E652D-F053-42B8-BEAF-6CEB407EC201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3CCB27E-9BA0-4DDC-8070-80562A546F56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3CCB27E-9BA0-4DDC-8070-80562A546F56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3CCB27E-9BA0-4DDC-8070-80562A546F56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3CCB27E-9BA0-4DDC-8070-80562A546F56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{359C343B-DA39-4AEA-90B6-A21E372F3AC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{359C343B-DA39-4AEA-90B6-A21E372F3AC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{359C343B-DA39-4AEA-90B6-A21E372F3AC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{359C343B-DA39-4AEA-90B6-A21E372F3AC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B657538F-BB28-47B1-B452-F0D18A95D53F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B657538F-BB28-47B1-B452-F0D18A95D53F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B657538F-BB28-47B1-B452-F0D18A95D53F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B657538F-BB28-47B1-B452-F0D18A95D53F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74599B06-D2F5-4A9E-9FD0-DA5F0F51C340}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74599B06-D2F5-4A9E-9FD0-DA5F0F51C340}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74599B06-D2F5-4A9E-9FD0-DA5F0F51C340}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74599B06-D2F5-4A9E-9FD0-DA5F0F51C340}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F2169EC-D5E0-416D-A123-F2978F271697}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F2169EC-D5E0-416D-A123-F2978F271697}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F2169EC-D5E0-416D-A123-F2978F271697}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F2169EC-D5E0-416D-A123-F2978F271697}.Release|Any CPU.Build.0 = Release|Any CPU
+		{957D0290-8C53-4A45-BBFE-DD687A98638E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{957D0290-8C53-4A45-BBFE-DD687A98638E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{957D0290-8C53-4A45-BBFE-DD687A98638E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{957D0290-8C53-4A45-BBFE-DD687A98638E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97C77312-D79C-4B3E-BDEF-B2A2644EC885}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97C77312-D79C-4B3E-BDEF-B2A2644EC885}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97C77312-D79C-4B3E-BDEF-B2A2644EC885}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97C77312-D79C-4B3E-BDEF-B2A2644EC885}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
