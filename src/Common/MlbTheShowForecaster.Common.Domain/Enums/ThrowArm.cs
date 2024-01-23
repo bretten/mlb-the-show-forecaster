@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using com.brettnamba.MlbTheShowForecaster.Common.Converters;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 
 /// <summary>
 /// The arm that the player throws with
