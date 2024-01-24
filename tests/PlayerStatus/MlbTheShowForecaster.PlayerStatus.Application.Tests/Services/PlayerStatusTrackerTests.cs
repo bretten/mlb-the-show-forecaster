@@ -1,11 +1,11 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.CreatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Queries.GetPlayerByMlbId;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;

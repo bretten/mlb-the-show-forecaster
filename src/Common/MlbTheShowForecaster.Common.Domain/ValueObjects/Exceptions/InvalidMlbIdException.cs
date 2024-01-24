@@ -1,6 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
-
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.Exceptions;
+﻿namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Exceptions;
 
 /// <summary>
 /// Thrown when an unsupported value is used for <see cref="MlbId"/>

@@ -1,7 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Exceptions;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 
 /// <summary>
 /// Represents the ID that is given to a player by MLB

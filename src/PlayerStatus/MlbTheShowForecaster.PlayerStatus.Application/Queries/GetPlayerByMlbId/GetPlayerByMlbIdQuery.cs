@@ -1,5 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Common.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Queries.GetPlayerByMlbId;
