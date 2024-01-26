@@ -7,17 +7,26 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.Tests.ValueObjects.T
 /// </summary>
 public sealed class TestCalculatedStat : CalculatedStat
 {
-    private TestCalculatedStat(decimal value) : base(value)
+    public int Component1 { get; }
+
+    public int Component2 { get; }
+
+    public int Component3 { get; }
+
+    private TestCalculatedStat(int component1, int component2, int component3)
     {
+        Component1 = component1;
+        Component2 = component2;
+        Component3 = component3;
     }
 
-    public static TestCalculatedStat Create(int variable1, int variable2, int variable3)
+    public static TestCalculatedStat Create(int component1, int component2, int component3)
     {
-        return new TestCalculatedStat(((decimal)variable1 / variable2) + variable3);
+        return new TestCalculatedStat(component1, component2, component3);
     }
 
-    public static TestCalculatedStat Create(decimal rawValue)
+    protected override decimal Calculate()
     {
-        return new TestCalculatedStat(rawValue);
+        return ((decimal)Component1 / Component2) + Component3;
     }
 }

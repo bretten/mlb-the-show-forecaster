@@ -1,5 +1,4 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 
@@ -10,22 +9,24 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 public abstract class CalculatedStat : ValueObject
 {
     /// <summary>
-    /// The underlying value of the stat
+    /// Holds the underlying value of the stat after it is calculated
     /// </summary>
-    public decimal Value { get; }
+    private decimal? _value;
 
     /// <summary>
-    /// Constructor
+    /// The underlying value of the stat
     /// </summary>
-    /// <param name="value">The stat value</param>
-    protected CalculatedStat(decimal value)
+    public decimal Value
     {
-        if (value < 0)
+        get
         {
-            throw new CalculatedStatBelowZeroException($"Calculated stat must not be negative but {value} was given");
-        }
+            if (!_value.HasValue)
+            {
+                _value = Calculate();
+            }
 
-        Value = value;
+            return _value.Value;
+        }
     }
 
     /// <summary>
@@ -37,4 +38,10 @@ public abstract class CalculatedStat : ValueObject
     {
         return Math.Round(Value, decimals, MidpointRounding.AwayFromZero);
     }
+
+    /// <summary>
+    /// Calculates the stat
+    /// </summary>
+    /// <returns>The stat</returns>
+    protected abstract decimal Calculate();
 }
