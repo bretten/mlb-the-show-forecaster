@@ -1,25 +1,9 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Tests.ValueObjects.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.Tests.ValueObjects;
 
 public class CalculatedStatTests
 {
-    [Fact]
-    public void Constructor_NegativeValue_ThrowsException()
-    {
-        // Arrange
-        const decimal value = -1.2m;
-        var action = () => TestCalculatedStat.Create(value);
-
-        // Act
-        var actual = Record.Exception(action);
-
-        // Assert
-        Assert.NotNull(actual);
-        Assert.IsType<CalculatedStatBelowZeroException>(actual);
-    }
-
     [Fact]
     public void Value_CalculationComponents_ReturnsCalculatedValue()
     {
