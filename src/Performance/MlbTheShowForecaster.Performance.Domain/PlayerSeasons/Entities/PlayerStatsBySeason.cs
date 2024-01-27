@@ -1,7 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 
-namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Entities.PlayerSeasons;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 
 public sealed class PlayerStatsBySeason : AggregateRoot
 {

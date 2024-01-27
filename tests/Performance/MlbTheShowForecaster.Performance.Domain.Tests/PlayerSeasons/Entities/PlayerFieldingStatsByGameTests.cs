@@ -1,4 +1,4 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons;
+﻿namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.Entities;
 
 public class PlayerFieldingStatsByGameTests
 {
