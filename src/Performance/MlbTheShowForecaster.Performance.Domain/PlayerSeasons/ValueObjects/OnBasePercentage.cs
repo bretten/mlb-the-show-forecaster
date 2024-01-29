@@ -26,7 +26,7 @@ public sealed class OnBasePercentage : CalculatedStat
     public NaturalNumber HitByPitches { get; }
 
     /// <summary>
-    /// The number of at-ats
+    /// The number of at-bats
     /// </summary>
     public NaturalNumber AtBats { get; }
 
