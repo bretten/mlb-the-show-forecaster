@@ -18,14 +18,14 @@ public sealed class BaseOnBallsPerNine : CalculatedStat
     /// <summary>
     /// The number of innings pitched
     /// </summary>
-    public InningsPitched InningsPitched { get; }
+    public InningsCount InningsPitched { get; }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="baseOnBalls">The number of walks</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
-    private BaseOnBallsPerNine(NaturalNumber baseOnBalls, InningsPitched inningsPitched)
+    private BaseOnBallsPerNine(NaturalNumber baseOnBalls, InningsCount inningsPitched)
     {
         BaseOnBalls = baseOnBalls;
         InningsPitched = inningsPitched;
@@ -48,6 +48,6 @@ public sealed class BaseOnBallsPerNine : CalculatedStat
     /// <returns><see cref="BaseOnBallsPerNine"/></returns>
     public static BaseOnBallsPerNine Create(uint baseOnBalls, decimal inningsPitched)
     {
-        return new BaseOnBallsPerNine(NaturalNumber.Create(baseOnBalls), InningsPitched.Create(inningsPitched));
+        return new BaseOnBallsPerNine(NaturalNumber.Create(baseOnBalls), InningsCount.Create(inningsPitched));
     }
 }

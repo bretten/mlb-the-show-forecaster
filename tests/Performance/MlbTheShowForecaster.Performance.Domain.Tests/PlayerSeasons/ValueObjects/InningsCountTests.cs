@@ -3,21 +3,21 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Value
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.ValueObjects;
 
-public class InningsPitchedTests
+public class InningsCountTests
 {
     [Fact]
     public void Constructor_InvalidPartialInningsPitched_ThrowsException()
     {
         // Arrange
         const decimal inningsPitched = 0.3m;
-        var action = () => InningsPitched.Create(inningsPitched);
+        var action = () => InningsCount.Create(inningsPitched);
 
         // Act
         var actual = Record.Exception(action);
 
         // Assert
         Assert.NotNull(actual);
-        Assert.IsType<InvalidInningsPitchedDecimalException>(actual);
+        Assert.IsType<InvalidInningsCountDecimalException>(actual);
     }
 
     [Fact]
@@ -25,7 +25,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const int inningsPitched = 2;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;
@@ -39,7 +39,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const decimal inningsPitched = 0.0m;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;
@@ -53,7 +53,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const decimal inningsPitched = 0.1m;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;
@@ -67,7 +67,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const decimal inningsPitched = 0.2m;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;
@@ -81,7 +81,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const decimal inningsPitched = 1.1m;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;
@@ -95,7 +95,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const decimal inningsPitched = 1.2m;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;
@@ -109,7 +109,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const decimal inningsPitched = (decimal)1 / 3;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;
@@ -123,7 +123,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const decimal inningsPitched = (decimal)2 / 3;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;
@@ -137,7 +137,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const decimal inningsPitched = 1 + (decimal)1 / 3;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;
@@ -151,7 +151,7 @@ public class InningsPitchedTests
     {
         // Arrange
         const decimal inningsPitched = 1 + (decimal)2 / 3;
-        var ip = InningsPitched.Create(inningsPitched);
+        var ip = InningsCount.Create(inningsPitched);
 
         // Act
         var actual = ip.Value;

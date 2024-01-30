@@ -18,14 +18,14 @@ public sealed class HitsPerNine : CalculatedStat
     /// <summary>
     /// The number of innings pitched
     /// </summary>
-    public InningsPitched InningsPitched { get; }
+    public InningsCount InningsPitched { get; }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="hitsAllowed">The number of hits allowed</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
-    private HitsPerNine(NaturalNumber hitsAllowed, InningsPitched inningsPitched)
+    private HitsPerNine(NaturalNumber hitsAllowed, InningsCount inningsPitched)
     {
         HitsAllowed = hitsAllowed;
         InningsPitched = inningsPitched;
@@ -48,6 +48,6 @@ public sealed class HitsPerNine : CalculatedStat
     /// <returns><see cref="HitsPerNine"/></returns>
     public static HitsPerNine Create(uint hitsAllowed, decimal inningsPitched)
     {
-        return new HitsPerNine(NaturalNumber.Create(hitsAllowed), InningsPitched.Create(inningsPitched));
+        return new HitsPerNine(NaturalNumber.Create(hitsAllowed), InningsCount.Create(inningsPitched));
     }
 }

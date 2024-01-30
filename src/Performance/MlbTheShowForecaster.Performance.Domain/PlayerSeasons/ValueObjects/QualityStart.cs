@@ -16,7 +16,7 @@ public sealed class QualityStart : ValueObject
     /// <summary>
     /// The number of innings pitched
     /// </summary>
-    public InningsPitched InningsPitched { get; }
+    public InningsCount InningsPitched { get; }
 
     /// <summary>
     /// The number of earned runs
@@ -28,7 +28,7 @@ public sealed class QualityStart : ValueObject
     /// </summary>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <param name="earnedRuns">The number of earned runs</param>
-    private QualityStart(InningsPitched inningsPitched, NaturalNumber earnedRuns)
+    private QualityStart(InningsCount inningsPitched, NaturalNumber earnedRuns)
     {
         InningsPitched = inningsPitched;
         EarnedRuns = earnedRuns;
@@ -40,7 +40,7 @@ public sealed class QualityStart : ValueObject
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <param name="earnedRuns">The number of earned runs</param>
     /// <returns><see cref="QualityStart"/></returns>
-    public static QualityStart Create(InningsPitched inningsPitched, NaturalNumber earnedRuns)
+    public static QualityStart Create(InningsCount inningsPitched, NaturalNumber earnedRuns)
     {
         return new QualityStart(inningsPitched, earnedRuns);
     }

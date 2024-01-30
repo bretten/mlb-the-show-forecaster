@@ -23,7 +23,7 @@ public sealed class RangeFactorPerNine : CalculatedStat
     /// <summary>
     /// The number of innings this player fielded at this position
     /// </summary>
-    public InningsPitched Innings { get; private set; }
+    public InningsCount Innings { get; private set; }
 
     /// <summary>
     /// Constructor
@@ -31,7 +31,7 @@ public sealed class RangeFactorPerNine : CalculatedStat
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
     /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="innings">The number of innings this player fielded at this position</param>
-    private RangeFactorPerNine(NaturalNumber assists, NaturalNumber putOuts, InningsPitched innings)
+    private RangeFactorPerNine(NaturalNumber assists, NaturalNumber putOuts, InningsCount innings)
     {
         Assists = assists;
         PutOuts = putOuts;
@@ -57,6 +57,6 @@ public sealed class RangeFactorPerNine : CalculatedStat
     public static RangeFactorPerNine Create(uint assists, uint putOuts, decimal innings)
     {
         return new RangeFactorPerNine(NaturalNumber.Create(assists), NaturalNumber.Create(putOuts),
-            InningsPitched.Create(innings));
+            InningsCount.Create(innings));
     }
 }

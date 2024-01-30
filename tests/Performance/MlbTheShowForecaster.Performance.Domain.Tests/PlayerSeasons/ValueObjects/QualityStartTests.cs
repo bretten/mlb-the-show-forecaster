@@ -9,7 +9,7 @@ public class QualityStartTests
     public void Value_LessThan6InningsPitched_ReturnsFalse()
     {
         // Arrange
-        var inningsPitched = InningsPitched.Create(5);
+        var inningsPitched = InningsCount.Create(5);
         var earnedRuns = NaturalNumber.Create(2);
         var qualityStart = QualityStart.Create(inningsPitched, earnedRuns);
 
@@ -24,7 +24,7 @@ public class QualityStartTests
     public void Value_MoreThan3EarnedRuns_ReturnsFalse()
     {
         // Arrange
-        var inningsPitched = InningsPitched.Create(7);
+        var inningsPitched = InningsCount.Create(7);
         var earnedRuns = NaturalNumber.Create(4);
         var qualityStart = QualityStart.Create(inningsPitched, earnedRuns);
 
@@ -39,7 +39,7 @@ public class QualityStartTests
     public void Value_MoreThan6InningsPitchedLessThan3EarnedRuns_ReturnsTrue()
     {
         // Arrange
-        var inningsPitched = InningsPitched.Create(6);
+        var inningsPitched = InningsCount.Create(6);
         var earnedRuns = NaturalNumber.Create(3);
         var qualityStart = QualityStart.Create(inningsPitched, earnedRuns);
 

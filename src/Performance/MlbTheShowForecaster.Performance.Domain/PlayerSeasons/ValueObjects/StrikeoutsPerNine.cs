@@ -18,14 +18,14 @@ public sealed class StrikeoutsPerNine : CalculatedStat
     /// <summary>
     /// The number of innings pitched
     /// </summary>
-    public InningsPitched InningsPitched { get; }
+    public InningsCount InningsPitched { get; }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="strikeouts">The number of strikeouts</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
-    private StrikeoutsPerNine(NaturalNumber strikeouts, InningsPitched inningsPitched)
+    private StrikeoutsPerNine(NaturalNumber strikeouts, InningsCount inningsPitched)
     {
         Strikeouts = strikeouts;
         InningsPitched = inningsPitched;
@@ -48,6 +48,6 @@ public sealed class StrikeoutsPerNine : CalculatedStat
     /// <returns><see cref="StrikeoutsPerNine"/></returns>
     public static StrikeoutsPerNine Create(uint strikeouts, decimal inningsPitched)
     {
-        return new StrikeoutsPerNine(NaturalNumber.Create(strikeouts), InningsPitched.Create(inningsPitched));
+        return new StrikeoutsPerNine(NaturalNumber.Create(strikeouts), InningsCount.Create(inningsPitched));
     }
 }

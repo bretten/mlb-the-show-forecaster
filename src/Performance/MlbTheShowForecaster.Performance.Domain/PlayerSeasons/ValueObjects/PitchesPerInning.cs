@@ -18,14 +18,14 @@ public sealed class PitchesPerInning : CalculatedStat
     /// <summary>
     /// The number of innings pitched
     /// </summary>
-    public InningsPitched InningsPitched { get; }
+    public InningsCount InningsPitched { get; }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="numberOfPitches">The number of pitches thrown</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
-    private PitchesPerInning(NaturalNumber numberOfPitches, InningsPitched inningsPitched)
+    private PitchesPerInning(NaturalNumber numberOfPitches, InningsCount inningsPitched)
     {
         NumberOfPitches = numberOfPitches;
         InningsPitched = inningsPitched;
@@ -48,6 +48,6 @@ public sealed class PitchesPerInning : CalculatedStat
     /// <returns><see cref="PitchesPerInning"/></returns>
     public static PitchesPerInning Create(uint numberOfPitches, decimal inningsPitched)
     {
-        return new PitchesPerInning(NaturalNumber.Create(numberOfPitches), InningsPitched.Create(inningsPitched));
+        return new PitchesPerInning(NaturalNumber.Create(numberOfPitches), InningsCount.Create(inningsPitched));
     }
 }

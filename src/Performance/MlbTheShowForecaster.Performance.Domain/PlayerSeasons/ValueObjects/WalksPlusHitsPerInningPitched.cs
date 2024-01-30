@@ -23,7 +23,7 @@ public sealed class WalksPlusHitsPerInningPitched : CalculatedStat
     /// <summary>
     /// The number of innings pitched
     /// </summary>
-    public InningsPitched InningsPitched { get; }
+    public InningsCount InningsPitched { get; }
 
     /// <summary>
     /// Constructor
@@ -31,7 +31,7 @@ public sealed class WalksPlusHitsPerInningPitched : CalculatedStat
     /// <param name="baseOnBalls">The number of walks</param>
     /// <param name="hits">The number of hits</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
-    private WalksPlusHitsPerInningPitched(NaturalNumber baseOnBalls, NaturalNumber hits, InningsPitched inningsPitched)
+    private WalksPlusHitsPerInningPitched(NaturalNumber baseOnBalls, NaturalNumber hits, InningsCount inningsPitched)
     {
         BaseOnBalls = baseOnBalls;
         Hits = hits;
@@ -58,6 +58,6 @@ public sealed class WalksPlusHitsPerInningPitched : CalculatedStat
     {
         return new WalksPlusHitsPerInningPitched(NaturalNumber.Create(baseOnBalls),
             NaturalNumber.Create(hits),
-            InningsPitched.Create(inningsPitched));
+            InningsCount.Create(inningsPitched));
     }
 }

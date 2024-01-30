@@ -18,14 +18,14 @@ public sealed class HomeRunsPerNine : CalculatedStat
     /// <summary>
     /// The number of innings pitched
     /// </summary>
-    public InningsPitched InningsPitched { get; }
+    public InningsCount InningsPitched { get; }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="homeRunsAllowed">The number of home runs allowed</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
-    private HomeRunsPerNine(NaturalNumber homeRunsAllowed, InningsPitched inningsPitched)
+    private HomeRunsPerNine(NaturalNumber homeRunsAllowed, InningsCount inningsPitched)
     {
         HomeRunsAllowed = homeRunsAllowed;
         InningsPitched = inningsPitched;
@@ -48,6 +48,6 @@ public sealed class HomeRunsPerNine : CalculatedStat
     /// <returns><see cref="HomeRunsPerNine"/></returns>
     public static HomeRunsPerNine Create(uint homeRunsAllowed, decimal inningsPitched)
     {
-        return new HomeRunsPerNine(NaturalNumber.Create(homeRunsAllowed), InningsPitched.Create(inningsPitched));
+        return new HomeRunsPerNine(NaturalNumber.Create(homeRunsAllowed), InningsCount.Create(inningsPitched));
     }
 }
