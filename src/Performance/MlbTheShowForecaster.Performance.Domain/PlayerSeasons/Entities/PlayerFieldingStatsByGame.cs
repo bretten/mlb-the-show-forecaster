@@ -86,6 +86,48 @@ public sealed class PlayerFieldingStatsByGame : Entity
     /// </summary>
     public int TotalChances => PutOuts + Assists + Errors;
 
+    public int RangeFactorPerNineInnings => 9 * (PutOuts + Assists) / Innings;
+
+    /// <summary>
+    /// Catcher stat: The catcher was able to throw out a base runner attempting to steal
+    /// </summary>
+    public int CaughtStealing { get; private set; }
+
+    /// <summary>
+    /// Catcher stat: The number of times a base runner successfully stole a base against the catcher
+    /// </summary>
+    public int StolenBases { get; private set; }
+
+    /// <summary>
+    /// Catcher stat: The number of times the catcher dropped the ball and a runner is able to advance
+    /// </summary>
+    public int PassedBalls { get; private set; }
+
+    /// <summary>
+    /// Catcher stat: The number of times a catcher interfered with the batter's plate appearance
+    /// </summary>
+    public int CatchersInterference { get; private set; }
+
+    /// <summary>
+    /// Catcher stat: The number of wild pitches the catcher saw from the pitcher
+    /// </summary>
+    public int WildPitches { get; private set; }
+
+    /// <summary>
+    /// Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate
+    /// </summary>
+    public int PickOffs { get; private set; }
+
+    /// <summary>
+    /// Catcher stat: Stolen base percentage = SB / (SB + CS)
+    /// </summary>
+    public float StolenBasePercentage => (float)(StolenBases) / (StolenBases + CaughtStealing);
+
+    /// <summary>
+    /// Catcher stat: Catcher's ERA = 9 * (ER / IP)
+    /// </summary>
+    public float CatcherEarnedRunAverage { get; private set; }
+
     public PlayerFieldingStatsByGame(Guid id) : base(id)
     {
     }
