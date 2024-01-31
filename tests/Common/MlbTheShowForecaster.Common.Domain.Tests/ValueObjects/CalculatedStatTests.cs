@@ -21,7 +21,7 @@ public class CalculatedStatTests
     }
 
     [Fact]
-    public void AsRounded_NoDecimalCount_ReturnsValueRoundedToDefaultDecimalCount()
+    public void FractionalDigitCount_Two_ReturnsValueRoundedToSpecifiedFractionalDigitCount()
     {
         // Arrange
         const int var1 = 7;
@@ -30,23 +30,7 @@ public class CalculatedStatTests
         var stat = TestCalculatedStat.Create(var1, var2, var3); // Calculation is (var1 / var2) + var3
 
         // Act
-        var actual = stat.AsRounded();
-
-        // Assert
-        Assert.Equal(3.167m, actual);
-    }
-
-    [Fact]
-    public void AsRounded_WithDecimalCount_ReturnsValueRoundedToSpecifiedDecimalCount()
-    {
-        // Arrange
-        const int var1 = 7;
-        const int var2 = 6;
-        const int var3 = 2;
-        var stat = TestCalculatedStat.Create(var1, var2, var3); // Calculation is (var1 / var2) + var3
-
-        // Act
-        var actual = stat.AsRounded(2);
+        var actual = stat.Value;
 
         // Assert
         Assert.Equal(3.17m, actual);

@@ -41,7 +41,7 @@ public sealed class OnBasePercentage : CalculatedStat
     /// <param name="hits">Number of hits</param>
     /// <param name="baseOnBalls">Number of base on balls or walks</param>
     /// <param name="hitByPitches">Number of hit by pitches</param>
-    /// <param name="atBats">Number of at bats</param>
+    /// <param name="atBats">Number of at-bats</param>
     /// <param name="sacrificeFlies">Number of sacrifice flies</param>
     private OnBasePercentage(NaturalNumber hits, NaturalNumber baseOnBalls, NaturalNumber hitByPitches,
         NaturalNumber atBats, NaturalNumber sacrificeFlies)
@@ -54,21 +54,6 @@ public sealed class OnBasePercentage : CalculatedStat
     }
 
     /// <summary>
-    /// Creates <see cref="OnBasePercentage"/>
-    /// </summary>
-    /// <param name="hits">Number of hits</param>
-    /// <param name="baseOnBalls">Number of base on balls or walks</param>
-    /// <param name="hitByPitches">Number of hit by pitches</param>
-    /// <param name="atBats">Number of at bats</param>
-    /// <param name="sacrificeFlies">Number of sacrifice flies</param>
-    /// <returns><see cref="OnBasePercentage"/></returns>
-    public static OnBasePercentage Create(NaturalNumber hits, NaturalNumber baseOnBalls, NaturalNumber hitByPitches,
-        NaturalNumber atBats, NaturalNumber sacrificeFlies)
-    {
-        return new OnBasePercentage(hits, baseOnBalls, hitByPitches, atBats, sacrificeFlies);
-    }
-
-    /// <summary>
     /// Calculates on-base percentage
     /// </summary>
     /// <returns>On-base percentage</returns>
@@ -77,5 +62,21 @@ public sealed class OnBasePercentage : CalculatedStat
         var n = Hits.Value + BaseOnBalls.Value + HitByPitches.Value;
         var d = AtBats.Value + BaseOnBalls.Value + HitByPitches.Value + SacrificeFlies.Value;
         return (decimal)n / d;
+    }
+
+    /// <summary>
+    /// Creates <see cref="OnBasePercentage"/>
+    /// </summary>
+    /// <param name="hits">Number of hits</param>
+    /// <param name="baseOnBalls">Number of base on balls or walks</param>
+    /// <param name="hitByPitches">Number of hit by pitches</param>
+    /// <param name="atBats">Number of at-bats</param>
+    /// <param name="sacrificeFlies">Number of sacrifice flies</param>
+    /// <returns><see cref="OnBasePercentage"/></returns>
+    public static OnBasePercentage Create(uint hits, uint baseOnBalls, uint hitByPitches, uint atBats,
+        uint sacrificeFlies)
+    {
+        return new OnBasePercentage(NaturalNumber.Create(hits), NaturalNumber.Create(baseOnBalls),
+            NaturalNumber.Create(hitByPitches), NaturalNumber.Create(atBats), NaturalNumber.Create(sacrificeFlies));
     }
 }

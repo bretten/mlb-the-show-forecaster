@@ -21,7 +21,7 @@ public class InningsCountTests
     }
 
     [Fact]
-    public void Value_WholeNumberInningsPitched_ReturnsValue()
+    public void Value_WholeNumberInningsPitched_ReturnsWholeNumber()
     {
         // Arrange
         const int inningsPitched = 2;
@@ -31,11 +31,11 @@ public class InningsCountTests
         var actual = ip.Value;
 
         // Assert
-        Assert.Equal(inningsPitched, actual);
+        Assert.Equal(2, actual);
     }
 
     [Fact]
-    public void Value_ZeroInningsPitched_ReturnsValue()
+    public void Value_ZeroInningsPitched_ReturnsZero()
     {
         // Arrange
         const decimal inningsPitched = 0.0m;
@@ -45,11 +45,11 @@ public class InningsCountTests
         var actual = ip.Value;
 
         // Assert
-        Assert.Equal(inningsPitched, actual);
+        Assert.Equal(0, actual);
     }
 
     [Fact]
-    public void Value_ShorthandPointOneInningsPitched_ReturnsValue()
+    public void Value_ShorthandPointOneInningsPitched_ReturnsOneThird()
     {
         // Arrange
         const decimal inningsPitched = 0.1m;
@@ -63,7 +63,7 @@ public class InningsCountTests
     }
 
     [Fact]
-    public void Value_ShorthandPointTwoInningsPitched_ReturnsValue()
+    public void Value_ShorthandPointTwoInningsPitched_ReturnsTwoThirds()
     {
         // Arrange
         const decimal inningsPitched = 0.2m;
@@ -77,7 +77,7 @@ public class InningsCountTests
     }
 
     [Fact]
-    public void Value_ShorthandOnePointOneInningsPitched_ReturnsValue()
+    public void Value_ShorthandOnePointOneInningsPitched_ReturnsOneAndOneThird()
     {
         // Arrange
         const decimal inningsPitched = 1.1m;
@@ -91,7 +91,7 @@ public class InningsCountTests
     }
 
     [Fact]
-    public void Value_ShorthandOnePointTwoInningsPitched_ReturnsValue()
+    public void Value_ShorthandOnePointTwoInningsPitched_ReturnsOneAndTwoThirds()
     {
         // Arrange
         const decimal inningsPitched = 1.2m;
@@ -105,7 +105,7 @@ public class InningsCountTests
     }
 
     [Fact]
-    public void Value_OneThirdInningsPitched_ReturnsValue()
+    public void Value_OneThirdInningsPitched_ReturnsOneThird()
     {
         // Arrange
         const decimal inningsPitched = (decimal)1 / 3;
@@ -119,7 +119,7 @@ public class InningsCountTests
     }
 
     [Fact]
-    public void Value_TwoThirdsInningsPitched_ReturnsValue()
+    public void Value_TwoThirdsInningsPitched_ReturnsTwoThirds()
     {
         // Arrange
         const decimal inningsPitched = (decimal)2 / 3;
@@ -133,7 +133,7 @@ public class InningsCountTests
     }
 
     [Fact]
-    public void Value_OneAndOneThirdInningsPitched_ReturnsValue()
+    public void Value_OneAndOneThirdInningsPitched_ReturnsOneAndOneThird()
     {
         // Arrange
         const decimal inningsPitched = 1 + (decimal)1 / 3;
@@ -147,7 +147,7 @@ public class InningsCountTests
     }
 
     [Fact]
-    public void Value_OneAndTwoThirdsInningsPitched_ReturnsValue()
+    public void Value_OneAndTwoThirdsInningsPitched_ReturnsOneAndTwoThirds()
     {
         // Arrange
         const decimal inningsPitched = 1 + (decimal)2 / 3;

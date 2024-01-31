@@ -23,14 +23,14 @@ public sealed class InningsCount : ValueObject
     };
 
     /// <summary>
-    /// The underlying value
+    /// The underlying innings pitched value
     /// </summary>
     public decimal Value { get; }
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="value">The underlying value</param>
+    /// <param name="value">The underlying innings pitched value</param>
     /// <exception cref="InvalidInningsCountDecimalException">Thrown if the partial innings is not valid</exception>
     private InningsCount(decimal value)
     {

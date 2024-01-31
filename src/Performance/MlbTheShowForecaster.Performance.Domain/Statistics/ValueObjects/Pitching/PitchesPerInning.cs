@@ -7,7 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.Valu
 /// Pitches per inning (P/IP)
 /// = NP / IP
 ///
-/// <para>The number of pitches per inning</para>
+/// <para>The average number of pitches per inning</para>
 /// </summary>
 public sealed class PitchesPerInning : CalculatedStat
 {

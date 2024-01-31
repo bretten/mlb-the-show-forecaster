@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class StrikeoutToWalkRatioTests
 {
     [Fact]
-    public void Value_PitchingStats_ReturnsCalculatedValue()
+    public void Value_StrikeoutsWalks_ReturnsCalculatedValue()
     {
         // Arrange
         const uint strikeouts = 167;
@@ -16,6 +16,8 @@ public class StrikeoutToWalkRatioTests
         var actual = strikeoutToWalkRatio.Value;
 
         // Assert
-        Assert.Equal(3.04m, Math.Round(actual, 2, MidpointRounding.AwayFromZero));
+        Assert.Equal(3.036m, actual);
+        Assert.Equal(167U, strikeoutToWalkRatio.Strikeouts.Value);
+        Assert.Equal(55U, strikeoutToWalkRatio.BaseOnBalls.Value);
     }
 }

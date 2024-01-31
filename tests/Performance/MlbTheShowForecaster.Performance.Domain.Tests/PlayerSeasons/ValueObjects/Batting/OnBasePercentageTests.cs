@@ -1,29 +1,29 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.ValueObjects.Batting;
 
 public class OnBasePercentageTests
 {
     [Fact]
-    public void Create_HitsWalksHitByPitchesAtBatsSacFlies_Created()
+    public void Value_HitsWalksHitByPitchesAtBatsSacFlies_ReturnsCalculatedValue()
     {
         // Arrange
-        var hits = NaturalNumber.Create(151);
-        var baseOnBalls = NaturalNumber.Create(91);
-        var hitByPitches = NaturalNumber.Create(3);
-        var atBats = NaturalNumber.Create(497);
-        var sacFlies = NaturalNumber.Create(3);
+        const uint hits = 151;
+        const uint baseOnBalls = 91;
+        const uint hitByPitches = 3;
+        const uint atBats = 497;
+        const uint sacrificeFlies = 3;
+        var onBasePercentage = OnBasePercentage.Create(hits, baseOnBalls, hitByPitches, atBats, sacrificeFlies);
 
         // Act
-        var actual = OnBasePercentage.Create(hits, baseOnBalls, hitByPitches, atBats, sacFlies);
+        var actual = onBasePercentage.Value;
 
         // Assert
-        Assert.Equal(0.412m, actual.AsRounded(3));
-        Assert.Equal(151U, actual.Hits.Value);
-        Assert.Equal(91U, actual.BaseOnBalls.Value);
-        Assert.Equal(3U, actual.HitByPitches.Value);
-        Assert.Equal(497U, actual.AtBats.Value);
-        Assert.Equal(3U, actual.SacrificeFlies.Value);
+        Assert.Equal(0.412m, actual);
+        Assert.Equal(151U, onBasePercentage.Hits.Value);
+        Assert.Equal(91U, onBasePercentage.BaseOnBalls.Value);
+        Assert.Equal(3U, onBasePercentage.HitByPitches.Value);
+        Assert.Equal(497U, onBasePercentage.AtBats.Value);
+        Assert.Equal(3U, onBasePercentage.SacrificeFlies.Value);
     }
 }

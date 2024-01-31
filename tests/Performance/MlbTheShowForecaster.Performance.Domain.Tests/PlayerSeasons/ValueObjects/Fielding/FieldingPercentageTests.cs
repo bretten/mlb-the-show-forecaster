@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class FieldingPercentageTests
 {
     [Fact]
-    public void Value_FieldingStats_ReturnsCalculatedValue()
+    public void Value_AssistsPutOutsErrors_ReturnsCalculatedValue()
     {
         // Arrange
         const uint assists = 276;
@@ -17,6 +17,9 @@ public class FieldingPercentageTests
         var actual = fieldingPercentage.Value;
 
         // Assert
-        Assert.Equal(0.981m, Math.Round(actual, 3, MidpointRounding.AwayFromZero));
+        Assert.Equal(0.981m, actual);
+        Assert.Equal(276U, fieldingPercentage.Assists.Value);
+        Assert.Equal(139U, fieldingPercentage.PutOuts.Value);
+        Assert.Equal(8U, fieldingPercentage.Errors.Value);
     }
 }

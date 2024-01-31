@@ -1,47 +1,48 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.ValueObjects.Batting;
 
 public class TotalBasesTests
 {
     [Fact]
-    public void Create_SinglesDoublesTriplesHomeRuns_Created()
+    public void Value_SinglesDoublesTriplesHomeRuns_ReturnsCalculatedValue()
     {
         // Arrange
-        var singles = NaturalNumber.Create(73);
-        var doubles = NaturalNumber.Create(26);
-        var triples = NaturalNumber.Create(8);
-        var homeRuns = NaturalNumber.Create(44);
+        const uint singles = 73;
+        const uint doubles = 26;
+        const uint triples = 8;
+        const uint homeRuns = 44;
+        var totalBases = TotalBases.Create(singles, doubles, triples, homeRuns);
 
         // Act
-        var actual = TotalBases.Create(singles, doubles, triples, homeRuns);
+        var actual = totalBases.Value;
 
         // Assert
-        Assert.Equal(325, actual.AsRounded(0));
-        Assert.Equal(73U, actual.Singles.Value);
-        Assert.Equal(26U, actual.Doubles.Value);
-        Assert.Equal(8U, actual.Triples.Value);
-        Assert.Equal(44U, actual.HomeRuns.Value);
+        Assert.Equal(325, actual);
+        Assert.Equal(73U, totalBases.Singles.Value);
+        Assert.Equal(26U, totalBases.Doubles.Value);
+        Assert.Equal(8U, totalBases.Triples.Value);
+        Assert.Equal(44U, totalBases.HomeRuns.Value);
     }
 
     [Fact]
-    public void Create_HitsDoublesTriplesHomeRuns_Created()
+    public void Value_HitsDoublesTriplesHomeRuns_ReturnsCalculatedValue()
     {
         // Arrange
-        var hits = NaturalNumber.Create(151);
-        var doubles = NaturalNumber.Create(26);
-        var triples = NaturalNumber.Create(8);
-        var homeRuns = NaturalNumber.Create(44);
+        const uint hits = 151;
+        const uint doubles = 26;
+        const uint triples = 8;
+        const uint homeRuns = 44;
+        var totalBases = TotalBases.CreateWithHits(hits, doubles, triples, homeRuns);
 
         // Act
-        var actual = TotalBases.CreateWithHits(hits, doubles, triples, homeRuns);
+        var actual = totalBases.Value;
 
         // Assert
-        Assert.Equal(325, actual.AsRounded(0));
-        Assert.Equal(73U, actual.Singles.Value);
-        Assert.Equal(26U, actual.Doubles.Value);
-        Assert.Equal(8U, actual.Triples.Value);
-        Assert.Equal(44U, actual.HomeRuns.Value);
+        Assert.Equal(325, actual);
+        Assert.Equal(73U, totalBases.Singles.Value);
+        Assert.Equal(26U, totalBases.Doubles.Value);
+        Assert.Equal(8U, totalBases.Triples.Value);
+        Assert.Equal(44U, totalBases.HomeRuns.Value);
     }
 }

@@ -5,17 +5,19 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class BaseOnBallsPerNineTests
 {
     [Fact]
-    public void Value_PitchingStats_ReturnsCalculatedValue()
+    public void Value_WalksInnings_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint strikeouts = 55;
+        const uint baseOnBalls = 55;
         const decimal inningsPitched = 132;
-        var baseOnBallsPerNine = BaseOnBallsPerNine.Create(strikeouts, inningsPitched);
+        var baseOnBallsPerNine = BaseOnBallsPerNine.Create(baseOnBalls, inningsPitched);
 
         // Act
         var actual = baseOnBallsPerNine.Value;
 
         // Assert
-        Assert.Equal(3.75m, Math.Round(actual, 2, MidpointRounding.AwayFromZero));
+        Assert.Equal(3.750m, actual);
+        Assert.Equal(55U, baseOnBallsPerNine.BaseOnBalls.Value);
+        Assert.Equal(132, baseOnBallsPerNine.InningsPitched.Value);
     }
 }

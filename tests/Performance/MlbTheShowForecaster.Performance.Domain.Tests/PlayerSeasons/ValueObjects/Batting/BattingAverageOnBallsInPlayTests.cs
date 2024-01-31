@@ -1,29 +1,30 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.ValueObjects.Batting;
 
 public class BattingAverageOnBallsInPlayTests
 {
     [Fact]
-    public void Create_HitsHomeRunsAtBatsStrikeOutSacFlies_Created()
+    public void Value_HitsHomeRunsAtBatsStrikeOutSacFlies_ReturnsCalculatedValue()
     {
         // Arrange
-        var hits = NaturalNumber.Create(151);
-        var homeRuns = NaturalNumber.Create(44);
-        var atBats = NaturalNumber.Create(497);
-        var strikeOuts = NaturalNumber.Create(143);
-        var sacFlies = NaturalNumber.Create(3);
+        const uint hits = 151;
+        const uint homeRuns = 44;
+        const uint atBats = 497;
+        const uint strikeOuts = 143;
+        const uint sacrificeFlies = 3;
+        var battingAverageOnBallsInPlay =
+            BattingAverageOnBallsInPlay.Create(hits, homeRuns, atBats, strikeOuts, sacrificeFlies);
 
         // Act
-        var actual = BattingAverageOnBallsInPlay.Create(hits, homeRuns, atBats, strikeOuts, sacFlies);
+        var actual = battingAverageOnBallsInPlay.Value;
 
         // Assert
-        Assert.Equal(0.342m, actual.AsRounded(3));
-        Assert.Equal(151U, actual.Hits.Value);
-        Assert.Equal(44U, actual.HomeRuns.Value);
-        Assert.Equal(497U, actual.AtBats.Value);
-        Assert.Equal(143U, actual.StrikeOuts.Value);
-        Assert.Equal(3U, actual.SacrificeFlies.Value);
+        Assert.Equal(0.342m, actual);
+        Assert.Equal(151U, battingAverageOnBallsInPlay.Hits.Value);
+        Assert.Equal(44U, battingAverageOnBallsInPlay.HomeRuns.Value);
+        Assert.Equal(497U, battingAverageOnBallsInPlay.AtBats.Value);
+        Assert.Equal(143U, battingAverageOnBallsInPlay.StrikeOuts.Value);
+        Assert.Equal(3U, battingAverageOnBallsInPlay.SacrificeFlies.Value);
     }
 }

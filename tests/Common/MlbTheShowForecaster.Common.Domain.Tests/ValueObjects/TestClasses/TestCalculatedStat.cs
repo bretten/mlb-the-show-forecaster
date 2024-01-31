@@ -25,6 +25,8 @@ public sealed class TestCalculatedStat : CalculatedStat
         return new TestCalculatedStat(component1, component2, component3);
     }
 
+    protected override int FractionalDigitCount => 2;
+
     protected override decimal Calculate()
     {
         return ((decimal)Component1 / Component2) + Component3;

@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class OpponentsBattingAverageTests
 {
     [Fact]
-    public void Value_ObaStats_ReturnsCalculatedValue()
+    public void Value_HitsBattersWalksSacrificesInterferences_ReturnsCalculatedValue()
     {
         // Arrange
         const uint hits = 85;
@@ -15,19 +15,20 @@ public class OpponentsBattingAverageTests
         const uint sacrificeHits = 0;
         const uint sacrificeFlies = 1;
         const uint catchersInterferences = 1;
-
-        // Act
-        var actual = OpponentsBattingAverage.Create(hits, battersFaced, baseOnBalls, hitBatsmen,
+        var opponentsBattingAverage = OpponentsBattingAverage.Create(hits, battersFaced, baseOnBalls, hitBatsmen,
             sacrificeHits, sacrificeFlies, catchersInterferences);
 
+        // Act
+        var actual = opponentsBattingAverage.Value;
+
         // Assert
-        Assert.Equal(0.184m, actual.AsRounded(3));
-        Assert.Equal(hits, actual.Hits.Value);
-        Assert.Equal(battersFaced, actual.BattersFaced.Value);
-        Assert.Equal(baseOnBalls, actual.BaseOnBalls.Value);
-        Assert.Equal(hitBatsmen, actual.HitBatsmen.Value);
-        Assert.Equal(sacrificeHits, actual.SacrificeHits.Value);
-        Assert.Equal(sacrificeFlies, actual.SacrificeFlies.Value);
-        Assert.Equal(catchersInterferences, actual.CatchersInterferences.Value);
+        Assert.Equal(0.184m, actual);
+        Assert.Equal(hits, opponentsBattingAverage.Hits.Value);
+        Assert.Equal(battersFaced, opponentsBattingAverage.BattersFaced.Value);
+        Assert.Equal(baseOnBalls, opponentsBattingAverage.BaseOnBalls.Value);
+        Assert.Equal(hitBatsmen, opponentsBattingAverage.HitBatsmen.Value);
+        Assert.Equal(sacrificeHits, opponentsBattingAverage.SacrificeHits.Value);
+        Assert.Equal(sacrificeFlies, opponentsBattingAverage.SacrificeFlies.Value);
+        Assert.Equal(catchersInterferences, opponentsBattingAverage.CatchersInterferences.Value);
     }
 }

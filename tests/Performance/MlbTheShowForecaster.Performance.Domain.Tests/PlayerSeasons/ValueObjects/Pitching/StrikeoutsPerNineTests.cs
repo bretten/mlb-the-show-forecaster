@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class StrikeoutsPerNineTests
 {
     [Fact]
-    public void Value_PitchingStats_ReturnsCalculatedValue()
+    public void Value_StrikeoutsInnings_ReturnsCalculatedValue()
     {
         // Arrange
         const uint strikeouts = 167;
@@ -16,6 +16,8 @@ public class StrikeoutsPerNineTests
         var actual = strikeoutsPerNine.Value;
 
         // Assert
-        Assert.Equal(11.39m, Math.Round(actual, 2, MidpointRounding.AwayFromZero));
+        Assert.Equal(11.386m, actual);
+        Assert.Equal(167U, strikeoutsPerNine.Strikeouts.Value);
+        Assert.Equal(132, strikeoutsPerNine.InningsPitched.Value);
     }
 }

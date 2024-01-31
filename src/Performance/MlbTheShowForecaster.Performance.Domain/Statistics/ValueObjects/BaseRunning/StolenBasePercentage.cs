@@ -33,22 +33,22 @@ public sealed class StolenBasePercentage : CalculatedStat
     }
 
     /// <summary>
-    /// Creates <see cref="StolenBasePercentage"/>
-    /// </summary>
-    /// <param name="stolenBases">The number of stolen bases</param>
-    /// <param name="caughtStealing">The number of times caught stealing</param>
-    /// <returns><see cref="StolenBasePercentage"/></returns>
-    public static StolenBasePercentage Create(NaturalNumber stolenBases, NaturalNumber caughtStealing)
-    {
-        return new StolenBasePercentage(stolenBases, caughtStealing);
-    }
-
-    /// <summary>
     /// Calculates stolen base percentage
     /// </summary>
     /// <returns>Stolen base percentage</returns>
     protected override decimal Calculate()
     {
         return (decimal)StolenBases.Value / (StolenBases.Value + CaughtStealing.Value);
+    }
+
+    /// <summary>
+    /// Creates <see cref="StolenBasePercentage"/>
+    /// </summary>
+    /// <param name="stolenBases">The number of stolen bases</param>
+    /// <param name="caughtStealing">The number of times caught stealing</param>
+    /// <returns><see cref="StolenBasePercentage"/></returns>
+    public static StolenBasePercentage Create(uint stolenBases, uint caughtStealing)
+    {
+        return new StolenBasePercentage(NaturalNumber.Create(stolenBases), NaturalNumber.Create(caughtStealing));
     }
 }

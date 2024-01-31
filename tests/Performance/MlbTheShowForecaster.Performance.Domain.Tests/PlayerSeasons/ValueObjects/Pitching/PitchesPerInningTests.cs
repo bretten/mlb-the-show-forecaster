@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class PitchesPerInningTests
 {
     [Fact]
-    public void Value_PitchingStats_ReturnsCalculatedValue()
+    public void Value_PitchesInnings_ReturnsCalculatedValue()
     {
         // Arrange
         const uint numberOfPitches = 1993;
@@ -16,6 +16,8 @@ public class PitchesPerInningTests
         var actual = pitchesPerInning.Value;
 
         // Assert
-        Assert.Equal(16.94m, Math.Round(actual, 2, MidpointRounding.AwayFromZero));
+        Assert.Equal(16.938m, actual);
+        Assert.Equal(1993U, pitchesPerInning.NumberOfPitches.Value);
+        Assert.Equal(117.667m, pitchesPerInning.InningsPitched.Value);
     }
 }

@@ -14,17 +14,17 @@ public sealed class RangeFactorPerNine : CalculatedStat
     /// <summary>
     /// The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout
     /// </summary>
-    public NaturalNumber Assists { get; private set; }
+    public NaturalNumber Assists { get; }
 
     /// <summary>
     /// The number of times the fielder tags, forces, or appeals a runner and they are called out
     /// </summary>
-    public NaturalNumber PutOuts { get; private set; }
+    public NaturalNumber PutOuts { get; }
 
     /// <summary>
     /// The number of innings this player fielded at this position
     /// </summary>
-    public InningsCount Innings { get; private set; }
+    public InningsCount Innings { get; }
 
     /// <summary>
     /// Constructor

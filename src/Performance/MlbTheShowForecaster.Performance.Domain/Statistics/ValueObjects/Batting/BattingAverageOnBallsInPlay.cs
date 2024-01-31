@@ -21,7 +21,7 @@ public sealed class BattingAverageOnBallsInPlay : CalculatedStat
     public NaturalNumber HomeRuns { get; }
 
     /// <summary>
-    /// The number of at-ats
+    /// The number of at-bats
     /// </summary>
     public NaturalNumber AtBats { get; }
 
@@ -34,7 +34,6 @@ public sealed class BattingAverageOnBallsInPlay : CalculatedStat
     /// The number of sacrifice flies
     /// </summary>
     public NaturalNumber SacrificeFlies { get; }
-
 
     /// <summary>
     /// Constructor
@@ -55,21 +54,6 @@ public sealed class BattingAverageOnBallsInPlay : CalculatedStat
     }
 
     /// <summary>
-    /// Creates <see cref="BattingAverageOnBallsInPlay"/>
-    /// </summary>
-    /// <param name="hits">The number of hits</param>
-    /// <param name="homeRuns">The number of home runs</param>
-    /// <param name="atBats">The number of at-bats</param>
-    /// <param name="strikeOuts">The number of strikeouts</param>
-    /// <param name="sacrificeFlies">The number of sacrifice flies</param>
-    /// <returns><see cref="BattingAverageOnBallsInPlay"/></returns>
-    public static BattingAverageOnBallsInPlay Create(NaturalNumber hits, NaturalNumber homeRuns, NaturalNumber atBats,
-        NaturalNumber strikeOuts, NaturalNumber sacrificeFlies)
-    {
-        return new BattingAverageOnBallsInPlay(hits, homeRuns, atBats, strikeOuts, sacrificeFlies);
-    }
-
-    /// <summary>
     /// Calculates batting average on balls in play
     /// </summary>
     /// <returns>Batting average on balls in play</returns>
@@ -78,5 +62,21 @@ public sealed class BattingAverageOnBallsInPlay : CalculatedStat
         var n = Hits.Value - HomeRuns.Value;
         var d = AtBats.Value - StrikeOuts.Value - HomeRuns.Value + SacrificeFlies.Value;
         return (decimal)n / d;
+    }
+
+    /// <summary>
+    /// Creates <see cref="BattingAverageOnBallsInPlay"/>
+    /// </summary>
+    /// <param name="hits">The number of hits</param>
+    /// <param name="homeRuns">The number of home runs</param>
+    /// <param name="atBats">The number of at-bats</param>
+    /// <param name="strikeOuts">The number of strikeouts</param>
+    /// <param name="sacrificeFlies">The number of sacrifice flies</param>
+    /// <returns><see cref="BattingAverageOnBallsInPlay"/></returns>
+    public static BattingAverageOnBallsInPlay Create(uint hits, uint homeRuns, uint atBats, uint strikeOuts,
+        uint sacrificeFlies)
+    {
+        return new BattingAverageOnBallsInPlay(NaturalNumber.Create(hits), NaturalNumber.Create(homeRuns),
+            NaturalNumber.Create(atBats), NaturalNumber.Create(strikeOuts), NaturalNumber.Create(sacrificeFlies));
     }
 }

@@ -16,7 +16,7 @@ public sealed class StrikeoutToWalkRatio : CalculatedStat
     public NaturalNumber Strikeouts { get; }
 
     /// <summary>
-    /// The number of base on balls
+    /// The number of walks
     /// </summary>
     public NaturalNumber BaseOnBalls { get; }
 
@@ -24,7 +24,7 @@ public sealed class StrikeoutToWalkRatio : CalculatedStat
     /// Constructor
     /// </summary>
     /// <param name="strikeouts">The number of strikeouts</param>
-    /// <param name="baseOnBalls">The number of base on balls</param>
+    /// <param name="baseOnBalls">The number of walks</param>
     private StrikeoutToWalkRatio(NaturalNumber strikeouts, NaturalNumber baseOnBalls)
     {
         Strikeouts = strikeouts;

@@ -22,7 +22,7 @@ public abstract class CalculatedStat : ValueObject
         {
             if (!_value.HasValue)
             {
-                _value = Calculate();
+                _value = Math.Round(Calculate(), FractionalDigitCount, MidpointRounding.AwayFromZero);
             }
 
             return _value.Value;
@@ -30,14 +30,9 @@ public abstract class CalculatedStat : ValueObject
     }
 
     /// <summary>
-    /// Returns the value rounded to the specified number of decimals
+    /// The number of fractional digits to round the decimal value to
     /// </summary>
-    /// <param name="decimals">The number of decimals in the return value</param>
-    /// <returns>The rounded value</returns>
-    public decimal AsRounded(int decimals = 3)
-    {
-        return Math.Round(Value, decimals, MidpointRounding.AwayFromZero);
-    }
+    protected virtual int FractionalDigitCount => 3;
 
     /// <summary>
     /// Calculates the stat

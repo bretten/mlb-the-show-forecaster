@@ -13,17 +13,17 @@ public sealed class TotalChances : CalculatedStat
     /// <summary>
     /// The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout
     /// </summary>
-    public NaturalNumber Assists { get; private set; }
+    public NaturalNumber Assists { get; }
 
     /// <summary>
     /// The number of times the fielder tags, forces, or appeals a runner and they are called out
     /// </summary>
-    public NaturalNumber PutOuts { get; private set; }
+    public NaturalNumber PutOuts { get; }
 
     /// <summary>
     /// The number of times a fielder fails to make a play that is considered to be doable with common effort
     /// </summary>
-    public NaturalNumber Errors { get; private set; }
+    public NaturalNumber Errors { get; }
 
     /// <summary>
     /// Constructor
@@ -37,6 +37,11 @@ public sealed class TotalChances : CalculatedStat
         PutOuts = putOuts;
         Errors = errors;
     }
+
+    /// <summary>
+    /// The number of fractional digits to round the decimal value to
+    /// </summary>
+    protected override int FractionalDigitCount => 0;
 
     /// <summary>
     /// Calculates total chances

@@ -33,6 +33,15 @@ public sealed class OnBasePlusSlugging : CalculatedStat
     }
 
     /// <summary>
+    /// Calculates on-base plus slugging
+    /// </summary>
+    /// <returns>On-base plus slugging</returns>
+    protected override decimal Calculate()
+    {
+        return OnBasePercentage.Value + Slugging.Value;
+    }
+
+    /// <summary>
     /// Creates <see cref="OnBasePlusSlugging"/>
     /// </summary>
     /// <param name="onBasePercentage">On-base percentage</param>
@@ -41,14 +50,5 @@ public sealed class OnBasePlusSlugging : CalculatedStat
     public static OnBasePlusSlugging Create(OnBasePercentage onBasePercentage, Slugging slugging)
     {
         return new OnBasePlusSlugging(onBasePercentage, slugging);
-    }
-
-    /// <summary>
-    /// Calculates on-base plus slugging
-    /// </summary>
-    /// <returns>On-base plus slugging</returns>
-    protected override decimal Calculate()
-    {
-        return OnBasePercentage.Value + Slugging.Value;
     }
 }

@@ -3,7 +3,7 @@
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 
 /// <summary>
-/// Total bases
+/// Total bases (TB)
 /// = (1 x 1B) + (2 x 2B) + (3 x 3B) + (4 x HR)
 /// = (1 x [H - 2B - 3B - HR]) + (2 x 2B) + (3 x 3B) + (4 x HR)
 /// = H + 2B + (2 x 3B) + (3 x HR)
@@ -48,6 +48,20 @@ public sealed class TotalBases : CalculatedStat
     }
 
     /// <summary>
+    /// The number of fractional digits to round the decimal value to
+    /// </summary>
+    protected override int FractionalDigitCount => 0;
+
+    /// <summary>
+    /// Calculates total bases
+    /// </summary>
+    /// <returns>Total bases</returns>
+    protected override decimal Calculate()
+    {
+        return Singles.Value + (2 * Doubles.Value) + (3 * Triples.Value) + (4 * HomeRuns.Value);
+    }
+
+    /// <summary>
     /// Creates <see cref="TotalBases"/>
     /// </summary>
     /// <param name="singles">The number of singles</param>
@@ -55,10 +69,10 @@ public sealed class TotalBases : CalculatedStat
     /// <param name="triples">The number of triples</param>
     /// <param name="homeRuns">The number of home runs</param>
     /// <returns><see cref="TotalBases"/></returns>
-    public static TotalBases Create(NaturalNumber singles, NaturalNumber doubles, NaturalNumber triples,
-        NaturalNumber homeRuns)
+    public static TotalBases Create(uint singles, uint doubles, uint triples, uint homeRuns)
     {
-        return new TotalBases(singles, doubles, triples, homeRuns);
+        return new TotalBases(NaturalNumber.Create(singles), NaturalNumber.Create(doubles),
+            NaturalNumber.Create(triples), NaturalNumber.Create(homeRuns));
     }
 
     /// <summary>
@@ -69,19 +83,10 @@ public sealed class TotalBases : CalculatedStat
     /// <param name="triples">The number of triples</param>
     /// <param name="homeRuns">The number of home runs</param>
     /// <returns><see cref="TotalBases"/></returns>
-    public static TotalBases CreateWithHits(NaturalNumber hits, NaturalNumber doubles, NaturalNumber triples,
-        NaturalNumber homeRuns)
+    public static TotalBases CreateWithHits(uint hits, uint doubles, uint triples, uint homeRuns)
     {
-        var singles = hits.Value - doubles.Value - triples.Value - homeRuns.Value;
-        return new TotalBases(NaturalNumber.Create(singles), doubles, triples, homeRuns);
-    }
-
-    /// <summary>
-    /// Calculates total bases
-    /// </summary>
-    /// <returns>Total bases</returns>
-    protected override decimal Calculate()
-    {
-        return Singles.Value + (2 * Doubles.Value) + (3 * Triples.Value) + (4 * HomeRuns.Value);
+        var singles = hits - doubles - triples - homeRuns;
+        return new TotalBases(NaturalNumber.Create(singles), NaturalNumber.Create(doubles),
+            NaturalNumber.Create(triples), NaturalNumber.Create(homeRuns));
     }
 }

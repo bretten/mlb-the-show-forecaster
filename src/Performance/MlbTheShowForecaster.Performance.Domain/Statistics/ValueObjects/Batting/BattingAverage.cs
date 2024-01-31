@@ -16,7 +16,7 @@ public sealed class BattingAverage : CalculatedStat
     public NaturalNumber Hits { get; }
 
     /// <summary>
-    /// The number of at-ats
+    /// The number of at-bats
     /// </summary>
     public NaturalNumber AtBats { get; }
 
@@ -24,22 +24,11 @@ public sealed class BattingAverage : CalculatedStat
     /// Constructor
     /// </summary>
     /// <param name="hits">Number of hits</param>
-    /// <param name="atBats">Number of at- bats</param>
+    /// <param name="atBats">Number of at-bats</param>
     private BattingAverage(NaturalNumber hits, NaturalNumber atBats)
     {
         Hits = hits;
         AtBats = atBats;
-    }
-
-    /// <summary>
-    /// Creates <see cref="BattingAverage"/>
-    /// </summary>
-    /// <param name="hits">The number of hits</param>
-    /// <param name="atBats">The number of at-bats</param>
-    /// <returns><see cref="BattingAverage"/></returns>
-    public static BattingAverage Create(NaturalNumber hits, NaturalNumber atBats)
-    {
-        return new BattingAverage(hits, atBats);
     }
 
     /// <summary>
@@ -49,5 +38,16 @@ public sealed class BattingAverage : CalculatedStat
     protected override decimal Calculate()
     {
         return (decimal)Hits.Value / AtBats.Value;
+    }
+
+    /// <summary>
+    /// Creates <see cref="BattingAverage"/>
+    /// </summary>
+    /// <param name="hits">The number of hits</param>
+    /// <param name="atBats">The number of at-bats</param>
+    /// <returns><see cref="BattingAverage"/></returns>
+    public static BattingAverage Create(uint hits, uint atBats)
+    {
+        return new BattingAverage(NaturalNumber.Create(hits), NaturalNumber.Create(atBats));
     }
 }

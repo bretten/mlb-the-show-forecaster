@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class TotalChancesTests
 {
     [Fact]
-    public void Value_FieldingStats_ReturnsCalculatedValue()
+    public void Value_AssistsPutOutsErrors_ReturnsCalculatedValue()
     {
         // Arrange
         const uint assists = 276;
@@ -17,6 +17,9 @@ public class TotalChancesTests
         var actual = totalChances.Value;
 
         // Assert
-        Assert.Equal(423, Math.Round(actual, 0, MidpointRounding.AwayFromZero));
+        Assert.Equal(423, actual);
+        Assert.Equal(276U, totalChances.Assists.Value);
+        Assert.Equal(139U, totalChances.PutOuts.Value);
+        Assert.Equal(8U, totalChances.Errors.Value);
     }
 }

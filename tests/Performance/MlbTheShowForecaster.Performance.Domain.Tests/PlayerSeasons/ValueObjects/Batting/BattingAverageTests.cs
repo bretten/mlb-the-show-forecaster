@@ -1,23 +1,23 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.ValueObjects.Batting;
 
 public class BattingAverageTests
 {
     [Fact]
-    public void Create_HitsAndAtBats_Created()
+    public void Value_HitsAndAtBats_ReturnsCalculatedValue()
     {
         // Arrange
-        var hits = NaturalNumber.Create(151);
-        var atBats = NaturalNumber.Create(497);
+        const uint hits = 151;
+        const uint atBats = 497;
+        var battingAverage = BattingAverage.Create(hits, atBats);
 
         // Act
-        var actual = BattingAverage.Create(hits, atBats);
+        var actual = battingAverage.Value;
 
         // Assert
-        Assert.Equal(0.304m, actual.AsRounded(3));
-        Assert.Equal(151U, actual.Hits.Value);
-        Assert.Equal(497U, actual.AtBats.Value);
+        Assert.Equal(0.304m, actual);
+        Assert.Equal(151U, battingAverage.Hits.Value);
+        Assert.Equal(497U, battingAverage.AtBats.Value);
     }
 }

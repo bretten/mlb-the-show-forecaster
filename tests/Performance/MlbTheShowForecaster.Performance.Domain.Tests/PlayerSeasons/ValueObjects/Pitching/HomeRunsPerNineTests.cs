@@ -5,17 +5,19 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class HomeRunsPerNineTests
 {
     [Fact]
-    public void Value_PitchingStats_ReturnsCalculatedValue()
+    public void Value_HomeRunsInnings_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint strikeouts = 18;
+        const uint homeRunsAllowed = 18;
         const decimal inningsPitched = 132;
-        var homeRunsPerNine = HomeRunsPerNine.Create(strikeouts, inningsPitched);
+        var homeRunsPerNine = HomeRunsPerNine.Create(homeRunsAllowed, inningsPitched);
 
         // Act
         var actual = homeRunsPerNine.Value;
 
         // Assert
-        Assert.Equal(1.23m, Math.Round(actual, 2, MidpointRounding.AwayFromZero));
+        Assert.Equal(1.227m, actual);
+        Assert.Equal(18U, homeRunsPerNine.HomeRunsAllowed.Value);
+        Assert.Equal(132, homeRunsPerNine.InningsPitched.Value);
     }
 }

@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.Valu
 
 /// <summary>
 /// Strikeouts per 9 innings pitched (K/9 or SO/9)
-/// = 9 * (K/IP)
+/// = 9 * (K / IP)
 ///
 /// <para>The average number of strikeouts per 9 innings pitched</para>
 /// </summary>

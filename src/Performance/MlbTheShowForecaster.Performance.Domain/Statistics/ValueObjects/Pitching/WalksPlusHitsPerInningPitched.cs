@@ -55,10 +55,9 @@ public sealed class WalksPlusHitsPerInningPitched : CalculatedStat
     /// <param name="hits">The number of hits</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <returns><see cref="WalksPlusHitsPerInningPitched"/></returns>
-    public static WalksPlusHitsPerInningPitched Create(uint baseOnBalls, uint hits, uint inningsPitched)
+    public static WalksPlusHitsPerInningPitched Create(uint baseOnBalls, uint hits, decimal inningsPitched)
     {
-        return new WalksPlusHitsPerInningPitched(NaturalNumber.Create(baseOnBalls),
-            NaturalNumber.Create(hits),
+        return new WalksPlusHitsPerInningPitched(NaturalNumber.Create(baseOnBalls), NaturalNumber.Create(hits),
             InningsCount.Create(inningsPitched));
     }
 }

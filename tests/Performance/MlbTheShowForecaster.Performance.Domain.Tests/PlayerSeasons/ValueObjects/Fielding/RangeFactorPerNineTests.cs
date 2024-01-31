@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class RangeFactorPerNineTests
 {
     [Fact]
-    public void Value_FieldingStats_ReturnsCalculatedValue()
+    public void Value_AssistsPutOutsInnings_ReturnsCalculatedValue()
     {
         // Arrange
         const uint assists = 276;
@@ -17,6 +17,9 @@ public class RangeFactorPerNineTests
         var actual = rangeFactorPerNine.Value;
 
         // Assert
-        Assert.Equal(3.92m, Math.Round(actual, 2, MidpointRounding.AwayFromZero));
+        Assert.Equal(3.925m, actual);
+        Assert.Equal(276U, rangeFactorPerNine.Assists.Value);
+        Assert.Equal(139U, rangeFactorPerNine.PutOuts.Value);
+        Assert.Equal(951.667m, rangeFactorPerNine.Innings.Value);
     }
 }

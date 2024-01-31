@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class RunsScoredPerNineTests
 {
     [Fact]
-    public void Value_PitchingStats_ReturnsCalculatedValue()
+    public void Value_RunsInnings_ReturnsCalculatedValue()
     {
         // Arrange
         const uint runsAllowed = 50;
@@ -16,6 +16,8 @@ public class RunsScoredPerNineTests
         var actual = runsScoredPerNine.Value;
 
         // Assert
-        Assert.Equal(3.41m, Math.Round(actual, 2, MidpointRounding.AwayFromZero));
+        Assert.Equal(3.409m, actual);
+        Assert.Equal(50U, runsScoredPerNine.RunsAllowed.Value);
+        Assert.Equal(132, runsScoredPerNine.InningsPitched.Value);
     }
 }

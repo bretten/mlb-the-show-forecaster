@@ -33,22 +33,22 @@ public sealed class Slugging : CalculatedStat
     }
 
     /// <summary>
-    /// Creates <see cref="Slugging"/>
-    /// </summary>
-    /// <param name="totalBases">Total bases</param>
-    /// <param name="atBats">The number of at-bats</param>
-    /// <returns><see cref="Slugging"/></returns>
-    public static Slugging Create(TotalBases totalBases, NaturalNumber atBats)
-    {
-        return new Slugging(totalBases, atBats);
-    }
-
-    /// <summary>
     /// Calculates slugging
     /// </summary>
     /// <returns>Slugging</returns>
     protected override decimal Calculate()
     {
         return TotalBases.Value / AtBats.Value;
+    }
+
+    /// <summary>
+    /// Creates <see cref="Slugging"/>
+    /// </summary>
+    /// <param name="totalBases">Total bases</param>
+    /// <param name="atBats">The number of at-bats</param>
+    /// <returns><see cref="Slugging"/></returns>
+    public static Slugging Create(TotalBases totalBases, uint atBats)
+    {
+        return new Slugging(totalBases, NaturalNumber.Create(atBats));
     }
 }

@@ -5,12 +5,14 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObj
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
 
 /// <summary>
-/// A game where a pitcher completes at least 6 innings and has no more than 3 earned runs
+/// Quality start (QS)
+///
+/// <para>A game where a pitcher completes at least 6 innings and has no more than 3 earned runs</para>
 /// </summary>
 public sealed class QualityStart : ValueObject
 {
     /// <summary>
-    /// The underlying value
+    /// True if it was a quality start, otherwise false
     /// </summary>
     public bool Value => InningsPitched.Value >= 6 && EarnedRuns.Value <= 3;
 
@@ -41,8 +43,8 @@ public sealed class QualityStart : ValueObject
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <param name="earnedRuns">The number of earned runs</param>
     /// <returns><see cref="QualityStart"/></returns>
-    public static QualityStart Create(InningsCount inningsPitched, NaturalNumber earnedRuns)
+    public static QualityStart Create(decimal inningsPitched, uint earnedRuns)
     {
-        return new QualityStart(inningsPitched, earnedRuns);
+        return new QualityStart(InningsCount.Create(inningsPitched), NaturalNumber.Create(earnedRuns));
     }
 }

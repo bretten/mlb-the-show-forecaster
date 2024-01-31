@@ -5,7 +5,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class StrikePercentageTests
 {
     [Fact]
-    public void Value_PitchingStats_ReturnsValue()
+    public void Value_StrikesPitches_ReturnsValue()
     {
         // Arrange
         const uint strikes = 1337;
@@ -16,6 +16,8 @@ public class StrikePercentageTests
         var actual = strikePercentage.Value;
 
         // Assert
-        Assert.Equal(0.638m, Math.Round(actual, 3, MidpointRounding.AwayFromZero));
+        Assert.Equal(0.638m, actual);
+        Assert.Equal(1337U, strikePercentage.Strikes.Value);
+        Assert.Equal(2094U, strikePercentage.NumberOfPitches.Value);
     }
 }

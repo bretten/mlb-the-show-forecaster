@@ -1,7 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.BaseRunning;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 
@@ -148,6 +146,7 @@ public sealed class PlayerBattingStatsByGame : Entity
     /// </summary>
     public NaturalNumber CatchersInterference { get; private set; }
 
+/*
     /// <summary>
     /// Batting average
     /// </summary>
@@ -175,7 +174,7 @@ public sealed class PlayerBattingStatsByGame : Entity
     public OnBasePlusSlugging OnBasePlusSlugging => OnBasePlusSlugging.Create(OnBasePercentage, Slugging);
 
     /// <summary>
-    /// Stolen base percentage 
+    /// Stolen base percentage
     /// </summary>
     public StolenBasePercentage StolenBasePercentage => StolenBasePercentage.Create(StolenBases, CaughtStealing);
 
@@ -184,7 +183,7 @@ public sealed class PlayerBattingStatsByGame : Entity
     /// </summary>
     public BattingAverageOnBallsInPlay BattingAverageOnBallsInPlay =>
         BattingAverageOnBallsInPlay.Create(Hits, HomeRuns, AtBats, StrikeOuts, SacrificeFlies);
-
+*/
     private PlayerBattingStatsByGame(MlbId mlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
         MlbId teamId, NaturalNumber plateAppearances, NaturalNumber atBats, NaturalNumber runs, NaturalNumber hits,
         NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runsBattedIn,
