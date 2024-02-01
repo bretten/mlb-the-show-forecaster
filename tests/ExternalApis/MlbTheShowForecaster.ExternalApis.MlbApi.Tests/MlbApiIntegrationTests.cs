@@ -32,8 +32,7 @@ public class MlbApiIntegrationTests
         // Assert
         Assert.NotNull(actual.Players);
         Assert.Equal(1457, actual.Players?.Count);
-        var actualPlayer = actual.Players![1094];
-        Assert.Equal(677594, actualPlayer.Id);
+        var actualPlayer = actual.Players!.First(x => x.Id == 677594);
         Assert.Equal("Julio", actualPlayer.FirstName);
         Assert.Equal("Rodríguez", actualPlayer.LastName);
         Assert.Equal(new DateTime(2000, 12, 29), actualPlayer.Birthdate);
