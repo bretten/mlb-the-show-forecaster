@@ -121,8 +121,7 @@ public sealed class PlayerBattingStatsByGame : ValueObject
     public NaturalNumber NumberOfPitchesSeen { get; }
 
     /// <summary>
-    /// The number of runners the player did not advance when batting and
-    /// their out results in the end of the inning
+    /// The number of runners the player did not advance when batting and their out results in the end of the inning
     /// </summary>
     public NaturalNumber LeftOnBase { get; }
 
@@ -202,6 +201,37 @@ public sealed class PlayerBattingStatsByGame : ValueObject
         yield return GameId.Value;
     }
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="seasonYear">The season</param>
+    /// <param name="gameDate">The date of the game</param>
+    /// <param name="gameId">The MLB ID of the game</param>
+    /// <param name="teamId">The MLB ID of the team</param>
+    /// <param name="plateAppearances">The number of plate appearances</param>
+    /// <param name="atBats">The number of at bats</param>
+    /// <param name="runs">The number of runs scored</param>
+    /// <param name="hits">The number of hits</param>
+    /// <param name="doubles">The number of doubles</param>
+    /// <param name="triples">The number of triples</param>
+    /// <param name="homeRuns">The number of home runs</param>
+    /// <param name="runsBattedIn">The number of runs batted in</param>
+    /// <param name="baseOnBalls">The number of walks</param>
+    /// <param name="intentionalWalks">The number of intentional walks</param>
+    /// <param name="strikeouts">The number of strikeouts</param>
+    /// <param name="stolenBases">The number of stolen bases</param>
+    /// <param name="caughtStealing">The number of times caught stealing</param>
+    /// <param name="hitByPitch">The number of times the player was hit by a pitch</param>
+    /// <param name="sacrificeBunts">The number of sacrifice bunts</param>
+    /// <param name="sacrificeFlies">The number of sacrifice flies</param>
+    /// <param name="numberOfPitchesSeen">The number of pitches the player saw as a batter</param>
+    /// <param name="leftOnBase">The number of runners the player did not advance when batting and their out results in the end of the inning</param>
+    /// <param name="groundOuts">The number of times the batter grounded out</param>
+    /// <param name="groundIntoDoublePlays">The number of times the batter grounded into a double play</param>
+    /// <param name="groundIntoTriplePlays">The number of times the batter grounded into a triple play</param>
+    /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
+    /// <param name="catchersInterference">The number of times a catcher interfered with the batter's plate appearance</param>
     private PlayerBattingStatsByGame(MlbId playerId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
         MlbId teamId, NaturalNumber plateAppearances, NaturalNumber atBats, NaturalNumber runs, NaturalNumber hits,
         NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runsBattedIn,
@@ -241,6 +271,38 @@ public sealed class PlayerBattingStatsByGame : ValueObject
         CatchersInterference = catchersInterference;
     }
 
+    /// <summary>
+    /// Creates <see cref="PlayerBattingStatsByGame"/>
+    /// </summary>
+    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="seasonYear">The season</param>
+    /// <param name="gameDate">The date of the game</param>
+    /// <param name="gameId">The MLB ID of the game</param>
+    /// <param name="teamId">The MLB ID of the team</param>
+    /// <param name="plateAppearances">The number of plate appearances</param>
+    /// <param name="atBats">The number of at bats</param>
+    /// <param name="runs">The number of runs scored</param>
+    /// <param name="hits">The number of hits</param>
+    /// <param name="doubles">The number of doubles</param>
+    /// <param name="triples">The number of triples</param>
+    /// <param name="homeRuns">The number of home runs</param>
+    /// <param name="runsBattedIn">The number of runs batted in</param>
+    /// <param name="baseOnBalls">The number of walks</param>
+    /// <param name="intentionalWalks">The number of intentional walks</param>
+    /// <param name="strikeouts">The number of strikeouts</param>
+    /// <param name="stolenBases">The number of stolen bases</param>
+    /// <param name="caughtStealing">The number of times caught stealing</param>
+    /// <param name="hitByPitch">The number of times the player was hit by a pitch</param>
+    /// <param name="sacrificeBunts">The number of sacrifice bunts</param>
+    /// <param name="sacrificeFlies">The number of sacrifice flies</param>
+    /// <param name="numberOfPitchesSeen">The number of pitches the player saw as a batter</param>
+    /// <param name="leftOnBase">The number of runners the player did not advance when batting and their out results in the end of the inning</param>
+    /// <param name="groundOuts">The number of times the batter grounded out</param>
+    /// <param name="groundIntoDoublePlays">The number of times the batter grounded into a double play</param>
+    /// <param name="groundIntoTriplePlays">The number of times the batter grounded into a triple play</param>
+    /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
+    /// <param name="catchersInterference">The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <returns><see cref="PlayerBattingStatsByGame"/></returns>
     public static PlayerBattingStatsByGame Create(MlbId playerId, SeasonYear seasonYear, DateTime gameDate,
         MlbId gameId,
         MlbId teamId, uint plateAppearances, uint atBats, uint runs, uint hits, uint doubles, uint triples,

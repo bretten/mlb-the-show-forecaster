@@ -7,6 +7,9 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObj
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 
+/// <summary>
+/// A player's pitching statistics for a single game
+/// </summary>
 public sealed class PlayerPitchingStatsByGame : ValueObject
 {
     /// <summary>
@@ -135,7 +138,7 @@ public sealed class PlayerPitchingStatsByGame : ValueObject
     public NaturalNumber IntentionalWalks { get; }
 
     /// <summary>
-    /// Number of times the pitcher hit a batter with a pitch
+    /// The number of times the pitcher hit a batter with a pitch
     /// </summary>
     public NaturalNumber HitBatsmen { get; }
 
@@ -333,17 +336,64 @@ public sealed class PlayerPitchingStatsByGame : ValueObject
         yield return GameId.Value;
     }
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="seasonYear">The season</param>
+    /// <param name="gameDate">The date of the game</param>
+    /// <param name="gameId">The MLB ID of the game</param>
+    /// <param name="teamId">The MLB ID of the team</param>
+    /// <param name="win">True if the pitcher got the win for this game</param>
+    /// <param name="loss">True if the pitcher got the loss for this game</param>
+    /// <param name="gameStarted">True if the pitcher started this game</param>
+    /// <param name="gameFinished">True if the pitcher was the last pitcher in the game as a relief pitcher</param>
+    /// <param name="completeGame">True if the pitcher pitched the whole game</param>
+    /// <param name="shutout">True if the pitcher pitched a shutout</param>
+    /// <param name="hold">True if the pitcher earned a hold</param>
+    /// <param name="save">True if the pitcher earned a save</param>
+    /// <param name="blownSave">True if the pitcher failed to earn a save</param>
+    /// <param name="saveOpportunity">True if this game was a save opportunity for the pitcher</param>
+    /// <param name="inningsPitched">The number of innings pitched</param>
+    /// <param name="hits">The number of hits given up</param>
+    /// <param name="doubles">The number of doubles given up</param>
+    /// <param name="triples">The number of triples given up</param>
+    /// <param name="homeRuns">The number of home runs given up</param>
+    /// <param name="runs">The number of runs given up</param>
+    /// <param name="earnedRuns">The number of earned runs given up (runs that were a result of this pitcher giving up a hit)</param>
+    /// <param name="strikeouts">The number of strikeouts</param>
+    /// <param name="baseOnBalls">The number of times the pitcher walked the batter</param>
+    /// <param name="intentionalWalks">The number of times the pitcher intentionally walked the batter</param>
+    /// <param name="hitBatsmen">The number of times the pitcher hit a batter with a pitch</param>
+    /// <param name="outs">The number of outs made by the team while this pitcher was active</param>
+    /// <param name="groundOuts">The number of times a pitch resulted in a ground out</param>
+    /// <param name="airOuts">The number of times a pitch resulted in a air/fly out</param>
+    /// <param name="groundIntoDoublePlays">The number of double play ground outs induced</param>
+    /// <param name="numberOfPitches">The number of pitches thrown this game</param>
+    /// <param name="strikes">The number of strikes thrown by the pitcher</param>
+    /// <param name="wildPitches">The number of wild pitches thrown</param>
+    /// <param name="balks">The number of balks</param>
+    /// <param name="battersFaced">The number of batters faced, pitcher version of plate appearance</param>
+    /// <param name="atBats">The number of at-bats</param>
+    /// <param name="stolenBases">The number of bases stolen against this pitcher</param>
+    /// <param name="caughtStealing">The number of times a runner was caught stealing against this pitcher</param>
+    /// <param name="pickOffs">The number of pick offs made by this pitcher</param>
+    /// <param name="inheritedRunners">The number of runners on base when the pitcher enters the game</param>
+    /// <param name="inheritedRunnersScored">The number of inherited runners allowed to score</param>
+    /// <param name="catchersInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
+    /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
     private PlayerPitchingStatsByGame(MlbId playerId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
-        MlbId teamId,
-        bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame, bool shutout, bool hold, bool save,
-        bool blownSave, bool saveOpportunity, InningsCount inningsPitched, NaturalNumber hits, NaturalNumber doubles,
-        NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runs, NaturalNumber earnedRuns,
-        NaturalNumber strikeouts, NaturalNumber baseOnBalls, NaturalNumber intentionalWalks, NaturalNumber hitBatsmen,
-        NaturalNumber outs, NaturalNumber groundOuts, NaturalNumber airOuts, NaturalNumber groundIntoDoublePlays,
-        NaturalNumber numberOfPitches, NaturalNumber strikes, NaturalNumber wildPitches, NaturalNumber balks,
-        NaturalNumber battersFaced, NaturalNumber atBats, NaturalNumber stolenBases, NaturalNumber caughtStealing,
-        NaturalNumber pickOffs, NaturalNumber inheritedRunners, NaturalNumber inheritedRunnersScored,
-        NaturalNumber catchersInterferences, NaturalNumber sacrificeBunts, NaturalNumber sacrificeFlies)
+        MlbId teamId, bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame, bool shutout,
+        bool hold, bool save, bool blownSave, bool saveOpportunity, InningsCount inningsPitched, NaturalNumber hits,
+        NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runs,
+        NaturalNumber earnedRuns, NaturalNumber strikeouts, NaturalNumber baseOnBalls, NaturalNumber intentionalWalks,
+        NaturalNumber hitBatsmen, NaturalNumber outs, NaturalNumber groundOuts, NaturalNumber airOuts,
+        NaturalNumber groundIntoDoublePlays, NaturalNumber numberOfPitches, NaturalNumber strikes,
+        NaturalNumber wildPitches, NaturalNumber balks, NaturalNumber battersFaced, NaturalNumber atBats,
+        NaturalNumber stolenBases, NaturalNumber caughtStealing, NaturalNumber pickOffs, NaturalNumber inheritedRunners,
+        NaturalNumber inheritedRunnersScored, NaturalNumber catchersInterferences, NaturalNumber sacrificeBunts,
+        NaturalNumber sacrificeFlies)
     {
         PlayerId = playerId;
         SeasonYear = seasonYear;
@@ -391,10 +441,57 @@ public sealed class PlayerPitchingStatsByGame : ValueObject
         SacrificeFlies = sacrificeFlies;
     }
 
+    /// <summary>
+    /// Creates <see cref="PlayerPitchingStatsByGame"/>
+    /// </summary>
+    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="seasonYear">The season</param>
+    /// <param name="gameDate">The date of the game</param>
+    /// <param name="gameId">The MLB ID of the game</param>
+    /// <param name="teamId">The MLB ID of the team</param>
+    /// <param name="win">True if the pitcher got the win for this game</param>
+    /// <param name="loss">True if the pitcher got the loss for this game</param>
+    /// <param name="gameStarted">True if the pitcher started this game</param>
+    /// <param name="gameFinished">True if the pitcher was the last pitcher in the game as a relief pitcher</param>
+    /// <param name="completeGame">True if the pitcher pitched the whole game</param>
+    /// <param name="shutout">True if the pitcher pitched a shutout</param>
+    /// <param name="hold">True if the pitcher earned a hold</param>
+    /// <param name="save">True if the pitcher earned a save</param>
+    /// <param name="blownSave">True if the pitcher failed to earn a save</param>
+    /// <param name="saveOpportunity">True if this game was a save opportunity for the pitcher</param>
+    /// <param name="inningsPitched">The number of innings pitched</param>
+    /// <param name="hits">The number of hits given up</param>
+    /// <param name="doubles">The number of doubles given up</param>
+    /// <param name="triples">The number of triples given up</param>
+    /// <param name="homeRuns">The number of home runs given up</param>
+    /// <param name="runs">The number of runs given up</param>
+    /// <param name="earnedRuns">The number of earned runs given up (runs that were a result of this pitcher giving up a hit)</param>
+    /// <param name="strikeouts">The number of strikeouts</param>
+    /// <param name="baseOnBalls">The number of times the pitcher walked the batter</param>
+    /// <param name="intentionalWalks">The number of times the pitcher intentionally walked the batter</param>
+    /// <param name="hitBatsmen">The number of times the pitcher hit a batter with a pitch</param>
+    /// <param name="outs">The number of outs made by the team while this pitcher was active</param>
+    /// <param name="groundOuts">The number of times a pitch resulted in a ground out</param>
+    /// <param name="airOuts">The number of times a pitch resulted in a air/fly out</param>
+    /// <param name="groundIntoDoublePlays">The number of double play ground outs induced</param>
+    /// <param name="numberOfPitches">The number of pitches thrown this game</param>
+    /// <param name="strikes">The number of strikes thrown by the pitcher</param>
+    /// <param name="wildPitches">The number of wild pitches thrown</param>
+    /// <param name="balks">The number of balks</param>
+    /// <param name="battersFaced">The number of batters faced, pitcher version of plate appearance</param>
+    /// <param name="atBats">The number of at-bats</param>
+    /// <param name="stolenBases">The number of bases stolen against this pitcher</param>
+    /// <param name="caughtStealing">The number of times a runner was caught stealing against this pitcher</param>
+    /// <param name="pickOffs">The number of pick offs made by this pitcher</param>
+    /// <param name="inheritedRunners">The number of runners on base when the pitcher enters the game</param>
+    /// <param name="inheritedRunnersScored">The number of inherited runners allowed to score</param>
+    /// <param name="catchersInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
+    /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
+    /// <returns><see cref="PlayerPitchingStatsByGame"/></returns>
     public static PlayerPitchingStatsByGame Create(MlbId playerId, SeasonYear seasonYear, DateTime gameDate,
-        MlbId gameId,
-        MlbId teamId, bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame, bool shutout,
-        bool hold, bool save, bool blownSave, bool saveOpportunity, decimal inningsPitched, uint hits,
+        MlbId gameId, MlbId teamId, bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame,
+        bool shutout, bool hold, bool save, bool blownSave, bool saveOpportunity, decimal inningsPitched, uint hits,
         uint doubles, uint triples, uint homeRuns, uint runs, uint earnedRuns, uint strikeouts, uint baseOnBalls,
         uint intentionalWalks, uint hitBatsmen, uint outs, uint groundOuts, uint airOuts, uint groundIntoDoublePlays,
         uint numberOfPitches, uint strikes, uint wildPitches, uint balks, uint battersFaced, uint atBats,

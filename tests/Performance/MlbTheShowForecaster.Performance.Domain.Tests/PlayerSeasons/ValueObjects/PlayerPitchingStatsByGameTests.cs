@@ -333,7 +333,7 @@ public class PlayerPitchingStatsByGameTests
         const bool save = true;
         const bool blownSave = true;
         const bool saveOpportunity = true;
-        const decimal inningsPitched = 9;
+        const decimal inningsPitched = 8.1m;
         const uint hits = 3;
         const uint runs = 5;
         const uint earnedRuns = 5;
@@ -421,7 +421,7 @@ public class PlayerPitchingStatsByGameTests
         Assert.True(actual.Save);
         Assert.True(actual.BlownSave);
         Assert.True(actual.SaveOpportunity);
-        Assert.Equal(9U, actual.InningsPitched.Value);
+        Assert.Equal(8.333m, actual.InningsPitched.Value);
         Assert.Equal(3U, actual.Hits.Value);
         Assert.Equal(5U, actual.Runs.Value);
         Assert.Equal(5U, actual.EarnedRuns.Value);

@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
@@ -79,5 +80,31 @@ public static class Faker
             sacrificeBunts: sacrificeBunts,
             sacrificeFlies: sacrificeFlies
         );
+    }
+
+    public static PlayerFieldingStatsByGame FakeFieldingStats(int playerId = 1, ushort seasonYear = 2024,
+        DateTime? gameDate = null, int gameId = 10000, int teamId = 100, Position position = Position.Catcher,
+        bool gameStarted = false, decimal inningsPlayed = 0, uint assists = 0, uint putOuts = 0, uint errors = 0,
+        uint throwingErrors = 0, uint doublePlays = 0, uint triplePlays = 0, uint caughtStealing = 0,
+        uint stolenBases = 0, uint passedBalls = 0, uint catchersInterference = 0, uint wildPitches = 0,
+        uint pickOffs = 0)
+    {
+        return PlayerFieldingStatsByGame.Create(MlbId.Create(playerId), SeasonYear.Create(seasonYear),
+            gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
+            position: position,
+            gameStarted: gameStarted,
+            inningsPlayed: inningsPlayed,
+            assists: assists,
+            putOuts: putOuts,
+            errors: errors,
+            throwingErrors: throwingErrors,
+            doublePlays: doublePlays,
+            triplePlays: triplePlays,
+            caughtStealing: caughtStealing,
+            stolenBases: stolenBases,
+            passedBalls: passedBalls,
+            catchersInterference: catchersInterference,
+            wildPitches: wildPitches,
+            pickOffs: pickOffs);
     }
 }
