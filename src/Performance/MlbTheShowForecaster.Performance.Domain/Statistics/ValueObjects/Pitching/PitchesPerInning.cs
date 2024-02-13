@@ -47,7 +47,7 @@ public sealed class PitchesPerInning : CalculatedStat
     /// <param name="numberOfPitches">The number of pitches thrown</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <returns><see cref="PitchesPerInning"/></returns>
-    public static PitchesPerInning Create(uint numberOfPitches, decimal inningsPitched)
+    public static PitchesPerInning Create(int numberOfPitches, decimal inningsPitched)
     {
         return new PitchesPerInning(NaturalNumber.Create(numberOfPitches), InningsCount.Create(inningsPitched));
     }

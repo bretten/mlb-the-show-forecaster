@@ -8,8 +8,8 @@ public class StrikeoutToWalkRatioTests
     public void Value_StrikeoutsWalks_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint strikeouts = 167;
-        const uint baseOnBalls = 55;
+        const int strikeouts = 167;
+        const int baseOnBalls = 55;
         var strikeoutToWalkRatio = StrikeoutToWalkRatio.Create(strikeouts, baseOnBalls);
 
         // Act
@@ -17,7 +17,7 @@ public class StrikeoutToWalkRatioTests
 
         // Assert
         Assert.Equal(3.036m, actual);
-        Assert.Equal(167U, strikeoutToWalkRatio.Strikeouts.Value);
-        Assert.Equal(55U, strikeoutToWalkRatio.BaseOnBalls.Value);
+        Assert.Equal(167, strikeoutToWalkRatio.Strikeouts.Value);
+        Assert.Equal(55, strikeoutToWalkRatio.BaseOnBalls.Value);
     }
 }

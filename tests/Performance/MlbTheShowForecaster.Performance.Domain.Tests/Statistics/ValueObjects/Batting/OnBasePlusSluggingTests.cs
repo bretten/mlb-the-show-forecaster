@@ -8,17 +8,17 @@ public class OnBasePlusSluggingTests
     public void Value_OnBaseSlugging_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint hits = 151;
-        const uint baseOnBalls = 91;
-        const uint hitByPitches = 3;
-        const uint atBats = 497;
-        const uint sacrificeFlies = 3;
+        const int hits = 151;
+        const int baseOnBalls = 91;
+        const int hitByPitches = 3;
+        const int atBats = 497;
+        const int sacrificeFlies = 3;
         var onBasePercentage = OnBasePercentage.Create(hits, baseOnBalls, hitByPitches, atBats, sacrificeFlies);
 
-        const uint singles = 73;
-        const uint doubles = 26;
-        const uint triples = 8;
-        const uint homeRuns = 44;
+        const int singles = 73;
+        const int doubles = 26;
+        const int triples = 8;
+        const int homeRuns = 44;
         var totalBases = TotalBases.Create(singles, doubles, triples, homeRuns);
         var slugging = Slugging.Create(totalBases, atBats);
 

@@ -45,7 +45,7 @@ public sealed class StrikePercentage : CalculatedStat
     /// <param name="strikes">The number of strikes</param>
     /// <param name="numberOfPitches">The number of pitches thrown</param>
     /// <returns><see cref="StrikePercentage"/></returns>
-    public static StrikePercentage Create(uint strikes, uint numberOfPitches)
+    public static StrikePercentage Create(int strikes, int numberOfPitches)
     {
         return new StrikePercentage(NaturalNumber.Create(strikes), NaturalNumber.Create(numberOfPitches));
     }

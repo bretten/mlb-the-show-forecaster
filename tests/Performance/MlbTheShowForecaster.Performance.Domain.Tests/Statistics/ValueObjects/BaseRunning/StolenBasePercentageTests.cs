@@ -8,8 +8,8 @@ public class StolenBasePercentageTests
     public void Value_StolenBasesCaughtStealing_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint stolenBases = 20;
-        const uint caughtStealing = 6;
+        const int stolenBases = 20;
+        const int caughtStealing = 6;
         var stolenBasePercentage = StolenBasePercentage.Create(stolenBases, caughtStealing);
 
         // Act
@@ -17,7 +17,7 @@ public class StolenBasePercentageTests
 
         // Assert
         Assert.Equal(0.769m, actual);
-        Assert.Equal(20U, stolenBasePercentage.StolenBases.Value);
-        Assert.Equal(6U, stolenBasePercentage.CaughtStealing.Value);
+        Assert.Equal(20, stolenBasePercentage.StolenBases.Value);
+        Assert.Equal(6, stolenBasePercentage.CaughtStealing.Value);
     }
 }

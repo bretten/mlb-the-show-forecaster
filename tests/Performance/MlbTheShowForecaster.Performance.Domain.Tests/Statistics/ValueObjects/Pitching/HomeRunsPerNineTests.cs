@@ -8,7 +8,7 @@ public class HomeRunsPerNineTests
     public void Value_HomeRunsInnings_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint homeRunsAllowed = 18;
+        const int homeRunsAllowed = 18;
         const decimal inningsPitched = 132;
         var homeRunsPerNine = HomeRunsPerNine.Create(homeRunsAllowed, inningsPitched);
 
@@ -17,7 +17,7 @@ public class HomeRunsPerNineTests
 
         // Assert
         Assert.Equal(1.227m, actual);
-        Assert.Equal(18U, homeRunsPerNine.HomeRunsAllowed.Value);
+        Assert.Equal(18, homeRunsPerNine.HomeRunsAllowed.Value);
         Assert.Equal(132, homeRunsPerNine.InningsPitched.Value);
     }
 }

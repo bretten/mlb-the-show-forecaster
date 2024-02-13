@@ -8,13 +8,13 @@ public class OpponentsBattingAverageTests
     public void Value_HitsBattersWalksSacrificesInterferences_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint hits = 85;
-        const uint battersFaced = 531;
-        const uint baseOnBalls = 55;
-        const uint hitBatsmen = 11;
-        const uint sacrificeHits = 0;
-        const uint sacrificeFlies = 1;
-        const uint catchersInterferences = 1;
+        const int hits = 85;
+        const int battersFaced = 531;
+        const int baseOnBalls = 55;
+        const int hitBatsmen = 11;
+        const int sacrificeHits = 0;
+        const int sacrificeFlies = 1;
+        const int catchersInterferences = 1;
         var opponentsBattingAverage = OpponentsBattingAverage.Create(hits, battersFaced, baseOnBalls, hitBatsmen,
             sacrificeHits, sacrificeFlies, catchersInterferences);
 
@@ -23,12 +23,12 @@ public class OpponentsBattingAverageTests
 
         // Assert
         Assert.Equal(0.184m, actual);
-        Assert.Equal(hits, opponentsBattingAverage.Hits.Value);
-        Assert.Equal(battersFaced, opponentsBattingAverage.BattersFaced.Value);
-        Assert.Equal(baseOnBalls, opponentsBattingAverage.BaseOnBalls.Value);
-        Assert.Equal(hitBatsmen, opponentsBattingAverage.HitBatsmen.Value);
-        Assert.Equal(sacrificeHits, opponentsBattingAverage.SacrificeHits.Value);
-        Assert.Equal(sacrificeFlies, opponentsBattingAverage.SacrificeFlies.Value);
-        Assert.Equal(catchersInterferences, opponentsBattingAverage.CatchersInterferences.Value);
+        Assert.Equal(85, opponentsBattingAverage.Hits.Value);
+        Assert.Equal(531, opponentsBattingAverage.BattersFaced.Value);
+        Assert.Equal(55, opponentsBattingAverage.BaseOnBalls.Value);
+        Assert.Equal(11, opponentsBattingAverage.HitBatsmen.Value);
+        Assert.Equal(0, opponentsBattingAverage.SacrificeHits.Value);
+        Assert.Equal(1, opponentsBattingAverage.SacrificeFlies.Value);
+        Assert.Equal(1, opponentsBattingAverage.CatchersInterferences.Value);
     }
 }

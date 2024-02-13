@@ -47,7 +47,7 @@ public sealed class HomeRunsPerNine : CalculatedStat
     /// <param name="homeRunsAllowed">The number of home runs allowed</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <returns><see cref="HomeRunsPerNine"/></returns>
-    public static HomeRunsPerNine Create(uint homeRunsAllowed, decimal inningsPitched)
+    public static HomeRunsPerNine Create(int homeRunsAllowed, decimal inningsPitched)
     {
         return new HomeRunsPerNine(NaturalNumber.Create(homeRunsAllowed), InningsCount.Create(inningsPitched));
     }

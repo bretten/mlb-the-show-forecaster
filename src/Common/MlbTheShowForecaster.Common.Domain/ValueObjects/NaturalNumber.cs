@@ -11,14 +11,20 @@ public sealed class NaturalNumber : ValueObject
     /// <summary>
     /// The underlying natural number value (includes zero)
     /// </summary>
-    public uint Value { get; }
+    public int Value { get; }
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="value">The natural number</param>
-    private NaturalNumber(uint value)
+    private NaturalNumber(int value)
     {
+        if (value < 0)
+        {
+            throw new NaturalNumberCannotBeLessThanZeroException(
+                $"Natural number must not be less than zero. {value} was given");
+        }
+
         Value = value;
     }
 
@@ -26,7 +32,7 @@ public sealed class NaturalNumber : ValueObject
     /// Constructor
     /// </summary>
     /// <param name="value">The natural number</param>
-    private NaturalNumber(int value) : this((uint)value)
+    private NaturalNumber(long value) : this((int)value)
     {
         if (value < 0)
         {
@@ -40,7 +46,7 @@ public sealed class NaturalNumber : ValueObject
     /// </summary>
     /// <param name="value">The underlying value</param>
     /// <returns>The <see cref="NaturalNumber"/></returns>
-    public static NaturalNumber Create(uint value)
+    public static NaturalNumber Create(int value)
     {
         return new NaturalNumber(value);
     }
@@ -50,8 +56,14 @@ public sealed class NaturalNumber : ValueObject
     /// </summary>
     /// <param name="value">The underlying value</param>
     /// <returns>The <see cref="NaturalNumber"/></returns>
-    public static NaturalNumber Create(int value)
+    public static NaturalNumber Create(long value)
     {
+        if (value > int.MaxValue)
+        {
+            throw new NaturalNumberOverflowException(
+                $"A number larger than int.MaxValue was provided and no earthly, relevant stat should reach this number");
+        }
+
         return new NaturalNumber(value);
     }
 }
