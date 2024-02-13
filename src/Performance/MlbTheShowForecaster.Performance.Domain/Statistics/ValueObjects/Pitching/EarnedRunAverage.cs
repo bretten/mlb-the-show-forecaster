@@ -52,7 +52,7 @@ public sealed class EarnedRunAverage : CalculatedStat
     /// <param name="earnedRuns">The number of earned runs allowed</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <returns><see cref="EarnedRunAverage"/></returns>
-    public static EarnedRunAverage Create(uint earnedRuns, decimal inningsPitched)
+    public static EarnedRunAverage Create(int earnedRuns, decimal inningsPitched)
     {
         return new EarnedRunAverage(NaturalNumber.Create(earnedRuns), InningsCount.Create(inningsPitched));
     }

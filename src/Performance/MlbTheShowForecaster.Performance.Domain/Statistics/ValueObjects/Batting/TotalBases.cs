@@ -69,7 +69,7 @@ public sealed class TotalBases : CalculatedStat
     /// <param name="triples">The number of triples</param>
     /// <param name="homeRuns">The number of home runs</param>
     /// <returns><see cref="TotalBases"/></returns>
-    public static TotalBases Create(uint singles, uint doubles, uint triples, uint homeRuns)
+    public static TotalBases Create(int singles, int doubles, int triples, int homeRuns)
     {
         return new TotalBases(NaturalNumber.Create(singles), NaturalNumber.Create(doubles),
             NaturalNumber.Create(triples), NaturalNumber.Create(homeRuns));
@@ -83,7 +83,7 @@ public sealed class TotalBases : CalculatedStat
     /// <param name="triples">The number of triples</param>
     /// <param name="homeRuns">The number of home runs</param>
     /// <returns><see cref="TotalBases"/></returns>
-    public static TotalBases CreateWithHits(uint hits, uint doubles, uint triples, uint homeRuns)
+    public static TotalBases CreateWithHits(int hits, int doubles, int triples, int homeRuns)
     {
         var singles = hits - doubles - triples - homeRuns;
         return new TotalBases(NaturalNumber.Create(singles), NaturalNumber.Create(doubles),

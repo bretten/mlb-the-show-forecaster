@@ -8,7 +8,7 @@ public class EarnedRunAverageTests
     public void Value_EarnedRunsInningsPitched_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint earnedRuns = 46U;
+        const int earnedRuns = 46;
         const decimal inningsPitched = 132m;
         var earnedRunAverage = EarnedRunAverage.Create(earnedRuns, inningsPitched);
 
@@ -17,7 +17,7 @@ public class EarnedRunAverageTests
 
         // Assert
         Assert.Equal(3.14m, actual);
-        Assert.Equal(46U, earnedRunAverage.EarnedRuns.Value);
+        Assert.Equal(46, earnedRunAverage.EarnedRuns.Value);
         Assert.Equal(132m, earnedRunAverage.InningsPitched.Value);
     }
 }

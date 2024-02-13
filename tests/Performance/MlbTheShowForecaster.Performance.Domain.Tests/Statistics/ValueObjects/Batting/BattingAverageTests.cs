@@ -8,8 +8,8 @@ public class BattingAverageTests
     public void Value_HitsAndAtBats_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint hits = 151;
-        const uint atBats = 497;
+        const int hits = 151;
+        const int atBats = 497;
         var battingAverage = BattingAverage.Create(hits, atBats);
 
         // Act
@@ -17,7 +17,7 @@ public class BattingAverageTests
 
         // Assert
         Assert.Equal(0.304m, actual);
-        Assert.Equal(151U, battingAverage.Hits.Value);
-        Assert.Equal(497U, battingAverage.AtBats.Value);
+        Assert.Equal(151, battingAverage.Hits.Value);
+        Assert.Equal(497, battingAverage.AtBats.Value);
     }
 }

@@ -8,7 +8,7 @@ public class HitsPerNineTests
     public void Value_HitsInnings_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint hitsAllowed = 85;
+        const int hitsAllowed = 85;
         const decimal inningsPitched = 132;
         var hitsPerNine = HitsPerNine.Create(hitsAllowed, inningsPitched);
 
@@ -17,7 +17,7 @@ public class HitsPerNineTests
 
         // Assert
         Assert.Equal(5.795m, actual);
-        Assert.Equal(85U, hitsPerNine.HitsAllowed.Value);
+        Assert.Equal(85, hitsPerNine.HitsAllowed.Value);
         Assert.Equal(132, hitsPerNine.InningsPitched.Value);
     }
 }

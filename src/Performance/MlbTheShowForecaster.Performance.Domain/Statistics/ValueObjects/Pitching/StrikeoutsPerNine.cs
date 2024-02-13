@@ -47,7 +47,7 @@ public sealed class StrikeoutsPerNine : CalculatedStat
     /// <param name="strikeouts">The number of strikeouts</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <returns><see cref="StrikeoutsPerNine"/></returns>
-    public static StrikeoutsPerNine Create(uint strikeouts, decimal inningsPitched)
+    public static StrikeoutsPerNine Create(int strikeouts, decimal inningsPitched)
     {
         return new StrikeoutsPerNine(NaturalNumber.Create(strikeouts), InningsCount.Create(inningsPitched));
     }

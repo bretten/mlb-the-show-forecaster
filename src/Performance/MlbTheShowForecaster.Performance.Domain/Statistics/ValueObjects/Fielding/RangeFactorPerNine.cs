@@ -55,7 +55,7 @@ public sealed class RangeFactorPerNine : CalculatedStat
     /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="innings">The number of innings this player fielded at this position</param>
     /// <returns><see cref="RangeFactorPerNine"/></returns>
-    public static RangeFactorPerNine Create(uint assists, uint putOuts, decimal innings)
+    public static RangeFactorPerNine Create(int assists, int putOuts, decimal innings)
     {
         return new RangeFactorPerNine(NaturalNumber.Create(assists), NaturalNumber.Create(putOuts),
             InningsCount.Create(innings));

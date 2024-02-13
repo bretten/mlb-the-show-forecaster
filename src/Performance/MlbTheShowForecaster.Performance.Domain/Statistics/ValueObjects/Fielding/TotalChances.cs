@@ -59,7 +59,7 @@ public sealed class TotalChances : CalculatedStat
     /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
     /// <returns><see cref="TotalChances"/></returns>
-    public static TotalChances Create(uint assists, uint putOuts, uint errors)
+    public static TotalChances Create(int assists, int putOuts, int errors)
     {
         return new TotalChances(NaturalNumber.Create(assists), NaturalNumber.Create(putOuts),
             NaturalNumber.Create(errors));

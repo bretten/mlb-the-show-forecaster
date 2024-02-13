@@ -46,7 +46,7 @@ public sealed class BattingAverage : CalculatedStat
     /// <param name="hits">The number of hits</param>
     /// <param name="atBats">The number of at-bats</param>
     /// <returns><see cref="BattingAverage"/></returns>
-    public static BattingAverage Create(uint hits, uint atBats)
+    public static BattingAverage Create(int hits, int atBats)
     {
         return new BattingAverage(NaturalNumber.Create(hits), NaturalNumber.Create(atBats));
     }

@@ -46,7 +46,7 @@ public sealed class StrikeoutToWalkRatio : CalculatedStat
     /// <param name="strikeouts">The number of strikeouts</param>
     /// <param name="baseOnBalls">The number of base on balls</param>
     /// <returns><see cref="StrikeoutToWalkRatio"/></returns>
-    public static StrikeoutToWalkRatio Create(uint strikeouts, uint baseOnBalls)
+    public static StrikeoutToWalkRatio Create(int strikeouts, int baseOnBalls)
     {
         return new StrikeoutToWalkRatio(NaturalNumber.Create(strikeouts), NaturalNumber.Create(baseOnBalls));
     }
