@@ -43,7 +43,7 @@ public sealed class QualityStart : ValueObject
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <param name="earnedRuns">The number of earned runs</param>
     /// <returns><see cref="QualityStart"/></returns>
-    public static QualityStart Create(decimal inningsPitched, uint earnedRuns)
+    public static QualityStart Create(decimal inningsPitched, int earnedRuns)
     {
         return new QualityStart(InningsCount.Create(inningsPitched), NaturalNumber.Create(earnedRuns));
     }

@@ -90,8 +90,8 @@ public sealed class OpponentsBattingAverage : CalculatedStat
     /// <param name="sacrificeFlies">The number of sacrifice flies</param>
     /// <param name="catchersInterferences">The number of catcher's interferences</param>
     /// <returns><see cref="OpponentsBattingAverage"/></returns>
-    public static OpponentsBattingAverage Create(uint hits, uint battersFaced, uint baseOnBalls, uint hitBatsmen,
-        uint sacrificeHits, uint sacrificeFlies, uint catchersInterferences)
+    public static OpponentsBattingAverage Create(int hits, int battersFaced, int baseOnBalls, int hitBatsmen,
+        int sacrificeHits, int sacrificeFlies, int catchersInterferences)
     {
         var hitsValue = NaturalNumber.Create(hits);
         var battersFacedValue = NaturalNumber.Create(battersFaced);

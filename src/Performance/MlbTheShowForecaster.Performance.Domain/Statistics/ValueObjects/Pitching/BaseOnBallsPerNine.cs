@@ -47,7 +47,7 @@ public sealed class BaseOnBallsPerNine : CalculatedStat
     /// <param name="baseOnBalls">The number of walks</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <returns><see cref="BaseOnBallsPerNine"/></returns>
-    public static BaseOnBallsPerNine Create(uint baseOnBalls, decimal inningsPitched)
+    public static BaseOnBallsPerNine Create(int baseOnBalls, decimal inningsPitched)
     {
         return new BaseOnBallsPerNine(NaturalNumber.Create(baseOnBalls), InningsCount.Create(inningsPitched));
     }

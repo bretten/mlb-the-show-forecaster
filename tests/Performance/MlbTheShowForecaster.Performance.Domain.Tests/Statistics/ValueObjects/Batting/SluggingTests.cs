@@ -8,13 +8,13 @@ public class SluggingTests
     public void Value_TotalBasesAtBats_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint singles = 73;
-        const uint doubles = 26;
-        const uint triples = 8;
-        const uint homeRuns = 44;
+        const int singles = 73;
+        const int doubles = 26;
+        const int triples = 8;
+        const int homeRuns = 44;
         var totalBases = TotalBases.Create(singles, doubles, triples, homeRuns);
 
-        const uint atBats = 497;
+        const int atBats = 497;
 
         var slugging = Slugging.Create(totalBases, atBats);
 
@@ -23,7 +23,7 @@ public class SluggingTests
 
         // Assert
         Assert.Equal(0.654m, actual);
-        Assert.Equal(325U, slugging.TotalBases.Value);
-        Assert.Equal(497U, slugging.AtBats.Value);
+        Assert.Equal(325, slugging.TotalBases.Value);
+        Assert.Equal(497, slugging.AtBats.Value);
     }
 }

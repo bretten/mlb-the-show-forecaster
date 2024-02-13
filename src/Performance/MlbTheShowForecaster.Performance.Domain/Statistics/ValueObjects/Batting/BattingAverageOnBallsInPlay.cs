@@ -41,15 +41,15 @@ public sealed class BattingAverageOnBallsInPlay : CalculatedStat
     /// <param name="hits">The number of hits</param>
     /// <param name="homeRuns">The number of home runs</param>
     /// <param name="atBats">The number of at-bats</param>
-    /// <param name="strikeOuts">The number of strikeouts</param>
+    /// <param name="strikeouts">The number of strikeouts</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies</param>
     private BattingAverageOnBallsInPlay(NaturalNumber hits, NaturalNumber homeRuns, NaturalNumber atBats,
-        NaturalNumber strikeOuts, NaturalNumber sacrificeFlies)
+        NaturalNumber strikeouts, NaturalNumber sacrificeFlies)
     {
         Hits = hits;
         HomeRuns = homeRuns;
         AtBats = atBats;
-        StrikeOuts = strikeOuts;
+        StrikeOuts = strikeouts;
         SacrificeFlies = sacrificeFlies;
     }
 
@@ -70,11 +70,11 @@ public sealed class BattingAverageOnBallsInPlay : CalculatedStat
     /// <param name="hits">The number of hits</param>
     /// <param name="homeRuns">The number of home runs</param>
     /// <param name="atBats">The number of at-bats</param>
-    /// <param name="strikeOuts">The number of strikeouts</param>
+    /// <param name="strikeouts">The number of strikeouts</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies</param>
     /// <returns><see cref="BattingAverageOnBallsInPlay"/></returns>
-    public static BattingAverageOnBallsInPlay Create(uint hits, uint homeRuns, uint atBats, uint strikeOuts,
-        uint sacrificeFlies)
+    public static BattingAverageOnBallsInPlay Create(int hits, int homeRuns, int atBats, int strikeOuts,
+        int sacrificeFlies)
     {
         return new BattingAverageOnBallsInPlay(NaturalNumber.Create(hits), NaturalNumber.Create(homeRuns),
             NaturalNumber.Create(atBats), NaturalNumber.Create(strikeOuts), NaturalNumber.Create(sacrificeFlies));

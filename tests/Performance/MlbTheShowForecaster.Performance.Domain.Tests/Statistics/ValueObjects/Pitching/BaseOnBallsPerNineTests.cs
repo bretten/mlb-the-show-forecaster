@@ -8,7 +8,7 @@ public class BaseOnBallsPerNineTests
     public void Value_WalksInnings_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint baseOnBalls = 55;
+        const int baseOnBalls = 55;
         const decimal inningsPitched = 132;
         var baseOnBallsPerNine = BaseOnBallsPerNine.Create(baseOnBalls, inningsPitched);
 
@@ -17,7 +17,7 @@ public class BaseOnBallsPerNineTests
 
         // Assert
         Assert.Equal(3.750m, actual);
-        Assert.Equal(55U, baseOnBallsPerNine.BaseOnBalls.Value);
+        Assert.Equal(55, baseOnBallsPerNine.BaseOnBalls.Value);
         Assert.Equal(132, baseOnBallsPerNine.InningsPitched.Value);
     }
 }

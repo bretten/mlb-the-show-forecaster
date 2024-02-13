@@ -47,7 +47,7 @@ public sealed class Slugging : CalculatedStat
     /// <param name="totalBases">Total bases</param>
     /// <param name="atBats">The number of at-bats</param>
     /// <returns><see cref="Slugging"/></returns>
-    public static Slugging Create(TotalBases totalBases, uint atBats)
+    public static Slugging Create(TotalBases totalBases, int atBats)
     {
         return new Slugging(totalBases, NaturalNumber.Create(atBats));
     }

@@ -73,8 +73,8 @@ public sealed class OnBasePercentage : CalculatedStat
     /// <param name="atBats">Number of at-bats</param>
     /// <param name="sacrificeFlies">Number of sacrifice flies</param>
     /// <returns><see cref="OnBasePercentage"/></returns>
-    public static OnBasePercentage Create(uint hits, uint baseOnBalls, uint hitByPitches, uint atBats,
-        uint sacrificeFlies)
+    public static OnBasePercentage Create(int hits, int baseOnBalls, int hitByPitches, int atBats,
+        int sacrificeFlies)
     {
         return new OnBasePercentage(NaturalNumber.Create(hits), NaturalNumber.Create(baseOnBalls),
             NaturalNumber.Create(hitByPitches), NaturalNumber.Create(atBats), NaturalNumber.Create(sacrificeFlies));

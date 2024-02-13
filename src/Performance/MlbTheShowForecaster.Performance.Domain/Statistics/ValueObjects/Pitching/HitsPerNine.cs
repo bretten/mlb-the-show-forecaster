@@ -47,7 +47,7 @@ public sealed class HitsPerNine : CalculatedStat
     /// <param name="hitsAllowed">The number of hits allowed</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <returns><see cref="HitsPerNine"/></returns>
-    public static HitsPerNine Create(uint hitsAllowed, decimal inningsPitched)
+    public static HitsPerNine Create(int hitsAllowed, decimal inningsPitched)
     {
         return new HitsPerNine(NaturalNumber.Create(hitsAllowed), InningsCount.Create(inningsPitched));
     }

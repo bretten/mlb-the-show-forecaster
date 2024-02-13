@@ -8,8 +8,8 @@ public class RangeFactorPerNineTests
     public void Value_AssistsPutOutsInnings_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint assists = 276;
-        const uint putOuts = 139;
+        const int assists = 276;
+        const int putOuts = 139;
         const decimal innings = 951.2m;
         var rangeFactorPerNine = RangeFactorPerNine.Create(assists, putOuts, innings);
 
@@ -18,8 +18,8 @@ public class RangeFactorPerNineTests
 
         // Assert
         Assert.Equal(3.925m, actual);
-        Assert.Equal(276U, rangeFactorPerNine.Assists.Value);
-        Assert.Equal(139U, rangeFactorPerNine.PutOuts.Value);
+        Assert.Equal(276, rangeFactorPerNine.Assists.Value);
+        Assert.Equal(139, rangeFactorPerNine.PutOuts.Value);
         Assert.Equal(951.667m, rangeFactorPerNine.Innings.Value);
     }
 }

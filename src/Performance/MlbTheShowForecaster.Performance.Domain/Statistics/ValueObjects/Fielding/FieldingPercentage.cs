@@ -54,7 +54,7 @@ public sealed class FieldingPercentage : CalculatedStat
     /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
     /// <returns><see cref="FieldingPercentage"/></returns>
-    public static FieldingPercentage Create(uint assists, uint putOuts, uint errors)
+    public static FieldingPercentage Create(int assists, int putOuts, int errors)
     {
         return new FieldingPercentage(NaturalNumber.Create(assists), NaturalNumber.Create(putOuts),
             NaturalNumber.Create(errors));

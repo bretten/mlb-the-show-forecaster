@@ -9,7 +9,7 @@ public class QualityStartTests
     {
         // Arrange
         const decimal inningsPitched = 5;
-        const uint earnedRuns = 2;
+        const int earnedRuns = 2;
         var qualityStart = QualityStart.Create(inningsPitched, earnedRuns);
 
         // Act
@@ -24,7 +24,7 @@ public class QualityStartTests
     {
         // Arrange
         const decimal inningsPitched = 7;
-        const uint earnedRuns = 4;
+        const int earnedRuns = 4;
         var qualityStart = QualityStart.Create(inningsPitched, earnedRuns);
 
         // Act
@@ -39,7 +39,7 @@ public class QualityStartTests
     {
         // Arrange
         const decimal inningsPitched = 6;
-        const uint earnedRuns = 3;
+        const int earnedRuns = 3;
         var qualityStart = QualityStart.Create(inningsPitched, earnedRuns);
 
         // Act

@@ -8,7 +8,7 @@ public class RunsScoredPerNineTests
     public void Value_RunsInnings_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint runsAllowed = 50;
+        const int runsAllowed = 50;
         const decimal inningsPitched = 132;
         var runsScoredPerNine = RunsScoredPerNine.Create(runsAllowed, inningsPitched);
 
@@ -17,7 +17,7 @@ public class RunsScoredPerNineTests
 
         // Assert
         Assert.Equal(3.409m, actual);
-        Assert.Equal(50U, runsScoredPerNine.RunsAllowed.Value);
+        Assert.Equal(50, runsScoredPerNine.RunsAllowed.Value);
         Assert.Equal(132, runsScoredPerNine.InningsPitched.Value);
     }
 }

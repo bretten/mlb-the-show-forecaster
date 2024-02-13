@@ -47,7 +47,7 @@ public sealed class StolenBasePercentage : CalculatedStat
     /// <param name="stolenBases">The number of stolen bases</param>
     /// <param name="caughtStealing">The number of times caught stealing</param>
     /// <returns><see cref="StolenBasePercentage"/></returns>
-    public static StolenBasePercentage Create(uint stolenBases, uint caughtStealing)
+    public static StolenBasePercentage Create(int stolenBases, int caughtStealing)
     {
         return new StolenBasePercentage(NaturalNumber.Create(stolenBases), NaturalNumber.Create(caughtStealing));
     }
