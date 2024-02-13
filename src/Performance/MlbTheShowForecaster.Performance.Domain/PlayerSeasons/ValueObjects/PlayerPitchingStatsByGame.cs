@@ -491,12 +491,12 @@ public sealed class PlayerPitchingStatsByGame : ValueObject
     /// <returns><see cref="PlayerPitchingStatsByGame"/></returns>
     public static PlayerPitchingStatsByGame Create(MlbId playerId, SeasonYear seasonYear, DateTime gameDate,
         MlbId gameId, MlbId teamId, bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame,
-        bool shutout, bool hold, bool save, bool blownSave, bool saveOpportunity, decimal inningsPitched, uint hits,
-        uint doubles, uint triples, uint homeRuns, uint runs, uint earnedRuns, uint strikeouts, uint baseOnBalls,
-        uint intentionalWalks, uint hitBatsmen, uint outs, uint groundOuts, uint airOuts, uint groundIntoDoublePlays,
-        uint numberOfPitches, uint strikes, uint wildPitches, uint balks, uint battersFaced, uint atBats,
-        uint stolenBases, uint caughtStealing, uint pickOffs, uint inheritedRunners, uint inheritedRunnersScored,
-        uint catchersInterferences, uint sacrificeBunts, uint sacrificeFlies)
+        bool shutout, bool hold, bool save, bool blownSave, bool saveOpportunity, decimal inningsPitched, int hits,
+        int doubles, int triples, int homeRuns, int runs, int earnedRuns, int strikeouts, int baseOnBalls,
+        int intentionalWalks, int hitBatsmen, int outs, int groundOuts, int airOuts, int groundIntoDoublePlays,
+        int numberOfPitches, int strikes, int wildPitches, int balks, int battersFaced, int atBats,
+        int stolenBases, int caughtStealing, int pickOffs, int inheritedRunners, int inheritedRunnersScored,
+        int catchersInterferences, int sacrificeBunts, int sacrificeFlies)
     {
         var ip = InningsCount.Create(inningsPitched);
         var h = NaturalNumber.Create(hits);

@@ -68,8 +68,8 @@ public sealed class PlayerStatsBySeason : AggregateRoot
 
     public NaturalNumber AtBats => NaturalNumber.Create(_battingStatsByGames.Sum(x => x.AtBats.Value));
 
-    public BattingAverage BattingAverage => BattingAverage.Create((uint)_battingStatsByGames.Sum(x => x.Hits.Value),
-        (uint)_battingStatsByGames.Sum(x => x.AtBats.Value));
+    public BattingAverage BattingAverage => BattingAverage.Create(_battingStatsByGames.Sum(x => x.Hits.Value),
+        _battingStatsByGames.Sum(x => x.AtBats.Value));
 
     public void LogBattingGame(PlayerBattingStatsByGame stats)
     {

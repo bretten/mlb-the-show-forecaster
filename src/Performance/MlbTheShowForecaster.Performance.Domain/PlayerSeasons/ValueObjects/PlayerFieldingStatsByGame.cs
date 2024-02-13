@@ -223,9 +223,9 @@ public sealed class PlayerFieldingStatsByGame : ValueObject
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     /// <returns><see cref="PlayerFieldingStatsByGame"/></returns>
     public static PlayerFieldingStatsByGame Create(MlbId playerId, SeasonYear seasonYear, DateTime gameDate,
-        MlbId gameId, MlbId teamId, Position position, bool gameStarted, decimal inningsPlayed, uint assists,
-        uint putOuts, uint errors, uint throwingErrors, uint doublePlays, uint triplePlays, uint caughtStealing,
-        uint stolenBases, uint passedBalls, uint catchersInterference, uint wildPitches, uint pickOffs)
+        MlbId gameId, MlbId teamId, Position position, bool gameStarted, decimal inningsPlayed, int assists,
+        int putOuts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
+        int stolenBases, int passedBalls, int catchersInterference, int wildPitches, int pickOffs)
     {
         var inn = InningsCount.Create(inningsPlayed);
         var a = NaturalNumber.Create(assists);

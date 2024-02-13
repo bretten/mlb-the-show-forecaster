@@ -305,11 +305,11 @@ public sealed class PlayerBattingStatsByGame : ValueObject
     /// <returns><see cref="PlayerBattingStatsByGame"/></returns>
     public static PlayerBattingStatsByGame Create(MlbId playerId, SeasonYear seasonYear, DateTime gameDate,
         MlbId gameId,
-        MlbId teamId, uint plateAppearances, uint atBats, uint runs, uint hits, uint doubles, uint triples,
-        uint homeRuns, uint runsBattedIn, uint baseOnBalls, uint intentionalWalks, uint strikeouts, uint stolenBases,
-        uint caughtStealing, uint hitByPitch, uint sacrificeBunts, uint sacrificeFlies, uint numberOfPitchesSeen,
-        uint leftOnBase, uint groundOuts, uint groundIntoDoublePlays, uint groundIntoTriplePlays, uint airOuts,
-        uint catchersInterference)
+        MlbId teamId, int plateAppearances, int atBats, int runs, int hits, int doubles, int triples,
+        int homeRuns, int runsBattedIn, int baseOnBalls, int intentionalWalks, int strikeouts, int stolenBases,
+        int caughtStealing, int hitByPitch, int sacrificeBunts, int sacrificeFlies, int numberOfPitchesSeen,
+        int leftOnBase, int groundOuts, int groundIntoDoublePlays, int groundIntoTriplePlays, int airOuts,
+        int catchersInterference)
     {
         var pa = NaturalNumber.Create(plateAppearances);
         var ab = NaturalNumber.Create(atBats);

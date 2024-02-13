@@ -11,9 +11,9 @@ public class PlayerFieldingStatsByGameTests
     public void FieldingPercentage_AssistsPutoutsErrors_ReturnsCalculatedStat()
     {
         // Arrange
-        const uint assists = 276;
-        const uint putOuts = 139;
-        const uint errors = 8;
+        const int assists = 276;
+        const int putOuts = 139;
+        const int errors = 8;
         var stats = Faker.FakeFieldingStats(assists: assists, putOuts: putOuts, errors: errors);
 
         // Act
@@ -27,9 +27,9 @@ public class PlayerFieldingStatsByGameTests
     public void TotalChances_AssistsPutoutsErrors_ReturnsCalculatedStat()
     {
         // Arrange
-        const uint assists = 276;
-        const uint putOuts = 139;
-        const uint errors = 8;
+        const int assists = 276;
+        const int putOuts = 139;
+        const int errors = 8;
         var stats = Faker.FakeFieldingStats(assists: assists, putOuts: putOuts, errors: errors);
 
         // Act
@@ -43,8 +43,8 @@ public class PlayerFieldingStatsByGameTests
     public void RangeFactorPer9_AssistsPutOutsInnings_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint assists = 276;
-        const uint putOuts = 139;
+        const int assists = 276;
+        const int putOuts = 139;
         const decimal inningsPlayed = 951.2m;
         var stats = Faker.FakeFieldingStats(assists: assists, putOuts: putOuts, inningsPlayed: inningsPlayed);
 
@@ -59,8 +59,8 @@ public class PlayerFieldingStatsByGameTests
     public void StolenBasePercentage_StolenBasesCaughtStealing_ReturnsCalculatedValue()
     {
         // Arrange
-        const uint stolenBases = 20;
-        const uint caughtStealing = 6;
+        const int stolenBases = 20;
+        const int caughtStealing = 6;
         var stats = Faker.FakeFieldingStats(stolenBases: stolenBases, caughtStealing: caughtStealing);
 
         // Act
@@ -110,18 +110,18 @@ public class PlayerFieldingStatsByGameTests
         var position = Position.FirstBase;
         const bool gameStarted = true; // NOTE: Nonsensical stats
         const decimal inningsPlayed = 1.1m;
-        const uint assists = 1;
-        const uint putOuts = 2;
-        const uint errors = 3;
-        const uint throwingErrors = 4;
-        const uint doublePlays = 5;
-        const uint triplePlays = 6;
-        const uint caughtStealing = 7;
-        const uint stolenBases = 8;
-        const uint passedBalls = 9;
-        const uint catchersInterference = 10;
-        const uint wildPitches = 11;
-        const uint pickOffs = 12;
+        const int assists = 1;
+        const int putOuts = 2;
+        const int errors = 3;
+        const int throwingErrors = 4;
+        const int doublePlays = 5;
+        const int triplePlays = 6;
+        const int caughtStealing = 7;
+        const int stolenBases = 8;
+        const int passedBalls = 9;
+        const int catchersInterference = 10;
+        const int wildPitches = 11;
+        const int pickOffs = 12;
 
         // Act
         var actual = PlayerFieldingStatsByGame.Create(mlbId, seasonYear, gameDate, gameId, teamId,
@@ -150,17 +150,17 @@ public class PlayerFieldingStatsByGameTests
         Assert.Equal(Position.FirstBase, actual.Position);
         Assert.True(actual.GameStarted);
         Assert.Equal(1.333m, actual.InningsPlayed.Value);
-        Assert.Equal(1U, actual.Assists.Value);
-        Assert.Equal(2U, actual.PutOuts.Value);
-        Assert.Equal(3U, actual.Errors.Value);
-        Assert.Equal(4U, actual.ThrowingErrors.Value);
-        Assert.Equal(5U, actual.DoublePlays.Value);
-        Assert.Equal(6U, actual.TriplePlays.Value);
-        Assert.Equal(7U, actual.CaughtStealing.Value);
-        Assert.Equal(8U, actual.StolenBases.Value);
-        Assert.Equal(9U, actual.PassedBalls.Value);
-        Assert.Equal(10U, actual.CatchersInterference.Value);
-        Assert.Equal(11U, actual.WildPitches.Value);
-        Assert.Equal(12U, actual.PickOffs.Value);
+        Assert.Equal(1, actual.Assists.Value);
+        Assert.Equal(2, actual.PutOuts.Value);
+        Assert.Equal(3, actual.Errors.Value);
+        Assert.Equal(4, actual.ThrowingErrors.Value);
+        Assert.Equal(5, actual.DoublePlays.Value);
+        Assert.Equal(6, actual.TriplePlays.Value);
+        Assert.Equal(7, actual.CaughtStealing.Value);
+        Assert.Equal(8, actual.StolenBases.Value);
+        Assert.Equal(9, actual.PassedBalls.Value);
+        Assert.Equal(10, actual.CatchersInterference.Value);
+        Assert.Equal(11, actual.WildPitches.Value);
+        Assert.Equal(12, actual.PickOffs.Value);
     }
 }

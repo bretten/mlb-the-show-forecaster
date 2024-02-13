@@ -10,8 +10,8 @@ public class PlayerBattingStatsByGameTests
     public void BattingAverage_RequiredStats_ReturnsCalculatedStat()
     {
         // Arrange
-        const uint hits = 151;
-        const uint atBats = 497;
+        const int hits = 151;
+        const int atBats = 497;
         var stats = Faker.FakeBattingStats(hits: hits, atBats: atBats);
 
         // Act
@@ -25,11 +25,11 @@ public class PlayerBattingStatsByGameTests
     public void OnBasePercentage_RequiredStats_ReturnsCalculatedStat()
     {
         // Arrange
-        const uint hits = 151;
-        const uint baseOnBalls = 91;
-        const uint hitByPitches = 3;
-        const uint atBats = 497;
-        const uint sacrificeFlies = 3;
+        const int hits = 151;
+        const int baseOnBalls = 91;
+        const int hitByPitches = 3;
+        const int atBats = 497;
+        const int sacrificeFlies = 3;
         var stats = Faker.FakeBattingStats(hits: hits, baseOnBalls: baseOnBalls, hitByPitch: hitByPitches,
             atBats: atBats, sacrificeFlies: sacrificeFlies);
 
@@ -44,10 +44,10 @@ public class PlayerBattingStatsByGameTests
     public void TotalBases_RequiredStats_ReturnsCalculatedStat()
     {
         // Arrange
-        const uint hits = 151;
-        const uint doubles = 26;
-        const uint triples = 8;
-        const uint homeRuns = 44;
+        const int hits = 151;
+        const int doubles = 26;
+        const int triples = 8;
+        const int homeRuns = 44;
         var stats = Faker.FakeBattingStats(hits: hits, doubles: doubles, triples: triples, homeRuns: homeRuns);
 
         // Act
@@ -61,11 +61,11 @@ public class PlayerBattingStatsByGameTests
     public void Slugging_RequiredStats_ReturnsCalculatedStat()
     {
         // Arrange
-        const uint atBats = 497;
-        const uint hits = 151;
-        const uint doubles = 26;
-        const uint triples = 8;
-        const uint homeRuns = 44;
+        const int atBats = 497;
+        const int hits = 151;
+        const int doubles = 26;
+        const int triples = 8;
+        const int homeRuns = 44;
         var stats = Faker.FakeBattingStats(atBats: atBats, hits: hits, doubles: doubles, triples: triples,
             homeRuns: homeRuns);
 
@@ -80,15 +80,15 @@ public class PlayerBattingStatsByGameTests
     public void OnBasePlusSlugging_RequiredStats_ReturnsCalculatedStat()
     {
         // Arrange
-        const uint hits = 151;
-        const uint baseOnBalls = 91;
-        const uint hitByPitches = 3;
-        const uint atBats = 497;
-        const uint sacrificeFlies = 3;
+        const int hits = 151;
+        const int baseOnBalls = 91;
+        const int hitByPitches = 3;
+        const int atBats = 497;
+        const int sacrificeFlies = 3;
 
-        const uint doubles = 26;
-        const uint triples = 8;
-        const uint homeRuns = 44;
+        const int doubles = 26;
+        const int triples = 8;
+        const int homeRuns = 44;
         var stats = Faker.FakeBattingStats(atBats: atBats, baseOnBalls: baseOnBalls, hitByPitch: hitByPitches,
             hits: hits,
             sacrificeFlies: sacrificeFlies, doubles: doubles, triples: triples, homeRuns: homeRuns);
@@ -104,8 +104,8 @@ public class PlayerBattingStatsByGameTests
     public void StolenBasePercentage_RequiredStats_ReturnsCalculatedStat()
     {
         // Arrange
-        const uint stolenBases = 20;
-        const uint caughtStealing = 6;
+        const int stolenBases = 20;
+        const int caughtStealing = 6;
         var stats = Faker.FakeBattingStats(stolenBases: stolenBases, caughtStealing: caughtStealing);
 
         // Act
@@ -119,11 +119,11 @@ public class PlayerBattingStatsByGameTests
     public void BattingAverageOnBallsInPlay_RequiredStats_ReturnsCalculatedStat()
     {
         // Arrange
-        const uint hits = 151;
-        const uint homeRuns = 44;
-        const uint atBats = 497;
-        const uint strikeouts = 143;
-        const uint sacrificeFlies = 3;
+        const int hits = 151;
+        const int homeRuns = 44;
+        const int atBats = 497;
+        const int strikeouts = 143;
+        const int sacrificeFlies = 3;
         var stats = Faker.FakeBattingStats(hits: hits, homeRuns: homeRuns, atBats: atBats, strikeouts: strikeouts,
             sacrificeFlies: sacrificeFlies);
 
@@ -171,29 +171,29 @@ public class PlayerBattingStatsByGameTests
         var gameDate = new DateTime(2024, 4, 1);
         var gameId = MlbId.Create(10000);
         var teamId = MlbId.Create(100);
-        const uint plateAppearances = 1; // Note: Numbers are nonsensical
-        const uint atBats = 2;
-        const uint runs = 3;
-        const uint hits = 4;
-        const uint doubles = 5;
-        const uint triples = 6;
-        const uint homeRuns = 7;
-        const uint rbi = 8;
-        const uint baseOnBalls = 9;
-        const uint intentionalWalks = 10;
-        const uint strikeouts = 11;
-        const uint stolenBases = 12;
-        const uint caughtStealing = 13;
-        const uint hitByPitch = 14;
-        const uint sacrificeBunts = 15;
-        const uint sacrificeFlies = 16;
-        const uint numberOfPitchesSeen = 17;
-        const uint leftOnBase = 18;
-        const uint groundOuts = 19;
-        const uint groundIntoDoublePlays = 20;
-        const uint groundIntoTriplePlays = 21;
-        const uint airOuts = 22;
-        const uint catchersInterference = 23;
+        const int plateAppearances = 1; // Note: Numbers are nonsensical
+        const int atBats = 2;
+        const int runs = 3;
+        const int hits = 4;
+        const int doubles = 5;
+        const int triples = 6;
+        const int homeRuns = 7;
+        const int rbi = 8;
+        const int baseOnBalls = 9;
+        const int intentionalWalks = 10;
+        const int strikeouts = 11;
+        const int stolenBases = 12;
+        const int caughtStealing = 13;
+        const int hitByPitch = 14;
+        const int sacrificeBunts = 15;
+        const int sacrificeFlies = 16;
+        const int numberOfPitchesSeen = 17;
+        const int leftOnBase = 18;
+        const int groundOuts = 19;
+        const int groundIntoDoublePlays = 20;
+        const int groundIntoTriplePlays = 21;
+        const int airOuts = 22;
+        const int catchersInterference = 23;
 
         // Act
         var actual = PlayerBattingStatsByGame.Create(mlbId, seasonYear, gameDate, gameId, teamId, plateAppearances,
