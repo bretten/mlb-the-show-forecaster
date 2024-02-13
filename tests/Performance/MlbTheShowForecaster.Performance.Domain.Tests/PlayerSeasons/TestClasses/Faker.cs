@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
@@ -106,5 +107,16 @@ public static class Faker
             catchersInterference: catchersInterference,
             wildPitches: wildPitches,
             pickOffs: pickOffs);
+    }
+
+    public static PlayerStatsBySeason FakeSeasonStats(int playerId = 1, ushort seasonYear = 2024,
+        List<PlayerBattingStatsByGame>? battingStatsByGames = null,
+        List<PlayerFieldingStatsByGame>? fieldingStatsByGames = null,
+        List<PlayerPitchingStatsByGame>? pitchingStatsByGames = null)
+    {
+        return PlayerStatsBySeason.Create(MlbId.Create(playerId), SeasonYear.Create(seasonYear),
+            battingStatsByGames ?? new List<PlayerBattingStatsByGame>(),
+            fieldingStatsByGames ?? new List<PlayerFieldingStatsByGame>(),
+            pitchingStatsByGames ?? new List<PlayerPitchingStatsByGame>());
     }
 }
