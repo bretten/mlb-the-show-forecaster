@@ -1,10 +1,9 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
 
-namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.ValueObjects;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.Statistics.ValueObjects.Pitching;
 
-public class PlayerPitchingStatsByGameTests
+public class PitchingStatsTests
 {
     [Fact]
     public void QualityStart_InningsPitchedEarnedRuns_ReturnsCalculatedStat()
@@ -12,7 +11,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const decimal inningsPitched = 6;
         const int earnedRuns = 3;
-        var stats = Faker.FakePlayerPitchingStats(inningsPitched: inningsPitched, earnedRuns: earnedRuns);
+        var stats = Faker.FakePitchingStats(inningsPitched: inningsPitched, earnedRuns: earnedRuns);
 
         // Act
         var actual = stats.QualityStart;
@@ -27,7 +26,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int earnedRuns = 46;
         const decimal inningsPitched = 132m;
-        var stats = Faker.FakePlayerPitchingStats(inningsPitched: inningsPitched, earnedRuns: earnedRuns);
+        var stats = Faker.FakePitchingStats(inningsPitched: inningsPitched, earnedRuns: earnedRuns);
 
         // Act
         var actual = stats.EarnedRunAverage;
@@ -47,7 +46,7 @@ public class PlayerPitchingStatsByGameTests
         const int sacrificeHits = 0;
         const int sacrificeFlies = 1;
         const int catchersInterferences = 1;
-        var stats = Faker.FakePlayerPitchingStats(hits: hits, battersFaced: battersFaced, baseOnBalls: baseOnBalls,
+        var stats = Faker.FakePitchingStats(hits: hits, battersFaced: battersFaced, baseOnBalls: baseOnBalls,
             hitBatsmen: hitBatsmen, sacrificeBunts: sacrificeHits, sacrificeFlies: sacrificeFlies,
             catchersInterferences: catchersInterferences);
 
@@ -67,7 +66,7 @@ public class PlayerPitchingStatsByGameTests
         const int hitBatsmen = 3;
         const int atBats = 497;
         const int sacrificeFlies = 3;
-        var stats = Faker.FakePlayerPitchingStats(hits: hits, baseOnBalls: baseOnBalls, hitBatsmen: hitBatsmen,
+        var stats = Faker.FakePitchingStats(hits: hits, baseOnBalls: baseOnBalls, hitBatsmen: hitBatsmen,
             atBats: atBats, sacrificeFlies: sacrificeFlies);
 
         // Act
@@ -85,7 +84,7 @@ public class PlayerPitchingStatsByGameTests
         const int doubles = 26;
         const int triples = 8;
         const int homeRuns = 44;
-        var stats = Faker.FakePlayerPitchingStats(hits: hits, doubles: doubles, triples: triples, homeRuns: homeRuns);
+        var stats = Faker.FakePitchingStats(hits: hits, doubles: doubles, triples: triples, homeRuns: homeRuns);
 
         // Act
         var actual = stats.TotalBases;
@@ -103,7 +102,7 @@ public class PlayerPitchingStatsByGameTests
         const int triples = 8;
         const int homeRuns = 44;
         const int atBats = 497;
-        var stats = Faker.FakePlayerPitchingStats(hits: hits, doubles: doubles, triples: triples, homeRuns: homeRuns,
+        var stats = Faker.FakePitchingStats(hits: hits, doubles: doubles, triples: triples, homeRuns: homeRuns,
             atBats: atBats);
 
         // Act
@@ -125,7 +124,7 @@ public class PlayerPitchingStatsByGameTests
         const int doubles = 26;
         const int triples = 8;
         const int homeRuns = 44;
-        var stats = Faker.FakePlayerPitchingStats(hits: hits, doubles: doubles, triples: triples, homeRuns: homeRuns,
+        var stats = Faker.FakePitchingStats(hits: hits, doubles: doubles, triples: triples, homeRuns: homeRuns,
             baseOnBalls: baseOnBalls, hitBatsmen: hitBatsmen, atBats: atBats, sacrificeFlies: sacrificeFlies);
 
         // Act
@@ -141,7 +140,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int numberOfPitches = 1993;
         const decimal inningsPitched = 117 + (decimal)2 / 3;
-        var stats = Faker.FakePlayerPitchingStats(numberOfPitches: numberOfPitches, inningsPitched: inningsPitched);
+        var stats = Faker.FakePitchingStats(numberOfPitches: numberOfPitches, inningsPitched: inningsPitched);
 
         // Act
         var actual = stats.PitchesPerInning;
@@ -156,7 +155,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int strikes = 1337;
         const int numberOfPitches = 2094;
-        var stats = Faker.FakePlayerPitchingStats(strikes: strikes, numberOfPitches: numberOfPitches);
+        var stats = Faker.FakePitchingStats(strikes: strikes, numberOfPitches: numberOfPitches);
 
         // Act
         var actual = stats.StrikePercentage;
@@ -172,7 +171,7 @@ public class PlayerPitchingStatsByGameTests
         const int baseOnBalls = 55;
         const int hits = 85;
         const decimal inningsPitched = 132;
-        var stats = Faker.FakePlayerPitchingStats(baseOnBalls: baseOnBalls, hits: hits, inningsPitched: inningsPitched);
+        var stats = Faker.FakePitchingStats(baseOnBalls: baseOnBalls, hits: hits, inningsPitched: inningsPitched);
 
         // Act
         var actual = stats.WalksPlusHitsPerInningPitched;
@@ -187,7 +186,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int strikeouts = 167;
         const int baseOnBalls = 55;
-        var stats = Faker.FakePlayerPitchingStats(strikeouts: strikeouts, baseOnBalls: baseOnBalls);
+        var stats = Faker.FakePitchingStats(strikeouts: strikeouts, baseOnBalls: baseOnBalls);
 
         // Act
         var actual = stats.StrikeoutToWalkRatio;
@@ -202,7 +201,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int hitsAllowed = 85;
         const decimal inningsPitched = 132;
-        var stats = Faker.FakePlayerPitchingStats(hits: hitsAllowed, inningsPitched: inningsPitched);
+        var stats = Faker.FakePitchingStats(hits: hitsAllowed, inningsPitched: inningsPitched);
 
         // Act
         var actual = stats.HitsPer9;
@@ -217,7 +216,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int strikeouts = 167;
         const decimal inningsPitched = 132;
-        var stats = Faker.FakePlayerPitchingStats(strikeouts: strikeouts, inningsPitched: inningsPitched);
+        var stats = Faker.FakePitchingStats(strikeouts: strikeouts, inningsPitched: inningsPitched);
 
         // Act
         var actual = stats.StrikeoutsPer9;
@@ -232,7 +231,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int baseOnBalls = 55;
         const decimal inningsPitched = 132;
-        var stats = Faker.FakePlayerPitchingStats(baseOnBalls: baseOnBalls, inningsPitched: inningsPitched);
+        var stats = Faker.FakePitchingStats(baseOnBalls: baseOnBalls, inningsPitched: inningsPitched);
 
         // Act
         var actual = stats.BaseOnBallsPer9;
@@ -247,7 +246,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int runsAllowed = 50;
         const decimal inningsPitched = 132;
-        var stats = Faker.FakePlayerPitchingStats(runs: runsAllowed, inningsPitched: inningsPitched);
+        var stats = Faker.FakePitchingStats(runs: runsAllowed, inningsPitched: inningsPitched);
 
         // Act
         var actual = stats.RunsScoredPer9;
@@ -262,7 +261,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int homeRunsAllowed = 18;
         const decimal inningsPitched = 132;
-        var stats = Faker.FakePlayerPitchingStats(homeRuns: homeRunsAllowed, inningsPitched: inningsPitched);
+        var stats = Faker.FakePitchingStats(homeRuns: homeRunsAllowed, inningsPitched: inningsPitched);
 
         // Act
         var actual = stats.HomeRunsPer9;
@@ -277,7 +276,7 @@ public class PlayerPitchingStatsByGameTests
         // Arrange
         const int stolenBases = 20;
         const int caughtStealing = 6;
-        var stats = Faker.FakePlayerPitchingStats(stolenBases: stolenBases, caughtStealing: caughtStealing);
+        var stats = Faker.FakePitchingStats(stolenBases: stolenBases, caughtStealing: caughtStealing);
 
         // Act
         var actual = stats.StolenBasePercentage;
@@ -287,42 +286,9 @@ public class PlayerPitchingStatsByGameTests
     }
 
     [Fact]
-    public void Equals_SamePlayerSeasonDateGame_ReturnsTrue()
-    {
-        // Arrange
-        var stats1 = Faker.FakePlayerPitchingStats(playerId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerPitchingStats(playerId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-
-        // Act
-        var actual = stats1.Equals(stats2);
-
-        // Assert
-        Assert.True(actual);
-    }
-
-    [Fact]
-    public void Equals_DifferentPlayer_ReturnsTrue()
-    {
-        // Arrange
-        var stats1 = Faker.FakePlayerPitchingStats(playerId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerPitchingStats(playerId: 2, 2024, new DateTime(2024, 4, 1), 10000);
-
-        // Act
-        var actual = stats1.Equals(stats2);
-
-        // Assert
-        Assert.False(actual);
-    }
-
-    [Fact]
     public void Create_ValidValues_Created()
     {
         // Arrange
-        var mlbId = MlbId.Create(1);
-        var seasonYear = SeasonYear.Create(2024);
-        var gameDate = new DateTime(2024, 4, 1);
-        var gameId = MlbId.Create(10000);
-        var teamId = MlbId.Create(100);
         const bool win = true; // NOTE: Nonsensical stats
         const bool loss = true;
         const bool gameStarted = true;
@@ -364,8 +330,7 @@ public class PlayerPitchingStatsByGameTests
         const int sacrificeFlies = 0;
 
         // Act
-        var actual = PlayerPitchingStatsByGame.Create(mlbId, seasonYear, gameDate, gameId, teamId,
-            win: win,
+        var actual = PitchingStats.Create(win: win,
             loss: loss,
             gameStarted: gameStarted,
             gameFinished: gameFinished,
@@ -406,11 +371,6 @@ public class PlayerPitchingStatsByGameTests
             sacrificeFlies: sacrificeFlies);
 
         // Assert
-        Assert.Equal(1, actual.PlayerId.Value);
-        Assert.Equal(2024, actual.SeasonYear.Value);
-        Assert.Equal(new DateTime(2024, 4, 1), actual.GameDate);
-        Assert.Equal(10000, actual.GameId.Value);
-        Assert.Equal(100, actual.TeamId.Value);
         Assert.True(actual.Win);
         Assert.True(actual.Loss);
         Assert.True(actual.GameStarted);

@@ -2,61 +2,116 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.BaseRunning;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
 
-namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
 
 /// <summary>
-/// A player's fielding statistics for a single game
+/// Statistics for fielding
 /// </summary>
-public sealed class PlayerFieldingStatsByGame : FieldingStats
+public class FieldingStats : ValueObject
 {
     /// <summary>
-    /// The MLB ID of the Player
+    /// The position the player is fielding
     /// </summary>
-    public MlbId PlayerId { get; }
+    public Position Position { get; }
 
     /// <summary>
-    /// The season
+    /// True if the player started the game at this position
     /// </summary>
-    public SeasonYear SeasonYear { get; }
+    public bool GameStarted { get; }
 
     /// <summary>
-    /// The date of the game
+    /// The number of innings this player fielded at this position
     /// </summary>
-    public DateTime GameDate { get; }
+    public InningsCount InningsPlayed { get; }
 
     /// <summary>
-    /// The MLB ID of the game
+    /// The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout
     /// </summary>
-    public MlbId GameId { get; }
+    public NaturalNumber Assists { get; }
 
     /// <summary>
-    /// The MLB ID of the team
+    /// The number of times the fielder tags, forces, or appeals a runner and they are called out
     /// </summary>
-    public MlbId TeamId { get; }
+    public NaturalNumber PutOuts { get; }
 
     /// <summary>
-    /// Determines the properties that are used in equality
+    /// The number of times a fielder fails to make a play that is considered to be doable with common effort
     /// </summary>
-    /// <returns>The values of the properties that are used in equality</returns>
-    protected override IEnumerable<object?> GetNestedValues()
-    {
-        yield return PlayerId.Value;
-        yield return SeasonYear.Value;
-        yield return GameDate;
-        yield return GameId.Value;
-    }
+    public NaturalNumber Errors { get; }
+
+    /// <summary>
+    /// The number of errors that were the result of a bad throw
+    /// </summary>
+    public NaturalNumber ThrowingErrors { get; }
+
+    /// <summary>
+    /// The number of double plays where the fielder recorded a putout or an assist
+    /// </summary>
+    public NaturalNumber DoublePlays { get; }
+
+    /// <summary>
+    /// The number of triple plays where the fielder recorded a putout or an assist
+    /// </summary>
+    public NaturalNumber TriplePlays { get; }
+
+    /// <summary>
+    /// Fielding percentage
+    /// </summary>
+    public FieldingPercentage FieldingPercentage =>
+        FieldingPercentage.Create(Assists.Value, PutOuts.Value, Errors.Value);
+
+    /// <summary>
+    /// Total chances
+    /// </summary>
+    public TotalChances TotalChances => TotalChances.Create(Assists.Value, PutOuts.Value, Errors.Value);
+
+    /// <summary>
+    /// Range factor per 9 innings
+    /// </summary>
+    public RangeFactorPerNine RangeFactorPer9 =>
+        RangeFactorPerNine.Create(Assists.Value, PutOuts.Value, InningsPlayed.Value);
+
+    /// <summary>
+    /// Catcher stat: The number of times the catcher was able to throw out a base runner attempting to steal
+    /// </summary>
+    public NaturalNumber CaughtStealing { get; }
+
+    /// <summary>
+    /// Catcher stat: The number of times a base runner successfully stole a base against the catcher
+    /// </summary>
+    public NaturalNumber StolenBases { get; }
+
+    /// <summary>
+    /// Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance
+    /// </summary>
+    public NaturalNumber PassedBalls { get; }
+
+    /// <summary>
+    /// Catcher stat: The number of times a catcher interfered with the batter's plate appearance
+    /// </summary>
+    public NaturalNumber CatchersInterference { get; }
+
+    /// <summary>
+    /// Catcher stat: The number of wild pitches the catcher saw from the pitcher
+    /// </summary>
+    public NaturalNumber WildPitches { get; }
+
+    /// <summary>
+    /// Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate
+    /// </summary>
+    public NaturalNumber PickOffs { get; }
+
+    /// <summary>
+    /// Catcher stat: Stolen base percentage
+    /// </summary>
+    public StolenBasePercentage StolenBasePercentage =>
+        StolenBasePercentage.Create(StolenBases.Value, CaughtStealing.Value);
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="playerId">The MLB ID of the Player</param>
-    /// <param name="seasonYear">The season</param>
-    /// <param name="gameDate">The date of the game</param>
-    /// <param name="gameId">The MLB ID of the game</param>
-    /// <param name="teamId">The MLB ID of the team</param>
     /// <param name="position">The position the player is fielding</param>
     /// <param name="gameStarted">True if the player started the game at this position</param>
     /// <param name="inningsPlayed">The number of innings this player fielded at this position</param>
@@ -72,28 +127,31 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="catchersInterference">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
-    private PlayerFieldingStatsByGame(MlbId playerId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
-        MlbId teamId, Position position, bool gameStarted, InningsCount inningsPlayed, NaturalNumber assists,
+    protected FieldingStats(Position position, bool gameStarted, InningsCount inningsPlayed, NaturalNumber assists,
         NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors, NaturalNumber doublePlays,
         NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases, NaturalNumber passedBalls,
-        NaturalNumber catchersInterference, NaturalNumber wildPitches, NaturalNumber pickOffs) : base(position, gameStarted, inningsPlayed, assists, putOuts, errors, throwingErrors,
-        doublePlays, triplePlays, caughtStealing, stolenBases, passedBalls, catchersInterference, wildPitches, pickOffs)
+        NaturalNumber catchersInterference, NaturalNumber wildPitches, NaturalNumber pickOffs)
     {
-        PlayerId = playerId;
-        SeasonYear = seasonYear;
-        GameDate = gameDate;
-        GameId = gameId;
-        TeamId = teamId;
+        Position = position;
+        GameStarted = gameStarted;
+        InningsPlayed = inningsPlayed;
+        Assists = assists;
+        PutOuts = putOuts;
+        Errors = errors;
+        ThrowingErrors = throwingErrors;
+        DoublePlays = doublePlays;
+        TriplePlays = triplePlays;
+        CaughtStealing = caughtStealing;
+        StolenBases = stolenBases;
+        PassedBalls = passedBalls;
+        CatchersInterference = catchersInterference;
+        WildPitches = wildPitches;
+        PickOffs = pickOffs;
     }
 
     /// <summary>
-    /// Creates <see cref="PlayerFieldingStatsByGame"/>
+    /// Creates <see cref="FieldingStats"/>
     /// </summary>
-    /// <param name="playerId">The MLB ID of the Player</param>
-    /// <param name="seasonYear">The season</param>
-    /// <param name="gameDate">The date of the game</param>
-    /// <param name="gameId">The MLB ID of the game</param>
-    /// <param name="teamId">The MLB ID of the team</param>
     /// <param name="position">The position the player is fielding</param>
     /// <param name="gameStarted">True if the player started the game at this position</param>
     /// <param name="inningsPlayed">The number of innings this player fielded at this position</param>
@@ -109,9 +167,8 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="catchersInterference">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
-    /// <returns><see cref="PlayerFieldingStatsByGame"/></returns>
-    public static PlayerFieldingStatsByGame Create(MlbId playerId, SeasonYear seasonYear, DateTime gameDate,
-        MlbId gameId, MlbId teamId, Position position, bool gameStarted, decimal inningsPlayed, int assists,
+    /// <returns><see cref="FieldingStats"/></returns>
+    public static FieldingStats Create(Position position, bool gameStarted, decimal inningsPlayed, int assists,
         int putOuts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
         int stolenBases, int passedBalls, int catchersInterference, int wildPitches, int pickOffs)
     {
@@ -128,7 +185,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         var ci = NaturalNumber.Create(catchersInterference);
         var wp = NaturalNumber.Create(wildPitches);
         var pk = NaturalNumber.Create(pickOffs);
-        return new PlayerFieldingStatsByGame(playerId, seasonYear, gameDate, gameId, teamId, position, gameStarted,
+        return new FieldingStats(position, gameStarted,
             inn, a, po, e, te, dp, tp, cs, sb,
             pb, ci, wp, pk);
     }

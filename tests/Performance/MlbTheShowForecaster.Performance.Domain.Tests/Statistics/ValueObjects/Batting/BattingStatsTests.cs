@@ -1,10 +1,9 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
 
-namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.ValueObjects;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.Statistics.ValueObjects.Batting;
 
-public class PlayerBattingStatsByGameTests
+public class BattingStatsTests
 {
     [Fact]
     public void BattingAverage_RequiredStats_ReturnsCalculatedStat()
@@ -12,7 +11,7 @@ public class PlayerBattingStatsByGameTests
         // Arrange
         const int hits = 151;
         const int atBats = 497;
-        var stats = Faker.FakePlayerBattingStats(hits: hits, atBats: atBats);
+        var stats = Faker.FakeBattingStats(hits: hits, atBats: atBats);
 
         // Act
         var actual = stats.BattingAverage;
@@ -30,7 +29,7 @@ public class PlayerBattingStatsByGameTests
         const int hitByPitches = 3;
         const int atBats = 497;
         const int sacrificeFlies = 3;
-        var stats = Faker.FakePlayerBattingStats(hits: hits, baseOnBalls: baseOnBalls, hitByPitch: hitByPitches,
+        var stats = Faker.FakeBattingStats(hits: hits, baseOnBalls: baseOnBalls, hitByPitch: hitByPitches,
             atBats: atBats, sacrificeFlies: sacrificeFlies);
 
         // Act
@@ -48,7 +47,7 @@ public class PlayerBattingStatsByGameTests
         const int doubles = 26;
         const int triples = 8;
         const int homeRuns = 44;
-        var stats = Faker.FakePlayerBattingStats(hits: hits, doubles: doubles, triples: triples, homeRuns: homeRuns);
+        var stats = Faker.FakeBattingStats(hits: hits, doubles: doubles, triples: triples, homeRuns: homeRuns);
 
         // Act
         var actual = stats.TotalBases;
@@ -66,7 +65,7 @@ public class PlayerBattingStatsByGameTests
         const int doubles = 26;
         const int triples = 8;
         const int homeRuns = 44;
-        var stats = Faker.FakePlayerBattingStats(atBats: atBats, hits: hits, doubles: doubles, triples: triples,
+        var stats = Faker.FakeBattingStats(atBats: atBats, hits: hits, doubles: doubles, triples: triples,
             homeRuns: homeRuns);
 
         // Act
@@ -89,7 +88,7 @@ public class PlayerBattingStatsByGameTests
         const int doubles = 26;
         const int triples = 8;
         const int homeRuns = 44;
-        var stats = Faker.FakePlayerBattingStats(atBats: atBats, baseOnBalls: baseOnBalls, hitByPitch: hitByPitches,
+        var stats = Faker.FakeBattingStats(atBats: atBats, baseOnBalls: baseOnBalls, hitByPitch: hitByPitches,
             hits: hits,
             sacrificeFlies: sacrificeFlies, doubles: doubles, triples: triples, homeRuns: homeRuns);
 
@@ -106,7 +105,7 @@ public class PlayerBattingStatsByGameTests
         // Arrange
         const int stolenBases = 20;
         const int caughtStealing = 6;
-        var stats = Faker.FakePlayerBattingStats(stolenBases: stolenBases, caughtStealing: caughtStealing);
+        var stats = Faker.FakeBattingStats(stolenBases: stolenBases, caughtStealing: caughtStealing);
 
         // Act
         var actual = stats.StolenBasePercentage;
@@ -124,7 +123,7 @@ public class PlayerBattingStatsByGameTests
         const int atBats = 497;
         const int strikeouts = 143;
         const int sacrificeFlies = 3;
-        var stats = Faker.FakePlayerBattingStats(hits: hits, homeRuns: homeRuns, atBats: atBats, strikeouts: strikeouts,
+        var stats = Faker.FakeBattingStats(hits: hits, homeRuns: homeRuns, atBats: atBats, strikeouts: strikeouts,
             sacrificeFlies: sacrificeFlies);
 
         // Act
@@ -135,42 +134,9 @@ public class PlayerBattingStatsByGameTests
     }
 
     [Fact]
-    public void Equals_SamePlayerSeasonDateGame_ReturnsTrue()
-    {
-        // Arrange
-        var stats1 = Faker.FakePlayerBattingStats(playerId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerBattingStats(playerId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-
-        // Act
-        var actual = stats1.Equals(stats2);
-
-        // Assert
-        Assert.True(actual);
-    }
-
-    [Fact]
-    public void Equals_DifferentPlayer_ReturnsTrue()
-    {
-        // Arrange
-        var stats1 = Faker.FakePlayerBattingStats(playerId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerBattingStats(playerId: 2, 2024, new DateTime(2024, 4, 1), 10000);
-
-        // Act
-        var actual = stats1.Equals(stats2);
-
-        // Assert
-        Assert.False(actual);
-    }
-
-    [Fact]
     public void Create_ValidValues_Created()
     {
         // Arrange
-        var mlbId = MlbId.Create(1);
-        var seasonYear = SeasonYear.Create(2024);
-        var gameDate = new DateTime(2024, 4, 1);
-        var gameId = MlbId.Create(10000);
-        var teamId = MlbId.Create(100);
         const int plateAppearances = 1; // Note: Numbers are nonsensical
         const int atBats = 2;
         const int runs = 3;
@@ -196,17 +162,12 @@ public class PlayerBattingStatsByGameTests
         const int catchersInterference = 23;
 
         // Act
-        var actual = PlayerBattingStatsByGame.Create(mlbId, seasonYear, gameDate, gameId, teamId, plateAppearances,
+        var actual = BattingStats.Create(plateAppearances,
             atBats, runs, hits, doubles, triples, homeRuns, rbi, baseOnBalls, intentionalWalks, strikeouts,
             stolenBases, caughtStealing, hitByPitch, sacrificeBunts, sacrificeFlies, numberOfPitchesSeen, leftOnBase,
             groundOuts, groundIntoDoublePlays, groundIntoTriplePlays, airOuts, catchersInterference);
 
         // Assert
-        Assert.Equal(mlbId, actual.PlayerId);
-        Assert.Equal(seasonYear, actual.SeasonYear);
-        Assert.Equal(gameDate, actual.GameDate);
-        Assert.Equal(gameId, actual.GameId);
-        Assert.Equal(teamId, actual.TeamId);
         Assert.Equal(plateAppearances, actual.PlateAppearances.Value);
         Assert.Equal(atBats, actual.AtBats.Value);
         Assert.Equal(runs, actual.Runs.Value);

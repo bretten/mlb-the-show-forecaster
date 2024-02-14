@@ -2,6 +2,9 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
 
@@ -10,7 +13,98 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 /// </summary>
 public static class Faker
 {
-    public static PlayerBattingStatsByGame FakeBattingStats(int playerId = 1, ushort seasonYear = 2024,
+    public static BattingStats FakeBattingStats(int plateAppearances = 0,
+        int atBats = 0, int runs = 0, int hits = 0, int doubles = 0, int triples = 0, int homeRuns = 0,
+        int runsBattedIn = 0, int baseOnBalls = 0, int intentionalWalks = 0, int strikeouts = 0,
+        int stolenBases = 0, int caughtStealing = 0, int hitByPitch = 0, int sacrificeBunts = 0,
+        int sacrificeFlies = 0, int numberOfPitchesSeen = 0, int leftOnBase = 0, int groundOuts = 0,
+        int groundIntoDoublePlays = 0, int groundIntoTriplePlays = 0, int airOuts = 0,
+        int catchersInterference = 0)
+    {
+        return BattingStats.Create(plateAppearances, atBats, runs, hits, doubles, triples, homeRuns, runsBattedIn,
+            baseOnBalls,
+            intentionalWalks, strikeouts, stolenBases, caughtStealing, hitByPitch, sacrificeBunts, sacrificeFlies,
+            numberOfPitchesSeen, leftOnBase, groundOuts, groundIntoDoublePlays, groundIntoTriplePlays, airOuts,
+            catchersInterference);
+    }
+
+    public static PitchingStats FakePitchingStats(bool win = false, bool loss = false,
+        bool gameStarted = false, bool gameFinished = false, bool completeGame = false, bool shutout = false,
+        bool hold = false, bool save = false, bool blownSave = false, bool saveOpportunity = false,
+        decimal inningsPitched = 0, int hits = 0, int doubles = 0, int triples = 0, int homeRuns = 0, int runs = 0,
+        int earnedRuns = 0, int strikeouts = 0, int baseOnBalls = 0, int intentionalWalks = 0, int hitBatsmen = 0,
+        int outs = 0, int groundOuts = 0, int airOuts = 0, int groundIntoDoublePlays = 0, int numberOfPitches = 0,
+        int strikes = 0, int wildPitches = 0, int balks = 0, int battersFaced = 0, int atBats = 0,
+        int stolenBases = 0, int caughtStealing = 0, int pickOffs = 0, int inheritedRunners = 0,
+        int inheritedRunnersScored = 0, int catchersInterferences = 0, int sacrificeBunts = 0,
+        int sacrificeFlies = 0)
+    {
+        return PitchingStats.Create(win: win,
+            loss: loss,
+            gameStarted: gameStarted,
+            gameFinished: gameFinished,
+            completeGame: completeGame,
+            shutout: shutout,
+            hold: hold,
+            save: save,
+            blownSave: blownSave,
+            saveOpportunity: saveOpportunity,
+            inningsPitched: inningsPitched,
+            hits: hits,
+            doubles: doubles,
+            triples: triples,
+            homeRuns: homeRuns,
+            runs: runs,
+            earnedRuns: earnedRuns,
+            strikeouts: strikeouts,
+            baseOnBalls: baseOnBalls,
+            intentionalWalks: intentionalWalks,
+            hitBatsmen: hitBatsmen,
+            outs: outs,
+            groundOuts: groundOuts,
+            airOuts: airOuts,
+            groundIntoDoublePlays: groundIntoDoublePlays,
+            numberOfPitches: numberOfPitches,
+            strikes: strikes,
+            wildPitches: wildPitches,
+            balks: balks,
+            battersFaced: battersFaced,
+            atBats: atBats,
+            stolenBases: stolenBases,
+            caughtStealing: caughtStealing,
+            pickOffs: pickOffs,
+            inheritedRunners: inheritedRunners,
+            inheritedRunnersScored: inheritedRunnersScored,
+            catchersInterferences: catchersInterferences,
+            sacrificeBunts: sacrificeBunts,
+            sacrificeFlies: sacrificeFlies
+        );
+    }
+
+    public static FieldingStats FakeFieldingStats(Position position = Position.Catcher,
+        bool gameStarted = false, decimal inningsPlayed = 0, int assists = 0, int putOuts = 0, int errors = 0,
+        int throwingErrors = 0, int doublePlays = 0, int triplePlays = 0, int caughtStealing = 0,
+        int stolenBases = 0, int passedBalls = 0, int catchersInterference = 0, int wildPitches = 0,
+        int pickOffs = 0)
+    {
+        return FieldingStats.Create(position: position,
+            gameStarted: gameStarted,
+            inningsPlayed: inningsPlayed,
+            assists: assists,
+            putOuts: putOuts,
+            errors: errors,
+            throwingErrors: throwingErrors,
+            doublePlays: doublePlays,
+            triplePlays: triplePlays,
+            caughtStealing: caughtStealing,
+            stolenBases: stolenBases,
+            passedBalls: passedBalls,
+            catchersInterference: catchersInterference,
+            wildPitches: wildPitches,
+            pickOffs: pickOffs);
+    }
+
+    public static PlayerBattingStatsByGame FakePlayerBattingStats(int playerId = 1, ushort seasonYear = 2024,
         DateTime? gameDate = null, int gameId = 10000, int teamId = 100, int plateAppearances = 0,
         int atBats = 0, int runs = 0, int hits = 0, int doubles = 0, int triples = 0, int homeRuns = 0,
         int runsBattedIn = 0, int baseOnBalls = 0, int intentionalWalks = 0, int strikeouts = 0,
@@ -27,7 +121,7 @@ public static class Faker
             catchersInterference);
     }
 
-    public static PlayerPitchingStatsByGame FakePitchingStats(int playerId = 1, ushort seasonYear = 2024,
+    public static PlayerPitchingStatsByGame FakePlayerPitchingStats(int playerId = 1, ushort seasonYear = 2024,
         DateTime? gameDate = null, int gameId = 10000, int teamId = 100, bool win = false, bool loss = false,
         bool gameStarted = false, bool gameFinished = false, bool completeGame = false, bool shutout = false,
         bool hold = false, bool save = false, bool blownSave = false, bool saveOpportunity = false,
@@ -83,7 +177,7 @@ public static class Faker
         );
     }
 
-    public static PlayerFieldingStatsByGame FakeFieldingStats(int playerId = 1, ushort seasonYear = 2024,
+    public static PlayerFieldingStatsByGame FakePlayerFieldingStats(int playerId = 1, ushort seasonYear = 2024,
         DateTime? gameDate = null, int gameId = 10000, int teamId = 100, Position position = Position.Catcher,
         bool gameStarted = false, decimal inningsPlayed = 0, int assists = 0, int putOuts = 0, int errors = 0,
         int throwingErrors = 0, int doublePlays = 0, int triplePlays = 0, int caughtStealing = 0,
@@ -109,7 +203,7 @@ public static class Faker
             pickOffs: pickOffs);
     }
 
-    public static PlayerStatsBySeason FakeSeasonStats(int playerId = 1, ushort seasonYear = 2024,
+    public static PlayerStatsBySeason FakePlayerSeasonStats(int playerId = 1, ushort seasonYear = 2024,
         List<PlayerBattingStatsByGame>? battingStatsByGames = null,
         List<PlayerFieldingStatsByGame>? fieldingStatsByGames = null,
         List<PlayerPitchingStatsByGame>? pitchingStatsByGames = null)
