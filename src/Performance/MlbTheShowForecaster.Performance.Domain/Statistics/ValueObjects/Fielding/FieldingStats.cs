@@ -17,12 +17,12 @@ public class FieldingStats : ValueObject
     public Position Position { get; }
 
     /// <summary>
-    /// True if the player started the game at this position
+    /// The number of times the player started the game at this <see cref="Position"/>
     /// </summary>
-    public bool GameStarted { get; }
+    public NaturalNumber GamesStarted { get; }
 
     /// <summary>
-    /// The number of innings this player fielded at this position
+    /// The number of innings this player fielded at this <see cref="Position"/>
     /// </summary>
     public InningsCount InningsPlayed { get; }
 
@@ -113,8 +113,8 @@ public class FieldingStats : ValueObject
     /// Constructor
     /// </summary>
     /// <param name="position">The position the player is fielding</param>
-    /// <param name="gameStarted">True if the player started the game at this position</param>
-    /// <param name="inningsPlayed">The number of innings this player fielded at this position</param>
+    /// <param name="gamesStarted">The number of times the player started the game at this <see cref="Position"/></param>
+    /// <param name="inningsPlayed">The number of innings this player fielded at this <see cref="Position"/></param>
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
     /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
@@ -127,13 +127,14 @@ public class FieldingStats : ValueObject
     /// <param name="catchersInterference">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
-    protected FieldingStats(Position position, bool gameStarted, InningsCount inningsPlayed, NaturalNumber assists,
+    protected FieldingStats(Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed,
+        NaturalNumber assists,
         NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors, NaturalNumber doublePlays,
         NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases, NaturalNumber passedBalls,
         NaturalNumber catchersInterference, NaturalNumber wildPitches, NaturalNumber pickOffs)
     {
         Position = position;
-        GameStarted = gameStarted;
+        GamesStarted = gamesStarted;
         InningsPlayed = inningsPlayed;
         Assists = assists;
         PutOuts = putOuts;
@@ -153,8 +154,8 @@ public class FieldingStats : ValueObject
     /// Creates <see cref="FieldingStats"/>
     /// </summary>
     /// <param name="position">The position the player is fielding</param>
-    /// <param name="gameStarted">True if the player started the game at this position</param>
-    /// <param name="inningsPlayed">The number of innings this player fielded at this position</param>
+    /// <param name="gamesStarted">The number of times the player started the game at this <see cref="Position"/></param>
+    /// <param name="inningsPlayed">The number of innings this player fielded at this <see cref="Position"/></param>
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
     /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
@@ -168,10 +169,11 @@ public class FieldingStats : ValueObject
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     /// <returns><see cref="FieldingStats"/></returns>
-    public static FieldingStats Create(Position position, bool gameStarted, decimal inningsPlayed, int assists,
+    public static FieldingStats Create(Position position, int gamesStarted, decimal inningsPlayed, int assists,
         int putOuts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
         int stolenBases, int passedBalls, int catchersInterference, int wildPitches, int pickOffs)
     {
+        var gs = NaturalNumber.Create(gamesStarted);
         var inn = InningsCount.Create(inningsPlayed);
         var a = NaturalNumber.Create(assists);
         var po = NaturalNumber.Create(putOuts);
@@ -185,8 +187,6 @@ public class FieldingStats : ValueObject
         var ci = NaturalNumber.Create(catchersInterference);
         var wp = NaturalNumber.Create(wildPitches);
         var pk = NaturalNumber.Create(pickOffs);
-        return new FieldingStats(position, gameStarted,
-            inn, a, po, e, te, dp, tp, cs, sb,
-            pb, ci, wp, pk);
+        return new FieldingStats(position, gs, inn, a, po, e, te, dp, tp, cs, sb, pb, ci, wp, pk);
     }
 }

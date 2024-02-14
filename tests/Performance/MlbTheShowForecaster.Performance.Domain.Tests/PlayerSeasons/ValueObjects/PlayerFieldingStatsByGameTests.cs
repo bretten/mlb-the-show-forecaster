@@ -148,7 +148,7 @@ public class PlayerFieldingStatsByGameTests
         Assert.Equal(10000, actual.GameId.Value);
         Assert.Equal(100, actual.TeamId.Value);
         Assert.Equal(Position.FirstBase, actual.Position);
-        Assert.True(actual.GameStarted);
+        Assert.Equal(1, actual.GamesStarted.Value);
         Assert.Equal(1.333m, actual.InningsPlayed.Value);
         Assert.Equal(1, actual.Assists.Value);
         Assert.Equal(2, actual.PutOuts.Value);

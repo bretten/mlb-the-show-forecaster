@@ -1,7 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.BaseRunning;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
 
@@ -58,8 +56,8 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="gameId">The MLB ID of the game</param>
     /// <param name="teamId">The MLB ID of the team</param>
     /// <param name="position">The position the player is fielding</param>
-    /// <param name="gameStarted">True if the player started the game at this position</param>
-    /// <param name="inningsPlayed">The number of innings this player fielded at this position</param>
+    /// <param name="gamesStarted">The number of times the player started the game at this <see cref="Position"/></param>
+    /// <param name="inningsPlayed">The number of innings this player fielded at this <see cref="Position"/></param>
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
     /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
@@ -73,10 +71,11 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     private PlayerFieldingStatsByGame(MlbId playerId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
-        MlbId teamId, Position position, bool gameStarted, InningsCount inningsPlayed, NaturalNumber assists,
+        MlbId teamId, Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed, NaturalNumber assists,
         NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors, NaturalNumber doublePlays,
         NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases, NaturalNumber passedBalls,
-        NaturalNumber catchersInterference, NaturalNumber wildPitches, NaturalNumber pickOffs) : base(position, gameStarted, inningsPlayed, assists, putOuts, errors, throwingErrors,
+        NaturalNumber catchersInterference, NaturalNumber wildPitches, NaturalNumber pickOffs) : base(position,
+        gamesStarted, inningsPlayed, assists, putOuts, errors, throwingErrors,
         doublePlays, triplePlays, caughtStealing, stolenBases, passedBalls, catchersInterference, wildPitches, pickOffs)
     {
         PlayerId = playerId;
@@ -115,6 +114,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         int putOuts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
         int stolenBases, int passedBalls, int catchersInterference, int wildPitches, int pickOffs)
     {
+        var gs = gameStarted ? NaturalNumber.Create(1) : NaturalNumber.Create(0);
         var inn = InningsCount.Create(inningsPlayed);
         var a = NaturalNumber.Create(assists);
         var po = NaturalNumber.Create(putOuts);
@@ -128,8 +128,9 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         var ci = NaturalNumber.Create(catchersInterference);
         var wp = NaturalNumber.Create(wildPitches);
         var pk = NaturalNumber.Create(pickOffs);
-        return new PlayerFieldingStatsByGame(playerId, seasonYear, gameDate, gameId, teamId, position, gameStarted,
-            inn, a, po, e, te, dp, tp, cs, sb,
-            pb, ci, wp, pk);
+        return new PlayerFieldingStatsByGame(playerId, seasonYear, gameDate, gameId, teamId, position, gamesStarted: gs,
+            inningsPlayed: inn, assists: a, putOuts: po, errors: e, throwingErrors: te, doublePlays: dp,
+            triplePlays: tp, caughtStealing: cs, stolenBases: sb, passedBalls: pb, catchersInterference: ci,
+            wildPitches: wp, pickOffs: pk);
     }
 }

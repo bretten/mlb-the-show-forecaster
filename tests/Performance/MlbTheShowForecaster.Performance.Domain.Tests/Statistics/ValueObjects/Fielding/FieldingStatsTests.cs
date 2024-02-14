@@ -74,7 +74,7 @@ public class FieldingStatsTests
     {
         // Arrange
         var position = Position.FirstBase;
-        const bool gameStarted = true; // NOTE: Nonsensical stats
+        const int gamesStarted = 50; // NOTE: Nonsensical stats
         const decimal inningsPlayed = 1.1m;
         const int assists = 1;
         const int putOuts = 2;
@@ -91,7 +91,7 @@ public class FieldingStatsTests
 
         // Act
         var actual = FieldingStats.Create(position: position,
-            gameStarted: gameStarted,
+            gamesStarted: gamesStarted,
             inningsPlayed: inningsPlayed,
             assists: assists,
             putOuts: putOuts,
@@ -108,7 +108,7 @@ public class FieldingStatsTests
 
         // Assert
         Assert.Equal(Position.FirstBase, actual.Position);
-        Assert.True(actual.GameStarted);
+        Assert.Equal(50, actual.GamesStarted.Value);
         Assert.Equal(1.333m, actual.InningsPlayed.Value);
         Assert.Equal(1, actual.Assists.Value);
         Assert.Equal(2, actual.PutOuts.Value);
