@@ -324,15 +324,15 @@ public class PlayerPitchingStatsByGameTests
         var gameId = MlbId.Create(10000);
         var teamId = MlbId.Create(100);
         const bool win = true; // NOTE: Nonsensical stats
-        const bool loss = true;
+        const bool loss = false;
         const bool gameStarted = true;
-        const bool gameFinished = true;
+        const bool gameFinished = false;
         const bool completeGame = true;
         const bool shutOut = true;
-        const bool hold = true;
-        const bool save = true;
-        const bool blownSave = true;
-        const bool saveOpportunity = true;
+        const bool hold = false;
+        const bool save = false;
+        const bool blownSave = false;
+        const bool saveOpportunity = false;
         const decimal inningsPitched = 8.1m;
         const int hits = 3;
         const int runs = 5;
@@ -411,16 +411,16 @@ public class PlayerPitchingStatsByGameTests
         Assert.Equal(new DateTime(2024, 4, 1), actual.GameDate);
         Assert.Equal(10000, actual.GameId.Value);
         Assert.Equal(100, actual.TeamId.Value);
-        Assert.True(actual.Win);
-        Assert.True(actual.Loss);
-        Assert.True(actual.GameStarted);
-        Assert.True(actual.GameFinished);
-        Assert.True(actual.CompleteGame);
-        Assert.True(actual.Shutout);
-        Assert.True(actual.Hold);
-        Assert.True(actual.Save);
-        Assert.True(actual.BlownSave);
-        Assert.True(actual.SaveOpportunity);
+        Assert.Equal(1, actual.Wins.Value);
+        Assert.Equal(0, actual.Losses.Value);
+        Assert.Equal(1, actual.GamesStarted.Value);
+        Assert.Equal(0, actual.GamesFinished.Value);
+        Assert.Equal(1, actual.CompleteGames.Value);
+        Assert.Equal(1, actual.Shutouts.Value);
+        Assert.Equal(0, actual.Holds.Value);
+        Assert.Equal(0, actual.Saves.Value);
+        Assert.Equal(0, actual.BlownSaves.Value);
+        Assert.Equal(0, actual.SaveOpportunities.Value);
         Assert.Equal(8.333m, actual.InningsPitched.Value);
         Assert.Equal(3, actual.Hits.Value);
         Assert.Equal(5, actual.Runs.Value);
@@ -450,5 +450,15 @@ public class PlayerPitchingStatsByGameTests
         Assert.Equal(0, actual.CatchersInterferences.Value);
         Assert.Equal(0, actual.SacrificeBunts.Value);
         Assert.Equal(0, actual.SacrificeFlies.Value);
+        Assert.True(actual.PitchingResult.Win);
+        Assert.False(actual.PitchingResult.Loss);
+        Assert.True(actual.PitchingResult.GameStarted);
+        Assert.False(actual.PitchingResult.GameFinished);
+        Assert.True(actual.PitchingResult.CompleteGame);
+        Assert.True(actual.PitchingResult.Shutout);
+        Assert.False(actual.PitchingResult.Hold);
+        Assert.False(actual.PitchingResult.Save);
+        Assert.False(actual.PitchingResult.BlownSave);
+        Assert.False(actual.PitchingResult.SaveOpportunity);
     }
 }

@@ -12,54 +12,54 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.Valu
 public class PitchingStats : ValueObject
 {
     /// <summary>
-    /// True if the pitcher got the win for this game
+    /// The number of wins
     /// </summary>
-    public bool Win { get; }
+    public NaturalNumber Wins { get; }
 
     /// <summary>
-    /// True if the pitcher got the loss for this game
+    /// The number of losses
     /// </summary>
-    public bool Loss { get; }
+    public NaturalNumber Losses { get; }
 
     /// <summary>
-    /// True if the pitcher started this game
+    /// The number of games started as a pitcher
     /// </summary>
-    public bool GameStarted { get; }
+    public NaturalNumber GamesStarted { get; }
 
     /// <summary>
-    /// True if the pitcher was the last pitcher in the game as a relief pitcher
+    /// The number of times the pitcher was the last pitcher in the game as a relief pitcher
     /// </summary>
-    public bool GameFinished { get; }
+    public NaturalNumber GamesFinished { get; }
 
     /// <summary>
-    /// True if the pitcher pitched the whole game
+    /// The number of complete games pitched
     /// </summary>
-    public bool CompleteGame { get; }
+    public NaturalNumber CompleteGames { get; }
 
     /// <summary>
-    /// True if the pitcher pitched a shutout
+    /// The number of shutouts
     /// </summary>
-    public bool Shutout { get; }
+    public NaturalNumber Shutouts { get; }
 
     /// <summary>
-    /// True if the pitcher earned a hold
+    /// The number of holds
     /// </summary>
-    public bool Hold { get; }
+    public NaturalNumber Holds { get; }
 
     /// <summary>
-    /// True if the pitcher earned a save
+    /// The number of saves
     /// </summary>
-    public bool Save { get; }
+    public NaturalNumber Saves { get; }
 
     /// <summary>
-    /// True if the pitcher failed to earn a save
+    /// The number of blown saves
     /// </summary>
-    public bool BlownSave { get; }
+    public NaturalNumber BlownSaves { get; }
 
     /// <summary>
-    /// True if this game was a save opportunity for the pitcher
+    /// The number of save opportunities
     /// </summary>
-    public bool SaveOpportunity { get; }
+    public NaturalNumber SaveOpportunities { get; }
 
     /// <summary>
     /// The number of innings pitched
@@ -301,16 +301,16 @@ public class PitchingStats : ValueObject
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="win">True if the pitcher got the win for this game</param>
-    /// <param name="loss">True if the pitcher got the loss for this game</param>
-    /// <param name="gameStarted">True if the pitcher started this game</param>
-    /// <param name="gameFinished">True if the pitcher was the last pitcher in the game as a relief pitcher</param>
-    /// <param name="completeGame">True if the pitcher pitched the whole game</param>
-    /// <param name="shutout">True if the pitcher pitched a shutout</param>
-    /// <param name="hold">True if the pitcher earned a hold</param>
-    /// <param name="save">True if the pitcher earned a save</param>
-    /// <param name="blownSave">True if the pitcher failed to earn a save</param>
-    /// <param name="saveOpportunity">True if this game was a save opportunity for the pitcher</param>
+    /// <param name="wins">The number of wins</param>
+    /// <param name="losses">The number of losses</param>
+    /// <param name="gamesStarted">The number of games started as a pitcher</param>
+    /// <param name="gamesFinished">The number of times the pitcher was the last pitcher in the game as a relief pitcher</param>
+    /// <param name="completeGames">The number of complete games pitched</param>
+    /// <param name="shutouts">The number of shutouts</param>
+    /// <param name="holds">The number of holds</param>
+    /// <param name="saves">The number of saves</param>
+    /// <param name="blownSaves">The number of blown saves</param>
+    /// <param name="saveOpportunities">The number of save opportunities</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <param name="hits">The number of hits given up</param>
     /// <param name="doubles">The number of doubles given up</param>
@@ -340,9 +340,10 @@ public class PitchingStats : ValueObject
     /// <param name="catchersInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
-    protected PitchingStats(bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame, bool shutout,
-        bool hold, bool save, bool blownSave, bool saveOpportunity, InningsCount inningsPitched, NaturalNumber hits,
-        NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runs,
+    protected PitchingStats(NaturalNumber wins, NaturalNumber losses, NaturalNumber gamesStarted,
+        NaturalNumber gamesFinished, NaturalNumber completeGames, NaturalNumber shutouts, NaturalNumber holds,
+        NaturalNumber saves, NaturalNumber blownSaves, NaturalNumber saveOpportunities, InningsCount inningsPitched,
+        NaturalNumber hits, NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runs,
         NaturalNumber earnedRuns, NaturalNumber strikeouts, NaturalNumber baseOnBalls, NaturalNumber intentionalWalks,
         NaturalNumber hitBatsmen, NaturalNumber outs, NaturalNumber groundOuts, NaturalNumber airOuts,
         NaturalNumber groundIntoDoublePlays, NaturalNumber numberOfPitches, NaturalNumber strikes,
@@ -351,16 +352,16 @@ public class PitchingStats : ValueObject
         NaturalNumber inheritedRunnersScored, NaturalNumber catchersInterferences, NaturalNumber sacrificeBunts,
         NaturalNumber sacrificeFlies)
     {
-        Win = win;
-        Loss = loss;
-        GameStarted = gameStarted;
-        GameFinished = gameFinished;
-        CompleteGame = completeGame;
-        Shutout = shutout;
-        Hold = hold;
-        Save = save;
-        BlownSave = blownSave;
-        SaveOpportunity = saveOpportunity;
+        Wins = wins;
+        Losses = losses;
+        GamesStarted = gamesStarted;
+        GamesFinished = gamesFinished;
+        CompleteGames = completeGames;
+        Shutouts = shutouts;
+        Holds = holds;
+        Saves = saves;
+        BlownSaves = blownSaves;
+        SaveOpportunities = saveOpportunities;
         InningsPitched = inningsPitched;
         Hits = hits;
         Doubles = doubles;
@@ -395,16 +396,16 @@ public class PitchingStats : ValueObject
     /// <summary>
     /// Creates <see cref="PitchingStats"/>
     /// </summary>
-    /// <param name="win">True if the pitcher got the win for this game</param>
-    /// <param name="loss">True if the pitcher got the loss for this game</param>
-    /// <param name="gameStarted">True if the pitcher started this game</param>
-    /// <param name="gameFinished">True if the pitcher was the last pitcher in the game as a relief pitcher</param>
-    /// <param name="completeGame">True if the pitcher pitched the whole game</param>
-    /// <param name="shutout">True if the pitcher pitched a shutout</param>
-    /// <param name="hold">True if the pitcher earned a hold</param>
-    /// <param name="save">True if the pitcher earned a save</param>
-    /// <param name="blownSave">True if the pitcher failed to earn a save</param>
-    /// <param name="saveOpportunity">True if this game was a save opportunity for the pitcher</param>
+    /// <param name="wins">The number of wins</param>
+    /// <param name="losses">The number of losses</param>
+    /// <param name="gamesStarted">The number of games started as a pitcher</param>
+    /// <param name="gamesFinished">The number of times the pitcher was the last pitcher in the game as a relief pitcher</param>
+    /// <param name="completeGames">The number of complete games pitched</param>
+    /// <param name="shutouts">The number of shutouts</param>
+    /// <param name="holds">The number of holds</param>
+    /// <param name="saves">The number of saves</param>
+    /// <param name="blownSaves">The number of blown saves</param>
+    /// <param name="saveOpportunities">The number of save opportunities</param>
     /// <param name="inningsPitched">The number of innings pitched</param>
     /// <param name="hits">The number of hits given up</param>
     /// <param name="doubles">The number of doubles given up</param>
@@ -435,14 +436,24 @@ public class PitchingStats : ValueObject
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
     /// <returns><see cref="PitchingStats"/></returns>
-    public static PitchingStats Create(bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame,
-        bool shutout, bool hold, bool save, bool blownSave, bool saveOpportunity, decimal inningsPitched, int hits,
+    public static PitchingStats Create(int wins, int losses, int gamesStarted, int gamesFinished, int completeGames,
+        int shutouts, int holds, int saves, int blownSaves, int saveOpportunities, decimal inningsPitched, int hits,
         int doubles, int triples, int homeRuns, int runs, int earnedRuns, int strikeouts, int baseOnBalls,
         int intentionalWalks, int hitBatsmen, int outs, int groundOuts, int airOuts, int groundIntoDoublePlays,
-        int numberOfPitches, int strikes, int wildPitches, int balks, int battersFaced, int atBats,
-        int stolenBases, int caughtStealing, int pickOffs, int inheritedRunners, int inheritedRunnersScored,
-        int catchersInterferences, int sacrificeBunts, int sacrificeFlies)
+        int numberOfPitches, int strikes, int wildPitches, int balks, int battersFaced, int atBats, int stolenBases,
+        int caughtStealing, int pickOffs, int inheritedRunners, int inheritedRunnersScored, int catchersInterferences,
+        int sacrificeBunts, int sacrificeFlies)
     {
+        var w = NaturalNumber.Create(wins);
+        var l = NaturalNumber.Create(losses);
+        var gs = NaturalNumber.Create(gamesStarted);
+        var gf = NaturalNumber.Create(gamesFinished);
+        var cg = NaturalNumber.Create(completeGames);
+        var sho = NaturalNumber.Create(shutouts);
+        var hld = NaturalNumber.Create(holds);
+        var sv = NaturalNumber.Create(saves);
+        var bs = NaturalNumber.Create(blownSaves);
+        var svo = NaturalNumber.Create(saveOpportunities);
         var ip = InningsCount.Create(inningsPitched);
         var h = NaturalNumber.Create(hits);
         var r = NaturalNumber.Create(runs);
@@ -472,8 +483,16 @@ public class PitchingStats : ValueObject
         var ci = NaturalNumber.Create(catchersInterferences);
         var sh = NaturalNumber.Create(sacrificeBunts);
         var sf = NaturalNumber.Create(sacrificeFlies);
-        return new PitchingStats(win, loss, gameStarted,
-            gameFinished, completeGame, shutout, hold, save, blownSave, saveOpportunity,
+        return new PitchingStats(wins: w,
+            losses: l,
+            gamesStarted: gs,
+            gamesFinished: gf,
+            completeGames: cg,
+            shutouts: sho,
+            holds: hld,
+            saves: sv,
+            blownSaves: bs,
+            saveOpportunities: svo,
             inningsPitched: ip,
             hits: h,
             doubles: d,

@@ -289,16 +289,16 @@ public class PitchingStatsTests
     public void Create_ValidValues_Created()
     {
         // Arrange
-        const bool win = true; // NOTE: Nonsensical stats
-        const bool loss = true;
-        const bool gameStarted = true;
-        const bool gameFinished = true;
-        const bool completeGame = true;
-        const bool shutOut = true;
-        const bool hold = true;
-        const bool save = true;
-        const bool blownSave = true;
-        const bool saveOpportunity = true;
+        const int wins = 100; // NOTE: Nonsensical stats
+        const int losses = 101;
+        const int gamesStarted = 102;
+        const int gamesFinished = 103;
+        const int completeGames = 104;
+        const int shutouts = 105;
+        const int holds = 106;
+        const int saves = 107;
+        const int blownSaves = 108;
+        const int saveOpportunities = 109;
         const decimal inningsPitched = 8.1m;
         const int hits = 3;
         const int runs = 5;
@@ -330,16 +330,16 @@ public class PitchingStatsTests
         const int sacrificeFlies = 0;
 
         // Act
-        var actual = PitchingStats.Create(win: win,
-            loss: loss,
-            gameStarted: gameStarted,
-            gameFinished: gameFinished,
-            completeGame: completeGame,
-            shutout: shutOut,
-            hold: hold,
-            save: save,
-            blownSave: blownSave,
-            saveOpportunity: saveOpportunity,
+        var actual = PitchingStats.Create(wins: wins,
+            losses: losses,
+            gamesStarted: gamesStarted,
+            gamesFinished: gamesFinished,
+            completeGames: completeGames,
+            shutouts: shutouts,
+            holds: holds,
+            saves: saves,
+            blownSaves: blownSaves,
+            saveOpportunities: saveOpportunities,
             inningsPitched: inningsPitched,
             hits: hits,
             doubles: doubles,
@@ -371,16 +371,16 @@ public class PitchingStatsTests
             sacrificeFlies: sacrificeFlies);
 
         // Assert
-        Assert.True(actual.Win);
-        Assert.True(actual.Loss);
-        Assert.True(actual.GameStarted);
-        Assert.True(actual.GameFinished);
-        Assert.True(actual.CompleteGame);
-        Assert.True(actual.Shutout);
-        Assert.True(actual.Hold);
-        Assert.True(actual.Save);
-        Assert.True(actual.BlownSave);
-        Assert.True(actual.SaveOpportunity);
+        Assert.Equal(100, actual.Wins.Value);
+        Assert.Equal(101, actual.Losses.Value);
+        Assert.Equal(102, actual.GamesStarted.Value);
+        Assert.Equal(103, actual.GamesFinished.Value);
+        Assert.Equal(104, actual.CompleteGames.Value);
+        Assert.Equal(105, actual.Shutouts.Value);
+        Assert.Equal(106, actual.Holds.Value);
+        Assert.Equal(107, actual.Saves.Value);
+        Assert.Equal(108, actual.BlownSaves.Value);
+        Assert.Equal(109, actual.SaveOpportunities.Value);
         Assert.Equal(8.333m, actual.InningsPitched.Value);
         Assert.Equal(3, actual.Hits.Value);
         Assert.Equal(5, actual.Runs.Value);

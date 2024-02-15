@@ -28,9 +28,8 @@ public static class Faker
             catchersInterference);
     }
 
-    public static PitchingStats FakePitchingStats(bool win = false, bool loss = false,
-        bool gameStarted = false, bool gameFinished = false, bool completeGame = false, bool shutout = false,
-        bool hold = false, bool save = false, bool blownSave = false, bool saveOpportunity = false,
+    public static PitchingStats FakePitchingStats(int wins = 0, int losses = 0, int gamesStarted = 0, int gamesFinished = 0, 
+        int completeGames = 0, int shutouts = 0, int holds = 0, int saves = 0, int blownSaves = 0, int saveOpportunities = 0,
         decimal inningsPitched = 0, int hits = 0, int doubles = 0, int triples = 0, int homeRuns = 0, int runs = 0,
         int earnedRuns = 0, int strikeouts = 0, int baseOnBalls = 0, int intentionalWalks = 0, int hitBatsmen = 0,
         int outs = 0, int groundOuts = 0, int airOuts = 0, int groundIntoDoublePlays = 0, int numberOfPitches = 0,
@@ -39,16 +38,16 @@ public static class Faker
         int inheritedRunnersScored = 0, int catchersInterferences = 0, int sacrificeBunts = 0,
         int sacrificeFlies = 0)
     {
-        return PitchingStats.Create(win: win,
-            loss: loss,
-            gameStarted: gameStarted,
-            gameFinished: gameFinished,
-            completeGame: completeGame,
-            shutout: shutout,
-            hold: hold,
-            save: save,
-            blownSave: blownSave,
-            saveOpportunity: saveOpportunity,
+        return PitchingStats.Create(wins: wins,
+            losses: losses,
+            gamesStarted: gamesStarted,
+            gamesFinished: gamesFinished,
+            completeGames: completeGames,
+            shutouts: shutouts,
+            holds: holds,
+            saves: saves,
+            blownSaves: blownSaves,
+            saveOpportunities: saveOpportunities,
             inningsPitched: inningsPitched,
             hits: hits,
             doubles: doubles,
