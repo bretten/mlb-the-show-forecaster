@@ -128,10 +128,10 @@ public class FieldingStats : ValueObject
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     protected FieldingStats(Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed,
-        NaturalNumber assists,
-        NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors, NaturalNumber doublePlays,
-        NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases, NaturalNumber passedBalls,
-        NaturalNumber catchersInterference, NaturalNumber wildPitches, NaturalNumber pickOffs)
+        NaturalNumber assists, NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors,
+        NaturalNumber doublePlays, NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases,
+        NaturalNumber passedBalls, NaturalNumber catchersInterference, NaturalNumber wildPitches,
+        NaturalNumber pickOffs)
     {
         Position = position;
         GamesStarted = gamesStarted;
@@ -187,6 +187,20 @@ public class FieldingStats : ValueObject
         var ci = NaturalNumber.Create(catchersInterference);
         var wp = NaturalNumber.Create(wildPitches);
         var pk = NaturalNumber.Create(pickOffs);
-        return new FieldingStats(position, gs, inn, a, po, e, te, dp, tp, cs, sb, pb, ci, wp, pk);
+        return new FieldingStats(position,
+            gamesStarted: gs,
+            inningsPlayed: inn,
+            assists: a,
+            putOuts: po,
+            errors: e,
+            throwingErrors: te,
+            doublePlays: dp,
+            triplePlays: tp,
+            caughtStealing: cs,
+            stolenBases: sb,
+            passedBalls: pb,
+            catchersInterference: ci,
+            wildPitches: wp,
+            pickOffs: pk);
     }
 }

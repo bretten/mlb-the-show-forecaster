@@ -196,10 +196,30 @@ public class PlayerBattingStatsByGameTests
         const int catchersInterference = 23;
 
         // Act
-        var actual = PlayerBattingStatsByGame.Create(mlbId, seasonYear, gameDate, gameId, teamId, plateAppearances,
-            atBats, runs, hits, doubles, triples, homeRuns, rbi, baseOnBalls, intentionalWalks, strikeouts,
-            stolenBases, caughtStealing, hitByPitch, sacrificeBunts, sacrificeFlies, numberOfPitchesSeen, leftOnBase,
-            groundOuts, groundIntoDoublePlays, groundIntoTriplePlays, airOuts, catchersInterference);
+        var actual = PlayerBattingStatsByGame.Create(mlbId, seasonYear, gameDate, gameId, teamId,
+            plateAppearances: plateAppearances,
+            atBats: atBats,
+            runs: runs,
+            hits: hits,
+            doubles: doubles,
+            triples: triples,
+            homeRuns: homeRuns,
+            runsBattedIn: rbi,
+            baseOnBalls: baseOnBalls,
+            intentionalWalks: intentionalWalks,
+            strikeouts: strikeouts,
+            stolenBases: stolenBases,
+            caughtStealing: caughtStealing,
+            hitByPitch: hitByPitch,
+            sacrificeBunts: sacrificeBunts,
+            sacrificeFlies: sacrificeFlies,
+            numberOfPitchesSeen: numberOfPitchesSeen,
+            leftOnBase: leftOnBase,
+            groundOuts: groundOuts,
+            groundIntoDoublePlays: groundIntoDoublePlays,
+            groundIntoTriplePlays: groundIntoTriplePlays,
+            airOuts: airOuts,
+            catchersInterference: catchersInterference);
 
         // Assert
         Assert.Equal(mlbId, actual.PlayerId);

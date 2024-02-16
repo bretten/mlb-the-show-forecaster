@@ -178,9 +178,9 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
         bool shutout, bool hold, bool save, bool blownSave, bool saveOpportunity, decimal inningsPitched, int hits,
         int doubles, int triples, int homeRuns, int runs, int earnedRuns, int strikeouts, int baseOnBalls,
         int intentionalWalks, int hitBatsmen, int outs, int groundOuts, int airOuts, int groundIntoDoublePlays,
-        int numberOfPitches, int strikes, int wildPitches, int balks, int battersFaced, int atBats,
-        int stolenBases, int caughtStealing, int pickOffs, int inheritedRunners, int inheritedRunnersScored,
-        int catchersInterferences, int sacrificeBunts, int sacrificeFlies)
+        int numberOfPitches, int strikes, int wildPitches, int balks, int battersFaced, int atBats, int stolenBases,
+        int caughtStealing, int pickOffs, int inheritedRunners, int inheritedRunnersScored, int catchersInterferences,
+        int sacrificeBunts, int sacrificeFlies)
     {
         var pitchingResult = PitchingResult.Create(win: win, loss: loss, gameStarted: gameStarted,
             gameFinished: gameFinished, completeGame: completeGame, shutout: shutout, hold: hold, save: save,

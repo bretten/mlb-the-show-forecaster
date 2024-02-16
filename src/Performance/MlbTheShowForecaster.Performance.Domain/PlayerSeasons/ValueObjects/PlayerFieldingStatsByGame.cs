@@ -75,8 +75,8 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors, NaturalNumber doublePlays,
         NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases, NaturalNumber passedBalls,
         NaturalNumber catchersInterference, NaturalNumber wildPitches, NaturalNumber pickOffs) : base(position,
-        gamesStarted, inningsPlayed, assists, putOuts, errors, throwingErrors,
-        doublePlays, triplePlays, caughtStealing, stolenBases, passedBalls, catchersInterference, wildPitches, pickOffs)
+        gamesStarted, inningsPlayed, assists, putOuts, errors, throwingErrors, doublePlays, triplePlays, caughtStealing,
+        stolenBases, passedBalls, catchersInterference, wildPitches, pickOffs)
     {
         PlayerId = playerId;
         SeasonYear = seasonYear;
@@ -128,9 +128,20 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         var ci = NaturalNumber.Create(catchersInterference);
         var wp = NaturalNumber.Create(wildPitches);
         var pk = NaturalNumber.Create(pickOffs);
-        return new PlayerFieldingStatsByGame(playerId, seasonYear, gameDate, gameId, teamId, position, gamesStarted: gs,
-            inningsPlayed: inn, assists: a, putOuts: po, errors: e, throwingErrors: te, doublePlays: dp,
-            triplePlays: tp, caughtStealing: cs, stolenBases: sb, passedBalls: pb, catchersInterference: ci,
-            wildPitches: wp, pickOffs: pk);
+        return new PlayerFieldingStatsByGame(playerId, seasonYear, gameDate, gameId, teamId, position,
+            gamesStarted: gs,
+            inningsPlayed: inn,
+            assists: a,
+            putOuts: po,
+            errors: e,
+            throwingErrors: te,
+            doublePlays: dp,
+            triplePlays: tp,
+            caughtStealing: cs,
+            stolenBases: sb,
+            passedBalls: pb,
+            catchersInterference: ci,
+            wildPitches: wp,
+            pickOffs: pk);
     }
 }

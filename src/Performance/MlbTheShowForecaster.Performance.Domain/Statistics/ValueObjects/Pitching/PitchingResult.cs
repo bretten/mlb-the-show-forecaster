@@ -133,8 +133,15 @@ public sealed class PitchingResult : ValueObject
     public static PitchingResult Create(bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame,
         bool shutout, bool hold, bool save, bool blownSave, bool saveOpportunity)
     {
-        return new PitchingResult(win: win, loss: loss, gameStarted: gameStarted, gameFinished: gameFinished,
-            completeGame: completeGame, shutout: shutout, hold: hold, save: save, blownSave: blownSave,
+        return new PitchingResult(win: win,
+            loss: loss,
+            gameStarted: gameStarted,
+            gameFinished: gameFinished,
+            completeGame: completeGame,
+            shutout: shutout,
+            hold: hold,
+            save: save,
+            blownSave: blownSave,
             saveOpportunity: saveOpportunity);
     }
 }

@@ -19,8 +19,15 @@ public class PitchingResultTests
         const bool save = false;
         const bool blownSave = false;
         const bool saveOpportunity = false;
-        var action = () => PitchingResult.Create(win: win, loss: loss, gameStarted: gameStarted, gameFinished: gameFinished,
-            completeGame: completeGame, shutout: shutout, hold: hold, save: save, blownSave: blownSave,
+        var action = () => PitchingResult.Create(win: win,
+            loss: loss,
+            gameStarted: gameStarted,
+            gameFinished: gameFinished,
+            completeGame: completeGame,
+            shutout: shutout,
+            hold: hold,
+            save: save,
+            blownSave: blownSave,
             saveOpportunity: saveOpportunity);
 
         // Act
@@ -31,7 +38,7 @@ public class PitchingResultTests
         Assert.IsType<InvalidPitchingResultCombinationException>(actual);
         Assert.Equal("A pitcher cannot receive both a win and loss", actual.Message);
     }
-    
+
     [Fact]
     public void Constructor_GameStartedAndSave_ThrowsException()
     {
@@ -46,8 +53,15 @@ public class PitchingResultTests
         const bool save = true;
         const bool blownSave = true;
         const bool saveOpportunity = true;
-        var action = () => PitchingResult.Create(win: win, loss: loss, gameStarted: gameStarted, gameFinished: gameFinished,
-            completeGame: completeGame, shutout: shutout, hold: hold, save: save, blownSave: blownSave,
+        var action = () => PitchingResult.Create(win: win,
+            loss: loss,
+            gameStarted: gameStarted,
+            gameFinished: gameFinished,
+            completeGame: completeGame,
+            shutout: shutout,
+            hold: hold,
+            save: save,
+            blownSave: blownSave,
             saveOpportunity: saveOpportunity);
 
         // Act
@@ -58,7 +72,7 @@ public class PitchingResultTests
         Assert.IsType<InvalidPitchingResultCombinationException>(actual);
         Assert.Equal("A pitcher who starts a game is not eligible for a save", actual.Message);
     }
-    
+
     [Fact]
     public void Constructor_GameFinishedAndStartedOrCompleted_ThrowsException()
     {
@@ -73,8 +87,15 @@ public class PitchingResultTests
         const bool save = false;
         const bool blownSave = false;
         const bool saveOpportunity = false;
-        var action = () => PitchingResult.Create(win: win, loss: loss, gameStarted: gameStarted, gameFinished: gameFinished,
-            completeGame: completeGame, shutout: shutout, hold: hold, save: save, blownSave: blownSave,
+        var action = () => PitchingResult.Create(win: win,
+            loss: loss,
+            gameStarted: gameStarted,
+            gameFinished: gameFinished,
+            completeGame: completeGame,
+            shutout: shutout,
+            hold: hold,
+            save: save,
+            blownSave: blownSave,
             saveOpportunity: saveOpportunity);
 
         // Act
@@ -83,9 +104,10 @@ public class PitchingResultTests
         // Assert
         Assert.NotNull(actual);
         Assert.IsType<InvalidPitchingResultCombinationException>(actual);
-        Assert.Equal("A relief pitcher who finished a game means they did not start the game or pitch a complete game", actual.Message);
+        Assert.Equal("A relief pitcher who finished a game means they did not start the game or pitch a complete game",
+            actual.Message);
     }
-    
+
     [Fact]
     public void Constructor_ShutoutAndLoss_ThrowsException()
     {
@@ -100,8 +122,15 @@ public class PitchingResultTests
         const bool save = false;
         const bool blownSave = false;
         const bool saveOpportunity = false;
-        var action = () => PitchingResult.Create(win: win, loss: loss, gameStarted: gameStarted, gameFinished: gameFinished,
-            completeGame: completeGame, shutout: shutout, hold: hold, save: save, blownSave: blownSave,
+        var action = () => PitchingResult.Create(win: win,
+            loss: loss,
+            gameStarted: gameStarted,
+            gameFinished: gameFinished,
+            completeGame: completeGame,
+            shutout: shutout,
+            hold: hold,
+            save: save,
+            blownSave: blownSave,
             saveOpportunity: saveOpportunity);
 
         // Act
@@ -112,7 +141,7 @@ public class PitchingResultTests
         Assert.IsType<InvalidPitchingResultCombinationException>(actual);
         Assert.Equal("If a shutout was pitched, it means the pitcher did not receive a loss", actual.Message);
     }
-    
+
     [Fact]
     public void Constructor_WinAndSave_ThrowsException()
     {
@@ -127,8 +156,15 @@ public class PitchingResultTests
         const bool save = true;
         const bool blownSave = false;
         const bool saveOpportunity = false;
-        var action = () => PitchingResult.Create(win: win, loss: loss, gameStarted: gameStarted, gameFinished: gameFinished,
-            completeGame: completeGame, shutout: shutout, hold: hold, save: save, blownSave: blownSave,
+        var action = () => PitchingResult.Create(win: win,
+            loss: loss,
+            gameStarted: gameStarted,
+            gameFinished: gameFinished,
+            completeGame: completeGame,
+            shutout: shutout,
+            hold: hold,
+            save: save,
+            blownSave: blownSave,
             saveOpportunity: saveOpportunity);
 
         // Act
