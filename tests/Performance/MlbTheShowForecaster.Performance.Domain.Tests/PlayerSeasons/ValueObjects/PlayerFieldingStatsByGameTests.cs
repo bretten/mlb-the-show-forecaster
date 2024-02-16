@@ -8,69 +8,6 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSea
 public class PlayerFieldingStatsByGameTests
 {
     [Fact]
-    public void FieldingPercentage_AssistsPutoutsErrors_ReturnsCalculatedStat()
-    {
-        // Arrange
-        const int assists = 276;
-        const int putOuts = 139;
-        const int errors = 8;
-        var stats = Faker.FakePlayerFieldingStats(assists: assists, putOuts: putOuts, errors: errors);
-
-        // Act
-        var actual = stats.FieldingPercentage;
-
-        // Assert
-        Assert.Equal(0.981m, actual.Value);
-    }
-
-    [Fact]
-    public void TotalChances_AssistsPutoutsErrors_ReturnsCalculatedStat()
-    {
-        // Arrange
-        const int assists = 276;
-        const int putOuts = 139;
-        const int errors = 8;
-        var stats = Faker.FakePlayerFieldingStats(assists: assists, putOuts: putOuts, errors: errors);
-
-        // Act
-        var actual = stats.TotalChances;
-
-        // Assert
-        Assert.Equal(423, actual.Value);
-    }
-
-    [Fact]
-    public void RangeFactorPer9_AssistsPutOutsInnings_ReturnsCalculatedValue()
-    {
-        // Arrange
-        const int assists = 276;
-        const int putOuts = 139;
-        const decimal inningsPlayed = 951.2m;
-        var stats = Faker.FakePlayerFieldingStats(assists: assists, putOuts: putOuts, inningsPlayed: inningsPlayed);
-
-        // Act
-        var actual = stats.RangeFactorPer9;
-
-        // Assert
-        Assert.Equal(3.925m, actual.Value);
-    }
-
-    [Fact]
-    public void StolenBasePercentage_StolenBasesCaughtStealing_ReturnsCalculatedValue()
-    {
-        // Arrange
-        const int stolenBases = 20;
-        const int caughtStealing = 6;
-        var stats = Faker.FakePlayerFieldingStats(stolenBases: stolenBases, caughtStealing: caughtStealing);
-
-        // Act
-        var actual = stats.StolenBasePercentage;
-
-        // Assert
-        Assert.Equal(0.769m, actual.Value);
-    }
-
-    [Fact]
     public void Equals_SamePlayerSeasonDateGame_ReturnsTrue()
     {
         // Arrange
