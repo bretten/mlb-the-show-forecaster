@@ -91,7 +91,8 @@ public class PlayerBattingStatsByGameTests
             groundIntoDoublePlays: groundIntoDoublePlays,
             groundIntoTriplePlays: groundIntoTriplePlays,
             airOuts: airOuts,
-            catchersInterference: catchersInterference);
+            catchersInterference: catchersInterference
+        );
 
         // Assert
         Assert.Equal(mlbId, actual.PlayerId);

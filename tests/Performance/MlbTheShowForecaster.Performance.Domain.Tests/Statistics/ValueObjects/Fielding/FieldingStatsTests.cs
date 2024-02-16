@@ -104,7 +104,8 @@ public class FieldingStatsTests
             passedBalls: passedBalls,
             catchersInterference: catchersInterference,
             wildPitches: wildPitches,
-            pickOffs: pickOffs);
+            pickOffs: pickOffs
+        );
 
         // Assert
         Assert.Equal(Position.FirstBase, actual.Position);

@@ -184,7 +184,8 @@ public class BattingStatsTests
             groundIntoDoublePlays: groundIntoDoublePlays,
             groundIntoTriplePlays: groundIntoTriplePlays,
             airOuts: airOuts,
-            catchersInterference: catchersInterference);
+            catchersInterference: catchersInterference
+        );
 
         // Assert
         Assert.Equal(plateAppearances, actual.PlateAppearances.Value);

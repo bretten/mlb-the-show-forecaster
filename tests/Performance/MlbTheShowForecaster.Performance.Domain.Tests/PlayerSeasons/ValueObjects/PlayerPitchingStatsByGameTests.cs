@@ -123,7 +123,8 @@ public class PlayerPitchingStatsByGameTests
             inheritedRunnersScored: inheritedRunnersScored,
             catchersInterferences: catchersInterferences,
             sacrificeBunts: sacrificeBunts,
-            sacrificeFlies: sacrificeFlies);
+            sacrificeFlies: sacrificeFlies
+        );
 
         // Assert
         Assert.Equal(1, actual.PlayerId.Value);

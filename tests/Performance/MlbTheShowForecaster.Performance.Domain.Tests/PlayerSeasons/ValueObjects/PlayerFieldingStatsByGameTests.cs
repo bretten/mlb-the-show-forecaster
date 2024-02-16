@@ -76,7 +76,8 @@ public class PlayerFieldingStatsByGameTests
             passedBalls: passedBalls,
             catchersInterference: catchersInterference,
             wildPitches: wildPitches,
-            pickOffs: pickOffs);
+            pickOffs: pickOffs
+        );
 
         // Assert
         Assert.Equal(1, actual.PlayerId.Value);
