@@ -109,6 +109,7 @@ public class PlayerBattingStatsByGameTests
         Assert.Equal(rbi, actual.RunsBattedIn.Value);
         Assert.Equal(baseOnBalls, actual.BaseOnBalls.Value);
         Assert.Equal(intentionalWalks, actual.IntentionalWalks.Value);
+        Assert.Equal(strikeouts, actual.Strikeouts.Value);
         Assert.Equal(stolenBases, actual.StolenBases.Value);
         Assert.Equal(caughtStealing, actual.CaughtStealing.Value);
         Assert.Equal(hitByPitch, actual.HitByPitch.Value);

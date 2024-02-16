@@ -42,7 +42,8 @@ public static class Faker
             groundIntoDoublePlays: groundIntoDoublePlays,
             groundIntoTriplePlays: groundIntoTriplePlays,
             airOuts: airOuts,
-            catchersInterference: catchersInterference);
+            catchersInterference: catchersInterference
+        );
     }
 
     public static PitchingStats FakePitchingStats(int wins = 0, int losses = 0, int gamesStarted = 0,
@@ -116,7 +117,8 @@ public static class Faker
             passedBalls: passedBalls,
             catchersInterference: catchersInterference,
             wildPitches: wildPitches,
-            pickOffs: pickOffs);
+            pickOffs: pickOffs
+        );
     }
 
     public static PlayerBattingStatsByGame FakePlayerBattingStats(int playerId = 1, ushort seasonYear = 2024,
@@ -151,7 +153,8 @@ public static class Faker
             groundIntoDoublePlays: groundIntoDoublePlays,
             groundIntoTriplePlays: groundIntoTriplePlays,
             airOuts: airOuts,
-            catchersInterference: catchersInterference);
+            catchersInterference: catchersInterference
+        );
     }
 
     public static PlayerPitchingStatsByGame FakePlayerPitchingStats(int playerId = 1, ushort seasonYear = 2024,
@@ -231,17 +234,19 @@ public static class Faker
             passedBalls: passedBalls,
             catchersInterference: catchersInterference,
             wildPitches: wildPitches,
-            pickOffs: pickOffs);
+            pickOffs: pickOffs
+        );
     }
 
     public static PlayerStatsBySeason FakePlayerSeasonStats(int playerId = 1, ushort seasonYear = 2024,
         List<PlayerBattingStatsByGame>? battingStatsByGames = null,
-        List<PlayerFieldingStatsByGame>? fieldingStatsByGames = null,
-        List<PlayerPitchingStatsByGame>? pitchingStatsByGames = null)
+        List<PlayerPitchingStatsByGame>? pitchingStatsByGames = null,
+        List<PlayerFieldingStatsByGame>? fieldingStatsByGames = null)
     {
         return PlayerStatsBySeason.Create(MlbId.Create(playerId), SeasonYear.Create(seasonYear),
             battingStatsByGames ?? new List<PlayerBattingStatsByGame>(),
-            fieldingStatsByGames ?? new List<PlayerFieldingStatsByGame>(),
-            pitchingStatsByGames ?? new List<PlayerPitchingStatsByGame>());
+            pitchingStatsByGames ?? new List<PlayerPitchingStatsByGame>(),
+            fieldingStatsByGames ?? new List<PlayerFieldingStatsByGame>()
+        );
     }
 }

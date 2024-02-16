@@ -289,45 +289,45 @@ public class PitchingStatsTests
     public void Create_ValidValues_Created()
     {
         // Arrange
-        const int wins = 100; // NOTE: Nonsensical stats
-        const int losses = 101;
-        const int gamesStarted = 102;
-        const int gamesFinished = 103;
-        const int completeGames = 104;
-        const int shutouts = 105;
-        const int holds = 106;
-        const int saves = 107;
-        const int blownSaves = 108;
-        const int saveOpportunities = 109;
-        const decimal inningsPitched = 8.1m;
-        const int hits = 3;
-        const int runs = 5;
-        const int earnedRuns = 5;
-        const int homeRuns = 2;
-        const int numberOfPitches = 93;
-        const int hitBatsmen = 3;
-        const int baseOnBalls = 2;
-        const int intentionalWalks = 0;
-        const int strikeouts = 8;
-        const int groundOuts = 6;
-        const int airOuts = 4;
-        const int doubles = 1;
-        const int triples = 0;
-        const int groundIntoDoublePlays = 0;
-        const int wildPitches = 2;
-        const int balks = 0;
-        const int stolenBases = 1;
-        const int caughtStealing = 0;
-        const int pickOffs = 0;
-        const int strikes = 63;
-        const int battersFaced = 26;
-        const int atBats = 21;
-        const int inheritedRunners = 0;
-        const int inheritedRunnersScored = 0;
-        const int outs = 18;
-        const int catchersInterferences = 0;
-        const int sacrificeBunts = 0;
-        const int sacrificeFlies = 0;
+        const int wins = 1;
+        const int losses = 2;
+        const int gamesStarted = 3;
+        const int gamesFinished = 4;
+        const int completeGames = 5;
+        const int shutouts = 6;
+        const int holds = 7;
+        const int saves = 8;
+        const int blownSaves = 9;
+        const int saveOpportunities = 10;
+        const decimal inningsPitched = 11.1m;
+        const int hits = 12;
+        const int doubles = 13;
+        const int triples = 14;
+        const int homeRuns = 15;
+        const int runs = 16;
+        const int earnedRuns = 17;
+        const int strikeouts = 18;
+        const int baseOnBalls = 19;
+        const int intentionalWalks = 20;
+        const int hitBatsmen = 21;
+        const int outs = 22;
+        const int groundOuts = 23;
+        const int airOuts = 24;
+        const int groundIntoDoublePlays = 25;
+        const int numberOfPitches = 26;
+        const int strikes = 27;
+        const int wildPitches = 28;
+        const int balks = 29;
+        const int battersFaced = 30;
+        const int atBats = 31;
+        const int stolenBases = 32;
+        const int caughtStealing = 33;
+        const int pickOffs = 34;
+        const int inheritedRunners = 35;
+        const int inheritedRunnersScored = 36;
+        const int catchersInterferences = 37;
+        const int sacrificeBunts = 38;
+        const int sacrificeFlies = 39;
 
         // Act
         var actual = PitchingStats.Create(wins: wins,
@@ -368,47 +368,48 @@ public class PitchingStatsTests
             inheritedRunnersScored: inheritedRunnersScored,
             catchersInterferences: catchersInterferences,
             sacrificeBunts: sacrificeBunts,
-            sacrificeFlies: sacrificeFlies);
+            sacrificeFlies: sacrificeFlies
+        );
 
         // Assert
-        Assert.Equal(100, actual.Wins.Value);
-        Assert.Equal(101, actual.Losses.Value);
-        Assert.Equal(102, actual.GamesStarted.Value);
-        Assert.Equal(103, actual.GamesFinished.Value);
-        Assert.Equal(104, actual.CompleteGames.Value);
-        Assert.Equal(105, actual.Shutouts.Value);
-        Assert.Equal(106, actual.Holds.Value);
-        Assert.Equal(107, actual.Saves.Value);
-        Assert.Equal(108, actual.BlownSaves.Value);
-        Assert.Equal(109, actual.SaveOpportunities.Value);
-        Assert.Equal(8.333m, actual.InningsPitched.Value);
-        Assert.Equal(3, actual.Hits.Value);
-        Assert.Equal(5, actual.Runs.Value);
-        Assert.Equal(5, actual.EarnedRuns.Value);
-        Assert.Equal(2, actual.HomeRuns.Value);
-        Assert.Equal(93, actual.NumberOfPitches.Value);
-        Assert.Equal(3, actual.HitBatsmen.Value);
-        Assert.Equal(2, actual.BaseOnBalls.Value);
-        Assert.Equal(0, actual.IntentionalWalks.Value);
-        Assert.Equal(8, actual.Strikeouts.Value);
-        Assert.Equal(6, actual.GroundOuts.Value);
-        Assert.Equal(4, actual.AirOuts.Value);
-        Assert.Equal(1, actual.Doubles.Value);
-        Assert.Equal(0, actual.Triples.Value);
-        Assert.Equal(0, actual.GroundIntoDoublePlays.Value);
-        Assert.Equal(2, actual.WildPitches.Value);
-        Assert.Equal(0, actual.Balks.Value);
-        Assert.Equal(1, actual.StolenBases.Value);
-        Assert.Equal(0, actual.CaughtStealing.Value);
-        Assert.Equal(0, actual.PickOffs.Value);
-        Assert.Equal(63, actual.Strikes.Value);
-        Assert.Equal(26, actual.BattersFaced.Value);
-        Assert.Equal(21, actual.AtBats.Value);
-        Assert.Equal(0, actual.InheritedRunners.Value);
-        Assert.Equal(0, actual.InheritedRunnersScored.Value);
-        Assert.Equal(18, actual.Outs.Value);
-        Assert.Equal(0, actual.CatchersInterferences.Value);
-        Assert.Equal(0, actual.SacrificeBunts.Value);
-        Assert.Equal(0, actual.SacrificeFlies.Value);
+        Assert.Equal(1, actual.Wins.Value);
+        Assert.Equal(2, actual.Losses.Value);
+        Assert.Equal(3, actual.GamesStarted.Value);
+        Assert.Equal(4, actual.GamesFinished.Value);
+        Assert.Equal(5, actual.CompleteGames.Value);
+        Assert.Equal(6, actual.Shutouts.Value);
+        Assert.Equal(7, actual.Holds.Value);
+        Assert.Equal(8, actual.Saves.Value);
+        Assert.Equal(9, actual.BlownSaves.Value);
+        Assert.Equal(10, actual.SaveOpportunities.Value);
+        Assert.Equal(11.333m, actual.InningsPitched.Value);
+        Assert.Equal(12, actual.Hits.Value);
+        Assert.Equal(13, actual.Doubles.Value);
+        Assert.Equal(14, actual.Triples.Value);
+        Assert.Equal(15, actual.HomeRuns.Value);
+        Assert.Equal(16, actual.Runs.Value);
+        Assert.Equal(17, actual.EarnedRuns.Value);
+        Assert.Equal(18, actual.Strikeouts.Value);
+        Assert.Equal(19, actual.BaseOnBalls.Value);
+        Assert.Equal(20, actual.IntentionalWalks.Value);
+        Assert.Equal(21, actual.HitBatsmen.Value);
+        Assert.Equal(22, actual.Outs.Value);
+        Assert.Equal(23, actual.GroundOuts.Value);
+        Assert.Equal(24, actual.AirOuts.Value);
+        Assert.Equal(25, actual.GroundIntoDoublePlays.Value);
+        Assert.Equal(26, actual.NumberOfPitches.Value);
+        Assert.Equal(27, actual.Strikes.Value);
+        Assert.Equal(28, actual.WildPitches.Value);
+        Assert.Equal(29, actual.Balks.Value);
+        Assert.Equal(30, actual.BattersFaced.Value);
+        Assert.Equal(31, actual.AtBats.Value);
+        Assert.Equal(32, actual.StolenBases.Value);
+        Assert.Equal(33, actual.CaughtStealing.Value);
+        Assert.Equal(34, actual.PickOffs.Value);
+        Assert.Equal(35, actual.InheritedRunners.Value);
+        Assert.Equal(36, actual.InheritedRunnersScored.Value);
+        Assert.Equal(37, actual.CatchersInterferences.Value);
+        Assert.Equal(38, actual.SacrificeBunts.Value);
+        Assert.Equal(39, actual.SacrificeFlies.Value);
     }
 }
