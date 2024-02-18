@@ -303,4 +303,39 @@ public class BattingStats : ValueObject
             catchersInterference: ci
         );
     }
+
+    /// <summary>
+    /// Creates an aggregate <see cref="BattingStats"/>
+    /// </summary>
+    /// <param name="battingStatsCollection">A collection of batting stats</param>
+    /// <returns>Aggregated <see cref="BattingStats"/></returns>
+    public static BattingStats Create(IEnumerable<BattingStats> battingStatsCollection)
+    {
+        var battingStatsArray = battingStatsCollection as BattingStats[] ?? battingStatsCollection.ToArray();
+        return Create(
+            plateAppearances: battingStatsArray.Sum(x => x.PlateAppearances.Value),
+            atBats: battingStatsArray.Sum(x => x.AtBats.Value),
+            runs: battingStatsArray.Sum(x => x.Runs.Value),
+            hits: battingStatsArray.Sum(x => x.Hits.Value),
+            doubles: battingStatsArray.Sum(x => x.Doubles.Value),
+            triples: battingStatsArray.Sum(x => x.Triples.Value),
+            homeRuns: battingStatsArray.Sum(x => x.HomeRuns.Value),
+            runsBattedIn: battingStatsArray.Sum(x => x.RunsBattedIn.Value),
+            baseOnBalls: battingStatsArray.Sum(x => x.BaseOnBalls.Value),
+            intentionalWalks: battingStatsArray.Sum(x => x.IntentionalWalks.Value),
+            strikeouts: battingStatsArray.Sum(x => x.Strikeouts.Value),
+            stolenBases: battingStatsArray.Sum(x => x.StolenBases.Value),
+            caughtStealing: battingStatsArray.Sum(x => x.CaughtStealing.Value),
+            hitByPitch: battingStatsArray.Sum(x => x.HitByPitch.Value),
+            sacrificeBunts: battingStatsArray.Sum(x => x.SacrificeBunts.Value),
+            sacrificeFlies: battingStatsArray.Sum(x => x.SacrificeFlies.Value),
+            numberOfPitchesSeen: battingStatsArray.Sum(x => x.NumberOfPitchesSeen.Value),
+            leftOnBase: battingStatsArray.Sum(x => x.LeftOnBase.Value),
+            groundOuts: battingStatsArray.Sum(x => x.GroundOuts.Value),
+            groundIntoDoublePlays: battingStatsArray.Sum(x => x.GroundIntoDoublePlays.Value),
+            groundIntoTriplePlays: battingStatsArray.Sum(x => x.GroundIntoTriplePlays.Value),
+            airOuts: battingStatsArray.Sum(x => x.AirOuts.Value),
+            catchersInterference: battingStatsArray.Sum(x => x.CatchersInterference.Value)
+        );
+    }
 }

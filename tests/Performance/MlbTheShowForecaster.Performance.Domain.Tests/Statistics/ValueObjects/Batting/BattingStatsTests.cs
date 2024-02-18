@@ -212,4 +212,89 @@ public class BattingStatsTests
         Assert.Equal(airOuts, actual.AirOuts.Value);
         Assert.Equal(catchersInterference, actual.CatchersInterference.Value);
     }
+
+    [Fact]
+    public void Create_BattingStatsCollection_ReturnsAggregatedStats()
+    {
+        // Arrange
+        var stats1 = Faker.FakeBattingStats(
+            plateAppearances: 1, // Every number is different to ensure no crossed variable assignment
+            atBats: 2,
+            runs: 3,
+            hits: 4,
+            doubles: 5,
+            triples: 6,
+            homeRuns: 7,
+            runsBattedIn: 8,
+            baseOnBalls: 9,
+            intentionalWalks: 10,
+            strikeouts: 11,
+            stolenBases: 12,
+            caughtStealing: 13,
+            hitByPitch: 14,
+            sacrificeBunts: 15,
+            sacrificeFlies: 16,
+            numberOfPitchesSeen: 17,
+            leftOnBase: 18,
+            groundOuts: 19,
+            groundIntoDoublePlays: 20,
+            groundIntoTriplePlays: 21,
+            airOuts: 22,
+            catchersInterference: 23
+        );
+        var stats2 = Faker.FakeBattingStats(
+            plateAppearances: 1000, // Values are the previous one multiplied by 1000 to make expected values easy to calculate
+            atBats: 2000,
+            runs: 3000,
+            hits: 4000,
+            doubles: 5000,
+            triples: 6000,
+            homeRuns: 7000,
+            runsBattedIn: 8000,
+            baseOnBalls: 9000,
+            intentionalWalks: 10000,
+            strikeouts: 11000,
+            stolenBases: 12000,
+            caughtStealing: 13000,
+            hitByPitch: 14000,
+            sacrificeBunts: 15000,
+            sacrificeFlies: 16000,
+            numberOfPitchesSeen: 17000,
+            leftOnBase: 18000,
+            groundOuts: 19000,
+            groundIntoDoublePlays: 20000,
+            groundIntoTriplePlays: 21000,
+            airOuts: 22000,
+            catchersInterference: 23000
+        );
+        var statsCollection = new List<BattingStats>() { stats1, stats2 };
+
+        // Act
+        var actual = BattingStats.Create(statsCollection);
+
+        // Assert
+        Assert.Equal(1001, actual.PlateAppearances.Value);
+        Assert.Equal(2002, actual.AtBats.Value);
+        Assert.Equal(3003, actual.Runs.Value);
+        Assert.Equal(4004, actual.Hits.Value);
+        Assert.Equal(5005, actual.Doubles.Value);
+        Assert.Equal(6006, actual.Triples.Value);
+        Assert.Equal(7007, actual.HomeRuns.Value);
+        Assert.Equal(8008, actual.RunsBattedIn.Value);
+        Assert.Equal(9009, actual.BaseOnBalls.Value);
+        Assert.Equal(10010, actual.IntentionalWalks.Value);
+        Assert.Equal(11011, actual.Strikeouts.Value);
+        Assert.Equal(12012, actual.StolenBases.Value);
+        Assert.Equal(13013, actual.CaughtStealing.Value);
+        Assert.Equal(14014, actual.HitByPitch.Value);
+        Assert.Equal(15015, actual.SacrificeBunts.Value);
+        Assert.Equal(16016, actual.SacrificeFlies.Value);
+        Assert.Equal(17017, actual.NumberOfPitchesSeen.Value);
+        Assert.Equal(18018, actual.LeftOnBase.Value);
+        Assert.Equal(19019, actual.GroundOuts.Value);
+        Assert.Equal(20020, actual.GroundIntoDoublePlays.Value);
+        Assert.Equal(21021, actual.GroundIntoTriplePlays.Value);
+        Assert.Equal(22022, actual.AirOuts.Value);
+        Assert.Equal(23023, actual.CatchersInterference.Value);
+    }
 }

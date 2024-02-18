@@ -203,4 +203,31 @@ public class FieldingStats : ValueObject
             wildPitches: wp,
             pickOffs: pk);
     }
+
+    /// <summary>
+    /// Creates an aggregate <see cref="FieldingStats"/>
+    /// </summary>
+    /// <param name="fieldingStatsCollection">A collection of fielding stats</param>
+    /// <returns>Aggregated <see cref="FieldingStats"/></returns>
+    public static FieldingStats Create(IEnumerable<FieldingStats> fieldingStatsCollection)
+    {
+        var fieldingStatsArray = fieldingStatsCollection as FieldingStats[] ?? fieldingStatsCollection.ToArray();
+        return Create(
+            position: fieldingStatsArray.First().Position,
+            gamesStarted: fieldingStatsArray.Sum(x => x.GamesStarted.Value),
+            inningsPlayed: fieldingStatsArray.Sum(x => x.InningsPlayed.Value),
+            assists: fieldingStatsArray.Sum(x => x.Assists.Value),
+            putOuts: fieldingStatsArray.Sum(x => x.PutOuts.Value),
+            errors: fieldingStatsArray.Sum(x => x.Errors.Value),
+            throwingErrors: fieldingStatsArray.Sum(x => x.ThrowingErrors.Value),
+            doublePlays: fieldingStatsArray.Sum(x => x.DoublePlays.Value),
+            triplePlays: fieldingStatsArray.Sum(x => x.TriplePlays.Value),
+            caughtStealing: fieldingStatsArray.Sum(x => x.CaughtStealing.Value),
+            stolenBases: fieldingStatsArray.Sum(x => x.StolenBases.Value),
+            passedBalls: fieldingStatsArray.Sum(x => x.PassedBalls.Value),
+            catchersInterference: fieldingStatsArray.Sum(x => x.CatchersInterference.Value),
+            wildPitches: fieldingStatsArray.Sum(x => x.WildPitches.Value),
+            pickOffs: fieldingStatsArray.Sum(x => x.PickOffs.Value)
+        );
+    }
 }

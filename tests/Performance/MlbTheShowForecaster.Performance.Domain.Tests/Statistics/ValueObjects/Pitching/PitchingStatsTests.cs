@@ -412,4 +412,135 @@ public class PitchingStatsTests
         Assert.Equal(38, actual.SacrificeBunts.Value);
         Assert.Equal(39, actual.SacrificeFlies.Value);
     }
+
+    [Fact]
+    public void Create_PitchingStatsCollection_ReturnsAggregatedStats()
+    {
+        // Arrange
+        var stats1 = Faker.FakePitchingStats(wins: 1,
+            losses: 2,
+            gamesStarted: 3,
+            gamesFinished: 4,
+            completeGames: 5,
+            shutouts: 6,
+            holds: 7,
+            saves: 8,
+            blownSaves: 9,
+            saveOpportunities: 10,
+            inningsPitched: 11,
+            hits: 12,
+            doubles: 13,
+            triples: 14,
+            homeRuns: 15,
+            runs: 16,
+            earnedRuns: 17,
+            strikeouts: 18,
+            baseOnBalls: 19,
+            intentionalWalks: 20,
+            hitBatsmen: 21,
+            outs: 22,
+            groundOuts: 23,
+            airOuts: 24,
+            groundIntoDoublePlays: 25,
+            numberOfPitches: 26,
+            strikes: 27,
+            wildPitches: 28,
+            balks: 29,
+            battersFaced: 30,
+            atBats: 31,
+            stolenBases: 32,
+            caughtStealing: 33,
+            pickOffs: 34,
+            inheritedRunners: 35,
+            inheritedRunnersScored: 36,
+            catchersInterferences: 37,
+            sacrificeBunts: 38,
+            sacrificeFlies: 39
+        );
+        var stats2 = Faker.FakePitchingStats(wins: 1000,
+            losses: 2000,
+            gamesStarted: 3000,
+            gamesFinished: 4000,
+            completeGames: 5000,
+            shutouts: 6000,
+            holds: 7000,
+            saves: 8000,
+            blownSaves: 9000,
+            saveOpportunities: 10000,
+            inningsPitched: 11000,
+            hits: 12000,
+            doubles: 13000,
+            triples: 14000,
+            homeRuns: 15000,
+            runs: 16000,
+            earnedRuns: 17000,
+            strikeouts: 18000,
+            baseOnBalls: 19000,
+            intentionalWalks: 20000,
+            hitBatsmen: 21000,
+            outs: 22000,
+            groundOuts: 23000,
+            airOuts: 24000,
+            groundIntoDoublePlays: 25000,
+            numberOfPitches: 26000,
+            strikes: 27000,
+            wildPitches: 28000,
+            balks: 29000,
+            battersFaced: 30000,
+            atBats: 31000,
+            stolenBases: 32000,
+            caughtStealing: 33000,
+            pickOffs: 34000,
+            inheritedRunners: 35000,
+            inheritedRunnersScored: 36000,
+            catchersInterferences: 37000,
+            sacrificeBunts: 38000,
+            sacrificeFlies: 39000
+        );
+        var statsCollection = new List<PitchingStats>() { stats1, stats2 };
+
+        // Act
+        var actual = PitchingStats.Create(statsCollection);
+
+        // Assert
+        Assert.Equal(1001, actual.Wins.Value);
+        Assert.Equal(2002, actual.Losses.Value);
+        Assert.Equal(3003, actual.GamesStarted.Value);
+        Assert.Equal(4004, actual.GamesFinished.Value);
+        Assert.Equal(5005, actual.CompleteGames.Value);
+        Assert.Equal(6006, actual.Shutouts.Value);
+        Assert.Equal(7007, actual.Holds.Value);
+        Assert.Equal(8008, actual.Saves.Value);
+        Assert.Equal(9009, actual.BlownSaves.Value);
+        Assert.Equal(10010, actual.SaveOpportunities.Value);
+        Assert.Equal(11011, actual.InningsPitched.Value);
+        Assert.Equal(12012, actual.Hits.Value);
+        Assert.Equal(13013, actual.Doubles.Value);
+        Assert.Equal(14014, actual.Triples.Value);
+        Assert.Equal(15015, actual.HomeRuns.Value);
+        Assert.Equal(16016, actual.Runs.Value);
+        Assert.Equal(17017, actual.EarnedRuns.Value);
+        Assert.Equal(18018, actual.Strikeouts.Value);
+        Assert.Equal(19019, actual.BaseOnBalls.Value);
+        Assert.Equal(20020, actual.IntentionalWalks.Value);
+        Assert.Equal(21021, actual.HitBatsmen.Value);
+        Assert.Equal(22022, actual.Outs.Value);
+        Assert.Equal(23023, actual.GroundOuts.Value);
+        Assert.Equal(24024, actual.AirOuts.Value);
+        Assert.Equal(25025, actual.GroundIntoDoublePlays.Value);
+        Assert.Equal(26026, actual.NumberOfPitches.Value);
+        Assert.Equal(27027, actual.Strikes.Value);
+        Assert.Equal(28028, actual.WildPitches.Value);
+        Assert.Equal(29029, actual.Balks.Value);
+        Assert.Equal(30030, actual.BattersFaced.Value);
+        Assert.Equal(31031, actual.AtBats.Value);
+        Assert.Equal(32032, actual.StolenBases.Value);
+        Assert.Equal(33033, actual.CaughtStealing.Value);
+        Assert.Equal(34034, actual.PickOffs.Value);
+        Assert.Equal(35035, actual.InheritedRunners.Value);
+        Assert.Equal(36036, actual.InheritedRunnersScored.Value);
+        Assert.Equal(37037, actual.CatchersInterferences.Value);
+        Assert.Equal(38038, actual.SacrificeBunts.Value);
+        Assert.Equal(39039, actual.SacrificeFlies.Value);
+    }
 }

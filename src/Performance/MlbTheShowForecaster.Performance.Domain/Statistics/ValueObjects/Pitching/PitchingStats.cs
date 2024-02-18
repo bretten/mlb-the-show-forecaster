@@ -521,6 +521,57 @@ public class PitchingStats : ValueObject
             inheritedRunnersScored: irs,
             catchersInterferences: ci,
             sacrificeBunts: sh,
-            sacrificeFlies: sf);
+            sacrificeFlies: sf
+        );
+    }
+
+    /// <summary>
+    /// Creates an aggregate <see cref="PitchingStats"/>
+    /// </summary>
+    /// <param name="pitchingStatsCollection">A collection of pitching stats</param>
+    /// <returns>Aggregated <see cref="PitchingStats"/></returns>
+    public static PitchingStats Create(IEnumerable<PitchingStats> pitchingStatsCollection)
+    {
+        var pitchingStatsArray = pitchingStatsCollection as PitchingStats[] ?? pitchingStatsCollection.ToArray();
+        return Create(wins: pitchingStatsArray.Sum(x => x.Wins.Value),
+            losses: pitchingStatsArray.Sum(x => x.Losses.Value),
+            gamesStarted: pitchingStatsArray.Sum(x => x.GamesStarted.Value),
+            gamesFinished: pitchingStatsArray.Sum(x => x.GamesFinished.Value),
+            completeGames: pitchingStatsArray.Sum(x => x.CompleteGames.Value),
+            shutouts: pitchingStatsArray.Sum(x => x.Shutouts.Value),
+            holds: pitchingStatsArray.Sum(x => x.Holds.Value),
+            saves: pitchingStatsArray.Sum(x => x.Saves.Value),
+            blownSaves: pitchingStatsArray.Sum(x => x.BlownSaves.Value),
+            saveOpportunities: pitchingStatsArray.Sum(x => x.SaveOpportunities.Value),
+            inningsPitched: pitchingStatsArray.Sum(x => x.InningsPitched.Value),
+            hits: pitchingStatsArray.Sum(x => x.Hits.Value),
+            doubles: pitchingStatsArray.Sum(x => x.Doubles.Value),
+            triples: pitchingStatsArray.Sum(x => x.Triples.Value),
+            homeRuns: pitchingStatsArray.Sum(x => x.HomeRuns.Value),
+            runs: pitchingStatsArray.Sum(x => x.Runs.Value),
+            earnedRuns: pitchingStatsArray.Sum(x => x.EarnedRuns.Value),
+            strikeouts: pitchingStatsArray.Sum(x => x.Strikeouts.Value),
+            baseOnBalls: pitchingStatsArray.Sum(x => x.BaseOnBalls.Value),
+            intentionalWalks: pitchingStatsArray.Sum(x => x.IntentionalWalks.Value),
+            hitBatsmen: pitchingStatsArray.Sum(x => x.HitBatsmen.Value),
+            outs: pitchingStatsArray.Sum(x => x.Outs.Value),
+            groundOuts: pitchingStatsArray.Sum(x => x.GroundOuts.Value),
+            airOuts: pitchingStatsArray.Sum(x => x.AirOuts.Value),
+            groundIntoDoublePlays: pitchingStatsArray.Sum(x => x.GroundIntoDoublePlays.Value),
+            numberOfPitches: pitchingStatsArray.Sum(x => x.NumberOfPitches.Value),
+            strikes: pitchingStatsArray.Sum(x => x.Strikes.Value),
+            wildPitches: pitchingStatsArray.Sum(x => x.WildPitches.Value),
+            balks: pitchingStatsArray.Sum(x => x.Balks.Value),
+            battersFaced: pitchingStatsArray.Sum(x => x.BattersFaced.Value),
+            atBats: pitchingStatsArray.Sum(x => x.AtBats.Value),
+            stolenBases: pitchingStatsArray.Sum(x => x.StolenBases.Value),
+            caughtStealing: pitchingStatsArray.Sum(x => x.CaughtStealing.Value),
+            pickOffs: pitchingStatsArray.Sum(x => x.PickOffs.Value),
+            inheritedRunners: pitchingStatsArray.Sum(x => x.InheritedRunners.Value),
+            inheritedRunnersScored: pitchingStatsArray.Sum(x => x.InheritedRunnersScored.Value),
+            catchersInterferences: pitchingStatsArray.Sum(x => x.CatchersInterferences.Value),
+            sacrificeBunts: pitchingStatsArray.Sum(x => x.SacrificeBunts.Value),
+            sacrificeFlies: pitchingStatsArray.Sum(x => x.SacrificeFlies.Value)
+        );
     }
 }
