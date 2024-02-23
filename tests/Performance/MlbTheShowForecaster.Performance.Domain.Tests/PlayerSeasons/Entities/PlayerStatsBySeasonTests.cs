@@ -461,7 +461,7 @@ public class PlayerStatsBySeasonTests
         var actual = PlayerStatsBySeason.Create(mlbId, seasonYear, battingStats, pitchingStats, fieldingStats);
 
         // Assert
-        Assert.Equal(mlbId, actual.PlayerId);
+        Assert.Equal(mlbId, actual.PlayerMlbId);
         Assert.Equal(seasonYear, actual.SeasonYear);
         Assert.Equal(battingStats, actual.BattingStatsByGamesChronologically);
         Assert.Equal(fieldingStats, actual.FieldingStatsByGamesChronologically);

@@ -12,7 +12,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <summary>
     /// The MLB ID of the Player
     /// </summary>
-    public MlbId PlayerId { get; }
+    public MlbId PlayerMlbId { get; }
 
     /// <summary>
     /// The season
@@ -45,7 +45,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <returns>The values of the properties that are used in equality</returns>
     protected override IEnumerable<object?> GetNestedValues()
     {
-        yield return PlayerId.Value;
+        yield return PlayerMlbId.Value;
         yield return SeasonYear.Value;
         yield return GameDate;
         yield return GameId.Value;
@@ -54,7 +54,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
     /// <param name="gameId">The MLB ID of the game</param>
@@ -99,7 +99,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
     /// <param name="pitchingResult">The pitching result</param>
-    private PlayerPitchingStatsByGame(MlbId playerId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
+    private PlayerPitchingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
         MlbId teamId, NaturalNumber wins, NaturalNumber losses, NaturalNumber gamesStarted, NaturalNumber gamesFinished,
         NaturalNumber completeGames, NaturalNumber shutouts, NaturalNumber holds, NaturalNumber saves,
         NaturalNumber blownSaves, NaturalNumber saveOpportunities, InningsCount inningsPitched, NaturalNumber hits,
@@ -117,7 +117,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
         caughtStealing, pickOffs, inheritedRunners, inheritedRunnersScored, catchersInterferences, sacrificeBunts,
         sacrificeFlies)
     {
-        PlayerId = playerId;
+        PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
         GameDate = gameDate;
         GameId = gameId;
@@ -128,7 +128,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <summary>
     /// Creates <see cref="PlayerPitchingStatsByGame"/>
     /// </summary>
-    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
     /// <param name="gameId">The MLB ID of the game</param>
@@ -173,7 +173,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
     /// <returns><see cref="PlayerPitchingStatsByGame"/></returns>
-    public static PlayerPitchingStatsByGame Create(MlbId playerId, SeasonYear seasonYear, DateTime gameDate,
+    public static PlayerPitchingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate,
         MlbId gameId, MlbId teamId, bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame,
         bool shutout, bool hold, bool save, bool blownSave, bool saveOpportunity, decimal inningsPitched, int hits,
         int doubles, int triples, int homeRuns, int runs, int earnedRuns, int strikeouts, int baseOnBalls,
@@ -225,7 +225,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
         var ci = NaturalNumber.Create(catchersInterferences);
         var sh = NaturalNumber.Create(sacrificeBunts);
         var sf = NaturalNumber.Create(sacrificeFlies);
-        return new PlayerPitchingStatsByGame(playerId, seasonYear, gameDate, gameId, teamId,
+        return new PlayerPitchingStatsByGame(playerMlbId, seasonYear, gameDate, gameId, teamId,
             wins: w,
             losses: l,
             gamesStarted: gs,

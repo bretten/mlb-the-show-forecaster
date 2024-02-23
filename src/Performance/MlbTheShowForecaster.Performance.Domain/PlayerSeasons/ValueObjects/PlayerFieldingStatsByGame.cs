@@ -13,7 +13,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <summary>
     /// The MLB ID of the Player
     /// </summary>
-    public MlbId PlayerId { get; }
+    public MlbId PlayerMlbId { get; }
 
     /// <summary>
     /// The season
@@ -41,7 +41,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <returns>The values of the properties that are used in equality</returns>
     protected override IEnumerable<object?> GetNestedValues()
     {
-        yield return PlayerId.Value;
+        yield return PlayerMlbId.Value;
         yield return SeasonYear.Value;
         yield return GameDate;
         yield return GameId.Value;
@@ -50,7 +50,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
     /// <param name="gameId">The MLB ID of the game</param>
@@ -70,7 +70,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="catchersInterference">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
-    private PlayerFieldingStatsByGame(MlbId playerId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
+    private PlayerFieldingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
         MlbId teamId, Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed, NaturalNumber assists,
         NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors, NaturalNumber doublePlays,
         NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases, NaturalNumber passedBalls,
@@ -78,7 +78,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         gamesStarted, inningsPlayed, assists, putOuts, errors, throwingErrors, doublePlays, triplePlays, caughtStealing,
         stolenBases, passedBalls, catchersInterference, wildPitches, pickOffs)
     {
-        PlayerId = playerId;
+        PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
         GameDate = gameDate;
         GameId = gameId;
@@ -88,7 +88,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <summary>
     /// Creates <see cref="PlayerFieldingStatsByGame"/>
     /// </summary>
-    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
     /// <param name="gameId">The MLB ID of the game</param>
@@ -109,7 +109,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     /// <returns><see cref="PlayerFieldingStatsByGame"/></returns>
-    public static PlayerFieldingStatsByGame Create(MlbId playerId, SeasonYear seasonYear, DateTime gameDate,
+    public static PlayerFieldingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate,
         MlbId gameId, MlbId teamId, Position position, bool gameStarted, decimal inningsPlayed, int assists,
         int putOuts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
         int stolenBases, int passedBalls, int catchersInterference, int wildPitches, int pickOffs)
@@ -128,7 +128,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         var ci = NaturalNumber.Create(catchersInterference);
         var wp = NaturalNumber.Create(wildPitches);
         var pk = NaturalNumber.Create(pickOffs);
-        return new PlayerFieldingStatsByGame(playerId, seasonYear, gameDate, gameId, teamId, position,
+        return new PlayerFieldingStatsByGame(playerMlbId, seasonYear, gameDate, gameId, teamId, position,
             gamesStarted: gs,
             inningsPlayed: inn,
             assists: a,

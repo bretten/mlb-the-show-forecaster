@@ -36,7 +36,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <summary>
     /// The MLB ID of the Player
     /// </summary>
-    public MlbId PlayerId { get; }
+    public MlbId PlayerMlbId { get; }
 
     /// <summary>
     /// The season
@@ -83,11 +83,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         .GroupBy(x => x.Position)
         .ToDictionary(x => x.Key, FieldingStats.Create);
 
-    private PlayerStatsBySeason(MlbId playerId, SeasonYear seasonYear,
+    private PlayerStatsBySeason(MlbId playerMlbId, SeasonYear seasonYear,
         List<PlayerBattingStatsByGame> battingStatsByGames, List<PlayerPitchingStatsByGame> pitchingStatsByGames,
         List<PlayerFieldingStatsByGame> fieldingStatsByGames) : base(Guid.NewGuid())
     {
-        PlayerId = playerId;
+        PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
         _battingStatsByGames = battingStatsByGames;
         _pitchingStatsByGames = pitchingStatsByGames;
@@ -97,19 +97,19 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     public void LogBattingGame(PlayerBattingStatsByGame stats)
     {
         _battingStatsByGames.Add(stats);
-        RaiseDomainEvent(new PlayerBattedInGameEvent(PlayerId, stats.GameDate));
+        RaiseDomainEvent(new PlayerBattedInGameEvent(PlayerMlbId, stats.GameDate));
     }
 
     public void LogPitchingGame(PlayerPitchingStatsByGame stats)
     {
         _pitchingStatsByGames.Add(stats);
-        RaiseDomainEvent(new PlayerPitchedInGameEvent(PlayerId, stats.GameDate));
+        RaiseDomainEvent(new PlayerPitchedInGameEvent(PlayerMlbId, stats.GameDate));
     }
 
     public void LogFieldingGame(PlayerFieldingStatsByGame stats)
     {
         _fieldingStatsByGames.Add(stats);
-        RaiseDomainEvent(new PlayerFieldedInGameEvent(PlayerId, stats.GameDate));
+        RaiseDomainEvent(new PlayerFieldedInGameEvent(PlayerMlbId, stats.GameDate));
     }
 
     public void AssessPerformanceToDate(DateTime comparisonDate, decimal percentImprovementThreshold = 20)
@@ -123,7 +123,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     {
         var statsBefore = BattingStatsBeforeDate(comparisonDate);
         var statsSince = BattingStatsSinceDate(comparisonDate);
-        var comparison = PlayerBattingPeriodComparison.Create(PlayerId, comparisonDate,
+        var comparison = PlayerBattingPeriodComparison.Create(PlayerMlbId, comparisonDate,
             plateAppearancesBeforeComparisonDate: statsBefore.PlateAppearances.Value,
             onBasePlusSluggingBeforeComparisonDate: statsBefore.OnBasePlusSlugging.Value,
             plateAppearancesSinceComparisonDate: statsSince.PlateAppearances.Value,
@@ -154,7 +154,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     {
         var statsBefore = PitchingStatsBeforeDate(comparisonDate);
         var statsSince = PitchingStatsSinceDate(comparisonDate);
-        var comparison = PlayerPitchingPeriodComparison.Create(PlayerId, comparisonDate,
+        var comparison = PlayerPitchingPeriodComparison.Create(PlayerMlbId, comparisonDate,
             inningsPitchedBeforeComparisonDate: statsBefore.InningsPitched.Value,
             battersFacedBeforeComparisonDate: statsBefore.BattersFaced.Value,
             earnedRunAverageBeforeComparisonDate: statsBefore.EarnedRunAverage.Value,
@@ -187,7 +187,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     {
         var statsBefore = FieldingStatsBeforeDate(comparisonDate);
         var statsSince = FieldingStatsSinceDate(comparisonDate);
-        var comparison = PlayerFieldingPeriodComparison.Create(PlayerId, comparisonDate,
+        var comparison = PlayerFieldingPeriodComparison.Create(PlayerMlbId, comparisonDate,
             totalChancesBeforeComparisonDate: (int)statsBefore.TotalChances.Value,
             fieldingPercentageBeforeComparisonDate: statsBefore.FieldingPercentage.Value,
             totalChancesSinceComparisonDate: (int)statsSince.TotalChances.Value,
@@ -231,11 +231,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     private FieldingStats FieldingStatsSinceDate(DateTime date) =>
         FieldingStats.Create(_fieldingStatsByGames.Where(x => x.GameDate >= date));
 
-    public static PlayerStatsBySeason Create(MlbId playerId, SeasonYear seasonYear,
+    public static PlayerStatsBySeason Create(MlbId playerMlbId, SeasonYear seasonYear,
         List<PlayerBattingStatsByGame> battingStatsByGames, List<PlayerPitchingStatsByGame> pitchingStatsByGames,
         List<PlayerFieldingStatsByGame> fieldingStatsByGames)
     {
-        return new PlayerStatsBySeason(playerId, seasonYear, battingStatsByGames, pitchingStatsByGames,
+        return new PlayerStatsBySeason(playerMlbId, seasonYear, battingStatsByGames, pitchingStatsByGames,
             fieldingStatsByGames);
     }
 }

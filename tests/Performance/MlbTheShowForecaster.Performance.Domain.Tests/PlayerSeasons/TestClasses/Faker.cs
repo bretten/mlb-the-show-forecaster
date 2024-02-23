@@ -122,7 +122,7 @@ public static class Faker
         );
     }
 
-    public static PlayerBattingStatsByGame FakePlayerBattingStats(int playerId = 1, ushort seasonYear = 2024,
+    public static PlayerBattingStatsByGame FakePlayerBattingStats(int playerMlbId = 1, ushort seasonYear = 2024,
         DateTime? gameDate = null, int gameId = 10000, int teamId = 100, int plateAppearances = 0, int atBats = 0,
         int runs = 0, int hits = 0, int doubles = 0, int triples = 0, int homeRuns = 0, int runsBattedIn = 0,
         int baseOnBalls = 0, int intentionalWalks = 0, int strikeouts = 0, int stolenBases = 0, int caughtStealing = 0,
@@ -130,7 +130,7 @@ public static class Faker
         int leftOnBase = 0, int groundOuts = 0, int groundIntoDoublePlays = 0, int groundIntoTriplePlays = 0,
         int airOuts = 0, int catchersInterference = 0)
     {
-        return PlayerBattingStatsByGame.Create(MlbId.Create(playerId), SeasonYear.Create(seasonYear),
+        return PlayerBattingStatsByGame.Create(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
             gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
             plateAppearances: plateAppearances,
             atBats: atBats,
@@ -158,7 +158,7 @@ public static class Faker
         );
     }
 
-    public static PlayerPitchingStatsByGame FakePlayerPitchingStats(int playerId = 1, ushort seasonYear = 2024,
+    public static PlayerPitchingStatsByGame FakePlayerPitchingStats(int playerMlbId = 1, ushort seasonYear = 2024,
         DateTime? gameDate = null, int gameId = 10000, int teamId = 100, bool win = false, bool loss = false,
         bool gameStarted = false, bool gameFinished = false, bool completeGame = false, bool shutout = false,
         bool hold = false, bool save = false, bool blownSave = false, bool saveOpportunity = false,
@@ -169,7 +169,7 @@ public static class Faker
         int caughtStealing = 0, int pickOffs = 0, int inheritedRunners = 0, int inheritedRunnersScored = 0,
         int catchersInterferences = 0, int sacrificeBunts = 0, int sacrificeFlies = 0)
     {
-        return PlayerPitchingStatsByGame.Create(MlbId.Create(playerId), SeasonYear.Create(seasonYear),
+        return PlayerPitchingStatsByGame.Create(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
             gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
             win: win,
             loss: loss,
@@ -213,13 +213,13 @@ public static class Faker
         );
     }
 
-    public static PlayerFieldingStatsByGame FakePlayerFieldingStats(int playerId = 1, ushort seasonYear = 2024,
+    public static PlayerFieldingStatsByGame FakePlayerFieldingStats(int playerMlbId = 1, ushort seasonYear = 2024,
         DateTime? gameDate = null, int gameId = 10000, int teamId = 100, Position position = Position.Catcher,
         bool gameStarted = false, decimal inningsPlayed = 0, int assists = 0, int putOuts = 0, int errors = 0,
         int throwingErrors = 0, int doublePlays = 0, int triplePlays = 0, int caughtStealing = 0, int stolenBases = 0,
         int passedBalls = 0, int catchersInterference = 0, int wildPitches = 0, int pickOffs = 0)
     {
-        return PlayerFieldingStatsByGame.Create(MlbId.Create(playerId), SeasonYear.Create(seasonYear),
+        return PlayerFieldingStatsByGame.Create(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
             gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
             position: position,
             gameStarted: gameStarted,
@@ -239,12 +239,12 @@ public static class Faker
         );
     }
 
-    public static PlayerStatsBySeason FakePlayerSeasonStats(int playerId = 1, ushort seasonYear = 2024,
+    public static PlayerStatsBySeason FakePlayerSeasonStats(int playerMlbId = 1, ushort seasonYear = 2024,
         List<PlayerBattingStatsByGame>? battingStatsByGames = null,
         List<PlayerPitchingStatsByGame>? pitchingStatsByGames = null,
         List<PlayerFieldingStatsByGame>? fieldingStatsByGames = null)
     {
-        return PlayerStatsBySeason.Create(MlbId.Create(playerId), SeasonYear.Create(seasonYear),
+        return PlayerStatsBySeason.Create(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
             battingStatsByGames ?? new List<PlayerBattingStatsByGame>(),
             pitchingStatsByGames ?? new List<PlayerPitchingStatsByGame>(),
             fieldingStatsByGames ?? new List<PlayerFieldingStatsByGame>()

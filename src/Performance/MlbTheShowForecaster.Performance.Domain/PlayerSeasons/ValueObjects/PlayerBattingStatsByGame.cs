@@ -11,7 +11,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <summary>
     /// The MLB ID of the Player
     /// </summary>
-    public MlbId PlayerId { get; }
+    public MlbId PlayerMlbId { get; }
 
     /// <summary>
     /// The season
@@ -39,7 +39,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <returns>The values of the properties that are used in equality</returns>
     protected override IEnumerable<object?> GetNestedValues()
     {
-        yield return PlayerId.Value;
+        yield return PlayerMlbId.Value;
         yield return SeasonYear.Value;
         yield return GameDate;
         yield return GameId.Value;
@@ -48,7 +48,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
     /// <param name="gameId">The MLB ID of the game</param>
@@ -76,7 +76,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <param name="groundIntoTriplePlays">The number of times the batter grounded into a triple play</param>
     /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
     /// <param name="catchersInterference">The number of times a catcher interfered with the batter's plate appearance</param>
-    private PlayerBattingStatsByGame(MlbId playerId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
+    private PlayerBattingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
         MlbId teamId, NaturalNumber plateAppearances, NaturalNumber atBats, NaturalNumber runs, NaturalNumber hits,
         NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runsBattedIn,
         NaturalNumber baseOnBalls, NaturalNumber intentionalWalks, NaturalNumber strikeouts, NaturalNumber stolenBases,
@@ -88,7 +88,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
         hitByPitch, sacrificeBunts, sacrificeFlies, numberOfPitchesSeen, leftOnBase, groundOuts, groundIntoDoublePlays,
         groundIntoTriplePlays, airOuts, catchersInterference)
     {
-        PlayerId = playerId;
+        PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
         GameDate = gameDate;
         GameId = gameId;
@@ -98,7 +98,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <summary>
     /// Creates <see cref="PlayerBattingStatsByGame"/>
     /// </summary>
-    /// <param name="playerId">The MLB ID of the Player</param>
+    /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
     /// <param name="gameId">The MLB ID of the game</param>
@@ -127,7 +127,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
     /// <param name="catchersInterference">The number of times a catcher interfered with the batter's plate appearance</param>
     /// <returns><see cref="PlayerBattingStatsByGame"/></returns>
-    public static PlayerBattingStatsByGame Create(MlbId playerId, SeasonYear seasonYear, DateTime gameDate,
+    public static PlayerBattingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate,
         MlbId gameId, MlbId teamId, int plateAppearances, int atBats, int runs, int hits, int doubles, int triples,
         int homeRuns, int runsBattedIn, int baseOnBalls, int intentionalWalks, int strikeouts, int stolenBases,
         int caughtStealing, int hitByPitch, int sacrificeBunts, int sacrificeFlies, int numberOfPitchesSeen,
@@ -157,7 +157,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
         var goTp = NaturalNumber.Create(groundIntoTriplePlays);
         var ao = NaturalNumber.Create(airOuts);
         var ci = NaturalNumber.Create(catchersInterference);
-        return new PlayerBattingStatsByGame(playerId, seasonYear, gameDate, gameId, teamId,
+        return new PlayerBattingStatsByGame(playerMlbId, seasonYear, gameDate, gameId, teamId,
             plateAppearances: pa,
             atBats: ab,
             runs: r,

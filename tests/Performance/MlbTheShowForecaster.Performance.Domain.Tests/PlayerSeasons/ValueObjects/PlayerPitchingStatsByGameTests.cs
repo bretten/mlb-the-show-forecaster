@@ -10,8 +10,8 @@ public class PlayerPitchingStatsByGameTests
     public void Equals_SamePlayerSeasonDateGame_ReturnsTrue()
     {
         // Arrange
-        var stats1 = Faker.FakePlayerPitchingStats(playerId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerPitchingStats(playerId: 1, 2024, new DateTime(2024, 4, 1), 10000);
+        var stats1 = Faker.FakePlayerPitchingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);
+        var stats2 = Faker.FakePlayerPitchingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);
 
         // Act
         var actual = stats1.Equals(stats2);
@@ -24,8 +24,8 @@ public class PlayerPitchingStatsByGameTests
     public void Equals_DifferentPlayer_ReturnsTrue()
     {
         // Arrange
-        var stats1 = Faker.FakePlayerPitchingStats(playerId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerPitchingStats(playerId: 2, 2024, new DateTime(2024, 4, 1), 10000);
+        var stats1 = Faker.FakePlayerPitchingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);
+        var stats2 = Faker.FakePlayerPitchingStats(playerMlbId: 2, 2024, new DateTime(2024, 4, 1), 10000);
 
         // Act
         var actual = stats1.Equals(stats2);
@@ -127,7 +127,7 @@ public class PlayerPitchingStatsByGameTests
         );
 
         // Assert
-        Assert.Equal(1, actual.PlayerId.Value);
+        Assert.Equal(1, actual.PlayerMlbId.Value);
         Assert.Equal(2024, actual.SeasonYear.Value);
         Assert.Equal(new DateTime(2024, 4, 1), actual.GameDate);
         Assert.Equal(10000, actual.GameId.Value);

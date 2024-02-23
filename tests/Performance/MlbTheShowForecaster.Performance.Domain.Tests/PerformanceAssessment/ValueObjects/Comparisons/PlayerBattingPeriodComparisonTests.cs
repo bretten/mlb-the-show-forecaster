@@ -9,7 +9,7 @@ public class PlayerBattingPeriodComparisonTests
     public void Create_PlateAppearancesAndOps_Created()
     {
         // Arrange
-        var playerId = MlbId.Create(1);
+        var playerMlbId = MlbId.Create(1);
         var comparisonDate = new DateTime(2024, 4, 1);
         const int plateAppearancesBeforeComparisonDate = 536;
         const decimal onBasePlusSluggingBeforeComparisonDate = 1.013m;
@@ -17,7 +17,7 @@ public class PlayerBattingPeriodComparisonTests
         const decimal onBasePlusSluggingSinceComparisonDate = 1.066m;
 
         // Act
-        var actual = PlayerBattingPeriodComparison.Create(playerId, comparisonDate,
+        var actual = PlayerBattingPeriodComparison.Create(playerMlbId, comparisonDate,
             plateAppearancesBeforeComparisonDate: plateAppearancesBeforeComparisonDate,
             onBasePlusSluggingBeforeComparisonDate: onBasePlusSluggingBeforeComparisonDate,
             plateAppearancesSinceComparisonDate: plateAppearancesSinceComparisonDate,

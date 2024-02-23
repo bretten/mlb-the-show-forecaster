@@ -9,7 +9,7 @@ public class PlayerPitchingPeriodComparisonTests
     public void Create_InningsPitchedAndBattersFacedAndEarnedRunAverage_Created()
     {
         // Arrange
-        var playerId = MlbId.Create(1);
+        var playerMlbId = MlbId.Create(1);
         var comparisonDate = new DateTime(2024, 4, 1);
         const decimal inningsPitchedBeforeComparisonDate = 132.0m;
         const int battersFacedBeforeComparisonDate = 531;
@@ -19,7 +19,7 @@ public class PlayerPitchingPeriodComparisonTests
         const decimal earnedRunAverageSinceComparisonDate = 2.21m;
 
         // Act
-        var actual = PlayerPitchingPeriodComparison.Create(playerId, comparisonDate,
+        var actual = PlayerPitchingPeriodComparison.Create(playerMlbId, comparisonDate,
             inningsPitchedBeforeComparisonDate: inningsPitchedBeforeComparisonDate,
             battersFacedBeforeComparisonDate: battersFacedBeforeComparisonDate,
             earnedRunAverageBeforeComparisonDate: earnedRunAverageBeforeComparisonDate,
