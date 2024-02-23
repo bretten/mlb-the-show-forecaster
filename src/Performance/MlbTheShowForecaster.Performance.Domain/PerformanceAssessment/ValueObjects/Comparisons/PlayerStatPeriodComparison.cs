@@ -4,7 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
 
 /// <summary>
-/// Compares a player's stat before and since a specified date
+/// Represents a comparison between a stat before a specified date to the same stat since the specified date
 /// </summary>
 public abstract class PlayerStatPeriodComparison : ValueObject
 {

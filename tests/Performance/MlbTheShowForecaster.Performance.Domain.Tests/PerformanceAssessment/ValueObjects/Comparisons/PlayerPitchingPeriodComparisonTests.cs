@@ -17,7 +17,7 @@ public class PlayerPitchingPeriodComparisonTests
         const decimal inningsPitchedSinceComparisonDate = 30.0m;
         const int battersFacedSinceComparisonDate = 121;
         const decimal earnedRunAverageSinceComparisonDate = 2.21m;
-        
+
         // Act
         var actual = PlayerPitchingPeriodComparison.Create(playerId, comparisonDate,
             inningsPitchedBeforeComparisonDate: inningsPitchedBeforeComparisonDate,
@@ -27,7 +27,7 @@ public class PlayerPitchingPeriodComparisonTests
             battersFacedSinceComparisonDate: battersFacedSinceComparisonDate,
             earnedRunAverageSinceComparisonDate: earnedRunAverageSinceComparisonDate
         );
-        
+
         // Assert
         Assert.Equal(1, actual.PlayerMlbId.Value);
         Assert.Equal(new DateTime(2024, 4, 1), actual.ComparisonDate);
