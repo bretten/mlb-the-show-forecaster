@@ -428,6 +428,26 @@ public class PlayerStatsBySeasonTests
     }
 
     [Fact]
+    public void AssessBattingPerformance_ImprovedBattingStats_RaisesImprovementDomainEvent()
+    {
+        // Arrange
+        const int plateAppearancesBeforeComparisonDate = 536;
+        const decimal onBasePlusSluggingBeforeComparisonDate = 1.013m;
+        const int plateAppearancesSinceComparisonDate = 125;
+        const decimal onBasePlusSluggingSinceComparisonDate = 1.066m;
+        var comparison = Faker.FakePlayerBattingPeriodComparison(
+            plateAppearancesBeforeComparisonDate: plateAppearancesBeforeComparisonDate,
+            onBasePlusSluggingBeforeComparisonDate: onBasePlusSluggingBeforeComparisonDate,
+            plateAppearancesSinceComparisonDate: plateAppearancesSinceComparisonDate,
+            onBasePlusSluggingSinceComparisonDate: onBasePlusSluggingSinceComparisonDate
+        );
+
+        // Act
+
+        // Assert
+    }
+
+    [Fact]
     public void Create_ValidValues_Created()
     {
         // Arrange
