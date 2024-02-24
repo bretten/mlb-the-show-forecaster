@@ -1,6 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
@@ -248,20 +247,6 @@ public static class Faker
             battingStatsByGames ?? new List<PlayerBattingStatsByGame>(),
             pitchingStatsByGames ?? new List<PlayerPitchingStatsByGame>(),
             fieldingStatsByGames ?? new List<PlayerFieldingStatsByGame>()
-        );
-    }
-
-    public static PlayerBattingPeriodComparison FakePlayerBattingPeriodComparison(int playerMlbId = 1,
-        DateTime? comparisonDate = null, int plateAppearancesBeforeComparisonDate = 0,
-        decimal onBasePlusSluggingBeforeComparisonDate = 0, int plateAppearancesSinceComparisonDate = 0,
-        decimal onBasePlusSluggingSinceComparisonDate = 0)
-    {
-        return PlayerBattingPeriodComparison.Create(MlbId.Create(playerMlbId),
-            comparisonDate ?? new DateTime(2024, 4, 1),
-            plateAppearancesBeforeComparisonDate: plateAppearancesBeforeComparisonDate,
-            onBasePlusSluggingBeforeComparisonDate: onBasePlusSluggingBeforeComparisonDate,
-            plateAppearancesSinceComparisonDate: plateAppearancesSinceComparisonDate,
-            onBasePlusSluggingSinceComparisonDate: onBasePlusSluggingSinceComparisonDate
         );
     }
 }

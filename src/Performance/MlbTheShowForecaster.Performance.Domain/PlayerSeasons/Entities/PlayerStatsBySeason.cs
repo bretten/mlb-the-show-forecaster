@@ -136,10 +136,8 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         var statsSince = BattingStatsSinceDate(comparisonDate);
 
         var comparison = PlayerBattingPeriodComparison.Create(PlayerMlbId, comparisonDate,
-            plateAppearancesBeforeComparisonDate: statsBefore.PlateAppearances.Value,
-            onBasePlusSluggingBeforeComparisonDate: statsBefore.OnBasePlusSlugging.Value,
-            plateAppearancesSinceComparisonDate: statsSince.PlateAppearances.Value,
-            onBasePlusSluggingSinceComparisonDate: statsSince.OnBasePlusSlugging.Value
+            statsBeforeComparisonDate: statsBefore,
+            statsSinceComparisonDate: statsSince
         );
 
         if (comparison.PercentageChange >= percentChangeThreshold)
@@ -165,11 +163,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
             earnedRunAverageSinceComparisonDate: statsSince.EarnedRunAverage.Value
         );
 
-        if (comparison.PercentageChange >= percentChangeThreshold)
+        if (comparison.PercentageChange <= -percentChangeThreshold) // Lower ERA is better
         {
             RaiseDomainEvent(new PitchingImprovementEvent(comparison));
         }
-        else if (comparison.PercentageChange <= -percentChangeThreshold)
+        else if (comparison.PercentageChange >= percentChangeThreshold)
         {
             RaiseDomainEvent(new PitchingDeclineEvent(comparison));
         }
