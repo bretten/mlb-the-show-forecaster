@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Batting;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
@@ -428,23 +429,71 @@ public class PlayerStatsBySeasonTests
     }
 
     [Fact]
-    public void AssessBattingPerformance_ImprovedBattingStats_RaisesImprovementDomainEvent()
+    public void AssessBattingPerformance_ImprovedBattingStats_RaisesBattingImprovementDomainEvent()
     {
         // Arrange
-        const int plateAppearancesBeforeComparisonDate = 536;
-        const decimal onBasePlusSluggingBeforeComparisonDate = 1.013m;
-        const int plateAppearancesSinceComparisonDate = 125;
-        const decimal onBasePlusSluggingSinceComparisonDate = 1.066m;
-        var comparison = Faker.FakePlayerBattingPeriodComparison(
-            plateAppearancesBeforeComparisonDate: plateAppearancesBeforeComparisonDate,
-            onBasePlusSluggingBeforeComparisonDate: onBasePlusSluggingBeforeComparisonDate,
-            plateAppearancesSinceComparisonDate: plateAppearancesSinceComparisonDate,
-            onBasePlusSluggingSinceComparisonDate: onBasePlusSluggingSinceComparisonDate
-        );
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 20m;
+        var gameBeforeComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(-1),
+            plateAppearances: 4, atBats: 4, hits: 1, triples: 1); // OBP = 0.250, SLG = 0.750, OPS = 1.000
+        var gameSinceComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(1),
+            plateAppearances: 4, atBats: 4, hits: 1, homeRuns: 1); // OBP = 0.250, SLG = 1.000, OPS = 1.250
+        var seasonStats = Faker.FakePlayerSeasonStats(battingStatsByGames: new List<PlayerBattingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
 
         // Act
+        seasonStats.AssessPerformanceToDate(comparisonDate, percentChangeThreshold);
 
         // Assert
+        Assert.Equal(1, seasonStats.DomainEvents.Count);
+        Assert.IsType<BattingImprovementEvent>(seasonStats.DomainEvents[0]);
+    }
+
+    [Fact]
+    public void AssessBattingPerformance_DecliningBattingStats_RaisesBattingDeclineDomainEvent()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 20m;
+        var gameBeforeComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(-1),
+            plateAppearances: 4, atBats: 4, hits: 1, homeRuns: 1); // OBP = 0.250, SLG = 1.000, OPS = 1.250
+        var gameSinceComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(1),
+            plateAppearances: 4, atBats: 4, hits: 1, triples: 1); // OBP = 0.250, SLG = 0.750, OPS = 1.000
+        var seasonStats = Faker.FakePlayerSeasonStats(battingStatsByGames: new List<PlayerBattingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        // Act
+        seasonStats.AssessPerformanceToDate(comparisonDate, percentChangeThreshold);
+
+        // Assert
+        Assert.Equal(1, seasonStats.DomainEvents.Count);
+        Assert.IsType<BattingDeclineEvent>(seasonStats.DomainEvents[0]);
+    }
+
+    [Fact]
+    public void AssessBattingPerformance_HighPercentChangeThreshold_NoEventsRaised()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 30m;
+        var gameBeforeComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(-1),
+            plateAppearances: 4, atBats: 4, hits: 1, triples: 1); // OBP = 0.250, SLG = 0.750, OPS = 1.000
+        var gameSinceComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(1),
+            plateAppearances: 4, atBats: 4, hits: 1, homeRuns: 1); // OBP = 0.250, SLG = 1.000, OPS = 1.250
+        var seasonStats = Faker.FakePlayerSeasonStats(battingStatsByGames: new List<PlayerBattingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        // Act
+        seasonStats.AssessPerformanceToDate(comparisonDate, percentChangeThreshold);
+
+        // Assert
+        Assert.Equal(0, seasonStats.DomainEvents.Count);
     }
 
     [Fact]

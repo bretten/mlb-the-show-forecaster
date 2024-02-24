@@ -112,17 +112,29 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         RaiseDomainEvent(new PlayerFieldedInGameEvent(PlayerMlbId, stats.GameDate));
     }
 
-    public void AssessPerformanceToDate(DateTime comparisonDate, decimal percentImprovementThreshold = 20)
+    public void AssessPerformanceToDate(DateTime comparisonDate, decimal percentChangeThreshold)
     {
-        AssessBattingPerformance(comparisonDate, percentImprovementThreshold);
-        AssessPitchingPerformance(comparisonDate, percentImprovementThreshold);
-        AssessFieldingPerformance(comparisonDate, percentImprovementThreshold);
+        if (_battingStatsByGames.Count > 0)
+        {
+            AssessBattingPerformance(comparisonDate, percentChangeThreshold);
+        }
+
+        if (_pitchingStatsByGames.Count > 0)
+        {
+            AssessPitchingPerformance(comparisonDate, percentChangeThreshold);
+        }
+
+        if (_fieldingStatsByGames.Count > 0)
+        {
+            AssessFieldingPerformance(comparisonDate, percentChangeThreshold);
+        }
     }
 
-    private void AssessBattingPerformance(DateTime comparisonDate, decimal percentImprovementThreshold)
+    private void AssessBattingPerformance(DateTime comparisonDate, decimal percentChangeThreshold)
     {
         var statsBefore = BattingStatsBeforeDate(comparisonDate);
         var statsSince = BattingStatsSinceDate(comparisonDate);
+
         var comparison = PlayerBattingPeriodComparison.Create(PlayerMlbId, comparisonDate,
             plateAppearancesBeforeComparisonDate: statsBefore.PlateAppearances.Value,
             onBasePlusSluggingBeforeComparisonDate: statsBefore.OnBasePlusSlugging.Value,
@@ -130,27 +142,17 @@ public sealed class PlayerStatsBySeason : AggregateRoot
             onBasePlusSluggingSinceComparisonDate: statsSince.OnBasePlusSlugging.Value
         );
 
-        if (comparison.PercentageChange >= percentImprovementThreshold)
+        if (comparison.PercentageChange >= percentChangeThreshold)
         {
             RaiseDomainEvent(new BattingImprovementEvent(comparison));
         }
-        else if (comparison.PercentageChange <= -percentImprovementThreshold)
+        else if (comparison.PercentageChange <= -percentChangeThreshold)
         {
             RaiseDomainEvent(new BattingDeclineEvent(comparison));
         }
-
-        // switch (comparison.PercentageChange)
-        // {
-        //     case > 20:
-        //         RaiseDomainEvent(new BattingImprovementEvent(comparison));
-        //         break;
-        //     case < -20:
-        //         RaiseDomainEvent(new BattingDeclineEvent(comparison));
-        //         break;
-        // }
     }
 
-    private void AssessPitchingPerformance(DateTime comparisonDate, decimal percentImprovementThreshold)
+    private void AssessPitchingPerformance(DateTime comparisonDate, decimal percentChangeThreshold)
     {
         var statsBefore = PitchingStatsBeforeDate(comparisonDate);
         var statsSince = PitchingStatsSinceDate(comparisonDate);
@@ -163,11 +165,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
             earnedRunAverageSinceComparisonDate: statsSince.EarnedRunAverage.Value
         );
 
-        if (comparison.PercentageChange >= percentImprovementThreshold)
+        if (comparison.PercentageChange >= percentChangeThreshold)
         {
             RaiseDomainEvent(new PitchingImprovementEvent(comparison));
         }
-        else if (comparison.PercentageChange <= -percentImprovementThreshold)
+        else if (comparison.PercentageChange <= -percentChangeThreshold)
         {
             RaiseDomainEvent(new PitchingDeclineEvent(comparison));
         }
@@ -183,7 +185,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         // }
     }
 
-    private void AssessFieldingPerformance(DateTime comparisonDate, decimal percentImprovementThreshold)
+    private void AssessFieldingPerformance(DateTime comparisonDate, decimal percentChangeThreshold)
     {
         var statsBefore = FieldingStatsBeforeDate(comparisonDate);
         var statsSince = FieldingStatsSinceDate(comparisonDate);
@@ -194,11 +196,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
             fieldingPercentageSinceComparisonDate: statsSince.FieldingPercentage.Value
         );
 
-        if (comparison.PercentageChange >= percentImprovementThreshold)
+        if (comparison.PercentageChange >= percentChangeThreshold)
         {
             RaiseDomainEvent(new FieldingImprovementEvent(comparison));
         }
-        else if (comparison.PercentageChange <= -percentImprovementThreshold)
+        else if (comparison.PercentageChange <= -percentChangeThreshold)
         {
             RaiseDomainEvent(new FieldingDeclineEvent(comparison));
         }
