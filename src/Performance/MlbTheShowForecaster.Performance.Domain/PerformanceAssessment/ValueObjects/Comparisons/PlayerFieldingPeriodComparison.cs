@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
 
@@ -15,7 +16,7 @@ public sealed class PlayerFieldingPeriodComparison : PlayerStatPeriodComparison
     /// <summary>
     /// The player's fielding percentage before the comparison date
     /// </summary>
-    public RawStat FieldingPercentageBeforeComparisonDate => StatBeforeComparisonDate;
+    public IStat FieldingPercentageBeforeComparisonDate => StatBeforeComparisonDate;
 
     /// <summary>
     /// The number of fielding chances since the comparison date
@@ -25,7 +26,7 @@ public sealed class PlayerFieldingPeriodComparison : PlayerStatPeriodComparison
     /// <summary>
     /// The player's fielding percentage since the comparison date
     /// </summary>
-    public RawStat FieldingPercentageSinceComparisonDate => StatSinceComparisonDate;
+    public IStat FieldingPercentageSinceComparisonDate => StatSinceComparisonDate;
 
     /// <summary>
     /// Constructor
@@ -37,8 +38,8 @@ public sealed class PlayerFieldingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="totalChancesSinceComparisonDate">The number of fielding chances since the comparison date</param>
     /// <param name="fieldingPercentageSinceComparisonDate">The player's fielding percentage since the comparison date</param>
     private PlayerFieldingPeriodComparison(MlbId playerMlbId, DateTime comparisonDate,
-        NaturalNumber totalChancesBeforeComparisonDate, RawStat fieldingPercentageBeforeComparisonDate,
-        NaturalNumber totalChancesSinceComparisonDate, RawStat fieldingPercentageSinceComparisonDate) : base(
+        NaturalNumber totalChancesBeforeComparisonDate, IStat fieldingPercentageBeforeComparisonDate,
+        NaturalNumber totalChancesSinceComparisonDate, IStat fieldingPercentageSinceComparisonDate) : base(
         playerMlbId, comparisonDate, fieldingPercentageBeforeComparisonDate, fieldingPercentageSinceComparisonDate)
     {
         TotalChancesBeforeComparisonDate = totalChancesBeforeComparisonDate;
