@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
 
@@ -15,7 +16,7 @@ public sealed class PlayerBattingPeriodComparison : PlayerStatPeriodComparison
     /// <summary>
     /// The player's OPS before the comparison date
     /// </summary>
-    public RawStat OnBasePlusSluggingBeforeComparisonDate => StatBeforeComparisonDate;
+    public IStat OnBasePlusSluggingBeforeComparisonDate => StatBeforeComparisonDate;
 
     /// <summary>
     /// The number of plate appearances since the comparison date
@@ -25,7 +26,7 @@ public sealed class PlayerBattingPeriodComparison : PlayerStatPeriodComparison
     /// <summary>
     /// The player's OPS since the comparison date
     /// </summary>
-    public RawStat OnBasePlusSluggingSinceComparisonDate => StatSinceComparisonDate;
+    public IStat OnBasePlusSluggingSinceComparisonDate => StatSinceComparisonDate;
 
     /// <summary>
     /// Constructor
@@ -37,8 +38,8 @@ public sealed class PlayerBattingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="plateAppearancesSinceComparisonDate">The number of plate appearances since the comparison date</param>
     /// <param name="onBasePlusSluggingSinceComparisonDate">The player's OPS since the comparison date</param>
     private PlayerBattingPeriodComparison(MlbId playerMlbId, DateTime comparisonDate,
-        NaturalNumber plateAppearancesBeforeComparisonDate, RawStat onBasePlusSluggingBeforeComparisonDate,
-        NaturalNumber plateAppearancesSinceComparisonDate, RawStat onBasePlusSluggingSinceComparisonDate) : base(
+        NaturalNumber plateAppearancesBeforeComparisonDate, IStat onBasePlusSluggingBeforeComparisonDate,
+        NaturalNumber plateAppearancesSinceComparisonDate, IStat onBasePlusSluggingSinceComparisonDate) : base(
         playerMlbId, comparisonDate, onBasePlusSluggingBeforeComparisonDate, onBasePlusSluggingSinceComparisonDate)
     {
         PlateAppearancesBeforeComparisonDate = plateAppearancesBeforeComparisonDate;
