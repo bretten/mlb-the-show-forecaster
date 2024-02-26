@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
 
@@ -16,12 +17,12 @@ public abstract class PlayerStatPeriodComparison : ValueObject
     /// <summary>
     /// The player's stat before the comparison date
     /// </summary>
-    protected readonly RawStat StatBeforeComparisonDate;
+    protected readonly IStat StatBeforeComparisonDate;
 
     /// <summary>
     /// The player's stat since the comparison date
     /// </summary>
-    protected readonly RawStat StatSinceComparisonDate;
+    protected readonly IStat StatSinceComparisonDate;
 
     /// <summary>
     /// The MLB ID of the player
@@ -41,8 +42,8 @@ public abstract class PlayerStatPeriodComparison : ValueObject
     /// <param name="comparisonDate">The date of comparison -- the stat before this date will be compared to the stat since this date</param>
     /// <param name="statBeforeComparisonDate">The player's stat before the comparison date</param>
     /// <param name="statSinceComparisonDate">The player's stat since the comparison date</param>
-    protected PlayerStatPeriodComparison(MlbId playerMlbId, DateTime comparisonDate, RawStat statBeforeComparisonDate,
-        RawStat statSinceComparisonDate)
+    protected PlayerStatPeriodComparison(MlbId playerMlbId, DateTime comparisonDate, IStat statBeforeComparisonDate,
+        IStat statSinceComparisonDate)
     {
         PlayerMlbId = playerMlbId;
         ComparisonDate = comparisonDate;

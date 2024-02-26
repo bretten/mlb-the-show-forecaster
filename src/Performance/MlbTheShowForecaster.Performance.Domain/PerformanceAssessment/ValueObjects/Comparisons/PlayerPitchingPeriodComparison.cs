@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
@@ -21,7 +22,7 @@ public sealed class PlayerPitchingPeriodComparison : PlayerStatPeriodComparison
     /// <summary>
     /// The player's ERA before the comparison date
     /// </summary>
-    public RawStat EarnedRunAverageBeforeComparisonDate => StatBeforeComparisonDate;
+    public IStat EarnedRunAverageBeforeComparisonDate => StatBeforeComparisonDate;
 
     /// <summary>
     /// The number of innings pitched since the comparison date
@@ -36,7 +37,7 @@ public sealed class PlayerPitchingPeriodComparison : PlayerStatPeriodComparison
     /// <summary>
     /// The player's ERA since the comparison date
     /// </summary>
-    public RawStat EarnedRunAverageSinceComparisonDate => StatSinceComparisonDate;
+    public IStat EarnedRunAverageSinceComparisonDate => StatSinceComparisonDate;
 
     /// <summary>
     /// Constructor
@@ -51,8 +52,8 @@ public sealed class PlayerPitchingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="earnedRunAverageSinceComparisonDate">The player's ERA since the comparison date</param>
     private PlayerPitchingPeriodComparison(MlbId playerMlbId, DateTime comparisonDate,
         InningsCount inningsPitchedBeforeComparisonDate, NaturalNumber battersFacedBeforeComparisonDate,
-        RawStat earnedRunAverageBeforeComparisonDate, InningsCount inningsPitchedSinceComparisonDate,
-        NaturalNumber battersFacedSinceComparisonDate, RawStat earnedRunAverageSinceComparisonDate) : base(playerMlbId,
+        IStat earnedRunAverageBeforeComparisonDate, InningsCount inningsPitchedSinceComparisonDate,
+        NaturalNumber battersFacedSinceComparisonDate, IStat earnedRunAverageSinceComparisonDate) : base(playerMlbId,
         comparisonDate, earnedRunAverageBeforeComparisonDate, earnedRunAverageSinceComparisonDate)
     {
         InningsPitchedBeforeComparisonDate = inningsPitchedBeforeComparisonDate;

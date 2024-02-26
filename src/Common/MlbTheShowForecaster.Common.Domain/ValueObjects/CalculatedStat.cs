@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 
@@ -6,7 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 /// Represents a MLB statistic that is calculated from multiple individual statistics in batting, pitching or fielding.
 /// Since the calculation components are countable scores such as hits and home runs, the underlying value is a decimal.
 /// </summary>
-public abstract class CalculatedStat : ValueObject
+public abstract class CalculatedStat : ValueObject, IStat
 {
     /// <summary>
     /// Holds the underlying value of the stat after it is calculated
