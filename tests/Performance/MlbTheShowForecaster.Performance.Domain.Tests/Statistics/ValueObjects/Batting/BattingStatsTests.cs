@@ -1,5 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.Statistics.TestClasses;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.Statistics.ValueObjects.Batting;
 
@@ -89,8 +89,7 @@ public class BattingStatsTests
         const int triples = 8;
         const int homeRuns = 44;
         var stats = Faker.FakeBattingStats(atBats: atBats, baseOnBalls: baseOnBalls, hitByPitch: hitByPitches,
-            hits: hits,
-            sacrificeFlies: sacrificeFlies, doubles: doubles, triples: triples, homeRuns: homeRuns);
+            hits: hits, sacrificeFlies: sacrificeFlies, doubles: doubles, triples: triples, homeRuns: homeRuns);
 
         // Act
         var actual = stats.OnBasePlusSlugging;
