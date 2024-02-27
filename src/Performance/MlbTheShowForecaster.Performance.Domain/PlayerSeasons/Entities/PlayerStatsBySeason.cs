@@ -254,7 +254,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <summary>
     /// Returns the player's season batting stats from before the specified date
     /// </summary>
-    /// <param name="date">The season batting stats will be returned for the period before this date</param>
+    /// <param name="date">The date used to filter stats</param>
     /// <returns>Player's season batting stats from before the specified date</returns>
     private BattingStats BattingStatsBeforeDate(DateTime date) =>
         BattingStats.Create(_battingStatsByGames.Where(x => x.GameDate < date));
@@ -262,7 +262,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <summary>
     /// Returns the player's season batting stats since the specified date
     /// </summary>
-    /// <param name="date">The season batting stats will be returned since this date</param>
+    /// <param name="date">The date used to filter stats</param>
     /// <returns>Player's season batting stats since the specified date</returns>
     private BattingStats BattingStatsSinceDate(DateTime date) =>
         BattingStats.Create(_battingStatsByGames.Where(x => x.GameDate >= date));
@@ -270,7 +270,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <summary>
     /// Returns the player's season pitching stats from before the specified date
     /// </summary>
-    /// <param name="date">The season pitching stats will be returned for the period before this date</param>
+    /// <param name="date">The date used to filter stats</param>
     /// <returns>Player's season pitching stats from before the specified date</returns>
     private PitchingStats PitchingStatsBeforeDate(DateTime date) =>
         PitchingStats.Create(_pitchingStatsByGames.Where(x => x.GameDate < date));
@@ -278,7 +278,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <summary>
     /// Returns the player's season pitching stats since the specified date
     /// </summary>
-    /// <param name="date">The season pitching stats will be returned since this date</param>
+    /// <param name="date">The date used to filter stats</param>
     /// <returns>Player's season pitching stats since the specified date</returns>
     private PitchingStats PitchingStatsSinceDate(DateTime date) =>
         PitchingStats.Create(_pitchingStatsByGames.Where(x => x.GameDate >= date));
@@ -286,7 +286,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <summary>
     /// Returns the player's season fielding stats from before the specified date
     /// </summary>
-    /// <param name="date">The season fielding stats will be returned for the period before this date</param>
+    /// <param name="date">The date used to filter stats</param>
     /// <returns>Player's season fielding stats from before the specified date</returns>
     private FieldingStats FieldingStatsBeforeDate(DateTime date) =>
         FieldingStats.Create(_fieldingStatsByGames.Where(x => x.GameDate < date));
@@ -294,7 +294,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <summary>
     /// Returns the player's season fielding stats since the specified date
     /// </summary>
-    /// <param name="date">The season fielding stats will be returned since this date</param>
+    /// <param name="date">The date used to filter stats</param>
     /// <returns>Player's season fielding stats since the specified date</returns>
     private FieldingStats FieldingStatsSinceDate(DateTime date) =>
         FieldingStats.Create(_fieldingStatsByGames.Where(x => x.GameDate >= date));

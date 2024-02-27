@@ -21,7 +21,7 @@ public class PlayerPitchingStatsByGameTests
     }
 
     [Fact]
-    public void Equals_DifferentPlayer_ReturnsTrue()
+    public void Equals_DifferentPlayer_ReturnsFalse()
     {
         // Arrange
         var stats1 = Faker.FakePlayerPitchingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);

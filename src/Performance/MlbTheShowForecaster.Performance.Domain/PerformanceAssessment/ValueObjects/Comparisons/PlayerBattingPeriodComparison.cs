@@ -73,7 +73,7 @@ public sealed class PlayerBattingPeriodComparison : PlayerStatPeriodComparison
     /// Creates <see cref="PlayerBattingPeriodComparison"/>
     /// </summary>
     /// <param name="playerMlbId">The MLB ID of the player</param>
-    /// <param name="comparisonDate">The date of comparison -- the stat before this date will be compared to the stat since this date</param>
+    /// <param name="comparisonDate">The date of comparison -- stats before this date will be compared to stats since this date</param>
     /// <param name="statsBeforeComparisonDate">Stats from before the comparison date</param>
     /// <param name="statsSinceComparisonDate">Stats since the comparison date</param>
     /// <returns><see cref="PlayerBattingPeriodComparison"/></returns>
