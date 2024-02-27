@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
 
@@ -65,6 +66,25 @@ public sealed class PlayerFieldingPeriodComparison : PlayerStatPeriodComparison
             fieldingPercentageBeforeComparisonDate: RawStat.Create(fieldingPercentageBeforeComparisonDate),
             totalChancesSinceComparisonDate: NaturalNumber.Create(totalChancesSinceComparisonDate),
             fieldingPercentageSinceComparisonDate: RawStat.Create(fieldingPercentageSinceComparisonDate)
+        );
+    }
+
+    /// <summary>
+    /// Creates <see cref="PlayerFieldingPeriodComparison"/>
+    /// </summary>
+    /// <param name="playerMlbId">The MLB ID of the player</param>
+    /// <param name="comparisonDate">The date of comparison -- the stat before this date will be compared to the stat since this date</param>
+    /// <param name="statsBeforeComparisonDate">Stats from before the comparison date</param>
+    /// <param name="statsSinceComparisonDate">Stats since the comparison date</param>
+    /// <returns><see cref="PlayerFieldingPeriodComparison"/></returns>
+    public static PlayerFieldingPeriodComparison Create(MlbId playerMlbId, DateTime comparisonDate,
+        FieldingStats statsBeforeComparisonDate, FieldingStats statsSinceComparisonDate)
+    {
+        return new PlayerFieldingPeriodComparison(playerMlbId, comparisonDate,
+            totalChancesBeforeComparisonDate: statsBeforeComparisonDate.TotalChances.ToNaturalNumber(),
+            fieldingPercentageBeforeComparisonDate: statsBeforeComparisonDate.FieldingPercentage,
+            totalChancesSinceComparisonDate: statsSinceComparisonDate.TotalChances.ToNaturalNumber(),
+            fieldingPercentageSinceComparisonDate: statsSinceComparisonDate.FieldingPercentage
         );
     }
 }

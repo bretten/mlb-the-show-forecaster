@@ -1,9 +1,15 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Batting;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Fielding;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Pitching;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
+using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.Entities;
 
@@ -429,6 +435,96 @@ public class PlayerStatsBySeasonTests
     }
 
     [Fact]
+    public void LogBattingGame_BattingGame_LogsGameToSeasonAndRaisesParticipationDomainEvent()
+    {
+        // Arrange
+        var battingGame = Faker.FakePlayerBattingStats(plateAppearances: 3, atBats: 2, hits: 1, hitByPitch: 1);
+        var seasonStats = Faker.FakePlayerSeasonStats();
+
+        // Act
+        seasonStats.LogBattingGame(battingGame);
+
+        // Assert
+        Assert.Single(seasonStats.BattingStatsByGamesChronologically);
+        Assert.Equal(battingGame, seasonStats.BattingStatsByGamesChronologically[0]);
+        Assert.Equal(3, seasonStats.SeasonBattingStats.PlateAppearances.Value);
+        Assert.Equal(2, seasonStats.SeasonBattingStats.AtBats.Value);
+        Assert.Equal(1, seasonStats.SeasonBattingStats.Hits.Value);
+        Assert.Equal(1, seasonStats.SeasonBattingStats.HitByPitch.Value);
+
+        Assert.Equal(1, seasonStats.DomainEvents.Count);
+        Assert.IsType<PlayerBattedInGameEvent>(seasonStats.DomainEvents[0]);
+    }
+
+    [Fact]
+    public void LogPitchingGame_PitchingGame_LogsGameToSeasonAndRaisesParticipationDomainEvent()
+    {
+        // Arrange
+        var pitchingGame = Faker.FakePlayerPitchingStats(battersFaced: 3, strikeouts: 2, hitBatsmen: 1);
+        var seasonStats = Faker.FakePlayerSeasonStats();
+
+        // Act
+        seasonStats.LogPitchingGame(pitchingGame);
+
+        // Assert
+        Assert.Single(seasonStats.PitchingStatsByGamesChronologically);
+        Assert.Equal(pitchingGame, seasonStats.PitchingStatsByGamesChronologically[0]);
+        Assert.Equal(3, seasonStats.SeasonPitchingStats.BattersFaced.Value);
+        Assert.Equal(2, seasonStats.SeasonPitchingStats.Strikeouts.Value);
+        Assert.Equal(1, seasonStats.SeasonPitchingStats.HitBatsmen.Value);
+
+        Assert.Equal(1, seasonStats.DomainEvents.Count);
+        Assert.IsType<PlayerPitchedInGameEvent>(seasonStats.DomainEvents[0]);
+    }
+
+    [Fact]
+    public void LogFieldingGame_FieldingGame_LogsGameToSeasonAndRaisesParticipationDomainEvent()
+    {
+        // Arrange
+        var fieldingGame = Faker.FakePlayerFieldingStats(assists: 3, putOuts: 2, errors: 1);
+        var seasonStats = Faker.FakePlayerSeasonStats();
+
+        // Act
+        seasonStats.LogFieldingGame(fieldingGame);
+
+        // Assert
+        Assert.Single(seasonStats.FieldingStatsByGamesChronologically);
+        Assert.Equal(fieldingGame, seasonStats.FieldingStatsByGamesChronologically[0]);
+        Assert.Equal(3, seasonStats.SeasonAggregateFieldingStats.Assists.Value);
+        Assert.Equal(2, seasonStats.SeasonAggregateFieldingStats.PutOuts.Value);
+        Assert.Equal(1, seasonStats.SeasonAggregateFieldingStats.Errors.Value);
+
+        Assert.Equal(1, seasonStats.DomainEvents.Count);
+        Assert.IsType<PlayerFieldedInGameEvent>(seasonStats.DomainEvents[0]);
+    }
+
+    [Fact]
+    public void AssessBattingPerformance_NegligibleBattingStats_NoEventsRaised()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 20m;
+        var gameBeforeComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(-1),
+            plateAppearances: 4, atBats: 4, hits: 1, triples: 1); // OBP = 0.250, SLG = 0.750, OPS = 1.000
+        var gameSinceComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(1),
+            plateAppearances: 4, atBats: 4, hits: 1, homeRuns: 1); // OBP = 0.250, SLG = 1.000, OPS = 1.250
+        var seasonStats = Faker.FakePlayerSeasonStats(battingStatsByGames: new List<PlayerBattingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForBatting(percentChangeThreshold,
+            gameBeforeComparisonDate.PlateAppearances, false, gameSinceComparisonDate.PlateAppearances, false
+        );
+
+        // Act
+        seasonStats.AssessBattingPerformance(comparisonDate, mockAssessmentRequirements.Object);
+
+        // Assert
+        Assert.Equal(0, seasonStats.DomainEvents.Count);
+    }
+
+    [Fact]
     public void AssessBattingPerformance_ImprovedBattingStats_RaisesBattingImprovementDomainEvent()
     {
         // Arrange
@@ -443,8 +539,12 @@ public class PlayerStatsBySeasonTests
             gameBeforeComparisonDate, gameSinceComparisonDate
         });
 
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForBatting(percentChangeThreshold,
+            gameBeforeComparisonDate.PlateAppearances, true, gameSinceComparisonDate.PlateAppearances, true
+        );
+
         // Act
-        seasonStats.AssessPerformanceToDate(comparisonDate, percentChangeThreshold);
+        seasonStats.AssessBattingPerformance(comparisonDate, mockAssessmentRequirements.Object);
 
         // Assert
         Assert.Equal(1, seasonStats.DomainEvents.Count);
@@ -466,8 +566,12 @@ public class PlayerStatsBySeasonTests
             gameBeforeComparisonDate, gameSinceComparisonDate
         });
 
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForBatting(percentChangeThreshold,
+            gameBeforeComparisonDate.PlateAppearances, true, gameSinceComparisonDate.PlateAppearances, true
+        );
+
         // Act
-        seasonStats.AssessPerformanceToDate(comparisonDate, percentChangeThreshold);
+        seasonStats.AssessBattingPerformance(comparisonDate, mockAssessmentRequirements.Object);
 
         // Assert
         Assert.Equal(1, seasonStats.DomainEvents.Count);
@@ -475,7 +579,7 @@ public class PlayerStatsBySeasonTests
     }
 
     [Fact]
-    public void AssessBattingPerformance_HighPercentChangeThreshold_NoEventsRaised()
+    public void AssessBattingPerformance_RequiredStatPercentChangeThresholdNotCrossed_NoEventsRaised()
     {
         // Arrange
         var comparisonDate = new DateTime(2024, 4, 1);
@@ -489,8 +593,224 @@ public class PlayerStatsBySeasonTests
             gameBeforeComparisonDate, gameSinceComparisonDate
         });
 
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForBatting(percentChangeThreshold,
+            gameBeforeComparisonDate.PlateAppearances, true, gameSinceComparisonDate.PlateAppearances, true
+        );
+
         // Act
-        seasonStats.AssessPerformanceToDate(comparisonDate, percentChangeThreshold);
+        seasonStats.AssessBattingPerformance(comparisonDate, mockAssessmentRequirements.Object);
+
+        // Assert
+        Assert.Equal(0, seasonStats.DomainEvents.Count);
+    }
+
+    [Fact]
+    public void AssessPitchingPerformance_NegligiblePitchingStats_NoEventsRaised()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 20m;
+        var gameBeforeComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(-1),
+            inningsPitched: 9, battersFaced: 27, earnedRuns: 3); // ERA = 3
+        var gameSinceComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(1),
+            inningsPitched: 9, battersFaced: 27, earnedRuns: 3); // ERA = 3
+        var seasonStats = Faker.FakePlayerSeasonStats(pitchingStatsByGames: new List<PlayerPitchingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForPitching(percentChangeThreshold,
+            gameBeforeComparisonDate.InningsPitched, gameBeforeComparisonDate.BattersFaced, false,
+            gameSinceComparisonDate.InningsPitched, gameSinceComparisonDate.BattersFaced, false);
+
+        // Act
+        seasonStats.AssessPitchingPerformance(comparisonDate, mockAssessmentRequirements.Object);
+
+        // Assert
+        Assert.Equal(0, seasonStats.DomainEvents.Count);
+    }
+
+    [Fact]
+    public void AssessPitchingPerformance_ImprovedPitchingStats_RaisesPitchingImprovementDomainEvent()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 20m;
+        var gameBeforeComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(-1),
+            inningsPitched: 9, battersFaced: 27, earnedRuns: 3); // ERA = 3
+        var gameSinceComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(1),
+            inningsPitched: 9, battersFaced: 27, earnedRuns: 1); // ERA = 1
+        var seasonStats = Faker.FakePlayerSeasonStats(pitchingStatsByGames: new List<PlayerPitchingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForPitching(percentChangeThreshold,
+            gameBeforeComparisonDate.InningsPitched, gameBeforeComparisonDate.BattersFaced, true,
+            gameSinceComparisonDate.InningsPitched, gameSinceComparisonDate.BattersFaced, true);
+
+        // Act
+        seasonStats.AssessPitchingPerformance(comparisonDate, mockAssessmentRequirements.Object);
+
+        // Assert
+        Assert.Equal(1, seasonStats.DomainEvents.Count);
+        Assert.IsType<PitchingImprovementEvent>(seasonStats.DomainEvents[0]);
+    }
+
+    [Fact]
+    public void AssessPitchingPerformance_DecliningPitchingStats_RaisesPitchingDeclineDomainEvent()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 20m;
+        var gameBeforeComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(-1),
+            inningsPitched: 9, battersFaced: 27, earnedRuns: 1); // ERA = 1
+        var gameSinceComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(1),
+            inningsPitched: 9, battersFaced: 27, earnedRuns: 3); // ERA = 3
+        var seasonStats = Faker.FakePlayerSeasonStats(pitchingStatsByGames: new List<PlayerPitchingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForPitching(percentChangeThreshold,
+            gameBeforeComparisonDate.InningsPitched, gameBeforeComparisonDate.BattersFaced, true,
+            gameSinceComparisonDate.InningsPitched, gameSinceComparisonDate.BattersFaced, true);
+
+        // Act
+        seasonStats.AssessPitchingPerformance(comparisonDate, mockAssessmentRequirements.Object);
+
+        // Assert
+        Assert.Equal(1, seasonStats.DomainEvents.Count);
+        Assert.IsType<PitchingDeclineEvent>(seasonStats.DomainEvents[0]);
+    }
+
+    [Fact]
+    public void AssessPitchingPerformance_RequiredStatPercentChangeThresholdNotCrossed_NoEventsRaised()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 70m;
+        var gameBeforeComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(-1),
+            inningsPitched: 9, battersFaced: 27, earnedRuns: 3); // ERA = 3
+        var gameSinceComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(1),
+            inningsPitched: 9, battersFaced: 27, earnedRuns: 1); // ERA = 1
+        var seasonStats = Faker.FakePlayerSeasonStats(pitchingStatsByGames: new List<PlayerPitchingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForPitching(percentChangeThreshold,
+            gameBeforeComparisonDate.InningsPitched, gameBeforeComparisonDate.BattersFaced, true,
+            gameSinceComparisonDate.InningsPitched, gameSinceComparisonDate.BattersFaced, true);
+
+        // Act
+        seasonStats.AssessPitchingPerformance(comparisonDate, mockAssessmentRequirements.Object);
+
+        // Assert
+        Assert.Equal(0, seasonStats.DomainEvents.Count);
+    }
+
+    [Fact]
+    public void AssessFieldingPerformance_NegligibleFieldingStats_NoEventsRaised()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 20m;
+        var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
+            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+        var gameSinceComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(1),
+            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+        var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForFielding(percentChangeThreshold,
+            gameBeforeComparisonDate.TotalChances.ToNaturalNumber(), false,
+            gameSinceComparisonDate.TotalChances.ToNaturalNumber(), false);
+
+        // Act
+        seasonStats.AssessFieldingPerformance(comparisonDate, mockAssessmentRequirements.Object);
+
+        // Assert
+        Assert.Equal(0, seasonStats.DomainEvents.Count);
+    }
+
+    [Fact]
+    public void AssessFieldingPerformance_ImprovedFieldingStats_RaisesFieldingImprovementDomainEvent()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 10m;
+        var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
+            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+        var gameSinceComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(1),
+            assists: 1, putOuts: 2, errors: 1); // TC = 4, F% = 3/4
+        var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForFielding(percentChangeThreshold,
+            gameBeforeComparisonDate.TotalChances.ToNaturalNumber(), true,
+            gameSinceComparisonDate.TotalChances.ToNaturalNumber(), true);
+
+        // Act
+        seasonStats.AssessFieldingPerformance(comparisonDate, mockAssessmentRequirements.Object);
+
+        // Assert
+        Assert.Equal(1, seasonStats.DomainEvents.Count);
+        Assert.IsType<FieldingImprovementEvent>(seasonStats.DomainEvents[0]);
+    }
+
+    [Fact]
+    public void AssessFieldingPerformance_DecliningFieldingStats_RaisesFieldingDeclineDomainEvent()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 10m;
+        var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
+            assists: 1, putOuts: 2, errors: 1); // TC = 4, F% = 3/4
+        var gameSinceComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(1),
+            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+        var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForFielding(percentChangeThreshold,
+            gameBeforeComparisonDate.TotalChances.ToNaturalNumber(), true,
+            gameSinceComparisonDate.TotalChances.ToNaturalNumber(), true);
+
+        // Act
+        seasonStats.AssessFieldingPerformance(comparisonDate, mockAssessmentRequirements.Object);
+
+        // Assert
+        Assert.Equal(1, seasonStats.DomainEvents.Count);
+        Assert.IsType<FieldingDeclineEvent>(seasonStats.DomainEvents[0]);
+    }
+
+    [Fact]
+    public void AssessFieldingPerformance_StatPercentChangeThresholdNotCrossed_NoEventsRaised()
+    {
+        // Arrange
+        var comparisonDate = new DateTime(2024, 4, 1);
+        const decimal percentChangeThreshold = 30m;
+        var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
+            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+        var gameSinceComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(1),
+            assists: 1, putOuts: 2, errors: 1); // TC = 4, F% = 3/4
+        var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
+        {
+            gameBeforeComparisonDate, gameSinceComparisonDate
+        });
+
+        var mockAssessmentRequirements = GetMockPerformanceAssessmentRequirementsForFielding(percentChangeThreshold,
+            gameBeforeComparisonDate.TotalChances.ToNaturalNumber(), true,
+            gameSinceComparisonDate.TotalChances.ToNaturalNumber(), true);
+
+        // Act
+        seasonStats.AssessFieldingPerformance(comparisonDate, mockAssessmentRequirements.Object);
 
         // Assert
         Assert.Equal(0, seasonStats.DomainEvents.Count);
@@ -515,5 +835,60 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(battingStats, actual.BattingStatsByGamesChronologically);
         Assert.Equal(fieldingStats, actual.FieldingStatsByGamesChronologically);
         Assert.Equal(pitchingStats, actual.PitchingStatsByGamesChronologically);
+    }
+
+    private Mock<IPerformanceAssessmentRequirements> GetMockPerformanceAssessmentRequirementsForBatting(
+        decimal percentChangeThreshold, NaturalNumber plateAppearancesBeforeComparisonDate, bool beforeRequirementsMet,
+        NaturalNumber plateAppearancesSinceComparisonDate, bool sinceRequirementsMet)
+    {
+        var mockAssessmentRequirements = new Mock<IPerformanceAssessmentRequirements>();
+        mockAssessmentRequirements
+            .Setup(x => x.StatPercentChangeThreshold)
+            .Returns(percentChangeThreshold);
+        mockAssessmentRequirements
+            .Setup(x => x.AreBattingAssessmentRequirementsMet(plateAppearancesBeforeComparisonDate))
+            .Returns(beforeRequirementsMet);
+        mockAssessmentRequirements
+            .Setup(x => x.AreBattingAssessmentRequirementsMet(plateAppearancesSinceComparisonDate))
+            .Returns(sinceRequirementsMet);
+        return mockAssessmentRequirements;
+    }
+
+    private Mock<IPerformanceAssessmentRequirements> GetMockPerformanceAssessmentRequirementsForPitching(
+        decimal percentChangeThreshold, InningsCount inningsPitchedBeforeComparisonDate,
+        NaturalNumber battersFacedBeforeComparisonDate, bool beforeRequirementsMet,
+        InningsCount inningsPitchedSinceComparisonDate, NaturalNumber battersFacedSinceComparisonDate,
+        bool sinceRequirementsMet)
+    {
+        var mockAssessmentRequirements = new Mock<IPerformanceAssessmentRequirements>();
+        mockAssessmentRequirements
+            .Setup(x => x.StatPercentChangeThreshold)
+            .Returns(percentChangeThreshold);
+        mockAssessmentRequirements
+            .Setup(x => x.ArePitchingAssessmentRequirementsMet(inningsPitchedBeforeComparisonDate,
+                battersFacedBeforeComparisonDate))
+            .Returns(beforeRequirementsMet);
+        mockAssessmentRequirements
+            .Setup(x => x.ArePitchingAssessmentRequirementsMet(inningsPitchedSinceComparisonDate,
+                battersFacedSinceComparisonDate))
+            .Returns(sinceRequirementsMet);
+        return mockAssessmentRequirements;
+    }
+
+    private Mock<IPerformanceAssessmentRequirements> GetMockPerformanceAssessmentRequirementsForFielding(
+        decimal percentChangeThreshold, NaturalNumber totalChancesBeforeComparisonDate, bool beforeRequirementsMet,
+        NaturalNumber totalChancesSinceComparisonDate, bool sinceRequirementsMet)
+    {
+        var mockAssessmentRequirements = new Mock<IPerformanceAssessmentRequirements>();
+        mockAssessmentRequirements
+            .Setup(x => x.StatPercentChangeThreshold)
+            .Returns(percentChangeThreshold);
+        mockAssessmentRequirements
+            .Setup(x => x.AreFieldingAssessmentRequirementsMet(totalChancesBeforeComparisonDate))
+            .Returns(beforeRequirementsMet);
+        mockAssessmentRequirements
+            .Setup(x => x.AreFieldingAssessmentRequirementsMet(totalChancesSinceComparisonDate))
+            .Returns(sinceRequirementsMet);
+        return mockAssessmentRequirements;
     }
 }
