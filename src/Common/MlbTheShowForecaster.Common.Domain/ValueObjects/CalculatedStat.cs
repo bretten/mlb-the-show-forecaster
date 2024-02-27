@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 
@@ -28,6 +29,31 @@ public abstract class CalculatedStat : ValueObject, IStat
 
             return _value.Value;
         }
+    }
+
+    /// <summary>
+    /// Returns the stat's value as an int
+    /// </summary>
+    /// <returns>The stat value as an int</returns>
+    /// <exception cref="CalculatedStatCannotBeConvertedToIntException">Thrown if the decimal value does not fit in an int</exception>
+    public int ToInt()
+    {
+        if (Value < int.MinValue || Value > int.MaxValue)
+        {
+            throw new CalculatedStatCannotBeConvertedToIntException(
+                $"CalculatedStat value of {Value} does not fit in an int");
+        }
+
+        return (int)Value;
+    }
+
+    /// <summary>
+    /// Returns the stat's value as a NaturalNumber
+    /// </summary>
+    /// <returns>The stat value as a NaturalNumber</returns>
+    public NaturalNumber ToNaturalNumber()
+    {
+        return NaturalNumber.Create(ToInt());
     }
 
     /// <summary>
