@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
 
@@ -65,6 +66,25 @@ public sealed class PlayerBattingPeriodComparison : PlayerStatPeriodComparison
             onBasePlusSluggingBeforeComparisonDate: RawStat.Create(onBasePlusSluggingBeforeComparisonDate),
             plateAppearancesSinceComparisonDate: NaturalNumber.Create(plateAppearancesSinceComparisonDate),
             onBasePlusSluggingSinceComparisonDate: RawStat.Create(onBasePlusSluggingSinceComparisonDate)
+        );
+    }
+
+    /// <summary>
+    /// Creates <see cref="PlayerBattingPeriodComparison"/>
+    /// </summary>
+    /// <param name="playerMlbId">The MLB ID of the player</param>
+    /// <param name="comparisonDate">The date of comparison -- stats before this date will be compared to stats since this date</param>
+    /// <param name="statsBeforeComparisonDate">Stats from before the comparison date</param>
+    /// <param name="statsSinceComparisonDate">Stats since the comparison date</param>
+    /// <returns><see cref="PlayerBattingPeriodComparison"/></returns>
+    public static PlayerBattingPeriodComparison Create(MlbId playerMlbId, DateTime comparisonDate,
+        BattingStats statsBeforeComparisonDate, BattingStats statsSinceComparisonDate)
+    {
+        return new PlayerBattingPeriodComparison(playerMlbId, comparisonDate,
+            plateAppearancesBeforeComparisonDate: statsBeforeComparisonDate.PlateAppearances,
+            onBasePlusSluggingBeforeComparisonDate: statsBeforeComparisonDate.OnBasePlusSlugging,
+            plateAppearancesSinceComparisonDate: statsSinceComparisonDate.PlateAppearances,
+            onBasePlusSluggingSinceComparisonDate: statsSinceComparisonDate.OnBasePlusSlugging
         );
     }
 }

@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
@@ -86,6 +87,27 @@ public sealed class PlayerPitchingPeriodComparison : PlayerStatPeriodComparison
             inningsPitchedSinceComparisonDate: InningsCount.Create(inningsPitchedSinceComparisonDate),
             battersFacedSinceComparisonDate: NaturalNumber.Create(battersFacedSinceComparisonDate),
             earnedRunAverageSinceComparisonDate: RawStat.Create(earnedRunAverageSinceComparisonDate)
+        );
+    }
+
+    /// <summary>
+    /// Creates <see cref="PlayerPitchingPeriodComparison"/>
+    /// </summary>
+    /// <param name="playerMlbId">The MLB ID of the player</param>
+    /// <param name="comparisonDate">The date of comparison -- stats before this date will be compared to stats since this date</param>
+    /// <param name="statsBeforeComparisonDate">Stats from before the comparison date</param>
+    /// <param name="statsSinceComparisonDate">Stats since the comparison date</param>
+    /// <returns><see cref="PlayerPitchingPeriodComparison"/></returns>
+    public static PlayerPitchingPeriodComparison Create(MlbId playerMlbId, DateTime comparisonDate,
+        PitchingStats statsBeforeComparisonDate, PitchingStats statsSinceComparisonDate)
+    {
+        return new PlayerPitchingPeriodComparison(playerMlbId, comparisonDate,
+            inningsPitchedBeforeComparisonDate: statsBeforeComparisonDate.InningsPitched,
+            battersFacedBeforeComparisonDate: statsBeforeComparisonDate.BattersFaced,
+            earnedRunAverageBeforeComparisonDate: statsBeforeComparisonDate.EarnedRunAverage,
+            inningsPitchedSinceComparisonDate: statsSinceComparisonDate.InningsPitched,
+            battersFacedSinceComparisonDate: statsSinceComparisonDate.BattersFaced,
+            earnedRunAverageSinceComparisonDate: statsSinceComparisonDate.EarnedRunAverage
         );
     }
 }

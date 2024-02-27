@@ -67,7 +67,7 @@ public class NaturalNumberTests
     public void Create_SignedLong_ThrowsException()
     {
         // Arrange
-        const long value = 100U;
+        const long value = 100;
 
         // Act
         var actual = NaturalNumber.Create(value);

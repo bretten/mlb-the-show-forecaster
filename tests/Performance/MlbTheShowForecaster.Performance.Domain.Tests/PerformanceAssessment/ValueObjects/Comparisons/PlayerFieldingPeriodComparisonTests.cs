@@ -9,7 +9,7 @@ public class PlayerFieldingPeriodComparisonTests
     public void Create_TotalChancesAndFieldingPercentage_Created()
     {
         // Arrange
-        var playerId = MlbId.Create(1);
+        var playerMlbId = MlbId.Create(1);
         var comparisonDate = new DateTime(2024, 4, 1);
         const int totalChancesBeforeComparisonDate = 423;
         const decimal fieldingPercentageBeforeComparisonDate = 0.931m;
@@ -17,7 +17,7 @@ public class PlayerFieldingPeriodComparisonTests
         const decimal fieldingPercentageSinceComparisonDate = 0.983m;
 
         // Act
-        var actual = PlayerFieldingPeriodComparison.Create(playerId, comparisonDate,
+        var actual = PlayerFieldingPeriodComparison.Create(playerMlbId, comparisonDate,
             totalChancesBeforeComparisonDate: totalChancesBeforeComparisonDate,
             fieldingPercentageBeforeComparisonDate: fieldingPercentageBeforeComparisonDate,
             totalChancesSinceComparisonDate: totalChancesSinceComparisonDate,

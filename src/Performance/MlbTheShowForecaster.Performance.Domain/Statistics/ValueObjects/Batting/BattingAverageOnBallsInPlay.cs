@@ -73,10 +73,10 @@ public sealed class BattingAverageOnBallsInPlay : CalculatedStat
     /// <param name="strikeouts">The number of strikeouts</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies</param>
     /// <returns><see cref="BattingAverageOnBallsInPlay"/></returns>
-    public static BattingAverageOnBallsInPlay Create(int hits, int homeRuns, int atBats, int strikeOuts,
+    public static BattingAverageOnBallsInPlay Create(int hits, int homeRuns, int atBats, int strikeouts,
         int sacrificeFlies)
     {
         return new BattingAverageOnBallsInPlay(NaturalNumber.Create(hits), NaturalNumber.Create(homeRuns),
-            NaturalNumber.Create(atBats), NaturalNumber.Create(strikeOuts), NaturalNumber.Create(sacrificeFlies));
+            NaturalNumber.Create(atBats), NaturalNumber.Create(strikeouts), NaturalNumber.Create(sacrificeFlies));
     }
 }
