@@ -23,4 +23,8 @@
         </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\src\Performance\MlbTheShowForecaster.Performance.Application\MlbTheShowForecaster.Performance.Application.csproj" />
+    </ItemGroup>
+
 </Project>
