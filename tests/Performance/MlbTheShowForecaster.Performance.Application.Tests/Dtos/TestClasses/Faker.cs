@@ -5,8 +5,23 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObj
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Dtos.TestClasses;
 
+/// <summary>
+/// Creates fakes
+/// </summary>
 public static class Faker
 {
+    public static PlayerSeason FakePlayerSeason(int playerMlbId = 1, ushort seasonYear = 2024,
+        List<PlayerGameBattingStats>? playerGameBattingStats = null,
+        List<PlayerGamePitchingStats>? playerGamePitchingStats = null,
+        List<PlayerGameFieldingStats>? playerGameFieldingStats = null)
+    {
+        return new PlayerSeason(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
+            playerGameBattingStats ?? new List<PlayerGameBattingStats>(),
+            playerGamePitchingStats ?? new List<PlayerGamePitchingStats>(),
+            playerGameFieldingStats ?? new List<PlayerGameFieldingStats>()
+        );
+    }
+
     public static PlayerGameBattingStats FakePlayerGameBattingStats(int playerMlbId = 1, ushort seasonYear = 2024,
         DateTime? gameDate = null, int gameMlbId = 10000, int teamMlbId = 100, int plateAppearances = 1, int atBats = 2,
         int runs = 3, int hits = 4, int doubles = 5, int triples = 6, int homeRuns = 7, int runsBattedIn = 8,
