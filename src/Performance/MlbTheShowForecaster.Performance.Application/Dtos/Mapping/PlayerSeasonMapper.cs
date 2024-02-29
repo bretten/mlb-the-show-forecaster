@@ -28,7 +28,7 @@ public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
     /// </summary>
     /// <param name="stats">The collection of <see cref="PlayerGameBattingStats"/> to map</param>
     /// <returns>The mapped collection of <see cref="PlayerBattingStatsByGame"/></returns>
-    private IEnumerable<PlayerBattingStatsByGame> MapBattingGames(IEnumerable<PlayerGameBattingStats> stats)
+    public IEnumerable<PlayerBattingStatsByGame> MapBattingGames(IEnumerable<PlayerGameBattingStats> stats)
     {
         return stats
             .Select(x => PlayerBattingStatsByGame.Create(x.PlayerMlbId, x.SeasonYear, x.GameDate, x.GameMlbId,
@@ -65,7 +65,7 @@ public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
     /// </summary>
     /// <param name="stats">The collection of <see cref="PlayerGamePitchingStats"/> to map</param>
     /// <returns>The mapped collection of <see cref="PlayerPitchingStatsByGame"/></returns>
-    private IEnumerable<PlayerPitchingStatsByGame> MapPitchingGames(IEnumerable<PlayerGamePitchingStats> stats)
+    public IEnumerable<PlayerPitchingStatsByGame> MapPitchingGames(IEnumerable<PlayerGamePitchingStats> stats)
     {
         return stats
             .Select(x => PlayerPitchingStatsByGame.Create(x.PlayerMlbId, x.SeasonYear, x.GameDate, x.GameMlbId,
@@ -118,7 +118,7 @@ public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
     /// </summary>
     /// <param name="stats">The collection of <see cref="PlayerGameFieldingStats"/> to map</param>
     /// <returns>The mapped collection of <see cref="PlayerFieldingStatsByGame"/></returns>
-    private List<PlayerFieldingStatsByGame> MapFieldingGames(IEnumerable<PlayerGameFieldingStats> stats)
+    public IEnumerable<PlayerFieldingStatsByGame> MapFieldingGames(IEnumerable<PlayerGameFieldingStats> stats)
     {
         return stats
             .Select(x => PlayerFieldingStatsByGame.Create(x.PlayerMlbId, x.SeasonYear, x.GameDate, x.GameMlbId,

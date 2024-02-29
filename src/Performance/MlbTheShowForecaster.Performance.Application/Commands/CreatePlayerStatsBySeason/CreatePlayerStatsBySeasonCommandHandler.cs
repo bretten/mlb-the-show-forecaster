@@ -45,7 +45,7 @@ internal sealed class CreatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     }
 
     /// <summary>
-    /// Handles the <see cref="CreatePlayerStatsBySeasonCommand"/> command
+    /// Handles a <see cref="CreatePlayerStatsBySeasonCommand"/> command
     /// </summary>
     /// <param name="command">The command</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
