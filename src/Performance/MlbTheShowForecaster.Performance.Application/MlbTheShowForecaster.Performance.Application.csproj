@@ -7,4 +7,13 @@
         <RootNamespace>com.brettnamba.MlbTheShowForecaster.Performance.Application</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Common\MlbTheShowForecaster.Common.Application\MlbTheShowForecaster.Common.Application.csproj" />
+      <ProjectReference Include="..\MlbTheShowForecaster.Performance.Domain\MlbTheShowForecaster.Performance.Domain.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <InternalsVisibleTo Include="MlbTheShowForecaster.Performance.Application.Tests" />
+    </ItemGroup>
+
 </Project>
