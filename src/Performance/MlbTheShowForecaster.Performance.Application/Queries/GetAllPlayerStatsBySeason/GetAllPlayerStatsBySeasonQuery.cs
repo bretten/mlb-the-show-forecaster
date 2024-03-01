@@ -8,4 +8,5 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Queries.Ge
 /// Query that retrieves all <see cref="PlayerStatsBySeason"/> for a specified season
 /// </summary>
 /// <param name="SeasonYear">The season to get <see cref="PlayerStatsBySeason"/> for</param>
-internal readonly record struct GetAllPlayerStatsBySeasonQuery(SeasonYear SeasonYear) : IQuery<IEnumerable<PlayerStatsBySeason>>;
+internal readonly record struct GetAllPlayerStatsBySeasonQuery(SeasonYear SeasonYear)
+    : IQuery<IEnumerable<PlayerStatsBySeason>>;
