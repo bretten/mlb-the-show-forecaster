@@ -9,7 +9,7 @@ using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Commands.UpdatePlayerStatsBySeason;
 
-public class UpdatePlayerStatsBySeasonTests
+public class UpdatePlayerStatsBySeasonCommandHandlerTests
 {
     [Fact]
     public async Task Handle_UpdatePlayerStatsBySeasonCommand_UpdatesPlayerStatsBySeason()
