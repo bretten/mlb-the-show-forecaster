@@ -4,6 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Services;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason;
 
@@ -21,6 +22,11 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     private readonly IPlayerSeasonMapper _playerSeasonMapper;
 
     /// <summary>
+    /// Scorekeeper that logs new games for the season and assesses the player's performance to date
+    /// </summary>
+    private readonly IPlayerSeasonScorekeeper _playerSeasonScorekeeper;
+
+    /// <summary>
     /// The <see cref="PlayerStatsBySeason"/> repository
     /// </summary>
     private readonly IPlayerStatsBySeasonRepository _playerStatsBySeasonRepository;
@@ -34,14 +40,17 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     /// Constructor
     /// </summary>
     /// <param name="playerSeasonMapper">Maps <see cref="PlayerSeason"/> to other objects</param>
+    /// <param name="playerSeasonScorekeeper">Scorekeeper that logs new games for the season and assesses the player's performance to date</param>
     /// <param name="playerStatsBySeasonRepository">The <see cref="PlayerStatsBySeason"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/></param>
     public UpdatePlayerStatsBySeasonCommandHandler(IPlayerSeasonMapper playerSeasonMapper,
-        IPlayerStatsBySeasonRepository playerStatsBySeasonRepository, IUnitOfWork unitOfWork)
+        IPlayerSeasonScorekeeper playerSeasonScorekeeper, IPlayerStatsBySeasonRepository playerStatsBySeasonRepository,
+        IUnitOfWork unitOfWork)
     {
         _playerSeasonMapper = playerSeasonMapper;
         _playerStatsBySeasonRepository = playerStatsBySeasonRepository;
         _unitOfWork = unitOfWork;
+        _playerSeasonScorekeeper = playerSeasonScorekeeper;
     }
 
     /// <summary>
@@ -56,87 +65,19 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
         // The most up-to-date player season stats retrieved from an MLB source
         var playerSeason = command.PlayerSeason;
 
-        // Log new game stats
-        LogNewBattingGames(ref playerStatsBySeason, playerSeason.GameBattingStats);
-        LogNewPitchingGames(ref playerStatsBySeason, playerSeason.GamePitchingStats);
-        LogNewFieldingGames(ref playerStatsBySeason, playerSeason.GameFieldingStats);
+        // Map the stats by games to date to the domain
+        var playerBattingStatsByGamesToDate = _playerSeasonMapper.MapBattingGames(playerSeason.GameBattingStats);
+        var playerPitchingStatsByGamesToDate = _playerSeasonMapper.MapPitchingGames(playerSeason.GamePitchingStats);
+        var playerFieldingStatsByGamesToDate = _playerSeasonMapper.MapFieldingGames(playerSeason.GameFieldingStats);
+
+        // Score the player's season to date
+        var updatedPlayerStatsBySeason = _playerSeasonScorekeeper.ScoreSeason(playerStatsBySeason, DateTime.Now,
+            playerBattingStatsByGamesToDate, playerPitchingStatsByGamesToDate, playerFieldingStatsByGamesToDate);
 
         // Update
-        await _playerStatsBySeasonRepository.Update(playerStatsBySeason);
+        await _playerStatsBySeasonRepository.Update(updatedPlayerStatsBySeason);
 
         // Persist
         await _unitOfWork.CommitAsync(cancellationToken);
-    }
-
-    /// <summary>
-    /// Logs new batting games
-    /// </summary>
-    /// <param name="playerStatsBySeason">The player season stats as it exists in the system currently</param>
-    /// <param name="upToDateStats">The most up-to-date player season stats from the external MLB source</param>
-    private void LogNewBattingGames(ref PlayerStatsBySeason playerStatsBySeason,
-        IEnumerable<PlayerGameBattingStats> upToDateStats)
-    {
-        // Map the most up-to-date stats to domain entities
-        var upToDateStatsByGames = _playerSeasonMapper.MapBattingGames(upToDateStats);
-
-        // The stats stored internally which may not yet be up-to-date
-        var previousStatsByGames = playerStatsBySeason.BattingStatsByGamesChronologically;
-
-        // Get new stats that don't exist in the system
-        var newStatsByGames = upToDateStatsByGames.Except(previousStatsByGames);
-
-        // Log new games
-        foreach (var statsByGame in newStatsByGames)
-        {
-            playerStatsBySeason.LogBattingGame(statsByGame);
-        }
-    }
-
-    /// <summary>
-    /// Logs new pitching games
-    /// </summary>
-    /// <param name="playerStatsBySeason">The player season stats as it exists in the system currently</param>
-    /// <param name="upToDateStats">The most up-to-date player season stats from the external MLB source</param>
-    private void LogNewPitchingGames(ref PlayerStatsBySeason playerStatsBySeason,
-        IEnumerable<PlayerGamePitchingStats> upToDateStats)
-    {
-        // Map the most up-to-date stats to domain entities
-        var upToDateStatsByGames = _playerSeasonMapper.MapPitchingGames(upToDateStats);
-
-        // The stats stored internally which may not yet be up-to-date
-        var previousStatsByGames = playerStatsBySeason.PitchingStatsByGamesChronologically;
-
-        // Get new stats that don't exist in the system
-        var newStatsByGames = upToDateStatsByGames.Except(previousStatsByGames);
-
-        // Log new games
-        foreach (var statsByGame in newStatsByGames)
-        {
-            playerStatsBySeason.LogPitchingGame(statsByGame);
-        }
-    }
-
-    /// <summary>
-    /// Logs new fielding games
-    /// </summary>
-    /// <param name="playerStatsBySeason">The player season stats as it exists in the system currently</param>
-    /// <param name="upToDateStats">The most up-to-date player season stats from the external MLB source</param>
-    private void LogNewFieldingGames(ref PlayerStatsBySeason playerStatsBySeason,
-        IEnumerable<PlayerGameFieldingStats> upToDateStats)
-    {
-        // Map the most up-to-date stats to domain entities
-        var upToDateStatsByGames = _playerSeasonMapper.MapFieldingGames(upToDateStats);
-
-        // The stats stored internally which may not yet be up-to-date
-        var previousStatsByGames = playerStatsBySeason.FieldingStatsByGamesChronologically;
-
-        // Get new stats that don't exist in the system
-        var newStatsByGames = upToDateStatsByGames.Except(previousStatsByGames);
-
-        // Log new games
-        foreach (var statsByGame in newStatsByGames)
-        {
-            playerStatsBySeason.LogFieldingGame(statsByGame);
-        }
     }
 }
