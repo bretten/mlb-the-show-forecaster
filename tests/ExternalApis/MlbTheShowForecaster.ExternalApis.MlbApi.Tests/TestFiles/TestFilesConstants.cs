@@ -12,5 +12,8 @@ public static class TestFilesConstants
 
         public static readonly string FieldingStatsJson =
             $"TestFiles{Path.DirectorySeparatorChar}Responses{Path.DirectorySeparatorChar}FieldingStats.json";
+
+        public static readonly string UnknownStatsJson =
+            $"TestFiles{Path.DirectorySeparatorChar}Responses{Path.DirectorySeparatorChar}UnknownStats.json";
     }
 }

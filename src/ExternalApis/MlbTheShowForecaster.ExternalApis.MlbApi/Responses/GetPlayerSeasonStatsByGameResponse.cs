@@ -1,3 +1,9 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
+﻿using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
 
-public sealed record GetPlayerSeasonStatsByGameResponse();
+namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
+
+public sealed record GetPlayerSeasonStatsByGameResponse(
+    [property: JsonPropertyName("people")]
+    List<PlayerSeasonStatsByGameDto>? People
+);

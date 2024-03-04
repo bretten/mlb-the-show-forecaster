@@ -37,6 +37,9 @@
       <None Update="TestFiles\Responses\PitchingStats.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="TestFiles\Responses\UnknownStats.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

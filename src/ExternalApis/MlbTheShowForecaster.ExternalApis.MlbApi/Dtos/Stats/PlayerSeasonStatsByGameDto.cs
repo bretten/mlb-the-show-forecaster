@@ -2,13 +2,13 @@
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
 
-public record PlayerSeasonStatsByGameDto(
+public readonly record struct PlayerSeasonStatsByGameDto(
     [property: JsonPropertyName("id")]
     int Id,
     [property: JsonPropertyName("useName")]
-    int FirstName,
+    string FirstName,
     [property: JsonPropertyName("useLastName")]
-    int LastName,
+    string LastName,
     [property: JsonPropertyName("stats")]
-    StatsDto Stats
+    List<StatsDto> Stats
 );
