@@ -66,5 +66,11 @@ public class MlbApiIntegrationTests
 
         // Assert
         Assert.NotNull(actual);
+        Assert.NotNull(actual.People);
+        Assert.Single(actual.People);
+        Assert.Equal(660271, actual.People[0].Id);
+        Assert.Equal("Shohei", actual.People[0].FirstName);
+        Assert.Equal("Ohtani", actual.People[0].LastName);
+        Assert.Equal(3, actual.People[0].Stats.Count);
     }
 }

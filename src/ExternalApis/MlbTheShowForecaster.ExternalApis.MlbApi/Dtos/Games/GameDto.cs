@@ -2,7 +2,11 @@
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Games;
 
-public record GameDto(
+/// <summary>
+/// Models a MLB game
+/// </summary>
+/// <param name="GamePk">The ID of the game</param>
+public readonly record struct GameDto(
     [property: JsonPropertyName("gamePk")]
     int GamePk
 );

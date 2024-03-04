@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Converters.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
-using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Tests.TestFiles;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Tests.Converters;
@@ -15,9 +14,98 @@ public class StatJsonConverterTests
         var json = File.ReadAllText(TestFilesConstants.Responses.BattingStatsJson);
 
         // Act
-        var actual = JsonSerializer.Deserialize<GetPlayerSeasonStatsByGameResponse>(json);
+        var actual = JsonSerializer.Deserialize<StatsDto>(json);
 
         // Assert
+        Assert.Equal("hitting", actual.Group.DisplayName);
+
+        var actualGame1 = actual.Splits.ElementAt(0) as GameHittingStatsDto;
+        Assert.NotNull(actualGame1);
+        Assert.Equal("2023", actualGame1.Season);
+        Assert.Equal(new DateTime(2023, 3, 30), actualGame1.Date);
+        Assert.Equal("R", actualGame1.GameType);
+        Assert.False(actualGame1.IsHome);
+        Assert.False(actualGame1.IsWin);
+        Assert.Equal(718769, actualGame1.Game.GamePk);
+
+        Assert.Equal("1-3 | BB, 2 K", actualGame1.Stat.Summary);
+        Assert.Equal(1, actualGame1.Stat.GamesPlayed);
+        Assert.Equal(2, actualGame1.Stat.GroundOuts);
+        Assert.Equal(3, actualGame1.Stat.AirOuts);
+        Assert.Equal(4, actualGame1.Stat.Runs);
+        Assert.Equal(5, actualGame1.Stat.Doubles);
+        Assert.Equal(6, actualGame1.Stat.Triples);
+        Assert.Equal(7, actualGame1.Stat.HomeRuns);
+        Assert.Equal(8, actualGame1.Stat.StrikeOuts);
+        Assert.Equal(9, actualGame1.Stat.BaseOnBalls);
+        Assert.Equal(10, actualGame1.Stat.IntentionalWalks);
+        Assert.Equal(11, actualGame1.Stat.Hits);
+        Assert.Equal(12, actualGame1.Stat.HitByPitch);
+        Assert.Equal(".111", actualGame1.Stat.Avg);
+        Assert.Equal(13, actualGame1.Stat.AtBats);
+        Assert.Equal(".222", actualGame1.Stat.Obp);
+        Assert.Equal(".333", actualGame1.Stat.Slg);
+        Assert.Equal(".444", actualGame1.Stat.Ops);
+        Assert.Equal(14, actualGame1.Stat.CaughtStealing);
+        Assert.Equal(15, actualGame1.Stat.StolenBases);
+        Assert.Equal(".555", actualGame1.Stat.StolenBasePercentage);
+        Assert.Equal(16, actualGame1.Stat.GroundIntoDoublePlay);
+        Assert.Equal(17, actualGame1.Stat.GroundIntoTriplePlay);
+        Assert.Equal(18, actualGame1.Stat.NumberOfPitches);
+        Assert.Equal(19, actualGame1.Stat.PlateAppearances);
+        Assert.Equal(20, actualGame1.Stat.TotalBases);
+        Assert.Equal(21, actualGame1.Stat.Rbi);
+        Assert.Equal(22, actualGame1.Stat.LeftOnBase);
+        Assert.Equal(23, actualGame1.Stat.SacBunts);
+        Assert.Equal(24, actualGame1.Stat.SacFlies);
+        Assert.Equal(".666", actualGame1.Stat.Babip);
+        Assert.Equal(".777", actualGame1.Stat.GroundOutsToAirOuts);
+        Assert.Equal(25, actualGame1.Stat.CatchersInterference);
+        Assert.Equal(".888", actualGame1.Stat.AtBatsPerHomeRun);
+
+        var actualGame2 = actual.Splits.ElementAt(1) as GameHittingStatsDto;
+        Assert.NotNull(actualGame2);
+        Assert.Equal("2023", actualGame2.Season);
+        Assert.Equal(new DateTime(2023, 4, 1), actualGame2.Date);
+        Assert.Equal("R", actualGame2.GameType);
+        Assert.True(actualGame2.IsHome);
+        Assert.True(actualGame2.IsWin);
+        Assert.Equal(718757, actualGame2.Game.GamePk);
+
+        Assert.Equal("2-5 | K, 2 RBI, R", actualGame2.Stat.Summary);
+        Assert.Equal(26, actualGame2.Stat.GamesPlayed);
+        Assert.Equal(27, actualGame2.Stat.GroundOuts);
+        Assert.Equal(28, actualGame2.Stat.AirOuts);
+        Assert.Equal(29, actualGame2.Stat.Runs);
+        Assert.Equal(30, actualGame2.Stat.Doubles);
+        Assert.Equal(31, actualGame2.Stat.Triples);
+        Assert.Equal(32, actualGame2.Stat.HomeRuns);
+        Assert.Equal(33, actualGame2.Stat.StrikeOuts);
+        Assert.Equal(34, actualGame2.Stat.BaseOnBalls);
+        Assert.Equal(35, actualGame2.Stat.IntentionalWalks);
+        Assert.Equal(36, actualGame2.Stat.Hits);
+        Assert.Equal(37, actualGame2.Stat.HitByPitch);
+        Assert.Equal(".999", actualGame2.Stat.Avg);
+        Assert.Equal(38, actualGame2.Stat.AtBats);
+        Assert.Equal("1.111", actualGame2.Stat.Obp);
+        Assert.Equal("1.222", actualGame2.Stat.Slg);
+        Assert.Equal("1.333", actualGame2.Stat.Ops);
+        Assert.Equal(39, actualGame2.Stat.CaughtStealing);
+        Assert.Equal(40, actualGame2.Stat.StolenBases);
+        Assert.Equal("1.444", actualGame2.Stat.StolenBasePercentage);
+        Assert.Equal(41, actualGame2.Stat.GroundIntoDoublePlay);
+        Assert.Equal(42, actualGame2.Stat.GroundIntoTriplePlay);
+        Assert.Equal(43, actualGame2.Stat.NumberOfPitches);
+        Assert.Equal(44, actualGame2.Stat.PlateAppearances);
+        Assert.Equal(45, actualGame2.Stat.TotalBases);
+        Assert.Equal(46, actualGame2.Stat.Rbi);
+        Assert.Equal(47, actualGame2.Stat.LeftOnBase);
+        Assert.Equal(48, actualGame2.Stat.SacBunts);
+        Assert.Equal(49, actualGame2.Stat.SacFlies);
+        Assert.Equal("1.555", actualGame2.Stat.Babip);
+        Assert.Equal("1.666", actualGame2.Stat.GroundOutsToAirOuts);
+        Assert.Equal(50, actualGame2.Stat.CatchersInterference);
+        Assert.Equal("1.777", actualGame2.Stat.AtBatsPerHomeRun);
     }
 
     [Fact]
@@ -30,16 +118,16 @@ public class StatJsonConverterTests
         var actual = JsonSerializer.Deserialize<StatsDto>(json);
 
         // Assert
-        Assert.NotNull(actual);
         Assert.Equal("pitching", actual.Group.DisplayName);
 
-        var actualGame1 = actual.Splits.ElementAt(0) as GameStatSplitPitchingDto;
+        var actualGame1 = actual.Splits.ElementAt(0) as GamePitchingStatsDto;
         Assert.NotNull(actualGame1);
         Assert.Equal("2023", actualGame1.Season);
         Assert.Equal(new DateTime(2023, 3, 30), actualGame1.Date);
         Assert.Equal("R", actualGame1.GameType);
         Assert.False(actualGame1.IsHome);
         Assert.False(actualGame1.IsWin);
+        Assert.Equal(718769, actualGame1.Game.GamePk);
 
         Assert.Equal("6.0 IP, 0 ER, 10 K, 3 BB", actualGame1.Stat.Summary);
         Assert.Equal(1, actualGame1.Stat.GamesPlayed);
@@ -103,13 +191,14 @@ public class StatJsonConverterTests
         Assert.Equal(41, actualGame1.Stat.SacBunts);
         Assert.Equal(42, actualGame1.Stat.SacFlies);
 
-        var actualGame2 = actual.Splits.ElementAt(1) as GameStatSplitPitchingDto;
+        var actualGame2 = actual.Splits.ElementAt(1) as GamePitchingStatsDto;
         Assert.NotNull(actualGame2);
         Assert.Equal("2023", actualGame2.Season);
         Assert.Equal(new DateTime(2023, 4, 1), actualGame2.Date);
         Assert.Equal("R", actualGame2.GameType);
         Assert.True(actualGame2.IsHome);
         Assert.True(actualGame2.IsWin);
+        Assert.Equal(718691, actualGame2.Game.GamePk);
 
         Assert.Equal("6.0 IP, ER, 8 K, 4 BB", actualGame2.Stat.Summary);
         Assert.Equal(10, actualGame2.Stat.GamesPlayed);
@@ -184,16 +273,16 @@ public class StatJsonConverterTests
         var actual = JsonSerializer.Deserialize<StatsDto>(json);
 
         // Assert
-        Assert.NotNull(actual);
         Assert.Equal("fielding", actual.Group.DisplayName);
 
-        var actualGame1 = actual.Splits.ElementAt(0) as GameStatSplitFieldingDto;
+        var actualGame1 = actual.Splits.ElementAt(0) as GameFieldingStatsDto;
         Assert.NotNull(actualGame1);
         Assert.Equal("2023", actualGame1.Season);
         Assert.Equal(new DateTime(2023, 3, 30), actualGame1.Date);
         Assert.Equal("R", actualGame1.GameType);
         Assert.False(actualGame1.IsHome);
         Assert.False(actualGame1.IsWin);
+        Assert.Equal(718780, actualGame1.Game.GamePk);
 
         Assert.Equal(1, actualGame1.Stat.GamesPlayed);
         Assert.Equal(2, actualGame1.Stat.GamesStarted);
@@ -220,13 +309,14 @@ public class StatJsonConverterTests
         Assert.Equal(15, actualGame1.Stat.ThrowingErrors);
         Assert.Equal(16, actualGame1.Stat.Pickoffs);
 
-        var actualGame2 = actual.Splits.ElementAt(1) as GameStatSplitFieldingDto;
+        var actualGame2 = actual.Splits.ElementAt(1) as GameFieldingStatsDto;
         Assert.NotNull(actualGame2);
         Assert.Equal("2023", actualGame2.Season);
         Assert.Equal(new DateTime(2023, 4, 1), actualGame2.Date);
         Assert.Equal("R", actualGame2.GameType);
         Assert.True(actualGame2.IsHome);
         Assert.True(actualGame2.IsWin);
+        Assert.Equal(718781, actualGame2.Game.GamePk);
 
         Assert.Equal(10, actualGame2.Stat.GamesPlayed);
         Assert.Equal(20, actualGame2.Stat.GamesStarted);
@@ -259,7 +349,7 @@ public class StatJsonConverterTests
     {
         // Arrange
         var json = File.ReadAllText(TestFilesConstants.Responses.UnknownStatsJson);
-        var action = () => JsonSerializer.Deserialize<StatsDto>(json);
+        Func<object> action = () => JsonSerializer.Deserialize<StatsDto>(json);
 
         // Act
         var actual = Record.Exception(action);

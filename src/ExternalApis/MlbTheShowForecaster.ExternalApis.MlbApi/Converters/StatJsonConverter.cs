@@ -25,7 +25,7 @@ public class StatJsonConverter : JsonConverter<StatsDto>
     /// <param name="typeToConvert">The type being converted</param>
     /// <param name="options">The options for the serializer</param>
     /// <returns>The parsed object</returns>
-    public override StatsDto? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override StatsDto Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         // Parse the stat group
         var statGroup = ParseStatGroup(ref reader);
@@ -77,7 +77,7 @@ public class StatJsonConverter : JsonConverter<StatsDto>
     /// <param name="reader">The reader that is parsing the JSON</param>
     /// <param name="statGroup">The type of stat being parsed</param>
     /// <returns>The stats by game</returns>
-    private IEnumerable<GameStatSplitDto> ParseStatSplitsByGame(ref Utf8JsonReader reader, StatGroup statGroup)
+    private IEnumerable<GameStatsDto> ParseStatSplitsByGame(ref Utf8JsonReader reader, StatGroup statGroup)
     {
         // Read until the "splits" property
         ReadUntilProperty(ref reader, "splits");
@@ -98,16 +98,16 @@ public class StatJsonConverter : JsonConverter<StatsDto>
     /// <param name="reader">The reader that is parsing the JSON</param>
     /// <param name="statGroup">The type of stat to be parsed</param>
     /// <returns>The stats parsed by the reader</returns>
-    private IEnumerable<GameStatSplitDto> ParseStatsByGame(ref Utf8JsonReader reader, StatGroup statGroup)
+    private IEnumerable<GameStatsDto> ParseStatsByGame(ref Utf8JsonReader reader, StatGroup statGroup)
     {
         return statGroup switch
         {
-            StatGroup.Hitting => JsonSerializer.Deserialize<IEnumerable<GameStatSplitHittingDto>>(ref reader) ??
-                                 Array.Empty<GameStatSplitHittingDto>(),
-            StatGroup.Pitching => JsonSerializer.Deserialize<IEnumerable<GameStatSplitPitchingDto>>(ref reader) ??
-                                  Array.Empty<GameStatSplitPitchingDto>(),
-            _ => JsonSerializer.Deserialize<IEnumerable<GameStatSplitFieldingDto>>(ref reader) ??
-                 Array.Empty<GameStatSplitFieldingDto>(),
+            StatGroup.Hitting => JsonSerializer.Deserialize<IEnumerable<GameHittingStatsDto>>(ref reader) ??
+                                 Array.Empty<GameHittingStatsDto>(),
+            StatGroup.Pitching => JsonSerializer.Deserialize<IEnumerable<GamePitchingStatsDto>>(ref reader) ??
+                                  Array.Empty<GamePitchingStatsDto>(),
+            _ => JsonSerializer.Deserialize<IEnumerable<GameFieldingStatsDto>>(ref reader) ??
+                 Array.Empty<GameFieldingStatsDto>(),
         };
     }
 
