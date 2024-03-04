@@ -7,7 +7,7 @@ using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Commands.CreatePlayerStatsBySeason;
 
-public class CreatePlayerStatsBySeasonTests
+public class CreatePlayerStatsBySeasonCommandHandlerTests
 {
     [Fact]
     public async Task Handle_CreatePlayerStatsBySeasonCommand_CreatesPlayerStatsBySeason()
