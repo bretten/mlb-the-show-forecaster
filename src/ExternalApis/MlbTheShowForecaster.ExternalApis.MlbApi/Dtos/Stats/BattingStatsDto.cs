@@ -3,7 +3,7 @@
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
 
 /// <summary>
-/// Batting stats
+/// Hitting stats
 /// </summary>
 public readonly record struct BattingStatsDto(
     [property: JsonPropertyName("summary")]
