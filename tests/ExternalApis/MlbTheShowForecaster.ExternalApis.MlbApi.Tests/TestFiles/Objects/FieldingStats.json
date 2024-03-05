@@ -1,0 +1,165 @@
+﻿{
+  "type": {
+    "displayName": "gameLog"
+  },
+  "group": {
+    "displayName": "fielding"
+  },
+  "exemptions": [],
+  "splits": [
+    {
+      "season": "2023",
+      "stat": {
+        "gamesPlayed": 1,
+        "gamesStarted": 2,
+        "caughtStealing": 3,
+        "stolenBases": 4,
+        "stolenBasePercentage": ".111",
+        "assists": 5,
+        "putOuts": 6,
+        "errors": 7,
+        "chances": 8,
+        "fielding": ".222",
+        "position": {
+          "code": "2",
+          "name": "Catcher",
+          "type": "Catcher",
+          "abbreviation": "C"
+        },
+        "rangeFactorPerGame": ".333",
+        "rangeFactorPer9Inn": ".444",
+        "innings": "5.0",
+        "games": 9,
+        "passedBall": 10,
+        "doublePlays": 11,
+        "triplePlays": 12,
+        "catcherERA": ".666",
+        "catchersInterference": 13,
+        "wildPitches": 14,
+        "throwingErrors": 15,
+        "pickoffs": 16
+      },
+      "team": {
+        "id": 144,
+        "name": "Atlanta Braves",
+        "link": "/api/v1/teams/144"
+      },
+      "player": {
+        "id": 669221,
+        "fullName": "Sean Murphy",
+        "link": "/api/v1/people/669221"
+      },
+      "league": {
+        "id": 104,
+        "name": "National League",
+        "link": "/api/v1/league/104"
+      },
+      "sport": {
+        "id": 1,
+        "link": "/api/v1/sports/1",
+        "abbreviation": "MLB"
+      },
+      "opponent": {
+        "id": 120,
+        "name": "Washington Nationals",
+        "link": "/api/v1/teams/120"
+      },
+      "date": "2023-03-30",
+      "gameType": "R",
+      "isHome": false,
+      "isWin": false,
+      "position": {
+        "code": "2",
+        "name": "Catcher",
+        "type": "Catcher",
+        "abbreviation": "C"
+      },
+      "game": {
+        "gamePk": 718780,
+        "link": "/api/v1.1/game/718780/feed/live",
+        "content": {
+          "link": "/api/v1/game/718780/content"
+        },
+        "gameNumber": 1,
+        "dayNight": "day"
+      }
+    },
+    {
+      "season": "2023",
+      "stat": {
+        "gamesPlayed": 10,
+        "gamesStarted": 20,
+        "caughtStealing": 30,
+        "stolenBases": 40,
+        "stolenBasePercentage": "1.111",
+        "assists": 50,
+        "putOuts": 60,
+        "errors": 70,
+        "chances": 80,
+        "fielding": "1.222",
+        "position": {
+          "code": "2",
+          "name": "Catcher",
+          "type": "Catcher",
+          "abbreviation": "C"
+        },
+        "rangeFactorPerGame": "1.333",
+        "rangeFactorPer9Inn": "1.444",
+        "innings": "15.0",
+        "games": 90,
+        "passedBall": 100,
+        "doublePlays": 110,
+        "triplePlays": 120,
+        "catcherERA": "1.666",
+        "catchersInterference": 130,
+        "wildPitches": 140,
+        "throwingErrors": 150,
+        "pickoffs": 160
+      },
+      "team": {
+        "id": 144,
+        "name": "Atlanta Braves",
+        "link": "/api/v1/teams/144"
+      },
+      "player": {
+        "id": 669221,
+        "fullName": "Sean Murphy",
+        "link": "/api/v1/people/669221"
+      },
+      "league": {
+        "id": 104,
+        "name": "National League",
+        "link": "/api/v1/league/104"
+      },
+      "sport": {
+        "id": 1,
+        "link": "/api/v1/sports/1",
+        "abbreviation": "MLB"
+      },
+      "opponent": {
+        "id": 120,
+        "name": "Washington Nationals",
+        "link": "/api/v1/teams/120"
+      },
+      "date": "2023-04-01",
+      "gameType": "R",
+      "isHome": true,
+      "isWin": true,
+      "position": {
+        "code": "2",
+        "name": "Catcher",
+        "type": "Catcher",
+        "abbreviation": "C"
+      },
+      "game": {
+        "gamePk": 718781,
+        "link": "/api/v1.1/game/718780/feed/live",
+        "content": {
+          "link": "/api/v1/game/718780/content"
+        },
+        "gameNumber": 1,
+        "dayNight": "day"
+      }
+    }
+  ]
+}

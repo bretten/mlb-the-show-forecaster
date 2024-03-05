@@ -1,0 +1,187 @@
+﻿{
+  "type": {
+    "displayName": "gameLog"
+  },
+  "group": {
+    "displayName": "hitting"
+  },
+  "exemptions": [],
+  "splits": [
+    {
+      "season": "2023",
+      "stat": {
+        "summary": "1-3 | BB, 2 K",
+        "gamesPlayed": 1,
+        "groundOuts": 2,
+        "airOuts": 3,
+        "runs": 4,
+        "doubles": 5,
+        "triples": 6,
+        "homeRuns": 7,
+        "strikeOuts": 8,
+        "baseOnBalls": 9,
+        "intentionalWalks": 10,
+        "hits": 11,
+        "hitByPitch": 12,
+        "avg": ".111",
+        "atBats": 13,
+        "obp": ".222",
+        "slg": ".333",
+        "ops": ".444",
+        "caughtStealing": 14,
+        "stolenBases": 15,
+        "stolenBasePercentage": ".555",
+        "groundIntoDoublePlay": 16,
+        "groundIntoTriplePlay": 17,
+        "numberOfPitches": 18,
+        "plateAppearances": 19,
+        "totalBases": 20,
+        "rbi": 21,
+        "leftOnBase": 22,
+        "sacBunts": 23,
+        "sacFlies": 24,
+        "babip": ".666",
+        "groundOutsToAirouts": ".777",
+        "catchersInterference": 25,
+        "atBatsPerHomeRun": ".888"
+      },
+      "team": {
+        "id": 108,
+        "name": "Los Angeles Angels",
+        "link": "/api/v1/teams/108"
+      },
+      "player": {
+        "id": 660271,
+        "fullName": "Shohei Ohtani",
+        "link": "/api/v1/people/660271"
+      },
+      "league": {
+        "id": 103,
+        "name": "American League",
+        "link": "/api/v1/league/103"
+      },
+      "sport": {
+        "id": 1,
+        "link": "/api/v1/sports/1",
+        "abbreviation": "MLB"
+      },
+      "opponent": {
+        "id": 133,
+        "name": "Oakland Athletics",
+        "link": "/api/v1/teams/133"
+      },
+      "date": "2023-03-30",
+      "gameType": "R",
+      "isHome": false,
+      "isWin": false,
+      "positionsPlayed": [
+        {
+          "code": "1",
+          "name": "Pitcher",
+          "type": "Pitcher",
+          "abbreviation": "P"
+        },
+        {
+          "code": "10",
+          "name": "Designated Hitter",
+          "type": "Hitter",
+          "abbreviation": "DH"
+        }
+      ],
+      "game": {
+        "gamePk": 718769,
+        "link": "/api/v1.1/game/718769/feed/live",
+        "content": {
+          "link": "/api/v1/game/718769/content"
+        },
+        "gameNumber": 1,
+        "dayNight": "day"
+      }
+    },
+    {
+      "season": "2023",
+      "stat": {
+        "summary": "2-5 | K, 2 RBI, R",
+        "gamesPlayed": 26,
+        "groundOuts": 27,
+        "airOuts": 28,
+        "runs": 29,
+        "doubles": 30,
+        "triples": 31,
+        "homeRuns": 32,
+        "strikeOuts": 33,
+        "baseOnBalls": 34,
+        "intentionalWalks": 35,
+        "hits": 36,
+        "hitByPitch": 37,
+        "avg": ".999",
+        "atBats": 38,
+        "obp": "1.111",
+        "slg": "1.222",
+        "ops": "1.333",
+        "caughtStealing": 39,
+        "stolenBases": 40,
+        "stolenBasePercentage": "1.444",
+        "groundIntoDoublePlay": 41,
+        "groundIntoTriplePlay": 42,
+        "numberOfPitches": 43,
+        "plateAppearances": 44,
+        "totalBases": 45,
+        "rbi": 46,
+        "leftOnBase": 47,
+        "sacBunts": 48,
+        "sacFlies": 49,
+        "babip": "1.555",
+        "groundOutsToAirouts": "1.666",
+        "catchersInterference": 50,
+        "atBatsPerHomeRun": "1.777"
+      },
+      "team": {
+        "id": 108,
+        "name": "Los Angeles Angels",
+        "link": "/api/v1/teams/108"
+      },
+      "player": {
+        "id": 660271,
+        "fullName": "Shohei Ohtani",
+        "link": "/api/v1/people/660271"
+      },
+      "league": {
+        "id": 103,
+        "name": "American League",
+        "link": "/api/v1/league/103"
+      },
+      "sport": {
+        "id": 1,
+        "link": "/api/v1/sports/1",
+        "abbreviation": "MLB"
+      },
+      "opponent": {
+        "id": 133,
+        "name": "Oakland Athletics",
+        "link": "/api/v1/teams/133"
+      },
+      "date": "2023-04-01",
+      "gameType": "R",
+      "isHome": true,
+      "isWin": true,
+      "positionsPlayed": [
+        {
+          "code": "10",
+          "name": "Designated Hitter",
+          "type": "Hitter",
+          "abbreviation": "DH"
+        }
+      ],
+      "game": {
+        "gamePk": 718757,
+        "link": "/api/v1.1/game/718757/feed/live",
+        "content": {
+          "link": "/api/v1/game/718757/content"
+        },
+        "gameNumber": 1,
+        "dayNight": "day"
+      }
+    }
+  ]
+}

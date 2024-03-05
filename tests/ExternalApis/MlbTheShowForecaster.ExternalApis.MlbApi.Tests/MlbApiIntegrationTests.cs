@@ -11,7 +11,7 @@ public class MlbApiIntegrationTests
 {
     [Fact]
     [Trait("Category", "Integration")]
-    public async Task GetPlayersBySeason_2023RegularSeason_RequestsAllPlayers()
+    public async Task GetPlayersBySeason_2023RegularSeason_ReturnsAllPlayers()
     {
         // Arrange
         var request = new GetPlayersBySeasonRequest(2023, GameType.RegularSeason);
@@ -42,5 +42,38 @@ public class MlbApiIntegrationTests
         Assert.Equal(new ArmSideDto("R", "Right"), actualPlayer.ThrowArm);
         Assert.Equal(new CurrentTeamDto(136), actualPlayer.CurrentTeam);
         Assert.True(actualPlayer.Active);
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task GetPlayerSeasonStatsByGame_PlayerWithAllStatsAnd2023_ReturnsStatsForPlayer()
+    {
+        // Arrange
+        var request = new GetPlayerSeasonStatsByGameRequest(660271, 2023);
+        var mlbApi = RestService.For<IMlbApi>(Constants.BaseUrl,
+            new RefitSettings
+            {
+                ContentSerializer = new SystemTextJsonContentSerializer(
+                    new JsonSerializerOptions()
+                    {
+                        Converters = { new JsonStringEnumConverter() }
+                    }
+                )
+            });
+
+        // Act
+        var actual = await mlbApi.GetPlayerSeasonStatsByGame(request);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.NotNull(actual.People);
+        Assert.Single(actual.People);
+        Assert.Equal(660271, actual.People[0].Id);
+        Assert.Equal("Shohei", actual.People[0].FirstName);
+        Assert.Equal("Ohtani", actual.People[0].LastName);
+        Assert.Equal(3, actual.People[0].Stats.Count);
+        Assert.Equal(135, actual.People[0].Stats.First(x => x.Group.DisplayName == "hitting").Splits.Count());
+        Assert.Equal(23, actual.People[0].Stats.First(x => x.Group.DisplayName == "pitching").Splits.Count());
+        Assert.Equal(157, actual.People[0].Stats.First(x => x.Group.DisplayName == "fielding").Splits.Count());
     }
 }
