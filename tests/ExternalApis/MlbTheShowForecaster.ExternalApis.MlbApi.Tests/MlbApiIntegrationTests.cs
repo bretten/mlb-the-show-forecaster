@@ -72,5 +72,8 @@ public class MlbApiIntegrationTests
         Assert.Equal("Shohei", actual.People[0].FirstName);
         Assert.Equal("Ohtani", actual.People[0].LastName);
         Assert.Equal(3, actual.People[0].Stats.Count);
+        Assert.Equal(135, actual.People[0].Stats.First(x => x.Group.DisplayName == "hitting").Splits.Count());
+        Assert.Equal(23, actual.People[0].Stats.First(x => x.Group.DisplayName == "pitching").Splits.Count());
+        Assert.Equal(157, actual.People[0].Stats.First(x => x.Group.DisplayName == "fielding").Splits.Count());
     }
 }
