@@ -10,6 +10,7 @@ public static class PreEncodedText
 {
     public static class General
     {
+        public static readonly JsonEncodedText Id = JsonEncodedText.Encode("id");
         public static readonly JsonEncodedText Group = JsonEncodedText.Encode("group");
         public static readonly JsonEncodedText DisplayName = JsonEncodedText.Encode("displayName");
         public static readonly JsonEncodedText Splits = JsonEncodedText.Encode("splits");
@@ -19,6 +20,7 @@ public static class PreEncodedText
         public static readonly JsonEncodedText GameType = JsonEncodedText.Encode("gameType");
         public static readonly JsonEncodedText IsHome = JsonEncodedText.Encode("isHome");
         public static readonly JsonEncodedText IsWin = JsonEncodedText.Encode("isWin");
+        public static readonly JsonEncodedText Team = JsonEncodedText.Encode("team");
         public static readonly JsonEncodedText Game = JsonEncodedText.Encode("game");
         public static readonly JsonEncodedText GamePk = JsonEncodedText.Encode("gamePk");
         public static readonly JsonEncodedText Name = JsonEncodedText.Encode("name");

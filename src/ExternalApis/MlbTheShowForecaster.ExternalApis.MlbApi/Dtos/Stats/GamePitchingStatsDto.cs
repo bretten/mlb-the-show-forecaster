@@ -19,7 +19,8 @@ public sealed record GamePitchingStatsDto(
     string GameType,
     bool IsHome,
     bool IsWin,
+    TeamDto Team,
     GameDto Game,
     [property: JsonPropertyName("stat")]
     PitchingStatsDto Stat
-) : GameStatsDto(Season, Date, GameType, IsHome, IsWin, Game);
+) : GameStatsDto(Season, Date, GameType, IsHome, IsWin, Team, Game);

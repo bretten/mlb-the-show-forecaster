@@ -26,6 +26,8 @@ public class StatJsonConverterTests
         Assert.Equal("R", actualGame1.GameType);
         Assert.False(actualGame1.IsHome);
         Assert.False(actualGame1.IsWin);
+        Assert.Equal(108, actualGame1.Team.Id);
+        Assert.Equal("Los Angeles Angels", actualGame1.Team.Name);
         Assert.Equal(718769, actualGame1.Game.GamePk);
 
         Assert.Equal("1-3 | BB, 2 K", actualGame1.Stat.Summary);
@@ -70,6 +72,8 @@ public class StatJsonConverterTests
         Assert.Equal("R", actualGame2.GameType);
         Assert.True(actualGame2.IsHome);
         Assert.True(actualGame2.IsWin);
+        Assert.Equal(108, actualGame2.Team.Id);
+        Assert.Equal("Los Angeles Angels", actualGame2.Team.Name);
         Assert.Equal(718757, actualGame2.Game.GamePk);
 
         Assert.Equal("2-5 | K, 2 RBI, R", actualGame2.Stat.Summary);
@@ -127,6 +131,8 @@ public class StatJsonConverterTests
         Assert.Equal("R", actualGame1.GameType);
         Assert.False(actualGame1.IsHome);
         Assert.False(actualGame1.IsWin);
+        Assert.Equal(108, actualGame1.Team.Id);
+        Assert.Equal("Los Angeles Angels", actualGame1.Team.Name);
         Assert.Equal(718769, actualGame1.Game.GamePk);
 
         Assert.Equal("6.0 IP, 0 ER, 10 K, 3 BB", actualGame1.Stat.Summary);
@@ -198,6 +204,8 @@ public class StatJsonConverterTests
         Assert.Equal("R", actualGame2.GameType);
         Assert.True(actualGame2.IsHome);
         Assert.True(actualGame2.IsWin);
+        Assert.Equal(108, actualGame2.Team.Id);
+        Assert.Equal("Los Angeles Angels", actualGame2.Team.Name);
         Assert.Equal(718691, actualGame2.Game.GamePk);
 
         Assert.Equal("6.0 IP, ER, 8 K, 4 BB", actualGame2.Stat.Summary);
@@ -282,6 +290,8 @@ public class StatJsonConverterTests
         Assert.Equal("R", actualGame1.GameType);
         Assert.False(actualGame1.IsHome);
         Assert.False(actualGame1.IsWin);
+        Assert.Equal(144, actualGame1.Team.Id);
+        Assert.Equal("Atlanta Braves", actualGame1.Team.Name);
         Assert.Equal(718780, actualGame1.Game.GamePk);
 
         Assert.Equal(1, actualGame1.Stat.GamesPlayed);
@@ -316,6 +326,8 @@ public class StatJsonConverterTests
         Assert.Equal("R", actualGame2.GameType);
         Assert.True(actualGame2.IsHome);
         Assert.True(actualGame2.IsWin);
+        Assert.Equal(144, actualGame2.Team.Id);
+        Assert.Equal("Atlanta Braves", actualGame2.Team.Name);
         Assert.Equal(718781, actualGame2.Game.GamePk);
 
         Assert.Equal(10, actualGame2.Stat.GamesPlayed);

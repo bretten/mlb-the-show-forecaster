@@ -98,6 +98,12 @@ public class StatJsonConverter : JsonConverter<StatsDto>
             writer.WriteBoolean(PreEncodedText.General.IsHome, split.IsHome);
             writer.WriteBoolean(PreEncodedText.General.IsWin, split.IsWin);
 
+            // Team object
+            writer.WriteStartObject(PreEncodedText.General.Team);
+            writer.WriteNumber(PreEncodedText.General.Id, split.Team.Id);
+            writer.WriteString(PreEncodedText.General.Name, split.Team.Name);
+            writer.WriteEndObject();
+
             // Game object
             writer.WriteStartObject(PreEncodedText.General.Game);
             writer.WriteNumber(PreEncodedText.General.GamePk, split.Game.GamePk);
