@@ -23,6 +23,8 @@ public abstract record GameStatsDto(
     bool IsHome,
     [property: JsonPropertyName("isWin")]
     bool IsWin,
+    [property: JsonPropertyName("team")]
+    TeamDto Team,
     [property: JsonPropertyName("game")]
     GameDto Game
 );
