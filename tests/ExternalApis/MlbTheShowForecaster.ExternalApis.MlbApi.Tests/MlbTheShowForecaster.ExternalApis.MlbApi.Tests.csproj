@@ -28,16 +28,25 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="TestFiles\Responses\BattingStats.json">
+      <None Update="TestFiles\ExpectedJson\BattingStats.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="TestFiles\Responses\FieldingStats.json">
+      <None Update="TestFiles\ExpectedJson\FieldingStats.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="TestFiles\Responses\PitchingStats.json">
+      <None Update="TestFiles\ExpectedJson\PitchingStats.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
-      <None Update="TestFiles\Responses\UnknownStats.json">
+      <None Update="TestFiles\Objects\BattingStats.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestFiles\Objects\FieldingStats.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestFiles\Objects\PitchingStats.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestFiles\Objects\UnknownStats.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

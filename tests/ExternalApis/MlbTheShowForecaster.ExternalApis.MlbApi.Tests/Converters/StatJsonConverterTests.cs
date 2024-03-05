@@ -11,7 +11,7 @@ public class StatJsonConverterTests
     public void Read_BattingStatsJson_ParsesToBattingStatsDto()
     {
         // Arrange
-        var json = File.ReadAllText(TestFilesConstants.Responses.BattingStatsJson);
+        var json = File.ReadAllText(TestFilesConstants.Objects.BattingStatsJson);
 
         // Act
         var actual = JsonSerializer.Deserialize<StatsDto>(json);
@@ -112,7 +112,7 @@ public class StatJsonConverterTests
     public void Read_PitchingStatsJson_ParsesToPitchingStatsDto()
     {
         // Arrange
-        var json = File.ReadAllText(TestFilesConstants.Responses.PitchingStatsJson);
+        var json = File.ReadAllText(TestFilesConstants.Objects.PitchingStatsJson);
 
         // Act
         var actual = JsonSerializer.Deserialize<StatsDto>(json);
@@ -267,7 +267,7 @@ public class StatJsonConverterTests
     public void Read_FieldingStatsJson_ParsesToFieldingStatsDto()
     {
         // Arrange
-        var json = File.ReadAllText(TestFilesConstants.Responses.FieldingStatsJson);
+        var json = File.ReadAllText(TestFilesConstants.Objects.FieldingStatsJson);
 
         // Act
         var actual = JsonSerializer.Deserialize<StatsDto>(json);
@@ -348,7 +348,7 @@ public class StatJsonConverterTests
     public void Read_UnknownStatsJson_ThrowsException()
     {
         // Arrange
-        var json = File.ReadAllText(TestFilesConstants.Responses.UnknownStatsJson);
+        var json = File.ReadAllText(TestFilesConstants.Objects.UnknownStatsJson);
         Func<object> action = () => JsonSerializer.Deserialize<StatsDto>(json);
 
         // Act
@@ -360,50 +360,47 @@ public class StatJsonConverterTests
     }
 
     [Fact]
-    public void Write_BattingStatsDto_ThrowsException()
+    public void Write_BattingStatsDto_SerializesMatchingJson()
     {
         // Arrange
-        var json = File.ReadAllText(TestFilesConstants.Responses.BattingStatsJson);
+        var json = File.ReadAllText(TestFilesConstants.Objects.BattingStatsJson);
         var dto = JsonSerializer.Deserialize<StatsDto>(json);
-        var action = () => JsonSerializer.Serialize(dto);
+        var expected = File.ReadAllText(TestFilesConstants.ExpectedJson.BattingStats);
 
         // Act
-        var actual = Record.Exception(action);
+        var actual = JsonSerializer.Serialize(dto);
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.IsType<JsonException>(actual);
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
-    public void Write_PitchingStatsDto_ThrowsException()
+    public void Write_PitchingStatsDto_SerializesMatchingJson()
     {
         // Arrange
-        var json = File.ReadAllText(TestFilesConstants.Responses.PitchingStatsJson);
+        var json = File.ReadAllText(TestFilesConstants.Objects.PitchingStatsJson);
         var dto = JsonSerializer.Deserialize<StatsDto>(json);
-        var action = () => JsonSerializer.Serialize(dto);
+        var expected = File.ReadAllText(TestFilesConstants.ExpectedJson.PitchingStats);
 
         // Act
-        var actual = Record.Exception(action);
+        var actual = JsonSerializer.Serialize(dto);
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.IsType<JsonException>(actual);
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
-    public void Write_FieldingStatsDto_ThrowsException()
+    public void Write_FieldingStatsDto_SerializesMatchingJson()
     {
         // Arrange
-        var json = File.ReadAllText(TestFilesConstants.Responses.FieldingStatsJson);
+        var json = File.ReadAllText(TestFilesConstants.Objects.FieldingStatsJson);
         var dto = JsonSerializer.Deserialize<StatsDto>(json);
-        var action = () => JsonSerializer.Serialize(dto);
+        var expected = File.ReadAllText(TestFilesConstants.ExpectedJson.FieldingStats);
 
         // Act
-        var actual = Record.Exception(action);
+        var actual = JsonSerializer.Serialize(dto);
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.IsType<JsonException>(actual);
+        Assert.Equal(expected, actual);
     }
 }

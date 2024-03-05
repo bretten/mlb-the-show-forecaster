@@ -12,6 +12,21 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Converters;
 public class StatJsonConverter : JsonConverter<StatsDto>
 {
     /// <summary>
+    /// Group display name for hitting
+    /// </summary>
+    private const string HittingDisplayName = "hitting";
+
+    /// <summary>
+    /// Group display name for pitching
+    /// </summary>
+    private const string PitchingDisplayName = "pitching";
+
+    /// <summary>
+    /// Group display name for fielding
+    /// </summary>
+    private const string FieldingDisplayName = "fielding";
+
+    /// <summary>
     /// Makes sure the specified type can be converted by this converter
     /// </summary>
     /// <param name="typeToConvert">The type to check</param>
@@ -45,7 +60,76 @@ public class StatJsonConverter : JsonConverter<StatsDto>
     /// <exception cref="JsonException">Thrown since it is a one-way serialization</exception>
     public override void Write(Utf8JsonWriter writer, StatsDto value, JsonSerializerOptions options)
     {
-        throw new JsonException();
+        var isHitting = value.Group.DisplayName == HittingDisplayName;
+        var isPitching = value.Group.DisplayName == PitchingDisplayName;
+
+        // Start the whole JSON object
+        writer.WriteStartObject();
+
+        // Write the group
+        writer.WriteStartObject(PreEncodedText.General.Group);
+        if (isHitting)
+        {
+            writer.WriteString(PreEncodedText.General.DisplayName, PreEncodedText.Hitting.DisplayName);
+        }
+        else if (isPitching)
+        {
+            writer.WriteString(PreEncodedText.General.DisplayName, PreEncodedText.Pitching.DisplayName);
+        }
+        else
+        {
+            writer.WriteString(PreEncodedText.General.DisplayName, PreEncodedText.Fielding.DisplayName);
+        }
+
+        // End the group
+        writer.WriteEndObject();
+
+        // Start the stats by game array
+        writer.WriteStartArray(PreEncodedText.General.Splits);
+        foreach (var split in value.Splits)
+        {
+            // Start the stats by game object
+            writer.WriteStartObject();
+
+            // Write the stats by game object properties
+            writer.WriteString(PreEncodedText.General.Season, split.Season);
+            writer.WriteString(PreEncodedText.General.Date, split.Date);
+            writer.WriteString(PreEncodedText.General.GameType, split.GameType);
+            writer.WriteBoolean(PreEncodedText.General.IsHome, split.IsHome);
+            writer.WriteBoolean(PreEncodedText.General.IsWin, split.IsWin);
+
+            // Game object
+            writer.WriteStartObject(PreEncodedText.General.Game);
+            writer.WriteNumber(PreEncodedText.General.GamePk, split.Game.GamePk);
+            writer.WriteEndObject();
+
+            // Start the stat object
+            writer.WriteStartObject(PreEncodedText.General.Stat);
+            if (isHitting)
+            {
+                WriteHitting(ref writer, split);
+            }
+            else if (isPitching)
+            {
+                WritePitching(ref writer, split);
+            }
+            else
+            {
+                WriteFielding(ref writer, split);
+            }
+
+            // End the stat object
+            writer.WriteEndObject();
+
+            // End the stats by game object
+            writer.WriteEndObject();
+        }
+
+        // End the stats by game array
+        writer.WriteEndArray();
+
+        // End the whole JSON object
+        writer.WriteEndObject();
     }
 
     /// <summary>
@@ -64,9 +148,9 @@ public class StatJsonConverter : JsonConverter<StatsDto>
         var groupName = reader.GetString();
         return groupName switch
         {
-            "hitting" => StatGroup.Hitting,
-            "pitching" => StatGroup.Pitching,
-            "fielding" => StatGroup.Fielding,
+            HittingDisplayName => StatGroup.Hitting,
+            PitchingDisplayName => StatGroup.Pitching,
+            FieldingDisplayName => StatGroup.Fielding,
             _ => throw new UnknownStatGroupException($"Unknown stat group: {groupName}")
         };
     }
@@ -134,6 +218,160 @@ public class StatJsonConverter : JsonConverter<StatsDto>
                     break;
             }
         }
+    }
+
+    /// <summary>
+    /// Writes a hitting stats game
+    /// </summary>
+    /// <param name="writer">The writer that is serializing the JSON</param>
+    /// <param name="value">The game stats</param>
+    private void WriteHitting(ref Utf8JsonWriter writer, GameStatsDto value)
+    {
+        var game = value as GameHittingStatsDto;
+        writer.WriteString(PreEncodedText.Hitting.Summary, game.Stat.Summary);
+        writer.WriteNumber(PreEncodedText.Hitting.GamesPlayed, game.Stat.GamesPlayed);
+        writer.WriteNumber(PreEncodedText.Hitting.GroundOuts, game.Stat.GroundOuts);
+        writer.WriteNumber(PreEncodedText.Hitting.AirOuts, game.Stat.AirOuts);
+        writer.WriteNumber(PreEncodedText.Hitting.Runs, game.Stat.Runs);
+        writer.WriteNumber(PreEncodedText.Hitting.Doubles, game.Stat.Doubles);
+        writer.WriteNumber(PreEncodedText.Hitting.Triples, game.Stat.Triples);
+        writer.WriteNumber(PreEncodedText.Hitting.HomeRuns, game.Stat.HomeRuns);
+        writer.WriteNumber(PreEncodedText.Hitting.StrikeOuts, game.Stat.StrikeOuts);
+        writer.WriteNumber(PreEncodedText.Hitting.BaseOnBalls, game.Stat.BaseOnBalls);
+        writer.WriteNumber(PreEncodedText.Hitting.IntentionalWalks, game.Stat.IntentionalWalks);
+        writer.WriteNumber(PreEncodedText.Hitting.Hits, game.Stat.Hits);
+        writer.WriteNumber(PreEncodedText.Hitting.HitByPitch, game.Stat.HitByPitch);
+        writer.WriteString(PreEncodedText.Hitting.Avg, game.Stat.Avg);
+        writer.WriteNumber(PreEncodedText.Hitting.AtBats, game.Stat.AtBats);
+        writer.WriteString(PreEncodedText.Hitting.Obp, game.Stat.Obp);
+        writer.WriteString(PreEncodedText.Hitting.Slg, game.Stat.Slg);
+        writer.WriteString(PreEncodedText.Hitting.Ops, game.Stat.Ops);
+        writer.WriteNumber(PreEncodedText.Hitting.CaughtStealing, game.Stat.CaughtStealing);
+        writer.WriteNumber(PreEncodedText.Hitting.StolenBases, game.Stat.StolenBases);
+        writer.WriteString(PreEncodedText.Hitting.StolenBasePercentage, game.Stat.StolenBasePercentage);
+        writer.WriteNumber(PreEncodedText.Hitting.GroundIntoDoublePlay, game.Stat.GroundIntoDoublePlay);
+        writer.WriteNumber(PreEncodedText.Hitting.GroundIntoTriplePlay, game.Stat.GroundIntoTriplePlay);
+        writer.WriteNumber(PreEncodedText.Hitting.NumberOfPitches, game.Stat.NumberOfPitches);
+        writer.WriteNumber(PreEncodedText.Hitting.PlateAppearances, game.Stat.PlateAppearances);
+        writer.WriteNumber(PreEncodedText.Hitting.TotalBases, game.Stat.TotalBases);
+        writer.WriteNumber(PreEncodedText.Hitting.Rbi, game.Stat.Rbi);
+        writer.WriteNumber(PreEncodedText.Hitting.LeftOnBase, game.Stat.LeftOnBase);
+        writer.WriteNumber(PreEncodedText.Hitting.SacBunts, game.Stat.SacBunts);
+        writer.WriteNumber(PreEncodedText.Hitting.SacFlies, game.Stat.SacFlies);
+        writer.WriteString(PreEncodedText.Hitting.Babip, game.Stat.Babip);
+        writer.WriteString(PreEncodedText.Hitting.GroundOutsToAirouts, game.Stat.GroundOutsToAirOuts);
+        writer.WriteNumber(PreEncodedText.Hitting.CatchersInterference, game.Stat.CatchersInterference);
+        writer.WriteString(PreEncodedText.Hitting.AtBatsPerHomeRun, game.Stat.AtBatsPerHomeRun);
+    }
+
+    /// <summary>
+    /// Writes a pitching stats game
+    /// </summary>
+    /// <param name="writer">The writer that is serializing the JSON</param>
+    /// <param name="value">The game stats</param>
+    private void WritePitching(ref Utf8JsonWriter writer, GameStatsDto value)
+    {
+        var game = value as GamePitchingStatsDto;
+        writer.WriteString(PreEncodedText.Pitching.Summary, game.Stat.Summary);
+        writer.WriteNumber(PreEncodedText.Pitching.GamesPlayed, game.Stat.GamesPlayed);
+        writer.WriteNumber(PreEncodedText.Pitching.GamesStarted, game.Stat.GamesStarted);
+        writer.WriteNumber(PreEncodedText.Pitching.GroundOuts, game.Stat.GroundOuts);
+        writer.WriteNumber(PreEncodedText.Pitching.AirOuts, game.Stat.AirOuts);
+        writer.WriteNumber(PreEncodedText.Pitching.Runs, game.Stat.Runs);
+        writer.WriteNumber(PreEncodedText.Pitching.Doubles, game.Stat.Doubles);
+        writer.WriteNumber(PreEncodedText.Pitching.Triples, game.Stat.Triples);
+        writer.WriteNumber(PreEncodedText.Pitching.HomeRuns, game.Stat.HomeRuns);
+        writer.WriteNumber(PreEncodedText.Pitching.StrikeOuts, game.Stat.StrikeOuts);
+        writer.WriteNumber(PreEncodedText.Pitching.BaseOnBalls, game.Stat.BaseOnBalls);
+        writer.WriteNumber(PreEncodedText.Pitching.IntentionalWalks, game.Stat.IntentionalWalks);
+        writer.WriteNumber(PreEncodedText.Pitching.Hits, game.Stat.Hits);
+        writer.WriteNumber(PreEncodedText.Pitching.HitByPitch, game.Stat.HitByPitch);
+        writer.WriteString(PreEncodedText.Pitching.Avg, game.Stat.Avg);
+        writer.WriteNumber(PreEncodedText.Pitching.AtBats, game.Stat.AtBats);
+        writer.WriteString(PreEncodedText.Pitching.Obp, game.Stat.Obp);
+        writer.WriteString(PreEncodedText.Pitching.Slg, game.Stat.Slg);
+        writer.WriteString(PreEncodedText.Pitching.Ops, game.Stat.Ops);
+        writer.WriteNumber(PreEncodedText.Pitching.CaughtStealing, game.Stat.CaughtStealing);
+        writer.WriteNumber(PreEncodedText.Pitching.StolenBases, game.Stat.StolenBases);
+        writer.WriteString(PreEncodedText.Pitching.StolenBasePercentage, game.Stat.StolenBasePercentage);
+        writer.WriteNumber(PreEncodedText.Pitching.GroundIntoDoublePlay, game.Stat.GroundIntoDoublePlay);
+        writer.WriteNumber(PreEncodedText.Pitching.NumberOfPitches, game.Stat.NumberOfPitches);
+        writer.WriteString(PreEncodedText.Pitching.Era, game.Stat.Era);
+        writer.WriteString(PreEncodedText.Pitching.InningsPitched, game.Stat.InningsPitched);
+        writer.WriteNumber(PreEncodedText.Pitching.Wins, game.Stat.Wins);
+        writer.WriteNumber(PreEncodedText.Pitching.Losses, game.Stat.Losses);
+        writer.WriteNumber(PreEncodedText.Pitching.Saves, game.Stat.Saves);
+        writer.WriteNumber(PreEncodedText.Pitching.SaveOpportunities, game.Stat.SaveOpportunities);
+        writer.WriteNumber(PreEncodedText.Pitching.Holds, game.Stat.Holds);
+        writer.WriteNumber(PreEncodedText.Pitching.BlownSaves, game.Stat.BlownSaves);
+        writer.WriteNumber(PreEncodedText.Pitching.EarnedRuns, game.Stat.EarnedRuns);
+        writer.WriteString(PreEncodedText.Pitching.Whip, game.Stat.Whip);
+        writer.WriteNumber(PreEncodedText.Pitching.BattersFaced, game.Stat.BattersFaced);
+        writer.WriteNumber(PreEncodedText.Pitching.Outs, game.Stat.Outs);
+        writer.WriteNumber(PreEncodedText.Pitching.GamesPitched, game.Stat.GamesPitched);
+        writer.WriteNumber(PreEncodedText.Pitching.CompleteGames, game.Stat.CompleteGames);
+        writer.WriteNumber(PreEncodedText.Pitching.Shutouts, game.Stat.Shutouts);
+        writer.WriteNumber(PreEncodedText.Pitching.Strikes, game.Stat.Strikes);
+        writer.WriteString(PreEncodedText.Pitching.StrikePercentage, game.Stat.StrikePercentage);
+        writer.WriteNumber(PreEncodedText.Pitching.HitBatsmen, game.Stat.HitBatsmen);
+        writer.WriteNumber(PreEncodedText.Pitching.Balks, game.Stat.Balks);
+        writer.WriteNumber(PreEncodedText.Pitching.WildPitches, game.Stat.WildPitches);
+        writer.WriteNumber(PreEncodedText.Pitching.Pickoffs, game.Stat.Pickoffs);
+        writer.WriteNumber(PreEncodedText.Pitching.TotalBases, game.Stat.TotalBases);
+        writer.WriteString(PreEncodedText.Pitching.GroundOutsToAirouts, game.Stat.GroundOutsToAirOuts);
+        writer.WriteString(PreEncodedText.Pitching.WinPercentage, game.Stat.WinPercentage);
+        writer.WriteString(PreEncodedText.Pitching.PitchesPerInning, game.Stat.PitchesPerInning);
+        writer.WriteNumber(PreEncodedText.Pitching.GamesFinished, game.Stat.GamesFinished);
+        writer.WriteString(PreEncodedText.Pitching.StrikeoutWalkRatio, game.Stat.StrikeoutWalkRatio);
+        writer.WriteString(PreEncodedText.Pitching.StrikeoutsPer9Inn, game.Stat.StrikeoutsPer9Inn);
+        writer.WriteString(PreEncodedText.Pitching.WalksPer9Inn, game.Stat.WalksPer9Inn);
+        writer.WriteString(PreEncodedText.Pitching.HitsPer9Inn, game.Stat.HitsPer9Inn);
+        writer.WriteString(PreEncodedText.Pitching.RunsScoredPer9, game.Stat.RunsScoredPer9);
+        writer.WriteString(PreEncodedText.Pitching.HomeRunsPer9, game.Stat.HomeRunsPer9);
+        writer.WriteNumber(PreEncodedText.Pitching.InheritedRunners, game.Stat.InheritedRunners);
+        writer.WriteNumber(PreEncodedText.Pitching.InheritedRunnersScored, game.Stat.InheritedRunnersScored);
+        writer.WriteNumber(PreEncodedText.Pitching.CatchersInterference, game.Stat.CatchersInterference);
+        writer.WriteNumber(PreEncodedText.Pitching.SacBunts, game.Stat.SacBunts);
+        writer.WriteNumber(PreEncodedText.Pitching.SacFlies, game.Stat.SacFlies);
+    }
+
+    /// <summary>
+    /// Writes a fielding stats game
+    /// </summary>
+    /// <param name="writer">The writer that is serializing the JSON</param>
+    /// <param name="value">The game stats</param>
+    private void WriteFielding(ref Utf8JsonWriter writer, GameStatsDto value)
+    {
+        var game = value as GameFieldingStatsDto;
+        writer.WriteNumber(PreEncodedText.Fielding.GamesPlayed, game.Stat.GamesPlayed);
+        writer.WriteNumber(PreEncodedText.Fielding.GamesStarted, game.Stat.GamesStarted);
+        writer.WriteNumber(PreEncodedText.Fielding.CaughtStealing, game.Stat.CaughtStealing);
+        writer.WriteNumber(PreEncodedText.Fielding.StolenBases, game.Stat.StolenBases);
+        writer.WriteString(PreEncodedText.Fielding.StolenBasePercentage, game.Stat.StolenBasePercentage);
+        writer.WriteNumber(PreEncodedText.Fielding.Assists, game.Stat.Assists);
+        writer.WriteNumber(PreEncodedText.Fielding.PutOuts, game.Stat.PutOuts);
+        writer.WriteNumber(PreEncodedText.Fielding.Errors, game.Stat.Errors);
+        writer.WriteNumber(PreEncodedText.Fielding.Chances, game.Stat.Chances);
+        writer.WriteString(PreEncodedText.Fielding.FieldingPercentage, game.Stat.Fielding);
+
+        // Player's fielding position
+        writer.WriteStartObject(PreEncodedText.Fielding.Position);
+        writer.WriteString(PreEncodedText.General.Name, game.Stat.Position.Name);
+        writer.WriteString(PreEncodedText.General.Abbreviation, game.Stat.Position.Abbreviation);
+        writer.WriteEndObject();
+
+        writer.WriteString(PreEncodedText.Fielding.RangeFactorPerGame, game.Stat.RangeFactorPerGame);
+        writer.WriteString(PreEncodedText.Fielding.RangeFactorPer9Inn, game.Stat.RangeFactorPer9Inn);
+        writer.WriteString(PreEncodedText.Fielding.Innings, game.Stat.Innings);
+        writer.WriteNumber(PreEncodedText.Fielding.Games, game.Stat.Games);
+        writer.WriteNumber(PreEncodedText.Fielding.PassedBall, game.Stat.PassedBall);
+        writer.WriteNumber(PreEncodedText.Fielding.DoublePlays, game.Stat.DoublePlays);
+        writer.WriteNumber(PreEncodedText.Fielding.TriplePlays, game.Stat.TriplePlays);
+        writer.WriteString(PreEncodedText.Fielding.CatcherEra, game.Stat.CatcherEra);
+        writer.WriteNumber(PreEncodedText.Fielding.CatchersInterference, game.Stat.CatchersInterference);
+        writer.WriteNumber(PreEncodedText.Fielding.WildPitches, game.Stat.WildPitches);
+        writer.WriteNumber(PreEncodedText.Fielding.ThrowingErrors, game.Stat.ThrowingErrors);
+        writer.WriteNumber(PreEncodedText.Fielding.Pickoffs, game.Stat.Pickoffs);
     }
 
     /// <summary>
