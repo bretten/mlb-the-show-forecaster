@@ -5,16 +5,16 @@ public static class TestFilesConstants
     public static class Objects
     {
         public static readonly string BattingStatsJson =
-            $"TestFiles{Path.DirectorySeparatorChar}Responses{Path.DirectorySeparatorChar}BattingStats.json";
+            $"TestFiles{Path.DirectorySeparatorChar}Objects{Path.DirectorySeparatorChar}BattingStats.json";
 
         public static readonly string PitchingStatsJson =
-            $"TestFiles{Path.DirectorySeparatorChar}Responses{Path.DirectorySeparatorChar}PitchingStats.json";
+            $"TestFiles{Path.DirectorySeparatorChar}Objects{Path.DirectorySeparatorChar}PitchingStats.json";
 
         public static readonly string FieldingStatsJson =
-            $"TestFiles{Path.DirectorySeparatorChar}Responses{Path.DirectorySeparatorChar}FieldingStats.json";
+            $"TestFiles{Path.DirectorySeparatorChar}Objects{Path.DirectorySeparatorChar}FieldingStats.json";
 
         public static readonly string UnknownStatsJson =
-            $"TestFiles{Path.DirectorySeparatorChar}Responses{Path.DirectorySeparatorChar}UnknownStats.json";
+            $"TestFiles{Path.DirectorySeparatorChar}Objects{Path.DirectorySeparatorChar}UnknownStats.json";
     }
 
     public static class ExpectedJson
