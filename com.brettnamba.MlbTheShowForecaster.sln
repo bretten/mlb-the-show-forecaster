@@ -60,6 +60,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Perfor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Performance.Application.Tests", "tests\Performance\MlbTheShowForecaster.Performance.Application.Tests\MlbTheShowForecaster.Performance.Application.Tests.csproj", "{DA988368-CFD6-41EC-A4A3-82DAB748ABD1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Performance.Infrastructure", "src\Performance\MlbTheShowForecaster.Performance.Infrastructure\MlbTheShowForecaster.Performance.Infrastructure.csproj", "{8A6BA1AF-821B-4A41-9D73-EA35BFA1958E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Performance.Infrastructure.Tests", "tests\Performance\MlbTheShowForecaster.Performance.Infrastructure.Tests\MlbTheShowForecaster.Performance.Infrastructure.Tests.csproj", "{B89F68C7-D5DD-45F5-BA07-DFDA9094E459}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -94,6 +98,8 @@ Global
 		{5F7D678E-2AC3-471B-AE91-1C284AC8C3D4} = {E77BF9FC-BDF1-4A3F-B21C-EA368485CB1F}
 		{0E88AE61-BB2C-47FF-B5DB-62988D383661} = {AD7A948A-1C43-474C-AAC7-BDC4A1F525AC}
 		{DA988368-CFD6-41EC-A4A3-82DAB748ABD1} = {E77BF9FC-BDF1-4A3F-B21C-EA368485CB1F}
+		{8A6BA1AF-821B-4A41-9D73-EA35BFA1958E} = {AD7A948A-1C43-474C-AAC7-BDC4A1F525AC}
+		{B89F68C7-D5DD-45F5-BA07-DFDA9094E459} = {E77BF9FC-BDF1-4A3F-B21C-EA368485CB1F}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{037B88D0-DEA8-4F3E-83B8-94E49DF2641B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -176,5 +182,13 @@ Global
 		{DA988368-CFD6-41EC-A4A3-82DAB748ABD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA988368-CFD6-41EC-A4A3-82DAB748ABD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA988368-CFD6-41EC-A4A3-82DAB748ABD1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A6BA1AF-821B-4A41-9D73-EA35BFA1958E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A6BA1AF-821B-4A41-9D73-EA35BFA1958E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A6BA1AF-821B-4A41-9D73-EA35BFA1958E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A6BA1AF-821B-4A41-9D73-EA35BFA1958E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B89F68C7-D5DD-45F5-BA07-DFDA9094E459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B89F68C7-D5DD-45F5-BA07-DFDA9094E459}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B89F68C7-D5DD-45F5-BA07-DFDA9094E459}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B89F68C7-D5DD-45F5-BA07-DFDA9094E459}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
