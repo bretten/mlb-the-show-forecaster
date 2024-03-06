@@ -12,21 +12,6 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Converters;
 public class StatJsonConverter : JsonConverter<StatsDto>
 {
     /// <summary>
-    /// Group display name for hitting
-    /// </summary>
-    private const string HittingDisplayName = "hitting";
-
-    /// <summary>
-    /// Group display name for pitching
-    /// </summary>
-    private const string PitchingDisplayName = "pitching";
-
-    /// <summary>
-    /// Group display name for fielding
-    /// </summary>
-    private const string FieldingDisplayName = "fielding";
-
-    /// <summary>
     /// Makes sure the specified type can be converted by this converter
     /// </summary>
     /// <param name="typeToConvert">The type to check</param>
@@ -60,8 +45,8 @@ public class StatJsonConverter : JsonConverter<StatsDto>
     /// <exception cref="JsonException">Thrown since it is a one-way serialization</exception>
     public override void Write(Utf8JsonWriter writer, StatsDto value, JsonSerializerOptions options)
     {
-        var isHitting = value.Group.DisplayName == HittingDisplayName;
-        var isPitching = value.Group.DisplayName == PitchingDisplayName;
+        var isHitting = value.Group.DisplayName == Constants.Parameters.Hitting;
+        var isPitching = value.Group.DisplayName == Constants.Parameters.Pitching;
 
         // Start the whole JSON object
         writer.WriteStartObject();
@@ -111,17 +96,17 @@ public class StatJsonConverter : JsonConverter<StatsDto>
 
             // Start the stat object
             writer.WriteStartObject(PreEncodedText.General.Stat);
-            if (isHitting)
+            if (isHitting && split is GameHittingStatsDto gameHittingStatsDto)
             {
-                WriteHitting(ref writer, split);
+                WriteHitting(ref writer, gameHittingStatsDto);
             }
-            else if (isPitching)
+            else if (isPitching && split is GamePitchingStatsDto gamePitchingStatsDto)
             {
-                WritePitching(ref writer, split);
+                WritePitching(ref writer, gamePitchingStatsDto);
             }
             else
             {
-                WriteFielding(ref writer, split);
+                WriteFielding(ref writer, (split as GameFieldingStatsDto)!);
             }
 
             // End the stat object
@@ -154,9 +139,9 @@ public class StatJsonConverter : JsonConverter<StatsDto>
         var groupName = reader.GetString();
         return groupName switch
         {
-            HittingDisplayName => StatGroup.Hitting,
-            PitchingDisplayName => StatGroup.Pitching,
-            FieldingDisplayName => StatGroup.Fielding,
+            Constants.Parameters.Hitting => StatGroup.Hitting,
+            Constants.Parameters.Pitching => StatGroup.Pitching,
+            Constants.Parameters.Fielding => StatGroup.Fielding,
             _ => throw new UnknownStatGroupException($"Unknown stat group: {groupName}")
         };
     }
@@ -230,10 +215,9 @@ public class StatJsonConverter : JsonConverter<StatsDto>
     /// Writes a hitting stats game
     /// </summary>
     /// <param name="writer">The writer that is serializing the JSON</param>
-    /// <param name="value">The game stats</param>
-    private void WriteHitting(ref Utf8JsonWriter writer, GameStatsDto value)
+    /// <param name="game">The game stats</param>
+    private void WriteHitting(ref Utf8JsonWriter writer, GameHittingStatsDto game)
     {
-        var game = value as GameHittingStatsDto;
         writer.WriteString(PreEncodedText.Hitting.Summary, game.Stat.Summary);
         writer.WriteNumber(PreEncodedText.Hitting.GamesPlayed, game.Stat.GamesPlayed);
         writer.WriteNumber(PreEncodedText.Hitting.GroundOuts, game.Stat.GroundOuts);
@@ -274,10 +258,9 @@ public class StatJsonConverter : JsonConverter<StatsDto>
     /// Writes a pitching stats game
     /// </summary>
     /// <param name="writer">The writer that is serializing the JSON</param>
-    /// <param name="value">The game stats</param>
-    private void WritePitching(ref Utf8JsonWriter writer, GameStatsDto value)
+    /// <param name="game">The game stats</param>
+    private void WritePitching(ref Utf8JsonWriter writer, GamePitchingStatsDto game)
     {
-        var game = value as GamePitchingStatsDto;
         writer.WriteString(PreEncodedText.Pitching.Summary, game.Stat.Summary);
         writer.WriteNumber(PreEncodedText.Pitching.GamesPlayed, game.Stat.GamesPlayed);
         writer.WriteNumber(PreEncodedText.Pitching.GamesStarted, game.Stat.GamesStarted);
@@ -345,10 +328,9 @@ public class StatJsonConverter : JsonConverter<StatsDto>
     /// Writes a fielding stats game
     /// </summary>
     /// <param name="writer">The writer that is serializing the JSON</param>
-    /// <param name="value">The game stats</param>
-    private void WriteFielding(ref Utf8JsonWriter writer, GameStatsDto value)
+    /// <param name="game">The game stats</param>
+    private void WriteFielding(ref Utf8JsonWriter writer, GameFieldingStatsDto game)
     {
-        var game = value as GameFieldingStatsDto;
         writer.WriteNumber(PreEncodedText.Fielding.GamesPlayed, game.Stat.GamesPlayed);
         writer.WriteNumber(PreEncodedText.Fielding.GamesStarted, game.Stat.GamesStarted);
         writer.WriteNumber(PreEncodedText.Fielding.CaughtStealing, game.Stat.CaughtStealing);

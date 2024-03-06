@@ -159,4 +159,89 @@ public class InningsCountTests
         // Assert
         Assert.Equal(1.667m, actual);
     }
+
+    [Fact]
+    public void Constructor_InvalidStringPartialInningsPitched_ThrowsException()
+    {
+        // Arrange
+        const string inningsPitched = "";
+        var action = () => InningsCount.Create(inningsPitched);
+
+        // Act
+        var actual = Record.Exception(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<InvalidInningsCountDecimalException>(actual);
+    }
+
+    [Fact]
+    public void Value_StringZeroInningsPitched_ReturnsZero()
+    {
+        // Arrange
+        const string inningsPitched = "0.0";
+        var ip = InningsCount.Create(inningsPitched);
+
+        // Act
+        var actual = ip.Value;
+
+        // Assert
+        Assert.Equal(0, actual);
+    }
+
+    [Fact]
+    public void Value_StringPointOneInningsPitched_ReturnsOneThird()
+    {
+        // Arrange
+        const string inningsPitched = "0.1";
+        var ip = InningsCount.Create(inningsPitched);
+
+        // Act
+        var actual = ip.Value;
+
+        // Assert
+        Assert.Equal(0.333m, actual);
+    }
+
+    [Fact]
+    public void Value_StringPointTwoInningsPitched_ReturnsTwoThirds()
+    {
+        // Arrange
+        const string inningsPitched = "0.2";
+        var ip = InningsCount.Create(inningsPitched);
+
+        // Act
+        var actual = ip.Value;
+
+        // Assert
+        Assert.Equal(0.667m, actual);
+    }
+
+    [Fact]
+    public void Value_StringOnePointOneInningsPitched_ReturnsOneAndOneThird()
+    {
+        // Arrange
+        const string inningsPitched = "1.1";
+        var ip = InningsCount.Create(inningsPitched);
+
+        // Act
+        var actual = ip.Value;
+
+        // Assert
+        Assert.Equal(1.333m, actual);
+    }
+
+    [Fact]
+    public void Value_StringOnePointTwoInningsPitched_ReturnsOneAndTwoThirds()
+    {
+        // Arrange
+        const string inningsPitched = "1.2";
+        var ip = InningsCount.Create(inningsPitched);
+
+        // Act
+        var actual = ip.Value;
+
+        // Assert
+        Assert.Equal(1.667m, actual);
+    }
 }

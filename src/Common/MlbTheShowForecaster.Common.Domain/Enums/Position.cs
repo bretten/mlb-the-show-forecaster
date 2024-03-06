@@ -78,5 +78,10 @@ public enum Position
     /// <summary>
     /// Two-way player (TWP)
     /// </summary>
-    [Display(Name = "TWP")] TwoWayPlayer
+    [Display(Name = "TWP")] TwoWayPlayer,
+
+    /// <summary>
+    /// None
+    /// </summary>
+    [Display(Name = "NONE")] None
 }

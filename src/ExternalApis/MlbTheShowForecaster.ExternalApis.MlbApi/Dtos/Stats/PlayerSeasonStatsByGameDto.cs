@@ -18,4 +18,32 @@ public readonly record struct PlayerSeasonStatsByGameDto(
     string LastName,
     [property: JsonPropertyName("stats")]
     List<StatsDto> Stats
-);
+)
+{
+    /// <summary>
+    /// Returns any hitting stats by game for this player's season
+    /// </summary>
+    /// <returns>Hitting stats by game for this player's season</returns>
+    public IEnumerable<GameHittingStatsDto> GetHittingStats() =>
+        (IEnumerable<GameHittingStatsDto>)Stats
+            .FirstOrDefault(x => x.Group.DisplayName == Constants.Parameters.Hitting).Splits ??
+        new List<GameHittingStatsDto>();
+
+    /// <summary>
+    /// Returns any pitching stats by game for this player's season
+    /// </summary>
+    /// <returns>Pitching stats by game for this player's season</returns>
+    public IEnumerable<GamePitchingStatsDto> GetPitchingStats() =>
+        (IEnumerable<GamePitchingStatsDto>)Stats
+            .FirstOrDefault(x => x.Group.DisplayName == Constants.Parameters.Pitching).Splits ??
+        new List<GamePitchingStatsDto>();
+
+    /// <summary>
+    /// Returns any fielding stats by game for this player's season
+    /// </summary>
+    /// <returns>Fielding stats by game for this player's season</returns>
+    public IEnumerable<GameFieldingStatsDto> GetFieldingStats() =>
+        (IEnumerable<GameFieldingStatsDto>)Stats
+            .FirstOrDefault(x => x.Group.DisplayName == Constants.Parameters.Fielding).Splits ??
+        new List<GameFieldingStatsDto>();
+};
