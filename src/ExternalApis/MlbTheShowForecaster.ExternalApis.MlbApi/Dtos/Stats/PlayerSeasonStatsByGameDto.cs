@@ -21,6 +21,11 @@ public readonly record struct PlayerSeasonStatsByGameDto(
 )
 {
     /// <summary>
+    /// The season
+    /// </summary>
+    public int SeasonYear { get; init; }
+
+    /// <summary>
     /// Returns any hitting stats by game for this player's season
     /// </summary>
     /// <returns>Hitting stats by game for this player's season</returns>

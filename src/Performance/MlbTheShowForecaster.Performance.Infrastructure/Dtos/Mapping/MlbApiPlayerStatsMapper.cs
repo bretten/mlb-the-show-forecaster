@@ -20,22 +20,20 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
     public PlayerSeason Map(PlayerSeasonStatsByGameDto dto)
     {
         var playerMlbId = MlbId.Create(dto.Id);
-        var season = SeasonYear.Create(2024); // TODO Pass in season
-        return new PlayerSeason(playerMlbId, season, MapBatting(dto, season), MapPitching(dto, season),
-            MapFielding(dto, season));
+        var seasonYear = SeasonYear.Create((ushort)dto.SeasonYear);
+        return new PlayerSeason(playerMlbId, seasonYear, MapBatting(dto), MapPitching(dto), MapFielding(dto));
     }
 
     /// <summary>
     /// Maps MLB API batting stats by games to the corresponding application level DTOs
     /// </summary>
     /// <param name="dto">A player's MLB API season stats data</param>
-    /// <param name="seasonYear">The season</param>
     /// <returns>Batting stats by games</returns>
-    private List<PlayerGameBattingStats> MapBatting(PlayerSeasonStatsByGameDto dto, SeasonYear seasonYear)
+    private List<PlayerGameBattingStats> MapBatting(PlayerSeasonStatsByGameDto dto)
     {
         return dto.GetHittingStats().Select(x => new PlayerGameBattingStats(
             PlayerMlbId: MlbId.Create(dto.Id),
-            SeasonYear: seasonYear,
+            SeasonYear: SeasonYear.Create((ushort)dto.SeasonYear),
             GameDate: x.Date,
             GameMlbId: MlbId.Create(x.Game.GamePk),
             TeamMlbId: MlbId.Create(x.Team.Id),
@@ -69,13 +67,12 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
     /// Maps MLB API pitching stats by games to the corresponding application level DTOs
     /// </summary>
     /// <param name="dto">A player's MLB API season stats data</param>
-    /// <param name="seasonYear">The season</param>
     /// <returns>Pitching stats by games</returns>
-    private List<PlayerGamePitchingStats> MapPitching(PlayerSeasonStatsByGameDto dto, SeasonYear seasonYear)
+    private List<PlayerGamePitchingStats> MapPitching(PlayerSeasonStatsByGameDto dto)
     {
         return dto.GetPitchingStats().Select(x => new PlayerGamePitchingStats(
             PlayerMlbId: MlbId.Create(dto.Id),
-            SeasonYear: seasonYear,
+            SeasonYear: SeasonYear.Create((ushort)dto.SeasonYear),
             GameDate: x.Date,
             GameMlbId: MlbId.Create(x.Game.GamePk),
             TeamMlbId: MlbId.Create(x.Team.Id),
@@ -125,13 +122,12 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
     /// Maps MLB API fielding stats by games to the corresponding application level DTOs
     /// </summary>
     /// <param name="dto">A player's MLB API season stats data</param>
-    /// <param name="seasonYear">The season</param>
     /// <returns>Fielding stats by games</returns>
-    private List<PlayerGameFieldingStats> MapFielding(PlayerSeasonStatsByGameDto dto, SeasonYear seasonYear)
+    private List<PlayerGameFieldingStats> MapFielding(PlayerSeasonStatsByGameDto dto)
     {
         return dto.GetFieldingStats().Select(x => new PlayerGameFieldingStats(
             PlayerMlbId: MlbId.Create(dto.Id),
-            SeasonYear: seasonYear,
+            SeasonYear: SeasonYear.Create((ushort)dto.SeasonYear),
             GameDate: x.Date,
             GameMlbId: MlbId.Create(x.Game.GamePk),
             TeamMlbId: MlbId.Create(x.Team.Id),

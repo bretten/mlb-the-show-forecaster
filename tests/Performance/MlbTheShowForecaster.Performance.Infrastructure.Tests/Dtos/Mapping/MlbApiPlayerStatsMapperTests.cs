@@ -19,7 +19,7 @@ public class MlbApiPlayerStatsMapperTests
         var playerSeasonStats = new PlayerSeasonStatsByGameDto(playerMlbApi, "First", "Last", new List<StatsDto>()
         {
             hittingStats, pitchingStats, fieldingStats
-        });
+        }) { SeasonYear = 2024 };
 
         var mapper = new MlbApiPlayerStatsMapper();
 

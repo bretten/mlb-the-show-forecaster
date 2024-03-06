@@ -11,4 +11,8 @@
       <PackageReference Include="Refit.HttpClientFactory" Version="7.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <InternalsVisibleTo Include="DynamicProxyGenAssembly2" /> <!-- Needed so Moq can generate implementations for internal methods: https://github.com/devlooped/moq/wiki/Quickstart#advanced-features -->
+    </ItemGroup>
+
 </Project>
