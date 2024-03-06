@@ -161,7 +161,7 @@ public class InningsCountTests
     }
 
     [Fact]
-    public void Constructor_InvalidStringPartialInningsPitched_ThrowsException()
+    public void Constructor_InvalidStringInningsPitched_ThrowsException()
     {
         // Arrange
         const string inningsPitched = "";
@@ -215,6 +215,20 @@ public class InningsCountTests
 
         // Assert
         Assert.Equal(0.667m, actual);
+    }
+
+    [Fact]
+    public void Value_StringOnePointZeroInningsPitched_ReturnsOneAndOneThird()
+    {
+        // Arrange
+        const string inningsPitched = "1.0";
+        var ip = InningsCount.Create(inningsPitched);
+
+        // Act
+        var actual = ip.Value;
+
+        // Assert
+        Assert.Equal(1m, actual);
     }
 
     [Fact]

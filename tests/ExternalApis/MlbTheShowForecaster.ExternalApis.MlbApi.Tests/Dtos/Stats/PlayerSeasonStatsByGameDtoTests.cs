@@ -12,8 +12,7 @@ public class PlayerSeasonStatsByGameDtoTests
         // Arrange
         var gameStats = new GameHittingStatsDto("2024", new DateTime(2024, 4, 1), "R", true, true, new TeamDto(10, "A"),
             new GameDto(100), new BattingStatsDto());
-        var statsByGames = new List<GameHittingStatsDto>() { gameStats };
-        var stats = new StatsDto(new StatsGroupDto(Constants.Parameters.Hitting), statsByGames);
+        var stats = StatsDto.HittingStats(gameStats);
         var playerSeasonStats = new PlayerSeasonStatsByGameDto(1, "First", "Last", new List<StatsDto>() { stats });
 
         // Act
@@ -36,10 +35,8 @@ public class PlayerSeasonStatsByGameDtoTests
     {
         // Arrange
         var gameStats = new GamePitchingStatsDto("2024", new DateTime(2024, 4, 1), "R", true, true,
-            new TeamDto(10, "A"),
-            new GameDto(100), new PitchingStatsDto());
-        var statsByGames = new List<GamePitchingStatsDto>() { gameStats };
-        var stats = new StatsDto(new StatsGroupDto(Constants.Parameters.Pitching), statsByGames);
+            new TeamDto(10, "A"), new GameDto(100), new PitchingStatsDto());
+        var stats = StatsDto.PitchingStats(gameStats);
         var playerSeasonStats = new PlayerSeasonStatsByGameDto(1, "First", "Last", new List<StatsDto>() { stats });
 
         // Act
@@ -62,10 +59,8 @@ public class PlayerSeasonStatsByGameDtoTests
     {
         // Arrange
         var gameStats = new GameFieldingStatsDto("2024", new DateTime(2024, 4, 1), "R", true, true,
-            new TeamDto(10, "A"),
-            new GameDto(100), new FieldingStatsDto());
-        var statsByGames = new List<GameFieldingStatsDto>() { gameStats };
-        var stats = new StatsDto(new StatsGroupDto(Constants.Parameters.Fielding), statsByGames);
+            new TeamDto(10, "A"), new GameDto(100), new FieldingStatsDto());
+        var stats = StatsDto.FieldingStats(gameStats);
         var playerSeasonStats = new PlayerSeasonStatsByGameDto(1, "First", "Last", new List<StatsDto>() { stats });
 
         // Act
