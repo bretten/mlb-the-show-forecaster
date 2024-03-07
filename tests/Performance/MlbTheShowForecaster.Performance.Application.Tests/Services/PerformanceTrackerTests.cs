@@ -46,9 +46,9 @@ public class PerformanceTrackerTests
         // Player 2 has no changes
         var player2Season = Dtos.TestClasses.Faker.FakePlayerSeason(playerMlbId: player2Id.Value);
         // Live MLB stats returns the corresponding live stats per each player
-        stubPlayerStats.Setup(x => x.GetPlayerSeason(player1Id))
+        stubPlayerStats.Setup(x => x.GetPlayerSeason(player1Id, seasonYear))
             .ReturnsAsync(player1Season);
-        stubPlayerStats.Setup(x => x.GetPlayerSeason(player2Id))
+        stubPlayerStats.Setup(x => x.GetPlayerSeason(player2Id, seasonYear))
             .ReturnsAsync(player2Season);
 
         // Mock command sender
@@ -72,8 +72,8 @@ public class PerformanceTrackerTests
         // Was the system queried for player season stats?
         Mock.Get(stubQuerySender).Verify(x => x.Send(getAllPlayerStatsBySeasonQuery, cToken), Times.Once);
         // Was the live MLB data queried for each player?
-        stubPlayerStats.Verify(x => x.GetPlayerSeason(player1Id), Times.Once);
-        stubPlayerStats.Verify(x => x.GetPlayerSeason(player2Id), Times.Once);
+        stubPlayerStats.Verify(x => x.GetPlayerSeason(player1Id, seasonYear), Times.Once);
+        stubPlayerStats.Verify(x => x.GetPlayerSeason(player2Id, seasonYear), Times.Once);
 
         // Was an update command sent for player 1?
         Mock.Get(mockCommandSender).Verify(x => x.Send(expectedPlayer1UpdateCommand, cToken), Times.Once);

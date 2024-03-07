@@ -57,7 +57,7 @@ public sealed class PerformanceTracker : IPerformanceTracker
         foreach (var playerStatsBySeason in playerStatsBySeasons)
         {
             // Get the most recent season stats
-            var seasonToDate = await _playerStats.GetPlayerSeason(playerStatsBySeason.PlayerMlbId);
+            var seasonToDate = await _playerStats.GetPlayerSeason(playerStatsBySeason.PlayerMlbId, seasonYear);
             // Are the stats in this system up-to-date?
             if (IsSeasonUpToDate(playerStatsBySeason, seasonToDate))
             {

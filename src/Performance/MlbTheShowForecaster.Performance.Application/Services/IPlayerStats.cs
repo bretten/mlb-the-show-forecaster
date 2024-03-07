@@ -12,6 +12,7 @@ public interface IPlayerStats
     /// Gets a player's season stats
     /// </summary>
     /// <param name="playerMlbId">The MLB ID of the player</param>
+    /// <param name="seasonYear">The season year</param>
     /// <returns>The player's season stats</returns>
-    Task<PlayerSeason> GetPlayerSeason(MlbId playerMlbId);
+    Task<PlayerSeason> GetPlayerSeason(MlbId playerMlbId, SeasonYear seasonYear);
 }

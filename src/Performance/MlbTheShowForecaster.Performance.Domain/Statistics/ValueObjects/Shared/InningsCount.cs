@@ -65,6 +65,22 @@ public sealed class InningsCount : ValueObject
     }
 
     /// <summary>
+    /// Creates <see cref="InningsCount"/>
+    /// </summary>
+    /// <param name="inningsCount">The number of innings</param>
+    /// <returns><see cref="InningsCount"/></returns>
+    public static InningsCount Create(string inningsCount)
+    {
+        if (!decimal.TryParse(inningsCount, out var innings))
+        {
+            throw new InvalidInningsCountDecimalException(
+                $"Invalid partial innings count: {inningsCount}. It can only end in n.0, n.1 (1/3), or n.2 (2/3)");
+        }
+
+        return new InningsCount(innings);
+    }
+
+    /// <summary>
     /// Standard rounding for innings count
     /// </summary>
     /// <param name="inningsCount">The number of innings</param>
