@@ -50,6 +50,16 @@ public static class Constants
         public const string TableName = "player_batting_stats_by_game";
 
         /// <summary>
+        /// Player MLB ID column name
+        /// </summary>
+        public const string PlayerMlbId = PlayerStatsBySeasons.PlayerMlbId;
+
+        /// <summary>
+        /// The season
+        /// </summary>
+        public const string Season = PlayerStatsBySeasons.Season;
+
+        /// <summary>
         /// The number of plate appearances
         /// </summary>
         public const string PlateAppearances = "plate_appearances";
@@ -174,6 +184,16 @@ public static class Constants
         /// Table name
         /// </summary>
         public const string TableName = "player_pitching_stats_by_game";
+
+        /// <summary>
+        /// Player MLB ID column name
+        /// </summary>
+        public const string PlayerMlbId = PlayerStatsBySeasons.PlayerMlbId;
+
+        /// <summary>
+        /// The season
+        /// </summary>
+        public const string Season = PlayerStatsBySeasons.Season;
 
         /// <summary>
         /// The number of wins
@@ -380,6 +400,16 @@ public static class Constants
         /// Table name
         /// </summary>
         public const string TableName = "player_fielding_stats_by_game";
+
+        /// <summary>
+        /// Player MLB ID column name
+        /// </summary>
+        public const string PlayerMlbId = PlayerStatsBySeasons.PlayerMlbId;
+
+        /// <summary>
+        /// The season
+        /// </summary>
+        public const string Season = PlayerStatsBySeasons.Season;
 
         /// <summary>
         /// The position the player is fielding
