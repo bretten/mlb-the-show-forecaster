@@ -37,7 +37,33 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <summary>
     /// The pitching result for this game
     /// </summary>
-    public PitchingResult PitchingResult { get; }
+    public PitchingResult PitchingResult
+    {
+        get
+        {
+            if (_pitchingResult == null)
+            {
+                _pitchingResult = PitchingResult.Create(win: Wins.Value > 0,
+                    loss: Losses.Value > 0,
+                    gameStarted: GamesStarted.Value > 0,
+                    gameFinished: GamesFinished.Value > 0,
+                    completeGame: CompleteGames.Value > 0,
+                    shutout: Shutouts.Value > 0,
+                    hold: Holds.Value > 0,
+                    save: Saves.Value > 0,
+                    blownSave: BlownSaves.Value > 0,
+                    saveOpportunity: SaveOpportunities.Value > 0
+                );
+            }
+
+            return _pitchingResult;
+        }
+    }
+
+    /// <summary>
+    /// The pitching result for this game for lazy loading <see cref="PitchingResult"/>
+    /// </summary>
+    private PitchingResult? _pitchingResult;
 
     /// <summary>
     /// Determines the properties that are used in equality
@@ -98,7 +124,6 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <param name="catchersInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
-    /// <param name="pitchingResult">The pitching result</param>
     private PlayerPitchingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
         MlbId teamId, NaturalNumber wins, NaturalNumber losses, NaturalNumber gamesStarted, NaturalNumber gamesFinished,
         NaturalNumber completeGames, NaturalNumber shutouts, NaturalNumber holds, NaturalNumber saves,
@@ -110,19 +135,17 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
         NaturalNumber wildPitches, NaturalNumber balks, NaturalNumber battersFaced, NaturalNumber atBats,
         NaturalNumber stolenBases, NaturalNumber caughtStealing, NaturalNumber pickOffs, NaturalNumber inheritedRunners,
         NaturalNumber inheritedRunnersScored, NaturalNumber catchersInterferences, NaturalNumber sacrificeBunts,
-        NaturalNumber sacrificeFlies, PitchingResult pitchingResult) : base(wins, losses, gamesStarted, gamesFinished,
-        completeGames, shutouts, holds, saves, blownSaves, saveOpportunities, inningsPitched, hits, doubles, triples,
-        homeRuns, runs, earnedRuns, strikeouts, baseOnBalls, intentionalWalks, hitBatsmen, outs, groundOuts, airOuts,
-        groundIntoDoublePlays, numberOfPitches, strikes, wildPitches, balks, battersFaced, atBats, stolenBases,
-        caughtStealing, pickOffs, inheritedRunners, inheritedRunnersScored, catchersInterferences, sacrificeBunts,
-        sacrificeFlies)
+        NaturalNumber sacrificeFlies) : base(wins, losses, gamesStarted, gamesFinished, completeGames, shutouts, holds,
+        saves, blownSaves, saveOpportunities, inningsPitched, hits, doubles, triples, homeRuns, runs, earnedRuns,
+        strikeouts, baseOnBalls, intentionalWalks, hitBatsmen, outs, groundOuts, airOuts, groundIntoDoublePlays,
+        numberOfPitches, strikes, wildPitches, balks, battersFaced, atBats, stolenBases, caughtStealing, pickOffs,
+        inheritedRunners, inheritedRunnersScored, catchersInterferences, sacrificeBunts, sacrificeFlies)
     {
         PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
         GameDate = gameDate;
         GameId = gameId;
         TeamId = teamId;
-        PitchingResult = pitchingResult;
     }
 
     /// <summary>
@@ -182,10 +205,6 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
         int caughtStealing, int pickOffs, int inheritedRunners, int inheritedRunnersScored, int catchersInterferences,
         int sacrificeBunts, int sacrificeFlies)
     {
-        var pitchingResult = PitchingResult.Create(win: win, loss: loss, gameStarted: gameStarted,
-            gameFinished: gameFinished, completeGame: completeGame, shutout: shutout, hold: hold, save: save,
-            blownSave: blownSave, saveOpportunity: saveOpportunity);
-
         var w = win ? NaturalNumber.Create(1) : NaturalNumber.Create(0);
         var l = loss ? NaturalNumber.Create(1) : NaturalNumber.Create(0);
         var gs = gameStarted ? NaturalNumber.Create(1) : NaturalNumber.Create(0);
@@ -264,7 +283,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
             inheritedRunnersScored: irs,
             catchersInterferences: ci,
             sacrificeBunts: sh,
-            sacrificeFlies: sf,
-            pitchingResult: pitchingResult);
+            sacrificeFlies: sf
+        );
     }
 }

@@ -20,6 +20,8 @@ public sealed class
     {
         builder.ToTable(Constants.PlayerPitchingStatsByGames.TableName, Constants.Schema);
 
+        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameId });
+
         builder.Property(e => e.PlayerMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerPitchingStatsByGames.PlayerMlbId)
@@ -31,6 +33,23 @@ public sealed class
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Season)
             .HasConversion(v => v.Value,
                 v => SeasonYear.Create(v));
+
+        builder.Property(e => e.GameDate)
+            .IsRequired()
+            .HasColumnType("date")
+            .HasColumnName(Constants.PlayerPitchingStatsByGames.GameDate);
+
+        builder.Property(e => e.GameId)
+            .IsRequired()
+            .HasColumnName(Constants.PlayerPitchingStatsByGames.GameMlbId)
+            .HasConversion(v => v.Value,
+                v => MlbId.Create(v));
+
+        builder.Property(e => e.TeamId)
+            .IsRequired()
+            .HasColumnName(Constants.PlayerPitchingStatsByGames.TeamMlbId)
+            .HasConversion(v => v.Value,
+                v => MlbId.Create(v));
 
         builder.Property(e => e.Wins)
             .IsRequired()
@@ -104,7 +123,7 @@ public sealed class
 
         builder.Property(e => e.InningsPitched)
             .IsRequired()
-            .HasColumnType("integer")
+            .HasColumnType("decimal(8,3)")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.InningsPitched)
             .HasConversion(v => v.Value,
                 v => InningsCount.Create(v));

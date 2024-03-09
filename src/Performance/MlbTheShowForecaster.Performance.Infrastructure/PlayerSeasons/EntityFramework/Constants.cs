@@ -60,6 +60,21 @@ public static class Constants
         public const string Season = PlayerStatsBySeasons.Season;
 
         /// <summary>
+        /// The game date
+        /// </summary>
+        public const string GameDate = "date";
+
+        /// <summary>
+        /// The game ID
+        /// </summary>
+        public const string GameMlbId = "game_mlb_id";
+
+        /// <summary>
+        /// The team ID
+        /// </summary>
+        public const string TeamMlbId = "team_mlb_id";
+
+        /// <summary>
         /// The number of plate appearances
         /// </summary>
         public const string PlateAppearances = "plate_appearances";
@@ -194,6 +209,21 @@ public static class Constants
         /// The season
         /// </summary>
         public const string Season = PlayerStatsBySeasons.Season;
+
+        /// <summary>
+        /// The game date
+        /// </summary>
+        public const string GameDate = "date";
+
+        /// <summary>
+        /// The game ID
+        /// </summary>
+        public const string GameMlbId = "game_mlb_id";
+
+        /// <summary>
+        /// The team ID
+        /// </summary>
+        public const string TeamMlbId = "team_mlb_id";
 
         /// <summary>
         /// The number of wins
@@ -412,6 +442,21 @@ public static class Constants
         public const string Season = PlayerStatsBySeasons.Season;
 
         /// <summary>
+        /// The game date
+        /// </summary>
+        public const string GameDate = "date";
+
+        /// <summary>
+        /// The game ID
+        /// </summary>
+        public const string GameMlbId = "game_mlb_id";
+
+        /// <summary>
+        /// The team ID
+        /// </summary>
+        public const string TeamMlbId = "team_mlb_id";
+
+        /// <summary>
         /// The position the player is fielding
         /// </summary>
         public const string Position = "position";
@@ -455,5 +500,35 @@ public static class Constants
         /// The number of triple plays where the fielder recorded a putout or an assist
         /// </summary>
         public const string TriplePlays = "triple_plays";
+
+        /// <summary>
+        /// Catcher stat: The number of times the catcher was able to throw out a base runner attempting to steal
+        /// </summary>
+        public const string CaughtStealing = "caught_stealing";
+
+        /// <summary>
+        /// Catcher stat: The number of times a base runner successfully stole a base against the catcher
+        /// </summary>
+        public const string StolenBases = "stolen_bases";
+
+        /// <summary>
+        /// Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance
+        /// </summary>
+        public const string PassedBalls = "passed_balls";
+
+        /// <summary>
+        /// Catcher stat: The number of times a catcher interfered with the batter's plate appearance
+        /// </summary>
+        public const string CatchersInterference = "catchers_interference";
+
+        /// <summary>
+        /// Catcher stat: The number of wild pitches the catcher saw from the pitcher
+        /// </summary>
+        public const string WildPitches = "wild_pitches";
+
+        /// <summary>
+        /// Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate
+        /// </summary>
+        public const string PickOffs = "pick_offs";
     }
 }

@@ -23,6 +23,8 @@ public sealed class
     {
         builder.ToTable(Constants.PlayerFieldingStatsByGames.TableName, Constants.Schema);
 
+        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameId });
+
         builder.Property(e => e.PlayerMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerFieldingStatsByGames.PlayerMlbId)
@@ -34,6 +36,23 @@ public sealed class
             .HasColumnName(Constants.PlayerFieldingStatsByGames.Season)
             .HasConversion(v => v.Value,
                 v => SeasonYear.Create(v));
+
+        builder.Property(e => e.GameDate)
+            .IsRequired()
+            .HasColumnType("date")
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.GameDate);
+
+        builder.Property(e => e.GameId)
+            .IsRequired()
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.GameMlbId)
+            .HasConversion(v => v.Value,
+                v => MlbId.Create(v));
+
+        builder.Property(e => e.TeamId)
+            .IsRequired()
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.TeamMlbId)
+            .HasConversion(v => v.Value,
+                v => MlbId.Create(v));
 
         builder.Property(e => e.Position)
             .IsRequired()
@@ -51,7 +70,7 @@ public sealed class
 
         builder.Property(e => e.InningsPlayed)
             .IsRequired()
-            .HasColumnType("integer")
+            .HasColumnType("decimal(8,3)")
             .HasColumnName(Constants.PlayerFieldingStatsByGames.InningsPlayed)
             .HasConversion(v => v.Value,
                 v => InningsCount.Create(v));
@@ -95,6 +114,48 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerFieldingStatsByGames.TriplePlays)
+            .HasConversion(v => v.Value,
+                v => NaturalNumber.Create(v));
+
+        builder.Property(e => e.CaughtStealing)
+            .IsRequired()
+            .HasColumnType("integer")
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.CaughtStealing)
+            .HasConversion(v => v.Value,
+                v => NaturalNumber.Create(v));
+
+        builder.Property(e => e.StolenBases)
+            .IsRequired()
+            .HasColumnType("integer")
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.StolenBases)
+            .HasConversion(v => v.Value,
+                v => NaturalNumber.Create(v));
+
+        builder.Property(e => e.PassedBalls)
+            .IsRequired()
+            .HasColumnType("integer")
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.PassedBalls)
+            .HasConversion(v => v.Value,
+                v => NaturalNumber.Create(v));
+
+        builder.Property(e => e.CatchersInterference)
+            .IsRequired()
+            .HasColumnType("integer")
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.CatchersInterference)
+            .HasConversion(v => v.Value,
+                v => NaturalNumber.Create(v));
+
+        builder.Property(e => e.WildPitches)
+            .IsRequired()
+            .HasColumnType("integer")
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.WildPitches)
+            .HasConversion(v => v.Value,
+                v => NaturalNumber.Create(v));
+
+        builder.Property(e => e.PickOffs)
+            .IsRequired()
+            .HasColumnType("integer")
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.PickOffs)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
     }

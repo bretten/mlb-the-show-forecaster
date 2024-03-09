@@ -33,5 +33,10 @@ public sealed class PlayerStatsBySeasonEntityTypeConfiguration : IEntityTypeConf
             .HasColumnName(Constants.PlayerStatsBySeasons.Season)
             .HasConversion(v => v.Value,
                 v => SeasonYear.Create(v));
+
+        // Ignore these properties. They are not relationships/navigation properties, but just convenience methods for other members of the class
+        builder.Ignore(x => x.BattingStatsByGamesChronologically);
+        builder.Ignore(x => x.PitchingStatsByGamesChronologically);
+        builder.Ignore(x => x.FieldingStatsByGamesChronologically);
     }
 }

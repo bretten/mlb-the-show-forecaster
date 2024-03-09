@@ -18,6 +18,8 @@ public sealed class PlayerBattingStatsByGameEntityTypeConfiguration : IEntityTyp
     {
         builder.ToTable(Constants.PlayerBattingStatsByGames.TableName, Constants.Schema);
 
+        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameId });
+
         builder.Property(e => e.PlayerMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerBattingStatsByGames.PlayerMlbId)
@@ -29,6 +31,23 @@ public sealed class PlayerBattingStatsByGameEntityTypeConfiguration : IEntityTyp
             .HasColumnName(Constants.PlayerBattingStatsByGames.Season)
             .HasConversion(v => v.Value,
                 v => SeasonYear.Create(v));
+
+        builder.Property(e => e.GameDate)
+            .IsRequired()
+            .HasColumnType("date")
+            .HasColumnName(Constants.PlayerBattingStatsByGames.GameDate);
+
+        builder.Property(e => e.GameId)
+            .IsRequired()
+            .HasColumnName(Constants.PlayerBattingStatsByGames.GameMlbId)
+            .HasConversion(v => v.Value,
+                v => MlbId.Create(v));
+
+        builder.Property(e => e.TeamId)
+            .IsRequired()
+            .HasColumnName(Constants.PlayerBattingStatsByGames.TeamMlbId)
+            .HasConversion(v => v.Value,
+                v => MlbId.Create(v));
 
         builder.Property(e => e.PlateAppearances)
             .IsRequired()
