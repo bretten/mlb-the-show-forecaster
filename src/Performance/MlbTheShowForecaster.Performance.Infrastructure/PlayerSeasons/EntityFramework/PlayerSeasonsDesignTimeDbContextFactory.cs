@@ -17,8 +17,7 @@ public sealed class PlayerSeasonsDesignTimeDbContextFactory : IDesignTimeDbConte
     public PlayerSeasonsDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<PlayerSeasonsDbContext>();
-        optionsBuilder.UseNpgsql(
-            "Server=localhost;Port=54320;Database=mlbcards;Uid=postgres;Pwd=pass12;Search Path=performance");
+        optionsBuilder.UseNpgsql();
         return new PlayerSeasonsDbContext(optionsBuilder.Options);
     }
 }

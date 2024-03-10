@@ -1,5 +1,4 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
 
@@ -34,11 +33,6 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// The MLB ID of the team
     /// </summary>
     public MlbId TeamId { get; }
-
-    /// <summary>
-    /// <see cref="PlayerStatsBySeason"/>
-    /// </summary>
-    private PlayerStatsBySeason _playerStatsBySeason = null!;
 
     /// <summary>
     /// The pitching result for this game

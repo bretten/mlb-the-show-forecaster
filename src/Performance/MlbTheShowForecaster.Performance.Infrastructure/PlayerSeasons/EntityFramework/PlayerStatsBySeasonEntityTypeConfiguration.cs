@@ -41,15 +41,15 @@ public sealed class PlayerStatsBySeasonEntityTypeConfiguration : IEntityTypeConf
         builder.Ignore(x => x.FieldingStatsByGamesChronologically);
 
         builder.HasMany<PlayerBattingStatsByGame>("_battingStatsByGames")
-            .WithOne("_playerStatsBySeason")
+            .WithOne()
             .HasForeignKey("player_stats_by_season_id")
             .IsRequired();
         builder.HasMany<PlayerPitchingStatsByGame>("_pitchingStatsByGames")
-            .WithOne("_playerStatsBySeason")
+            .WithOne()
             .HasForeignKey("player_stats_by_season_id")
             .IsRequired();
         builder.HasMany<PlayerFieldingStatsByGame>("_fieldingStatsByGames")
-            .WithOne("_playerStatsBySeason")
+            .WithOne()
             .HasForeignKey("player_stats_by_season_id")
             .IsRequired();
     }
