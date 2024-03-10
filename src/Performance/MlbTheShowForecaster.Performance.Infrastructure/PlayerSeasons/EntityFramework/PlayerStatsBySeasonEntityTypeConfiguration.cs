@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -38,5 +39,18 @@ public sealed class PlayerStatsBySeasonEntityTypeConfiguration : IEntityTypeConf
         builder.Ignore(x => x.BattingStatsByGamesChronologically);
         builder.Ignore(x => x.PitchingStatsByGamesChronologically);
         builder.Ignore(x => x.FieldingStatsByGamesChronologically);
+
+        builder.HasMany<PlayerBattingStatsByGame>("_battingStatsByGames")
+            .WithOne("_playerStatsBySeason")
+            .HasForeignKey("player_stats_by_season_id")
+            .IsRequired();
+        builder.HasMany<PlayerPitchingStatsByGame>("_pitchingStatsByGames")
+            .WithOne("_playerStatsBySeason")
+            .HasForeignKey("player_stats_by_season_id")
+            .IsRequired();
+        builder.HasMany<PlayerFieldingStatsByGame>("_fieldingStatsByGames")
+            .WithOne("_playerStatsBySeason")
+            .HasForeignKey("player_stats_by_season_id")
+            .IsRequired();
     }
 }

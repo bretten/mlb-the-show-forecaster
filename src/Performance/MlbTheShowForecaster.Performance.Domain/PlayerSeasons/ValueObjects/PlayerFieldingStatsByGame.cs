@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
 
@@ -34,6 +35,11 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// The MLB ID of the team
     /// </summary>
     public MlbId TeamId { get; }
+
+    /// <summary>
+    /// <see cref="PlayerStatsBySeason"/>
+    /// </summary>
+    private PlayerStatsBySeason _playerStatsBySeason = null!;
 
     /// <summary>
     /// Determines the properties that are used in equality

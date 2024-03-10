@@ -20,22 +20,34 @@ public sealed class PlayerSeasonsDbContext : DbContext
     /// <summary>
     /// DB set for <see cref="PlayerStatsBySeason"/>
     /// </summary>
-    public DbSet<PlayerStatsBySeason> PlayerStatsBySeasons { get; } = null!;
+    public DbSet<PlayerStatsBySeason> PlayerStatsBySeasons { get; private init; } = null!;
 
     /// <summary>
     /// DB set for <see cref="PlayerBattingStatsByGame"/>
     /// </summary>
-    public DbSet<PlayerBattingStatsByGame> PlayerBattingStatsByGames { get; } = null!;
+    public DbSet<PlayerBattingStatsByGame> PlayerBattingStatsByGames { get; private init; } = null!;
 
     /// <summary>
     /// DB set for <see cref="PlayerPitchingStatsByGame"/>
     /// </summary>
-    public DbSet<PlayerPitchingStatsByGame> PlayerPitchingStatsByGames { get; } = null!;
+    public DbSet<PlayerPitchingStatsByGame> PlayerPitchingStatsByGames { get; private init; } = null!;
 
     /// <summary>
     /// DB set for <see cref="PlayerFieldingStatsByGame"/>
     /// </summary>
-    public DbSet<PlayerFieldingStatsByGame> PlayerFieldingStatsByGames { get; } = null!;
+    public DbSet<PlayerFieldingStatsByGame> PlayerFieldingStatsByGames { get; private init; } = null!;
+
+    /// <summary>
+    /// Returns the <see cref="PlayerStatsBySeason"/> DB set with stats by games
+    /// </summary>
+    /// <returns><see cref="IQueryable"/> for <see cref="PlayerStatsBySeasons"/></returns>
+    public IQueryable<PlayerStatsBySeason> PlayerStatsBySeasonsWithGames()
+    {
+        return PlayerStatsBySeasons
+            .Include("_battingStatsByGames")
+            .Include("_pitchingStatsByGames")
+            .Include("_fieldingStatsByGames");
+    }
 
     /// <summary>
     /// Configures the model for the player season stats domain
