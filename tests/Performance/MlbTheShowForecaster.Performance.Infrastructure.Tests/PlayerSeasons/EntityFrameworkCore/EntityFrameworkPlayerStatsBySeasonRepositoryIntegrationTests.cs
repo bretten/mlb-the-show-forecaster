@@ -3,13 +3,13 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFramework;
+using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Tests.TestClasses;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
-namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Tests.PlayerSeasons.EntityFramework;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Tests.PlayerSeasons.EntityFrameworkCore;
 
 /// <summary>
 /// Integration tests that use TestContainers to spin up database containers for the tests. Requires Docker to be

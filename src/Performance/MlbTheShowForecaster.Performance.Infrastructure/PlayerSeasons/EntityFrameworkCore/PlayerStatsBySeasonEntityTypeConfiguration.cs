@@ -4,7 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Value
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFramework;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 
 /// <summary>
 /// Configures <see cref="PlayerStatsBySeason"/> for EF

@@ -3,7 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entit
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFramework;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 
 public sealed class EntityFrameworkPlayerStatsBySeasonRepository : IPlayerStatsBySeasonRepository
 {
