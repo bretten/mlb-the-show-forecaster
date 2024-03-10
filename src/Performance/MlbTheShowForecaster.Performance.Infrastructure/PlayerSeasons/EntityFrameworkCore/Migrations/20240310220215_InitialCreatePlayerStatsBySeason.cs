@@ -1,0 +1,219 @@
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
+
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore.Migrations
+{
+    /// <inheritdoc />
+    public partial class InitialCreatePlayerStatsBySeason : Migration
+    {
+        /// <inheritdoc />
+        protected override void Up(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.EnsureSchema(
+                name: "performance");
+
+            migrationBuilder.CreateTable(
+                name: "player_stats_by_season",
+                schema: "performance",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    player_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    season = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_player_stats_by_season", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "player_batting_stats_by_game",
+                schema: "performance",
+                columns: table => new
+                {
+                    player_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    season = table.Column<int>(type: "integer", nullable: false),
+                    date = table.Column<DateTime>(type: "date", nullable: false),
+                    game_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    team_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    player_stats_by_season_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    plate_appearances = table.Column<int>(type: "integer", nullable: false),
+                    at_bats = table.Column<int>(type: "integer", nullable: false),
+                    runs = table.Column<int>(type: "integer", nullable: false),
+                    hits = table.Column<int>(type: "integer", nullable: false),
+                    doubles = table.Column<int>(type: "integer", nullable: false),
+                    triples = table.Column<int>(type: "integer", nullable: false),
+                    home_runs = table.Column<int>(type: "integer", nullable: false),
+                    runs_batted_in = table.Column<int>(type: "integer", nullable: false),
+                    base_on_balls = table.Column<int>(type: "integer", nullable: false),
+                    intentional_walks = table.Column<int>(type: "integer", nullable: false),
+                    strikeouts = table.Column<int>(type: "integer", nullable: false),
+                    stolen_bases = table.Column<int>(type: "integer", nullable: false),
+                    caught_stealing = table.Column<int>(type: "integer", nullable: false),
+                    hit_by_pitch = table.Column<int>(type: "integer", nullable: false),
+                    sacrifice_bunts = table.Column<int>(type: "integer", nullable: false),
+                    sacrifice_flies = table.Column<int>(type: "integer", nullable: false),
+                    number_of_pitches_seen = table.Column<int>(type: "integer", nullable: false),
+                    left_on_base = table.Column<int>(type: "integer", nullable: false),
+                    ground_outs = table.Column<int>(type: "integer", nullable: false),
+                    ground_into_double_plays = table.Column<int>(type: "integer", nullable: false),
+                    ground_into_triple_plays = table.Column<int>(type: "integer", nullable: false),
+                    air_outs = table.Column<int>(type: "integer", nullable: false),
+                    catchers_interference = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_player_batting_stats_by_game", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
+                    table.ForeignKey(
+                        name: "FK_player_batting_stats_by_game_player_stats_by_season_player_~",
+                        column: x => x.player_stats_by_season_id,
+                        principalSchema: "performance",
+                        principalTable: "player_stats_by_season",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "player_fielding_stats_by_game",
+                schema: "performance",
+                columns: table => new
+                {
+                    player_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    season = table.Column<int>(type: "integer", nullable: false),
+                    date = table.Column<DateTime>(type: "date", nullable: false),
+                    game_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    team_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    player_stats_by_season_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    position = table.Column<string>(type: "varchar(4)", nullable: false),
+                    games_started = table.Column<int>(type: "integer", nullable: false),
+                    innings_played = table.Column<decimal>(type: "numeric(8,3)", nullable: false),
+                    assists = table.Column<int>(type: "integer", nullable: false),
+                    put_outs = table.Column<int>(type: "integer", nullable: false),
+                    errors = table.Column<int>(type: "integer", nullable: false),
+                    throwing_errors = table.Column<int>(type: "integer", nullable: false),
+                    double_plays = table.Column<int>(type: "integer", nullable: false),
+                    triple_plays = table.Column<int>(type: "integer", nullable: false),
+                    caught_stealing = table.Column<int>(type: "integer", nullable: false),
+                    stolen_bases = table.Column<int>(type: "integer", nullable: false),
+                    passed_balls = table.Column<int>(type: "integer", nullable: false),
+                    catchers_interference = table.Column<int>(type: "integer", nullable: false),
+                    wild_pitches = table.Column<int>(type: "integer", nullable: false),
+                    pick_offs = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_player_fielding_stats_by_game", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
+                    table.ForeignKey(
+                        name: "FK_player_fielding_stats_by_game_player_stats_by_season_player~",
+                        column: x => x.player_stats_by_season_id,
+                        principalSchema: "performance",
+                        principalTable: "player_stats_by_season",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "player_pitching_stats_by_game",
+                schema: "performance",
+                columns: table => new
+                {
+                    player_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    season = table.Column<int>(type: "integer", nullable: false),
+                    date = table.Column<DateTime>(type: "date", nullable: false),
+                    game_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    team_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    player_stats_by_season_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    wins = table.Column<int>(type: "integer", nullable: false),
+                    losses = table.Column<int>(type: "integer", nullable: false),
+                    games_started = table.Column<int>(type: "integer", nullable: false),
+                    games_finished = table.Column<int>(type: "integer", nullable: false),
+                    complete_games = table.Column<int>(type: "integer", nullable: false),
+                    shutouts = table.Column<int>(type: "integer", nullable: false),
+                    holds = table.Column<int>(type: "integer", nullable: false),
+                    saves = table.Column<int>(type: "integer", nullable: false),
+                    blown_saves = table.Column<int>(type: "integer", nullable: false),
+                    save_opportunities = table.Column<int>(type: "integer", nullable: false),
+                    innings_pitched = table.Column<decimal>(type: "numeric(8,3)", nullable: false),
+                    hits = table.Column<int>(type: "integer", nullable: false),
+                    doubles = table.Column<int>(type: "integer", nullable: false),
+                    triples = table.Column<int>(type: "integer", nullable: false),
+                    home_runs = table.Column<int>(type: "integer", nullable: false),
+                    runs = table.Column<int>(type: "integer", nullable: false),
+                    earned_runs = table.Column<int>(type: "integer", nullable: false),
+                    strikeouts = table.Column<int>(type: "integer", nullable: false),
+                    base_on_balls = table.Column<int>(type: "integer", nullable: false),
+                    intentional_walks = table.Column<int>(type: "integer", nullable: false),
+                    hit_batsmen = table.Column<int>(type: "integer", nullable: false),
+                    outs = table.Column<int>(type: "integer", nullable: false),
+                    ground_outs = table.Column<int>(type: "integer", nullable: false),
+                    air_outs = table.Column<int>(type: "integer", nullable: false),
+                    ground_into_double_plays = table.Column<int>(type: "integer", nullable: false),
+                    number_of_pitches = table.Column<int>(type: "integer", nullable: false),
+                    strikes = table.Column<int>(type: "integer", nullable: false),
+                    wild_pitches = table.Column<int>(type: "integer", nullable: false),
+                    balks = table.Column<int>(type: "integer", nullable: false),
+                    batters_faced = table.Column<int>(type: "integer", nullable: false),
+                    at_bats = table.Column<int>(type: "integer", nullable: false),
+                    stolen_bases = table.Column<int>(type: "integer", nullable: false),
+                    caught_stealing = table.Column<int>(type: "integer", nullable: false),
+                    pick_offs = table.Column<int>(type: "integer", nullable: false),
+                    inherited_runners = table.Column<int>(type: "integer", nullable: false),
+                    inherited_runners_scored = table.Column<int>(type: "integer", nullable: false),
+                    catchers_interferences = table.Column<int>(type: "integer", nullable: false),
+                    sacrifice_bunts = table.Column<int>(type: "integer", nullable: false),
+                    sacrifice_flies = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_player_pitching_stats_by_game", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
+                    table.ForeignKey(
+                        name: "FK_player_pitching_stats_by_game_player_stats_by_season_player~",
+                        column: x => x.player_stats_by_season_id,
+                        principalSchema: "performance",
+                        principalTable: "player_stats_by_season",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_player_batting_stats_by_game_player_stats_by_season_id",
+                schema: "performance",
+                table: "player_batting_stats_by_game",
+                column: "player_stats_by_season_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_player_fielding_stats_by_game_player_stats_by_season_id",
+                schema: "performance",
+                table: "player_fielding_stats_by_game",
+                column: "player_stats_by_season_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_player_pitching_stats_by_game_player_stats_by_season_id",
+                schema: "performance",
+                table: "player_pitching_stats_by_game",
+                column: "player_stats_by_season_id");
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "player_batting_stats_by_game",
+                schema: "performance");
+
+            migrationBuilder.DropTable(
+                name: "player_fielding_stats_by_game",
+                schema: "performance");
+
+            migrationBuilder.DropTable(
+                name: "player_pitching_stats_by_game",
+                schema: "performance");
+
+            migrationBuilder.DropTable(
+                name: "player_stats_by_season",
+                schema: "performance");
+        }
+    }
+}
