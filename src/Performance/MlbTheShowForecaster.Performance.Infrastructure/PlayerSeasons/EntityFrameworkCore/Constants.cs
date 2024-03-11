@@ -21,7 +21,7 @@ public static class Constants
         /// <summary>
         /// Table name
         /// </summary>
-        public const string TableName = "player_stats_by_season";
+        public const string TableName = "player_stats_by_seasons";
 
         /// <summary>
         /// Primary key column name
@@ -47,7 +47,7 @@ public static class Constants
         /// <summary>
         /// Table name
         /// </summary>
-        public const string TableName = "player_batting_stats_by_game";
+        public const string TableName = "player_batting_stats_by_games";
 
         /// <summary>
         /// Player MLB ID column name
@@ -65,12 +65,12 @@ public static class Constants
         public const string GameDate = "date";
 
         /// <summary>
-        /// The game ID
+        /// The game MLB ID
         /// </summary>
         public const string GameMlbId = "game_mlb_id";
 
         /// <summary>
-        /// The team ID
+        /// The team MLB ID
         /// </summary>
         public const string TeamMlbId = "team_mlb_id";
 
@@ -198,7 +198,7 @@ public static class Constants
         /// <summary>
         /// Table name
         /// </summary>
-        public const string TableName = "player_pitching_stats_by_game";
+        public const string TableName = "player_pitching_stats_by_games";
 
         /// <summary>
         /// Player MLB ID column name
@@ -216,12 +216,12 @@ public static class Constants
         public const string GameDate = "date";
 
         /// <summary>
-        /// The game ID
+        /// The game MLB ID
         /// </summary>
         public const string GameMlbId = "game_mlb_id";
 
         /// <summary>
-        /// The team ID
+        /// The team MLB ID
         /// </summary>
         public const string TeamMlbId = "team_mlb_id";
 
@@ -429,7 +429,7 @@ public static class Constants
         /// <summary>
         /// Table name
         /// </summary>
-        public const string TableName = "player_fielding_stats_by_game";
+        public const string TableName = "player_fielding_stats_by_games";
 
         /// <summary>
         /// Player MLB ID column name
@@ -447,12 +447,12 @@ public static class Constants
         public const string GameDate = "date";
 
         /// <summary>
-        /// The game ID
+        /// The game MLB ID
         /// </summary>
         public const string GameMlbId = "game_mlb_id";
 
         /// <summary>
-        /// The team ID
+        /// The team MLB ID
         /// </summary>
         public const string TeamMlbId = "team_mlb_id";
 
