@@ -31,7 +31,7 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
                 .WithPassword("password99")
-                .WithPortBinding(54321, 5432)
+                .WithPortBinding(54322, 5432)
                 .Build();
         }
         catch (ArgumentException e)
