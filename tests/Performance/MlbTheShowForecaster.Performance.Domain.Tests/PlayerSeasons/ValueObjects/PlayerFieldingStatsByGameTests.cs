@@ -48,7 +48,7 @@ public class PlayerFieldingStatsByGameTests
         const bool gameStarted = true; // NOTE: Nonsensical stats
         const decimal inningsPlayed = 1.1m;
         const int assists = 1;
-        const int putOuts = 2;
+        const int putouts = 2;
         const int errors = 3;
         const int throwingErrors = 4;
         const int doublePlays = 5;
@@ -66,7 +66,7 @@ public class PlayerFieldingStatsByGameTests
             gameStarted: gameStarted,
             inningsPlayed: inningsPlayed,
             assists: assists,
-            putOuts: putOuts,
+            putouts: putouts,
             errors: errors,
             throwingErrors: throwingErrors,
             doublePlays: doublePlays,
@@ -89,7 +89,7 @@ public class PlayerFieldingStatsByGameTests
         Assert.Equal(1, actual.GamesStarted.Value);
         Assert.Equal(1.333m, actual.InningsPlayed.Value);
         Assert.Equal(1, actual.Assists.Value);
-        Assert.Equal(2, actual.PutOuts.Value);
+        Assert.Equal(2, actual.Putouts.Value);
         Assert.Equal(3, actual.Errors.Value);
         Assert.Equal(4, actual.ThrowingErrors.Value);
         Assert.Equal(5, actual.DoublePlays.Value);

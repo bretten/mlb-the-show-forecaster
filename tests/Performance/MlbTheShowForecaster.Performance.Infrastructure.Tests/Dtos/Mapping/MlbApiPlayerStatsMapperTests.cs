@@ -115,7 +115,7 @@ public class MlbApiPlayerStatsMapperTests
         Assert.Equal(3, actual.GameFieldingStats[0].CaughtStealing.Value);
         Assert.Equal(4, actual.GameFieldingStats[0].StolenBases.Value);
         Assert.Equal(5, actual.GameFieldingStats[0].Assists.Value);
-        Assert.Equal(6, actual.GameFieldingStats[0].PutOuts.Value);
+        Assert.Equal(6, actual.GameFieldingStats[0].Putouts.Value);
         Assert.Equal(7, actual.GameFieldingStats[0].Errors.Value);
         Assert.Equal(10, actual.GameFieldingStats[0].PassedBalls.Value);
         Assert.Equal(11, actual.GameFieldingStats[0].DoublePlays.Value);

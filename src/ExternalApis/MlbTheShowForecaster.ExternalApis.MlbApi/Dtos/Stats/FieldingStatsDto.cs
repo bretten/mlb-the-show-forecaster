@@ -19,7 +19,7 @@ public readonly record struct FieldingStatsDto(
     [property: JsonPropertyName("assists")]
     int Assists,
     [property: JsonPropertyName("putOuts")]
-    int PutOuts,
+    int Putouts,
     [property: JsonPropertyName("errors")]
     int Errors,
     [property: JsonPropertyName("chances")]
@@ -45,7 +45,7 @@ public readonly record struct FieldingStatsDto(
     [property: JsonPropertyName("catcherERA")]
     string CatcherEra,
     [property: JsonPropertyName("catchersInterference")]
-    int CatchersInterference,
+    int CatcherInterferences,
     [property: JsonPropertyName("wildPitches")]
     int WildPitches,
     [property: JsonPropertyName("throwingErrors")]

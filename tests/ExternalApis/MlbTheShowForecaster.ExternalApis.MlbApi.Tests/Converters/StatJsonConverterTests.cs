@@ -62,7 +62,7 @@ public class StatJsonConverterTests
         Assert.Equal(24, actualGame1.Stat.SacFlies);
         Assert.Equal(".666", actualGame1.Stat.Babip);
         Assert.Equal(".777", actualGame1.Stat.GroundOutsToAirOuts);
-        Assert.Equal(25, actualGame1.Stat.CatchersInterference);
+        Assert.Equal(25, actualGame1.Stat.CatcherInterferences);
         Assert.Equal(".888", actualGame1.Stat.AtBatsPerHomeRun);
 
         var actualGame2 = actual.Splits.ElementAt(1) as GameHittingStatsDto;
@@ -108,7 +108,7 @@ public class StatJsonConverterTests
         Assert.Equal(49, actualGame2.Stat.SacFlies);
         Assert.Equal("1.555", actualGame2.Stat.Babip);
         Assert.Equal("1.666", actualGame2.Stat.GroundOutsToAirOuts);
-        Assert.Equal(50, actualGame2.Stat.CatchersInterference);
+        Assert.Equal(50, actualGame2.Stat.CatcherInterferences);
         Assert.Equal("1.777", actualGame2.Stat.AtBatsPerHomeRun);
     }
 
@@ -193,7 +193,7 @@ public class StatJsonConverterTests
         Assert.Equal("1.999", actualGame1.Stat.HomeRunsPer9);
         Assert.Equal(38, actualGame1.Stat.InheritedRunners);
         Assert.Equal(39, actualGame1.Stat.InheritedRunnersScored);
-        Assert.Equal(40, actualGame1.Stat.CatchersInterference);
+        Assert.Equal(40, actualGame1.Stat.CatcherInterferences);
         Assert.Equal(41, actualGame1.Stat.SacBunts);
         Assert.Equal(42, actualGame1.Stat.SacFlies);
 
@@ -266,7 +266,7 @@ public class StatJsonConverterTests
         Assert.Equal("11.999", actualGame2.Stat.HomeRunsPer9);
         Assert.Equal(380, actualGame2.Stat.InheritedRunners);
         Assert.Equal(390, actualGame2.Stat.InheritedRunnersScored);
-        Assert.Equal(400, actualGame2.Stat.CatchersInterference);
+        Assert.Equal(400, actualGame2.Stat.CatcherInterferences);
         Assert.Equal(410, actualGame2.Stat.SacBunts);
         Assert.Equal(420, actualGame2.Stat.SacFlies);
     }
@@ -300,7 +300,7 @@ public class StatJsonConverterTests
         Assert.Equal(4, actualGame1.Stat.StolenBases);
         Assert.Equal(".111", actualGame1.Stat.StolenBasePercentage);
         Assert.Equal(5, actualGame1.Stat.Assists);
-        Assert.Equal(6, actualGame1.Stat.PutOuts);
+        Assert.Equal(6, actualGame1.Stat.Putouts);
         Assert.Equal(7, actualGame1.Stat.Errors);
         Assert.Equal(8, actualGame1.Stat.Chances);
         Assert.Equal(".222", actualGame1.Stat.Fielding);
@@ -314,7 +314,7 @@ public class StatJsonConverterTests
         Assert.Equal(11, actualGame1.Stat.DoublePlays);
         Assert.Equal(12, actualGame1.Stat.TriplePlays);
         Assert.Equal(".666", actualGame1.Stat.CatcherEra);
-        Assert.Equal(13, actualGame1.Stat.CatchersInterference);
+        Assert.Equal(13, actualGame1.Stat.CatcherInterferences);
         Assert.Equal(14, actualGame1.Stat.WildPitches);
         Assert.Equal(15, actualGame1.Stat.ThrowingErrors);
         Assert.Equal(16, actualGame1.Stat.Pickoffs);
@@ -336,7 +336,7 @@ public class StatJsonConverterTests
         Assert.Equal(40, actualGame2.Stat.StolenBases);
         Assert.Equal("1.111", actualGame2.Stat.StolenBasePercentage);
         Assert.Equal(50, actualGame2.Stat.Assists);
-        Assert.Equal(60, actualGame2.Stat.PutOuts);
+        Assert.Equal(60, actualGame2.Stat.Putouts);
         Assert.Equal(70, actualGame2.Stat.Errors);
         Assert.Equal(80, actualGame2.Stat.Chances);
         Assert.Equal("1.222", actualGame2.Stat.Fielding);
@@ -350,7 +350,7 @@ public class StatJsonConverterTests
         Assert.Equal(110, actualGame2.Stat.DoublePlays);
         Assert.Equal(120, actualGame2.Stat.TriplePlays);
         Assert.Equal("1.666", actualGame2.Stat.CatcherEra);
-        Assert.Equal(130, actualGame2.Stat.CatchersInterference);
+        Assert.Equal(130, actualGame2.Stat.CatcherInterferences);
         Assert.Equal(140, actualGame2.Stat.WildPitches);
         Assert.Equal(150, actualGame2.Stat.ThrowingErrors);
         Assert.Equal(160, actualGame2.Stat.Pickoffs);

@@ -16,7 +16,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 /// <param name="GameStarted">The number of times the player started the game at this <see cref="Position"/></param>
 /// <param name="InningsPlayed">The number of innings this player fielded at this <see cref="Position"/></param>
 /// <param name="Assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
-/// <param name="PutOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
+/// <param name="Putouts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
 /// <param name="Errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
 /// <param name="ThrowingErrors">The number of errors that were the result of a bad throw</param>
 /// <param name="DoublePlays">The number of double plays where the fielder recorded a putout or an assist</param>
@@ -37,7 +37,7 @@ public readonly record struct PlayerGameFieldingStats(
     bool GameStarted,
     InningsCount InningsPlayed,
     NaturalNumber Assists,
-    NaturalNumber PutOuts,
+    NaturalNumber Putouts,
     NaturalNumber Errors,
     NaturalNumber ThrowingErrors,
     NaturalNumber DoublePlays,

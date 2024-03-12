@@ -108,7 +108,7 @@ public class PlayerSeasonMapperTests
         Assert.Equal(1, actual.SeasonAggregateFieldingStats.GamesStarted.Value);
         Assert.Equal(1001, actual.SeasonAggregateFieldingStats.InningsPlayed.Value);
         Assert.Equal(2002, actual.SeasonAggregateFieldingStats.Assists.Value);
-        Assert.Equal(3003, actual.SeasonAggregateFieldingStats.PutOuts.Value);
+        Assert.Equal(3003, actual.SeasonAggregateFieldingStats.Putouts.Value);
         Assert.Equal(4004, actual.SeasonAggregateFieldingStats.Errors.Value);
         Assert.Equal(5005, actual.SeasonAggregateFieldingStats.ThrowingErrors.Value);
         Assert.Equal(6006, actual.SeasonAggregateFieldingStats.DoublePlays.Value);

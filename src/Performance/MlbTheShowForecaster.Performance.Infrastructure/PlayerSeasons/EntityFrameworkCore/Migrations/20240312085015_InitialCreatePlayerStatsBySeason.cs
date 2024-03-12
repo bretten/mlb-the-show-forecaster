@@ -90,7 +90,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     games_started = table.Column<int>(type: "integer", nullable: false),
                     innings_played = table.Column<decimal>(type: "numeric(8,3)", nullable: false),
                     assists = table.Column<int>(type: "integer", nullable: false),
-                    put_outs = table.Column<int>(type: "integer", nullable: false),
+                    putouts = table.Column<int>(type: "integer", nullable: false),
                     errors = table.Column<int>(type: "integer", nullable: false),
                     throwing_errors = table.Column<int>(type: "integer", nullable: false),
                     double_plays = table.Column<int>(type: "integer", nullable: false),

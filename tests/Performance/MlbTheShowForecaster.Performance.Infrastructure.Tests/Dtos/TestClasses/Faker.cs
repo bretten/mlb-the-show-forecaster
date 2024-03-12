@@ -146,7 +146,7 @@ public static class Faker
             SacFlies = scalar * sacFlies,
             Babip = babip,
             GroundOutsToAirOuts = groundOutsToAirOuts,
-            CatchersInterference = scalar * catcherInterferences,
+            CatcherInterferences = scalar * catcherInterferences,
             AtBatsPerHomeRun = atBatsPerHomeRun
         };
     }
@@ -275,7 +275,7 @@ public static class Faker
             HomeRunsPer9 = homeRunsPer9,
             InheritedRunners = scalar * inheritedRunners,
             InheritedRunnersScored = scalar * inheritedRunnersScored,
-            CatchersInterference = scalar * catcherInterferences,
+            CatcherInterferences = scalar * catcherInterferences,
             SacBunts = scalar * sacBunts,
             SacFlies = scalar * sacFlies
         };
@@ -287,7 +287,7 @@ public static class Faker
         int stolenBases = 4,
         string stolenBasePercentage = "",
         int assists = 5,
-        int putOuts = 6,
+        int putouts = 6,
         int errors = 7,
         int chances = 8,
         string fielding = "",
@@ -313,7 +313,7 @@ public static class Faker
             StolenBases: scalar * stolenBases,
             StolenBasePercentage: stolenBasePercentage,
             Assists: scalar * assists,
-            PutOuts: scalar * putOuts,
+            Putouts: scalar * putouts,
             Errors: scalar * errors,
             Chances: scalar * chances,
             Fielding: fielding,
@@ -326,7 +326,7 @@ public static class Faker
             DoublePlays: scalar * doublePlays,
             TriplePlays: scalar * triplePlays,
             CatcherEra: catcherEra,
-            CatchersInterference: scalar * catcherInterferences,
+            CatcherInterferences: scalar * catcherInterferences,
             WildPitches: scalar * wildPitches,
             ThrowingErrors: scalar * throwingErrors,
             Pickoffs: scalar * pickoffs

@@ -5,13 +5,13 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.Statistic
 public class TotalChancesTests
 {
     [Fact]
-    public void Value_AssistsPutOutsErrors_ReturnsCalculatedValue()
+    public void Value_AssistsPutoutsErrors_ReturnsCalculatedValue()
     {
         // Arrange
         const int assists = 276;
-        const int putOuts = 139;
+        const int putouts = 139;
         const int errors = 8;
-        var totalChances = TotalChances.Create(assists, putOuts, errors);
+        var totalChances = TotalChances.Create(assists, putouts, errors);
 
         // Act
         var actual = totalChances.Value;
@@ -19,7 +19,7 @@ public class TotalChancesTests
         // Assert
         Assert.Equal(423, actual);
         Assert.Equal(276, totalChances.Assists.Value);
-        Assert.Equal(139, totalChances.PutOuts.Value);
+        Assert.Equal(139, totalChances.Putouts.Value);
         Assert.Equal(8, totalChances.Errors.Value);
     }
 }

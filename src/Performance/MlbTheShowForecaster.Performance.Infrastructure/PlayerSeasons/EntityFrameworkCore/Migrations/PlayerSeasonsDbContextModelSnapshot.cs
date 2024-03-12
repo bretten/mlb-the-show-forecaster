@@ -226,9 +226,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("varchar(4)")
                         .HasColumnName("position");
 
-                    b.Property<int>("PutOuts")
+                    b.Property<int>("Putouts")
                         .HasColumnType("integer")
-                        .HasColumnName("put_outs");
+                        .HasColumnName("putouts");
 
                     b.Property<int>("StolenBases")
                         .HasColumnType("integer")

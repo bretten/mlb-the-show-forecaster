@@ -12,7 +12,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeaso
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(PlayerSeasonsDbContext))]
-    [Migration("20240312074659_InitialCreatePlayerStatsBySeason")]
+    [Migration("20240312085015_InitialCreatePlayerStatsBySeason")]
     partial class InitialCreatePlayerStatsBySeason
     {
         /// <inheritdoc />
@@ -229,9 +229,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("varchar(4)")
                         .HasColumnName("position");
 
-                    b.Property<int>("PutOuts")
+                    b.Property<int>("Putouts")
                         .HasColumnType("integer")
-                        .HasColumnName("put_outs");
+                        .HasColumnName("putouts");
 
                     b.Property<int>("StolenBases")
                         .HasColumnType("integer")

@@ -19,7 +19,7 @@ public sealed class RangeFactorPerNine : CalculatedStat
     /// <summary>
     /// The number of times the fielder tags, forces, or appeals a runner and they are called out
     /// </summary>
-    public NaturalNumber PutOuts { get; }
+    public NaturalNumber Putouts { get; }
 
     /// <summary>
     /// The number of innings this player fielded at this position
@@ -30,12 +30,12 @@ public sealed class RangeFactorPerNine : CalculatedStat
     /// Constructor
     /// </summary>
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
-    /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
+    /// <param name="putouts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="innings">The number of innings this player fielded at this position</param>
-    private RangeFactorPerNine(NaturalNumber assists, NaturalNumber putOuts, InningsCount innings)
+    private RangeFactorPerNine(NaturalNumber assists, NaturalNumber putouts, InningsCount innings)
     {
         Assists = assists;
-        PutOuts = putOuts;
+        Putouts = putouts;
         Innings = innings;
     }
 
@@ -45,19 +45,19 @@ public sealed class RangeFactorPerNine : CalculatedStat
     /// <returns>Range factor per 9 innings</returns>
     protected override decimal Calculate()
     {
-        return 9 * ((PutOuts.Value + Assists.Value) / Innings.Value);
+        return 9 * ((Putouts.Value + Assists.Value) / Innings.Value);
     }
 
     /// <summary>
     /// Creates <see cref="RangeFactorPerNine"/>
     /// </summary>
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
-    /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
+    /// <param name="putouts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="innings">The number of innings this player fielded at this position</param>
     /// <returns><see cref="RangeFactorPerNine"/></returns>
-    public static RangeFactorPerNine Create(int assists, int putOuts, decimal innings)
+    public static RangeFactorPerNine Create(int assists, int putouts, decimal innings)
     {
-        return new RangeFactorPerNine(NaturalNumber.Create(assists), NaturalNumber.Create(putOuts),
+        return new RangeFactorPerNine(NaturalNumber.Create(assists), NaturalNumber.Create(putouts),
             InningsCount.Create(innings));
     }
 }

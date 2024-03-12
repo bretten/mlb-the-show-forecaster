@@ -123,7 +123,7 @@ public readonly record struct PitchingStatsDto(
     [property: JsonPropertyName("inheritedRunnersScored")]
     int InheritedRunnersScored,
     [property: JsonPropertyName("catchersInterference")]
-    int CatchersInterference,
+    int CatcherInterferences,
     [property: JsonPropertyName("sacBunts")]
     int SacBunts,
     [property: JsonPropertyName("sacFlies")]

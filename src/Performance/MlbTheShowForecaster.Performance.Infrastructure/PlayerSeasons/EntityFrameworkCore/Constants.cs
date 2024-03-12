@@ -479,7 +479,7 @@ public static class Constants
         /// <summary>
         /// The number of times the fielder tags, forces, or appeals a runner and they are called out
         /// </summary>
-        public const string PutOuts = "put_outs";
+        public const string Putouts = "putouts";
 
         /// <summary>
         /// The number of times a fielder fails to make a play that is considered to be doable with common effort

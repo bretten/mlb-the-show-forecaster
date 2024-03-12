@@ -62,7 +62,7 @@ public static class PreEncodedText
         public static readonly JsonEncodedText SacFlies = JsonEncodedText.Encode("sacFlies");
         public static readonly JsonEncodedText Babip = JsonEncodedText.Encode("babip");
         public static readonly JsonEncodedText GroundOutsToAirouts = JsonEncodedText.Encode("groundOutsToAirouts");
-        public static readonly JsonEncodedText CatchersInterference = JsonEncodedText.Encode("catchersInterference");
+        public static readonly JsonEncodedText CatcherInterferences = JsonEncodedText.Encode("catchersInterference");
         public static readonly JsonEncodedText AtBatsPerHomeRun = JsonEncodedText.Encode("atBatsPerHomeRun");
     }
 
@@ -130,7 +130,7 @@ public static class PreEncodedText
         public static readonly JsonEncodedText
             InheritedRunnersScored = JsonEncodedText.Encode("inheritedRunnersScored");
 
-        public static readonly JsonEncodedText CatchersInterference = JsonEncodedText.Encode("catchersInterference");
+        public static readonly JsonEncodedText CatcherInterferences = JsonEncodedText.Encode("catchersInterference");
         public static readonly JsonEncodedText SacBunts = JsonEncodedText.Encode("sacBunts");
         public static readonly JsonEncodedText SacFlies = JsonEncodedText.Encode("sacFlies");
     }
@@ -144,7 +144,7 @@ public static class PreEncodedText
         public static readonly JsonEncodedText StolenBases = JsonEncodedText.Encode("stolenBases");
         public static readonly JsonEncodedText StolenBasePercentage = JsonEncodedText.Encode("stolenBasePercentage");
         public static readonly JsonEncodedText Assists = JsonEncodedText.Encode("assists");
-        public static readonly JsonEncodedText PutOuts = JsonEncodedText.Encode("putOuts");
+        public static readonly JsonEncodedText Putouts = JsonEncodedText.Encode("putOuts");
         public static readonly JsonEncodedText Errors = JsonEncodedText.Encode("errors");
         public static readonly JsonEncodedText Chances = JsonEncodedText.Encode("chances");
         public static readonly JsonEncodedText FieldingPercentage = JsonEncodedText.Encode("fielding");
@@ -157,7 +157,7 @@ public static class PreEncodedText
         public static readonly JsonEncodedText DoublePlays = JsonEncodedText.Encode("doublePlays");
         public static readonly JsonEncodedText TriplePlays = JsonEncodedText.Encode("triplePlays");
         public static readonly JsonEncodedText CatcherEra = JsonEncodedText.Encode("catcherERA");
-        public static readonly JsonEncodedText CatchersInterference = JsonEncodedText.Encode("catchersInterference");
+        public static readonly JsonEncodedText CatcherInterferences = JsonEncodedText.Encode("catchersInterference");
         public static readonly JsonEncodedText WildPitches = JsonEncodedText.Encode("wildPitches");
         public static readonly JsonEncodedText ThrowingErrors = JsonEncodedText.Encode("throwingErrors");
         public static readonly JsonEncodedText Pickoffs = JsonEncodedText.Encode("pickoffs");

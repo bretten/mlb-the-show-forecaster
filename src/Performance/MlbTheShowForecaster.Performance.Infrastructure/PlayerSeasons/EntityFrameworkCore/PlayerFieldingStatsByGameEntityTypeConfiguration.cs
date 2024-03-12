@@ -82,10 +82,10 @@ public sealed class
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
-        builder.Property(e => e.PutOuts)
+        builder.Property(e => e.Putouts)
             .IsRequired()
             .HasColumnType("integer")
-            .HasColumnName(Constants.PlayerFieldingStatsByGames.PutOuts)
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.Putouts)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 

@@ -127,7 +127,7 @@ public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
                     gameStarted: x.GameStarted,
                     inningsPlayed: x.InningsPlayed.Value,
                     assists: x.Assists.Value,
-                    putOuts: x.PutOuts.Value,
+                    putouts: x.Putouts.Value,
                     errors: x.Errors.Value,
                     throwingErrors: x.ThrowingErrors.Value,
                     doublePlays: x.DoublePlays.Value,

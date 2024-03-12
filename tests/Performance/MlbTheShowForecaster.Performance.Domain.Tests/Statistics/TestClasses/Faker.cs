@@ -96,7 +96,7 @@ public static class Faker
     }
 
     public static FieldingStats FakeFieldingStats(Position position = Position.Catcher, int gamesStarted = 0,
-        decimal inningsPlayed = 0, int assists = 0, int putOuts = 0, int errors = 0, int throwingErrors = 0,
+        decimal inningsPlayed = 0, int assists = 0, int putouts = 0, int errors = 0, int throwingErrors = 0,
         int doublePlays = 0, int triplePlays = 0, int caughtStealing = 0, int stolenBases = 0, int passedBalls = 0,
         int catcherInterferences = 0, int wildPitches = 0, int pickOffs = 0)
     {
@@ -104,7 +104,7 @@ public static class Faker
             gamesStarted: gamesStarted,
             inningsPlayed: inningsPlayed,
             assists: assists,
-            putOuts: putOuts,
+            putouts: putouts,
             errors: errors,
             throwingErrors: throwingErrors,
             doublePlays: doublePlays,

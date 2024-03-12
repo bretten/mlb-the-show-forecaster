@@ -18,7 +18,7 @@ public sealed class TotalChances : CalculatedStat
     /// <summary>
     /// The number of times the fielder tags, forces, or appeals a runner and they are called out
     /// </summary>
-    public NaturalNumber PutOuts { get; }
+    public NaturalNumber Putouts { get; }
 
     /// <summary>
     /// The number of times a fielder fails to make a play that is considered to be doable with common effort
@@ -29,12 +29,12 @@ public sealed class TotalChances : CalculatedStat
     /// Constructor
     /// </summary>
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
-    /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
+    /// <param name="putouts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
-    private TotalChances(NaturalNumber assists, NaturalNumber putOuts, NaturalNumber errors)
+    private TotalChances(NaturalNumber assists, NaturalNumber putouts, NaturalNumber errors)
     {
         Assists = assists;
-        PutOuts = putOuts;
+        Putouts = putouts;
         Errors = errors;
     }
 
@@ -49,19 +49,19 @@ public sealed class TotalChances : CalculatedStat
     /// <returns>Total chances</returns>
     protected override decimal Calculate()
     {
-        return Assists.Value + PutOuts.Value + Errors.Value;
+        return Assists.Value + Putouts.Value + Errors.Value;
     }
 
     /// <summary>
     /// Creates <see cref="TotalChances"/>
     /// </summary>
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
-    /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
+    /// <param name="putouts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
     /// <returns><see cref="TotalChances"/></returns>
-    public static TotalChances Create(int assists, int putOuts, int errors)
+    public static TotalChances Create(int assists, int putouts, int errors)
     {
-        return new TotalChances(NaturalNumber.Create(assists), NaturalNumber.Create(putOuts),
+        return new TotalChances(NaturalNumber.Create(assists), NaturalNumber.Create(putouts),
             NaturalNumber.Create(errors));
     }
 }

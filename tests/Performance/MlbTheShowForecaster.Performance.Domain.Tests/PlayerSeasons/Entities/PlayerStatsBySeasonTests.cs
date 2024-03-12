@@ -306,7 +306,7 @@ public class PlayerStatsBySeasonTests
             gameStarted: true,
             inningsPlayed: 1,
             assists: 2,
-            putOuts: 3,
+            putouts: 3,
             errors: 4,
             throwingErrors: 5,
             doublePlays: 6,
@@ -322,7 +322,7 @@ public class PlayerStatsBySeasonTests
             gameStarted: false,
             inningsPlayed: 1000,
             assists: 2000,
-            putOuts: 3000,
+            putouts: 3000,
             errors: 4000,
             throwingErrors: 5000,
             doublePlays: 6000,
@@ -345,7 +345,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(1, actual.GamesStarted.Value);
         Assert.Equal(1001, actual.InningsPlayed.Value);
         Assert.Equal(2002, actual.Assists.Value);
-        Assert.Equal(3003, actual.PutOuts.Value);
+        Assert.Equal(3003, actual.Putouts.Value);
         Assert.Equal(4004, actual.Errors.Value);
         Assert.Equal(5005, actual.ThrowingErrors.Value);
         Assert.Equal(6006, actual.DoublePlays.Value);
@@ -366,7 +366,7 @@ public class PlayerStatsBySeasonTests
             gameStarted: true,
             inningsPlayed: 1,
             assists: 2,
-            putOuts: 3,
+            putouts: 3,
             errors: 4,
             throwingErrors: 5,
             doublePlays: 6,
@@ -382,7 +382,7 @@ public class PlayerStatsBySeasonTests
             gameStarted: false,
             inningsPlayed: 1000,
             assists: 2000,
-            putOuts: 3000,
+            putouts: 3000,
             errors: 4000,
             throwingErrors: 5000,
             doublePlays: 6000,
@@ -405,7 +405,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(1, actual[Position.RightField].GamesStarted.Value);
         Assert.Equal(1, actual[Position.RightField].InningsPlayed.Value);
         Assert.Equal(2, actual[Position.RightField].Assists.Value);
-        Assert.Equal(3, actual[Position.RightField].PutOuts.Value);
+        Assert.Equal(3, actual[Position.RightField].Putouts.Value);
         Assert.Equal(4, actual[Position.RightField].Errors.Value);
         Assert.Equal(5, actual[Position.RightField].ThrowingErrors.Value);
         Assert.Equal(6, actual[Position.RightField].DoublePlays.Value);
@@ -421,7 +421,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(0, actual[Position.LeftField].GamesStarted.Value);
         Assert.Equal(1000, actual[Position.LeftField].InningsPlayed.Value);
         Assert.Equal(2000, actual[Position.LeftField].Assists.Value);
-        Assert.Equal(3000, actual[Position.LeftField].PutOuts.Value);
+        Assert.Equal(3000, actual[Position.LeftField].Putouts.Value);
         Assert.Equal(4000, actual[Position.LeftField].Errors.Value);
         Assert.Equal(5000, actual[Position.LeftField].ThrowingErrors.Value);
         Assert.Equal(6000, actual[Position.LeftField].DoublePlays.Value);
@@ -481,7 +481,7 @@ public class PlayerStatsBySeasonTests
     public void LogFieldingGame_FieldingGame_LogsGameToSeasonAndRaisesParticipationDomainEvent()
     {
         // Arrange
-        var fieldingGame = Faker.FakePlayerFieldingStats(assists: 3, putOuts: 2, errors: 1);
+        var fieldingGame = Faker.FakePlayerFieldingStats(assists: 3, putouts: 2, errors: 1);
         var seasonStats = Faker.FakePlayerSeasonStats();
 
         // Act
@@ -491,7 +491,7 @@ public class PlayerStatsBySeasonTests
         Assert.Single(seasonStats.FieldingStatsByGamesChronologically);
         Assert.Equal(fieldingGame, seasonStats.FieldingStatsByGamesChronologically[0]);
         Assert.Equal(3, seasonStats.SeasonAggregateFieldingStats.Assists.Value);
-        Assert.Equal(2, seasonStats.SeasonAggregateFieldingStats.PutOuts.Value);
+        Assert.Equal(2, seasonStats.SeasonAggregateFieldingStats.Putouts.Value);
         Assert.Equal(1, seasonStats.SeasonAggregateFieldingStats.Errors.Value);
 
         Assert.Equal(1, seasonStats.DomainEvents.Count);
@@ -717,9 +717,9 @@ public class PlayerStatsBySeasonTests
         var comparisonDate = new DateTime(2024, 4, 1);
         const decimal percentChangeThreshold = 20m;
         var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
-            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+            assists: 1, putouts: 1, errors: 1); // TC = 3, F% = 2/3
         var gameSinceComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(1),
-            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+            assists: 1, putouts: 1, errors: 1); // TC = 3, F% = 2/3
         var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
         {
             gameBeforeComparisonDate, gameSinceComparisonDate
@@ -743,9 +743,9 @@ public class PlayerStatsBySeasonTests
         var comparisonDate = new DateTime(2024, 4, 1);
         const decimal percentChangeThreshold = 10m;
         var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
-            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+            assists: 1, putouts: 1, errors: 1); // TC = 3, F% = 2/3
         var gameSinceComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(1),
-            assists: 1, putOuts: 2, errors: 1); // TC = 4, F% = 3/4
+            assists: 1, putouts: 2, errors: 1); // TC = 4, F% = 3/4
         var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
         {
             gameBeforeComparisonDate, gameSinceComparisonDate
@@ -770,9 +770,9 @@ public class PlayerStatsBySeasonTests
         var comparisonDate = new DateTime(2024, 4, 1);
         const decimal percentChangeThreshold = 10m;
         var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
-            assists: 1, putOuts: 2, errors: 1); // TC = 4, F% = 3/4
+            assists: 1, putouts: 2, errors: 1); // TC = 4, F% = 3/4
         var gameSinceComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(1),
-            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+            assists: 1, putouts: 1, errors: 1); // TC = 3, F% = 2/3
         var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
         {
             gameBeforeComparisonDate, gameSinceComparisonDate
@@ -797,9 +797,9 @@ public class PlayerStatsBySeasonTests
         var comparisonDate = new DateTime(2024, 4, 1);
         const decimal percentChangeThreshold = 30m;
         var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
-            assists: 1, putOuts: 1, errors: 1); // TC = 3, F% = 2/3
+            assists: 1, putouts: 1, errors: 1); // TC = 3, F% = 2/3
         var gameSinceComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(1),
-            assists: 1, putOuts: 2, errors: 1); // TC = 4, F% = 3/4
+            assists: 1, putouts: 2, errors: 1); // TC = 4, F% = 3/4
         var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
         {
             gameBeforeComparisonDate, gameSinceComparisonDate

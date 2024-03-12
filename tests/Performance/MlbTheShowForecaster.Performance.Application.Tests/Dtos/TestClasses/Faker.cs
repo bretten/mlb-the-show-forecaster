@@ -116,7 +116,7 @@ public static class Faker
 
     public static PlayerGameFieldingStats FakePlayerGameFieldingStats(int playerMlbId = 1, ushort seasonYear = 2024,
         DateTime? gameDate = null, int gameMlbId = 10000, int teamMlbId = 100, Position position = Position.Catcher,
-        bool gameStarted = false, decimal inningsPlayed = 1, int assists = 2, int putOuts = 3, int errors = 4,
+        bool gameStarted = false, decimal inningsPlayed = 1, int assists = 2, int putouts = 3, int errors = 4,
         int throwingErrors = 5, int doublePlays = 6, int triplePlays = 7, int caughtStealing = 8, int stolenBases = 9,
         int passedBalls = 10, int catcherInterferences = 11, int wildPitches = 12, int pickOffs = 13, int scalar = 1)
     {
@@ -126,7 +126,7 @@ public static class Faker
             GameStarted: gameStarted,
             InningsPlayed: InningsCount.Create(scalar * inningsPlayed),
             Assists: NaturalNumber.Create(scalar * assists),
-            PutOuts: NaturalNumber.Create(scalar * putOuts),
+            Putouts: NaturalNumber.Create(scalar * putouts),
             Errors: NaturalNumber.Create(scalar * errors),
             ThrowingErrors: NaturalNumber.Create(scalar * throwingErrors),
             DoublePlays: NaturalNumber.Create(scalar * doublePlays),
