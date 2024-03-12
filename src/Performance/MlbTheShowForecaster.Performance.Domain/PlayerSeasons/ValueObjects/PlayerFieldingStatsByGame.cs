@@ -59,7 +59,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="gamesStarted">The number of times the player started the game at this <see cref="Position"/></param>
     /// <param name="inningsPlayed">The number of innings this player fielded at this <see cref="Position"/></param>
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
-    /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
+    /// <param name="putouts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
     /// <param name="throwingErrors">The number of errors that were the result of a bad throw</param>
     /// <param name="doublePlays">The number of double plays where the fielder recorded a putout or an assist</param>
@@ -69,14 +69,14 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="passedBalls">Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance</param>
     /// <param name="catcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
-    /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
+    /// <param name="pickoffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     private PlayerFieldingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameMlbId,
         MlbId teamMlbId, Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed,
-        NaturalNumber assists, NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors,
+        NaturalNumber assists, NaturalNumber putouts, NaturalNumber errors, NaturalNumber throwingErrors,
         NaturalNumber doublePlays, NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases,
         NaturalNumber passedBalls, NaturalNumber catcherInterferences, NaturalNumber wildPitches,
-        NaturalNumber pickOffs) : base(position, gamesStarted, inningsPlayed, assists, putOuts, errors, throwingErrors,
-        doublePlays, triplePlays, caughtStealing, stolenBases, passedBalls, catcherInterferences, wildPitches, pickOffs)
+        NaturalNumber pickoffs) : base(position, gamesStarted, inningsPlayed, assists, putouts, errors, throwingErrors,
+        doublePlays, triplePlays, caughtStealing, stolenBases, passedBalls, catcherInterferences, wildPitches, pickoffs)
     {
         PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
@@ -97,7 +97,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="gameStarted">True if the player started the game at this position</param>
     /// <param name="inningsPlayed">The number of innings this player fielded at this position</param>
     /// <param name="assists">The number of outs on a play where the fielder touched the ball excluding when this player does the actual putout</param>
-    /// <param name="putOuts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
+    /// <param name="putouts">The number of times the fielder tags, forces, or appeals a runner and they are called out</param>
     /// <param name="errors">The number of times a fielder fails to make a play that is considered to be doable with common effort</param>
     /// <param name="throwingErrors">The number of errors that were the result of a bad throw</param>
     /// <param name="doublePlays">The number of double plays where the fielder recorded a putout or an assist</param>
@@ -107,17 +107,17 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="passedBalls">Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance</param>
     /// <param name="catcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
-    /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
+    /// <param name="pickoffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     /// <returns><see cref="PlayerFieldingStatsByGame"/></returns>
     public static PlayerFieldingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate,
         MlbId gameMlbId, MlbId teamMlbId, Position position, bool gameStarted, decimal inningsPlayed, int assists,
-        int putOuts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
-        int stolenBases, int passedBalls, int catcherInterferences, int wildPitches, int pickOffs)
+        int putouts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
+        int stolenBases, int passedBalls, int catcherInterferences, int wildPitches, int pickoffs)
     {
         var gs = gameStarted ? NaturalNumber.Create(1) : NaturalNumber.Create(0);
         var inn = InningsCount.Create(inningsPlayed);
         var a = NaturalNumber.Create(assists);
-        var po = NaturalNumber.Create(putOuts);
+        var po = NaturalNumber.Create(putouts);
         var e = NaturalNumber.Create(errors);
         var te = NaturalNumber.Create(throwingErrors);
         var dp = NaturalNumber.Create(doublePlays);
@@ -127,12 +127,12 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         var pb = NaturalNumber.Create(passedBalls);
         var ci = NaturalNumber.Create(catcherInterferences);
         var wp = NaturalNumber.Create(wildPitches);
-        var pk = NaturalNumber.Create(pickOffs);
+        var pk = NaturalNumber.Create(pickoffs);
         return new PlayerFieldingStatsByGame(playerMlbId, seasonYear, gameDate, gameMlbId, teamMlbId, position,
             gamesStarted: gs,
             inningsPlayed: inn,
             assists: a,
-            putOuts: po,
+            putouts: po,
             errors: e,
             throwingErrors: te,
             doublePlays: dp,
@@ -142,6 +142,6 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
             passedBalls: pb,
             catcherInterferences: ci,
             wildPitches: wp,
-            pickOffs: pk);
+            pickoffs: pk);
     }
 }

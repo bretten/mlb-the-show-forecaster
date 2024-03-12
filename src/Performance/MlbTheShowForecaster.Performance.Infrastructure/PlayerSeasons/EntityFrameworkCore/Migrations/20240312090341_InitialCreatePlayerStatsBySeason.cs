@@ -90,7 +90,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     games_started = table.Column<int>(type: "integer", nullable: false),
                     innings_played = table.Column<decimal>(type: "numeric(8,3)", nullable: false),
                     assists = table.Column<int>(type: "integer", nullable: false),
-                    put_outs = table.Column<int>(type: "integer", nullable: false),
+                    putouts = table.Column<int>(type: "integer", nullable: false),
                     errors = table.Column<int>(type: "integer", nullable: false),
                     throwing_errors = table.Column<int>(type: "integer", nullable: false),
                     double_plays = table.Column<int>(type: "integer", nullable: false),
@@ -100,7 +100,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     passed_balls = table.Column<int>(type: "integer", nullable: false),
                     catcher_interferences = table.Column<int>(type: "integer", nullable: false),
                     wild_pitches = table.Column<int>(type: "integer", nullable: false),
-                    pick_offs = table.Column<int>(type: "integer", nullable: false)
+                    pickoffs = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -158,7 +158,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     at_bats = table.Column<int>(type: "integer", nullable: false),
                     stolen_bases = table.Column<int>(type: "integer", nullable: false),
                     caught_stealing = table.Column<int>(type: "integer", nullable: false),
-                    pick_offs = table.Column<int>(type: "integer", nullable: false),
+                    pickoffs = table.Column<int>(type: "integer", nullable: false),
                     inherited_runners = table.Column<int>(type: "integer", nullable: false),
                     inherited_runners_scored = table.Column<int>(type: "integer", nullable: false),
                     catcher_interferences = table.Column<int>(type: "integer", nullable: false),

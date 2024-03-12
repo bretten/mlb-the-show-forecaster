@@ -11,9 +11,9 @@ public class FieldingStatsTests
     {
         // Arrange
         const int assists = 276;
-        const int putOuts = 139;
+        const int putouts = 139;
         const int errors = 8;
-        var stats = Faker.FakeFieldingStats(assists: assists, putOuts: putOuts, errors: errors);
+        var stats = Faker.FakeFieldingStats(assists: assists, putouts: putouts, errors: errors);
 
         // Act
         var actual = stats.FieldingPercentage;
@@ -27,9 +27,9 @@ public class FieldingStatsTests
     {
         // Arrange
         const int assists = 276;
-        const int putOuts = 139;
+        const int putouts = 139;
         const int errors = 8;
-        var stats = Faker.FakeFieldingStats(assists: assists, putOuts: putOuts, errors: errors);
+        var stats = Faker.FakeFieldingStats(assists: assists, putouts: putouts, errors: errors);
 
         // Act
         var actual = stats.TotalChances;
@@ -39,13 +39,13 @@ public class FieldingStatsTests
     }
 
     [Fact]
-    public void RangeFactorPer9_AssistsPutOutsInnings_ReturnsCalculatedValue()
+    public void RangeFactorPer9_AssistsPutoutsInnings_ReturnsCalculatedValue()
     {
         // Arrange
         const int assists = 276;
-        const int putOuts = 139;
+        const int putouts = 139;
         const decimal inningsPlayed = 951.2m;
-        var stats = Faker.FakeFieldingStats(assists: assists, putOuts: putOuts, inningsPlayed: inningsPlayed);
+        var stats = Faker.FakeFieldingStats(assists: assists, putouts: putouts, inningsPlayed: inningsPlayed);
 
         // Act
         var actual = stats.RangeFactorPer9;
@@ -77,7 +77,7 @@ public class FieldingStatsTests
         const int gamesStarted = 50; // NOTE: Nonsensical stats
         const decimal inningsPlayed = 1.1m;
         const int assists = 1;
-        const int putOuts = 2;
+        const int putouts = 2;
         const int errors = 3;
         const int throwingErrors = 4;
         const int doublePlays = 5;
@@ -87,14 +87,14 @@ public class FieldingStatsTests
         const int passedBalls = 9;
         const int catcherInterferences = 10;
         const int wildPitches = 11;
-        const int pickOffs = 12;
+        const int pickoffs = 12;
 
         // Act
         var actual = FieldingStats.Create(position: position,
             gamesStarted: gamesStarted,
             inningsPlayed: inningsPlayed,
             assists: assists,
-            putOuts: putOuts,
+            putouts: putouts,
             errors: errors,
             throwingErrors: throwingErrors,
             doublePlays: doublePlays,
@@ -104,7 +104,7 @@ public class FieldingStatsTests
             passedBalls: passedBalls,
             catcherInterferences: catcherInterferences,
             wildPitches: wildPitches,
-            pickOffs: pickOffs
+            pickoffs: pickoffs
         );
 
         // Assert
@@ -112,7 +112,7 @@ public class FieldingStatsTests
         Assert.Equal(50, actual.GamesStarted.Value);
         Assert.Equal(1.333m, actual.InningsPlayed.Value);
         Assert.Equal(1, actual.Assists.Value);
-        Assert.Equal(2, actual.PutOuts.Value);
+        Assert.Equal(2, actual.Putouts.Value);
         Assert.Equal(3, actual.Errors.Value);
         Assert.Equal(4, actual.ThrowingErrors.Value);
         Assert.Equal(5, actual.DoublePlays.Value);
@@ -122,7 +122,7 @@ public class FieldingStatsTests
         Assert.Equal(9, actual.PassedBalls.Value);
         Assert.Equal(10, actual.CatcherInterferences.Value);
         Assert.Equal(11, actual.WildPitches.Value);
-        Assert.Equal(12, actual.PickOffs.Value);
+        Assert.Equal(12, actual.Pickoffs.Value);
     }
 
     [Fact]
@@ -133,7 +133,7 @@ public class FieldingStatsTests
             gamesStarted: 1,
             inningsPlayed: 2,
             assists: 3,
-            putOuts: 4,
+            putouts: 4,
             errors: 5,
             throwingErrors: 6,
             doublePlays: 7,
@@ -143,13 +143,13 @@ public class FieldingStatsTests
             passedBalls: 11,
             catcherInterferences: 12,
             wildPitches: 13,
-            pickOffs: 14
+            pickoffs: 14
         );
         var stats2 = Faker.FakeFieldingStats(position: Position.RightField,
             gamesStarted: 1000,
             inningsPlayed: 2000,
             assists: 3000,
-            putOuts: 4000,
+            putouts: 4000,
             errors: 5000,
             throwingErrors: 6000,
             doublePlays: 7000,
@@ -159,7 +159,7 @@ public class FieldingStatsTests
             passedBalls: 11000,
             catcherInterferences: 12000,
             wildPitches: 13000,
-            pickOffs: 14000
+            pickoffs: 14000
         );
         var statsCollection = new List<FieldingStats>() { stats1, stats2 };
 
@@ -171,7 +171,7 @@ public class FieldingStatsTests
         Assert.Equal(1001, actual.GamesStarted.Value);
         Assert.Equal(2002, actual.InningsPlayed.Value);
         Assert.Equal(3003, actual.Assists.Value);
-        Assert.Equal(4004, actual.PutOuts.Value);
+        Assert.Equal(4004, actual.Putouts.Value);
         Assert.Equal(5005, actual.Errors.Value);
         Assert.Equal(6006, actual.ThrowingErrors.Value);
         Assert.Equal(7007, actual.DoublePlays.Value);
@@ -181,6 +181,6 @@ public class FieldingStatsTests
         Assert.Equal(11011, actual.PassedBalls.Value);
         Assert.Equal(12012, actual.CatcherInterferences.Value);
         Assert.Equal(13013, actual.WildPitches.Value);
-        Assert.Equal(14014, actual.PickOffs.Value);
+        Assert.Equal(14014, actual.Pickoffs.Value);
     }
 }

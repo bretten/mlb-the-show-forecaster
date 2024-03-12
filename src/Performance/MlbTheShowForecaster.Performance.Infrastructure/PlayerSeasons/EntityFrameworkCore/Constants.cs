@@ -393,7 +393,7 @@ public static class Constants
         /// <summary>
         /// The number of pick offs made by this pitcher
         /// </summary>
-        public const string PickOffs = "pick_offs";
+        public const string Pickoffs = "pickoffs";
 
         /// <summary>
         /// The number of runners on base when the pitcher enters the game
@@ -479,7 +479,7 @@ public static class Constants
         /// <summary>
         /// The number of times the fielder tags, forces, or appeals a runner and they are called out
         /// </summary>
-        public const string PutOuts = "put_outs";
+        public const string Putouts = "putouts";
 
         /// <summary>
         /// The number of times a fielder fails to make a play that is considered to be doable with common effort
@@ -529,6 +529,6 @@ public static class Constants
         /// <summary>
         /// Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate
         /// </summary>
-        public const string PickOffs = "pick_offs";
+        public const string Pickoffs = "pickoffs";
     }
 }

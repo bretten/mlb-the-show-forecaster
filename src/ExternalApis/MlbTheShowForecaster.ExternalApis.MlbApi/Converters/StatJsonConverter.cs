@@ -250,7 +250,7 @@ public class StatJsonConverter : JsonConverter<StatsDto>
         writer.WriteNumber(PreEncodedText.Hitting.SacFlies, game.Stat.SacFlies);
         writer.WriteString(PreEncodedText.Hitting.Babip, game.Stat.Babip);
         writer.WriteString(PreEncodedText.Hitting.GroundOutsToAirouts, game.Stat.GroundOutsToAirOuts);
-        writer.WriteNumber(PreEncodedText.Hitting.CatchersInterference, game.Stat.CatchersInterference);
+        writer.WriteNumber(PreEncodedText.Hitting.CatcherInterferences, game.Stat.CatcherInterferences);
         writer.WriteString(PreEncodedText.Hitting.AtBatsPerHomeRun, game.Stat.AtBatsPerHomeRun);
     }
 
@@ -319,7 +319,7 @@ public class StatJsonConverter : JsonConverter<StatsDto>
         writer.WriteString(PreEncodedText.Pitching.HomeRunsPer9, game.Stat.HomeRunsPer9);
         writer.WriteNumber(PreEncodedText.Pitching.InheritedRunners, game.Stat.InheritedRunners);
         writer.WriteNumber(PreEncodedText.Pitching.InheritedRunnersScored, game.Stat.InheritedRunnersScored);
-        writer.WriteNumber(PreEncodedText.Pitching.CatchersInterference, game.Stat.CatchersInterference);
+        writer.WriteNumber(PreEncodedText.Pitching.CatcherInterferences, game.Stat.CatcherInterferences);
         writer.WriteNumber(PreEncodedText.Pitching.SacBunts, game.Stat.SacBunts);
         writer.WriteNumber(PreEncodedText.Pitching.SacFlies, game.Stat.SacFlies);
     }
@@ -337,7 +337,7 @@ public class StatJsonConverter : JsonConverter<StatsDto>
         writer.WriteNumber(PreEncodedText.Fielding.StolenBases, game.Stat.StolenBases);
         writer.WriteString(PreEncodedText.Fielding.StolenBasePercentage, game.Stat.StolenBasePercentage);
         writer.WriteNumber(PreEncodedText.Fielding.Assists, game.Stat.Assists);
-        writer.WriteNumber(PreEncodedText.Fielding.PutOuts, game.Stat.PutOuts);
+        writer.WriteNumber(PreEncodedText.Fielding.Putouts, game.Stat.Putouts);
         writer.WriteNumber(PreEncodedText.Fielding.Errors, game.Stat.Errors);
         writer.WriteNumber(PreEncodedText.Fielding.Chances, game.Stat.Chances);
         writer.WriteString(PreEncodedText.Fielding.FieldingPercentage, game.Stat.Fielding);
@@ -356,7 +356,7 @@ public class StatJsonConverter : JsonConverter<StatsDto>
         writer.WriteNumber(PreEncodedText.Fielding.DoublePlays, game.Stat.DoublePlays);
         writer.WriteNumber(PreEncodedText.Fielding.TriplePlays, game.Stat.TriplePlays);
         writer.WriteString(PreEncodedText.Fielding.CatcherEra, game.Stat.CatcherEra);
-        writer.WriteNumber(PreEncodedText.Fielding.CatchersInterference, game.Stat.CatchersInterference);
+        writer.WriteNumber(PreEncodedText.Fielding.CatcherInterferences, game.Stat.CatcherInterferences);
         writer.WriteNumber(PreEncodedText.Fielding.WildPitches, game.Stat.WildPitches);
         writer.WriteNumber(PreEncodedText.Fielding.ThrowingErrors, game.Stat.ThrowingErrors);
         writer.WriteNumber(PreEncodedText.Fielding.Pickoffs, game.Stat.Pickoffs);

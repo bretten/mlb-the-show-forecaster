@@ -322,7 +322,7 @@ public class PitchingStatsTests
         const int atBats = 31;
         const int stolenBases = 32;
         const int caughtStealing = 33;
-        const int pickOffs = 34;
+        const int pickoffs = 34;
         const int inheritedRunners = 35;
         const int inheritedRunnersScored = 36;
         const int catcherInterferences = 37;
@@ -363,7 +363,7 @@ public class PitchingStatsTests
             atBats: atBats,
             stolenBases: stolenBases,
             caughtStealing: caughtStealing,
-            pickOffs: pickOffs,
+            pickoffs: pickoffs,
             inheritedRunners: inheritedRunners,
             inheritedRunnersScored: inheritedRunnersScored,
             catcherInterferences: catcherInterferences,
@@ -405,7 +405,7 @@ public class PitchingStatsTests
         Assert.Equal(31, actual.AtBats.Value);
         Assert.Equal(32, actual.StolenBases.Value);
         Assert.Equal(33, actual.CaughtStealing.Value);
-        Assert.Equal(34, actual.PickOffs.Value);
+        Assert.Equal(34, actual.Pickoffs.Value);
         Assert.Equal(35, actual.InheritedRunners.Value);
         Assert.Equal(36, actual.InheritedRunnersScored.Value);
         Assert.Equal(37, actual.CatcherInterferences.Value);
@@ -450,7 +450,7 @@ public class PitchingStatsTests
             atBats: 31,
             stolenBases: 32,
             caughtStealing: 33,
-            pickOffs: 34,
+            pickoffs: 34,
             inheritedRunners: 35,
             inheritedRunnersScored: 36,
             catcherInterferences: 37,
@@ -490,7 +490,7 @@ public class PitchingStatsTests
             atBats: 31000,
             stolenBases: 32000,
             caughtStealing: 33000,
-            pickOffs: 34000,
+            pickoffs: 34000,
             inheritedRunners: 35000,
             inheritedRunnersScored: 36000,
             catcherInterferences: 37000,
@@ -536,7 +536,7 @@ public class PitchingStatsTests
         Assert.Equal(31031, actual.AtBats.Value);
         Assert.Equal(32032, actual.StolenBases.Value);
         Assert.Equal(33033, actual.CaughtStealing.Value);
-        Assert.Equal(34034, actual.PickOffs.Value);
+        Assert.Equal(34034, actual.Pickoffs.Value);
         Assert.Equal(35035, actual.InheritedRunners.Value);
         Assert.Equal(36036, actual.InheritedRunnersScored.Value);
         Assert.Equal(37037, actual.CatcherInterferences.Value);

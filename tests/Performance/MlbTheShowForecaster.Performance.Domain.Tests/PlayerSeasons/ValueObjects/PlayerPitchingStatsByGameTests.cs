@@ -76,7 +76,7 @@ public class PlayerPitchingStatsByGameTests
         const int atBats = 31;
         const int stolenBases = 32;
         const int caughtStealing = 33;
-        const int pickOffs = 34;
+        const int pickoffs = 34;
         const int inheritedRunners = 35;
         const int inheritedRunnersScored = 36;
         const int catcherInterferences = 37;
@@ -118,7 +118,7 @@ public class PlayerPitchingStatsByGameTests
             atBats: atBats,
             stolenBases: stolenBases,
             caughtStealing: caughtStealing,
-            pickOffs: pickOffs,
+            pickoffs: pickoffs,
             inheritedRunners: inheritedRunners,
             inheritedRunnersScored: inheritedRunnersScored,
             catcherInterferences: catcherInterferences,
@@ -165,7 +165,7 @@ public class PlayerPitchingStatsByGameTests
         Assert.Equal(31, actual.AtBats.Value);
         Assert.Equal(32, actual.StolenBases.Value);
         Assert.Equal(33, actual.CaughtStealing.Value);
-        Assert.Equal(34, actual.PickOffs.Value);
+        Assert.Equal(34, actual.Pickoffs.Value);
         Assert.Equal(35, actual.InheritedRunners.Value);
         Assert.Equal(36, actual.InheritedRunnersScored.Value);
         Assert.Equal(37, actual.CatcherInterferences.Value);

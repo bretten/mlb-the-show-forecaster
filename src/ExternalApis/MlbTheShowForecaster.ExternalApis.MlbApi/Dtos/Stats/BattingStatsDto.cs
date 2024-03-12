@@ -71,7 +71,7 @@ public readonly record struct BattingStatsDto(
     [property: JsonPropertyName("groundOutsToAirouts")]
     string GroundOutsToAirOuts,
     [property: JsonPropertyName("catchersInterference")]
-    int CatchersInterference,
+    int CatcherInterferences,
     [property: JsonPropertyName("atBatsPerHomeRun")]
     string AtBatsPerHomeRun
 );

@@ -54,7 +54,7 @@ public static class Faker
         int earnedRuns = 0, int strikeouts = 0, int baseOnBalls = 0, int intentionalWalks = 0, int hitBatsmen = 0,
         int outs = 0, int groundOuts = 0, int airOuts = 0, int groundIntoDoublePlays = 0, int numberOfPitches = 0,
         int strikes = 0, int wildPitches = 0, int balks = 0, int battersFaced = 0, int atBats = 0, int stolenBases = 0,
-        int caughtStealing = 0, int pickOffs = 0, int inheritedRunners = 0, int inheritedRunnersScored = 0,
+        int caughtStealing = 0, int pickoffs = 0, int inheritedRunners = 0, int inheritedRunnersScored = 0,
         int catcherInterferences = 0, int sacrificeBunts = 0, int sacrificeFlies = 0)
     {
         return PlayerPitchingStatsByGame.Create(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
@@ -92,7 +92,7 @@ public static class Faker
             atBats: atBats,
             stolenBases: stolenBases,
             caughtStealing: caughtStealing,
-            pickOffs: pickOffs,
+            pickoffs: pickoffs,
             inheritedRunners: inheritedRunners,
             inheritedRunnersScored: inheritedRunnersScored,
             catcherInterferences: catcherInterferences,
@@ -103,9 +103,9 @@ public static class Faker
 
     public static PlayerFieldingStatsByGame FakePlayerFieldingStats(int playerMlbId = 1, ushort seasonYear = 2024,
         DateTime? gameDate = null, int gameId = 10000, int teamId = 100, Position position = Position.Catcher,
-        bool gameStarted = false, decimal inningsPlayed = 0, int assists = 0, int putOuts = 0, int errors = 0,
+        bool gameStarted = false, decimal inningsPlayed = 0, int assists = 0, int putouts = 0, int errors = 0,
         int throwingErrors = 0, int doublePlays = 0, int triplePlays = 0, int caughtStealing = 0, int stolenBases = 0,
-        int passedBalls = 0, int catcherInterferences = 0, int wildPitches = 0, int pickOffs = 0)
+        int passedBalls = 0, int catcherInterferences = 0, int wildPitches = 0, int pickoffs = 0)
     {
         return PlayerFieldingStatsByGame.Create(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
             gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
@@ -113,7 +113,7 @@ public static class Faker
             gameStarted: gameStarted,
             inningsPlayed: inningsPlayed,
             assists: assists,
-            putOuts: putOuts,
+            putouts: putouts,
             errors: errors,
             throwingErrors: throwingErrors,
             doublePlays: doublePlays,
@@ -123,7 +123,7 @@ public static class Faker
             passedBalls: passedBalls,
             catcherInterferences: catcherInterferences,
             wildPitches: wildPitches,
-            pickOffs: pickOffs
+            pickoffs: pickoffs
         );
     }
 

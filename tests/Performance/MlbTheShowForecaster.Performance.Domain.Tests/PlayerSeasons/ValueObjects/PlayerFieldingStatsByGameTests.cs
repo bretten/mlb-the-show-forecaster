@@ -48,7 +48,7 @@ public class PlayerFieldingStatsByGameTests
         const bool gameStarted = true; // NOTE: Nonsensical stats
         const decimal inningsPlayed = 1.1m;
         const int assists = 1;
-        const int putOuts = 2;
+        const int putouts = 2;
         const int errors = 3;
         const int throwingErrors = 4;
         const int doublePlays = 5;
@@ -58,7 +58,7 @@ public class PlayerFieldingStatsByGameTests
         const int passedBalls = 9;
         const int catcherInterferences = 10;
         const int wildPitches = 11;
-        const int pickOffs = 12;
+        const int pickoffs = 12;
 
         // Act
         var actual = PlayerFieldingStatsByGame.Create(mlbId, seasonYear, gameDate, gameId, teamId,
@@ -66,7 +66,7 @@ public class PlayerFieldingStatsByGameTests
             gameStarted: gameStarted,
             inningsPlayed: inningsPlayed,
             assists: assists,
-            putOuts: putOuts,
+            putouts: putouts,
             errors: errors,
             throwingErrors: throwingErrors,
             doublePlays: doublePlays,
@@ -76,7 +76,7 @@ public class PlayerFieldingStatsByGameTests
             passedBalls: passedBalls,
             catcherInterferences: catcherInterferences,
             wildPitches: wildPitches,
-            pickOffs: pickOffs
+            pickoffs: pickoffs
         );
 
         // Assert
@@ -89,7 +89,7 @@ public class PlayerFieldingStatsByGameTests
         Assert.Equal(1, actual.GamesStarted.Value);
         Assert.Equal(1.333m, actual.InningsPlayed.Value);
         Assert.Equal(1, actual.Assists.Value);
-        Assert.Equal(2, actual.PutOuts.Value);
+        Assert.Equal(2, actual.Putouts.Value);
         Assert.Equal(3, actual.Errors.Value);
         Assert.Equal(4, actual.ThrowingErrors.Value);
         Assert.Equal(5, actual.DoublePlays.Value);
@@ -99,6 +99,6 @@ public class PlayerFieldingStatsByGameTests
         Assert.Equal(9, actual.PassedBalls.Value);
         Assert.Equal(10, actual.CatcherInterferences.Value);
         Assert.Equal(11, actual.WildPitches.Value);
-        Assert.Equal(12, actual.PickOffs.Value);
+        Assert.Equal(12, actual.Pickoffs.Value);
     }
 }
