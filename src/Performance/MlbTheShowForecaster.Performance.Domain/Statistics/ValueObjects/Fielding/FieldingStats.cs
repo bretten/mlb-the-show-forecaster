@@ -101,7 +101,7 @@ public class FieldingStats : ValueObject
     /// <summary>
     /// Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate
     /// </summary>
-    public NaturalNumber PickOffs { get; }
+    public NaturalNumber Pickoffs { get; }
 
     /// <summary>
     /// Catcher stat: Stolen base percentage
@@ -126,12 +126,12 @@ public class FieldingStats : ValueObject
     /// <param name="passedBalls">Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance</param>
     /// <param name="catcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
-    /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
+    /// <param name="pickoffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     protected FieldingStats(Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed,
         NaturalNumber assists, NaturalNumber putouts, NaturalNumber errors, NaturalNumber throwingErrors,
         NaturalNumber doublePlays, NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases,
         NaturalNumber passedBalls, NaturalNumber catcherInterferences, NaturalNumber wildPitches,
-        NaturalNumber pickOffs)
+        NaturalNumber pickoffs)
     {
         Position = position;
         GamesStarted = gamesStarted;
@@ -147,7 +147,7 @@ public class FieldingStats : ValueObject
         PassedBalls = passedBalls;
         CatcherInterferences = catcherInterferences;
         WildPitches = wildPitches;
-        PickOffs = pickOffs;
+        Pickoffs = pickoffs;
     }
 
     /// <summary>
@@ -167,11 +167,11 @@ public class FieldingStats : ValueObject
     /// <param name="passedBalls">Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance</param>
     /// <param name="catcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
-    /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
+    /// <param name="pickoffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     /// <returns><see cref="FieldingStats"/></returns>
     public static FieldingStats Create(Position position, int gamesStarted, decimal inningsPlayed, int assists,
         int putouts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
-        int stolenBases, int passedBalls, int catcherInterferences, int wildPitches, int pickOffs)
+        int stolenBases, int passedBalls, int catcherInterferences, int wildPitches, int pickoffs)
     {
         var gs = NaturalNumber.Create(gamesStarted);
         var inn = InningsCount.Create(inningsPlayed);
@@ -186,7 +186,7 @@ public class FieldingStats : ValueObject
         var pb = NaturalNumber.Create(passedBalls);
         var ci = NaturalNumber.Create(catcherInterferences);
         var wp = NaturalNumber.Create(wildPitches);
-        var pk = NaturalNumber.Create(pickOffs);
+        var pk = NaturalNumber.Create(pickoffs);
         return new FieldingStats(position,
             gamesStarted: gs,
             inningsPlayed: inn,
@@ -201,7 +201,7 @@ public class FieldingStats : ValueObject
             passedBalls: pb,
             catcherInterferences: ci,
             wildPitches: wp,
-            pickOffs: pk);
+            pickoffs: pk);
     }
 
     /// <summary>
@@ -227,7 +227,7 @@ public class FieldingStats : ValueObject
             passedBalls: fieldingStatsArray.Sum(x => x.PassedBalls.Value),
             catcherInterferences: fieldingStatsArray.Sum(x => x.CatcherInterferences.Value),
             wildPitches: fieldingStatsArray.Sum(x => x.WildPitches.Value),
-            pickOffs: fieldingStatsArray.Sum(x => x.PickOffs.Value)
+            pickoffs: fieldingStatsArray.Sum(x => x.Pickoffs.Value)
         );
     }
 }

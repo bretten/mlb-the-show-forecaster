@@ -97,7 +97,7 @@ public class MlbApiPlayerStatsMapperTests
         Assert.Equal(32, actual.GamePitchingStats[0].HitBatsmen.Value);
         Assert.Equal(33, actual.GamePitchingStats[0].Balks.Value);
         Assert.Equal(34, actual.GamePitchingStats[0].WildPitches.Value);
-        Assert.Equal(35, actual.GamePitchingStats[0].PickOffs.Value);
+        Assert.Equal(35, actual.GamePitchingStats[0].Pickoffs.Value);
         Assert.True(actual.GamePitchingStats[0].GameFinished);
         Assert.Equal(38, actual.GamePitchingStats[0].InheritedRunners.Value);
         Assert.Equal(39, actual.GamePitchingStats[0].InheritedRunnersScored.Value);
@@ -123,6 +123,6 @@ public class MlbApiPlayerStatsMapperTests
         Assert.Equal(13, actual.GameFieldingStats[0].CatcherInterferences.Value);
         Assert.Equal(14, actual.GameFieldingStats[0].WildPitches.Value);
         Assert.Equal(15, actual.GameFieldingStats[0].ThrowingErrors.Value);
-        Assert.Equal(16, actual.GameFieldingStats[0].PickOffs.Value);
+        Assert.Equal(16, actual.GameFieldingStats[0].Pickoffs.Value);
     }
 }

@@ -179,7 +179,7 @@ public class PitchingStats : ValueObject
     /// <summary>
     /// The number of pick offs made by this pitcher
     /// </summary>
-    public NaturalNumber PickOffs { get; }
+    public NaturalNumber Pickoffs { get; }
 
     /// <summary>
     /// The number of runners on base when the pitcher enters the game
@@ -334,7 +334,7 @@ public class PitchingStats : ValueObject
     /// <param name="atBats">The number of at-bats</param>
     /// <param name="stolenBases">The number of bases stolen against this pitcher</param>
     /// <param name="caughtStealing">The number of times a runner was caught stealing against this pitcher</param>
-    /// <param name="pickOffs">The number of pick offs made by this pitcher</param>
+    /// <param name="pickoffs">The number of pick offs made by this pitcher</param>
     /// <param name="inheritedRunners">The number of runners on base when the pitcher enters the game</param>
     /// <param name="inheritedRunnersScored">The number of inherited runners allowed to score</param>
     /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
@@ -348,7 +348,7 @@ public class PitchingStats : ValueObject
         NaturalNumber hitBatsmen, NaturalNumber outs, NaturalNumber groundOuts, NaturalNumber airOuts,
         NaturalNumber groundIntoDoublePlays, NaturalNumber numberOfPitches, NaturalNumber strikes,
         NaturalNumber wildPitches, NaturalNumber balks, NaturalNumber battersFaced, NaturalNumber atBats,
-        NaturalNumber stolenBases, NaturalNumber caughtStealing, NaturalNumber pickOffs, NaturalNumber inheritedRunners,
+        NaturalNumber stolenBases, NaturalNumber caughtStealing, NaturalNumber pickoffs, NaturalNumber inheritedRunners,
         NaturalNumber inheritedRunnersScored, NaturalNumber catcherInterferences, NaturalNumber sacrificeBunts,
         NaturalNumber sacrificeFlies)
     {
@@ -385,7 +385,7 @@ public class PitchingStats : ValueObject
         AtBats = atBats;
         StolenBases = stolenBases;
         CaughtStealing = caughtStealing;
-        PickOffs = pickOffs;
+        Pickoffs = pickoffs;
         InheritedRunners = inheritedRunners;
         InheritedRunnersScored = inheritedRunnersScored;
         CatcherInterferences = catcherInterferences;
@@ -429,7 +429,7 @@ public class PitchingStats : ValueObject
     /// <param name="atBats">The number of at-bats</param>
     /// <param name="stolenBases">The number of bases stolen against this pitcher</param>
     /// <param name="caughtStealing">The number of times a runner was caught stealing against this pitcher</param>
-    /// <param name="pickOffs">The number of pick offs made by this pitcher</param>
+    /// <param name="pickoffs">The number of pick offs made by this pitcher</param>
     /// <param name="inheritedRunners">The number of runners on base when the pitcher enters the game</param>
     /// <param name="inheritedRunnersScored">The number of inherited runners allowed to score</param>
     /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
@@ -441,7 +441,7 @@ public class PitchingStats : ValueObject
         int doubles, int triples, int homeRuns, int runs, int earnedRuns, int strikeouts, int baseOnBalls,
         int intentionalWalks, int hitBatsmen, int outs, int groundOuts, int airOuts, int groundIntoDoublePlays,
         int numberOfPitches, int strikes, int wildPitches, int balks, int battersFaced, int atBats, int stolenBases,
-        int caughtStealing, int pickOffs, int inheritedRunners, int inheritedRunnersScored, int catcherInterferences,
+        int caughtStealing, int pickoffs, int inheritedRunners, int inheritedRunnersScored, int catcherInterferences,
         int sacrificeBunts, int sacrificeFlies)
     {
         var w = NaturalNumber.Create(wins);
@@ -477,7 +477,7 @@ public class PitchingStats : ValueObject
         var ab = NaturalNumber.Create(atBats);
         var sb = NaturalNumber.Create(stolenBases);
         var cs = NaturalNumber.Create(caughtStealing);
-        var pk = NaturalNumber.Create(pickOffs);
+        var pk = NaturalNumber.Create(pickoffs);
         var ir = NaturalNumber.Create(inheritedRunners);
         var irs = NaturalNumber.Create(inheritedRunnersScored);
         var ci = NaturalNumber.Create(catcherInterferences);
@@ -516,7 +516,7 @@ public class PitchingStats : ValueObject
             atBats: ab,
             stolenBases: sb,
             caughtStealing: cs,
-            pickOffs: pk,
+            pickoffs: pk,
             inheritedRunners: ir,
             inheritedRunnersScored: irs,
             catcherInterferences: ci,
@@ -566,7 +566,7 @@ public class PitchingStats : ValueObject
             atBats: pitchingStatsArray.Sum(x => x.AtBats.Value),
             stolenBases: pitchingStatsArray.Sum(x => x.StolenBases.Value),
             caughtStealing: pitchingStatsArray.Sum(x => x.CaughtStealing.Value),
-            pickOffs: pitchingStatsArray.Sum(x => x.PickOffs.Value),
+            pickoffs: pitchingStatsArray.Sum(x => x.Pickoffs.Value),
             inheritedRunners: pitchingStatsArray.Sum(x => x.InheritedRunners.Value),
             inheritedRunnersScored: pitchingStatsArray.Sum(x => x.InheritedRunnersScored.Value),
             catcherInterferences: pitchingStatsArray.Sum(x => x.CatcherInterferences.Value),

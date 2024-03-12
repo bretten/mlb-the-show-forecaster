@@ -152,10 +152,10 @@ public sealed class
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
-        builder.Property(e => e.PickOffs)
+        builder.Property(e => e.Pickoffs)
             .IsRequired()
             .HasColumnType("integer")
-            .HasColumnName(Constants.PlayerFieldingStatsByGames.PickOffs)
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.Pickoffs)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
     }

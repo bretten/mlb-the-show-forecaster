@@ -87,7 +87,7 @@ public class FieldingStatsTests
         const int passedBalls = 9;
         const int catcherInterferences = 10;
         const int wildPitches = 11;
-        const int pickOffs = 12;
+        const int pickoffs = 12;
 
         // Act
         var actual = FieldingStats.Create(position: position,
@@ -104,7 +104,7 @@ public class FieldingStatsTests
             passedBalls: passedBalls,
             catcherInterferences: catcherInterferences,
             wildPitches: wildPitches,
-            pickOffs: pickOffs
+            pickoffs: pickoffs
         );
 
         // Assert
@@ -122,7 +122,7 @@ public class FieldingStatsTests
         Assert.Equal(9, actual.PassedBalls.Value);
         Assert.Equal(10, actual.CatcherInterferences.Value);
         Assert.Equal(11, actual.WildPitches.Value);
-        Assert.Equal(12, actual.PickOffs.Value);
+        Assert.Equal(12, actual.Pickoffs.Value);
     }
 
     [Fact]
@@ -143,7 +143,7 @@ public class FieldingStatsTests
             passedBalls: 11,
             catcherInterferences: 12,
             wildPitches: 13,
-            pickOffs: 14
+            pickoffs: 14
         );
         var stats2 = Faker.FakeFieldingStats(position: Position.RightField,
             gamesStarted: 1000,
@@ -159,7 +159,7 @@ public class FieldingStatsTests
             passedBalls: 11000,
             catcherInterferences: 12000,
             wildPitches: 13000,
-            pickOffs: 14000
+            pickoffs: 14000
         );
         var statsCollection = new List<FieldingStats>() { stats1, stats2 };
 
@@ -181,6 +181,6 @@ public class FieldingStatsTests
         Assert.Equal(11011, actual.PassedBalls.Value);
         Assert.Equal(12012, actual.CatcherInterferences.Value);
         Assert.Equal(13013, actual.WildPitches.Value);
-        Assert.Equal(14014, actual.PickOffs.Value);
+        Assert.Equal(14014, actual.Pickoffs.Value);
     }
 }

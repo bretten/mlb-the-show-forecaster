@@ -44,7 +44,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 /// <param name="AtBats">The number of at-bats</param>
 /// <param name="StolenBases">The number of bases stolen against this pitcher</param>
 /// <param name="CaughtStealing">The number of times a runner was caught stealing against this pitcher</param>
-/// <param name="PickOffs">The number of pick offs made by this pitcher</param>
+/// <param name="Pickoffs">The number of pick offs made by this pitcher</param>
 /// <param name="InheritedRunners">The number of runners on base when the pitcher enters the game</param>
 /// <param name="InheritedRunnersScored">The number of inherited runners allowed to score</param>
 /// <param name="CatcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
@@ -89,7 +89,7 @@ public readonly record struct PlayerGamePitchingStats(
     NaturalNumber AtBats,
     NaturalNumber StolenBases,
     NaturalNumber CaughtStealing,
-    NaturalNumber PickOffs,
+    NaturalNumber Pickoffs,
     NaturalNumber InheritedRunners,
     NaturalNumber InheritedRunnersScored,
     NaturalNumber CatcherInterferences,

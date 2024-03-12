@@ -97,7 +97,7 @@ public class PlayerSeasonMapperTests
         Assert.Equal(21021, actual.SeasonPitchingStats.AtBats.Value);
         Assert.Equal(22022, actual.SeasonPitchingStats.StolenBases.Value);
         Assert.Equal(23023, actual.SeasonPitchingStats.CaughtStealing.Value);
-        Assert.Equal(24024, actual.SeasonPitchingStats.PickOffs.Value);
+        Assert.Equal(24024, actual.SeasonPitchingStats.Pickoffs.Value);
         Assert.Equal(25025, actual.SeasonPitchingStats.InheritedRunners.Value);
         Assert.Equal(26026, actual.SeasonPitchingStats.InheritedRunnersScored.Value);
         Assert.Equal(27027, actual.SeasonPitchingStats.CatcherInterferences.Value);
@@ -118,6 +118,6 @@ public class PlayerSeasonMapperTests
         Assert.Equal(10010, actual.SeasonAggregateFieldingStats.PassedBalls.Value);
         Assert.Equal(11011, actual.SeasonAggregateFieldingStats.CatcherInterferences.Value);
         Assert.Equal(12012, actual.SeasonAggregateFieldingStats.WildPitches.Value);
-        Assert.Equal(13013, actual.SeasonAggregateFieldingStats.PickOffs.Value);
+        Assert.Equal(13013, actual.SeasonAggregateFieldingStats.Pickoffs.Value);
     }
 }

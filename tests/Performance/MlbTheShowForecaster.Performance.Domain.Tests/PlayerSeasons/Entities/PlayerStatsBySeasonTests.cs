@@ -201,7 +201,7 @@ public class PlayerStatsBySeasonTests
             atBats: 21,
             stolenBases: 22,
             caughtStealing: 23,
-            pickOffs: 24,
+            pickoffs: 24,
             inheritedRunners: 25,
             inheritedRunnersScored: 26,
             catcherInterferences: 27,
@@ -241,7 +241,7 @@ public class PlayerStatsBySeasonTests
             atBats: 21000,
             stolenBases: 22000,
             caughtStealing: 23000,
-            pickOffs: 24000,
+            pickoffs: 24000,
             inheritedRunners: 25000,
             inheritedRunnersScored: 26000,
             catcherInterferences: 27000,
@@ -290,7 +290,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(21021, actual.AtBats.Value);
         Assert.Equal(22022, actual.StolenBases.Value);
         Assert.Equal(23023, actual.CaughtStealing.Value);
-        Assert.Equal(24024, actual.PickOffs.Value);
+        Assert.Equal(24024, actual.Pickoffs.Value);
         Assert.Equal(25025, actual.InheritedRunners.Value);
         Assert.Equal(26026, actual.InheritedRunnersScored.Value);
         Assert.Equal(27027, actual.CatcherInterferences.Value);
@@ -316,7 +316,7 @@ public class PlayerStatsBySeasonTests
             passedBalls: 10,
             catcherInterferences: 11,
             wildPitches: 12,
-            pickOffs: 13
+            pickoffs: 13
         );
         var game2 = Faker.FakePlayerFieldingStats(position: Position.LeftField,
             gameStarted: false,
@@ -332,7 +332,7 @@ public class PlayerStatsBySeasonTests
             passedBalls: 10000,
             catcherInterferences: 11000,
             wildPitches: 12000,
-            pickOffs: 13000
+            pickoffs: 13000
         );
         var playerFieldingStatsByGames = new List<PlayerFieldingStatsByGame>() { game1, game2 };
         var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: playerFieldingStatsByGames);
@@ -355,7 +355,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(10010, actual.PassedBalls.Value);
         Assert.Equal(11011, actual.CatcherInterferences.Value);
         Assert.Equal(12012, actual.WildPitches.Value);
-        Assert.Equal(13013, actual.PickOffs.Value);
+        Assert.Equal(13013, actual.Pickoffs.Value);
     }
 
     [Fact]
@@ -376,7 +376,7 @@ public class PlayerStatsBySeasonTests
             passedBalls: 10,
             catcherInterferences: 11,
             wildPitches: 12,
-            pickOffs: 13
+            pickoffs: 13
         );
         var game2 = Faker.FakePlayerFieldingStats(position: Position.LeftField,
             gameStarted: false,
@@ -392,7 +392,7 @@ public class PlayerStatsBySeasonTests
             passedBalls: 10000,
             catcherInterferences: 11000,
             wildPitches: 12000,
-            pickOffs: 13000
+            pickoffs: 13000
         );
         var playerFieldingStatsByGames = new List<PlayerFieldingStatsByGame>() { game1, game2 };
         var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: playerFieldingStatsByGames);
@@ -415,7 +415,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(10, actual[Position.RightField].PassedBalls.Value);
         Assert.Equal(11, actual[Position.RightField].CatcherInterferences.Value);
         Assert.Equal(12, actual[Position.RightField].WildPitches.Value);
-        Assert.Equal(13, actual[Position.RightField].PickOffs.Value);
+        Assert.Equal(13, actual[Position.RightField].Pickoffs.Value);
 
         Assert.Equal(Position.LeftField, actual[Position.LeftField].Position);
         Assert.Equal(0, actual[Position.LeftField].GamesStarted.Value);
@@ -431,7 +431,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(10000, actual[Position.LeftField].PassedBalls.Value);
         Assert.Equal(11000, actual[Position.LeftField].CatcherInterferences.Value);
         Assert.Equal(12000, actual[Position.LeftField].WildPitches.Value);
-        Assert.Equal(13000, actual[Position.LeftField].PickOffs.Value);
+        Assert.Equal(13000, actual[Position.LeftField].Pickoffs.Value);
     }
 
     [Fact]

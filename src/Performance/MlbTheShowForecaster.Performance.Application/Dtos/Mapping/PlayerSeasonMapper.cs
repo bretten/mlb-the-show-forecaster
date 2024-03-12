@@ -103,7 +103,7 @@ public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
                     atBats: x.AtBats.Value,
                     stolenBases: x.StolenBases.Value,
                     caughtStealing: x.CaughtStealing.Value,
-                    pickOffs: x.PickOffs.Value,
+                    pickoffs: x.Pickoffs.Value,
                     inheritedRunners: x.InheritedRunners.Value,
                     inheritedRunnersScored: x.InheritedRunnersScored.Value,
                     catcherInterferences: x.CatcherInterferences.Value,
@@ -137,7 +137,7 @@ public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
                     passedBalls: x.PassedBalls.Value,
                     catcherInterferences: x.CatcherInterferences.Value,
                     wildPitches: x.WildPitches.Value,
-                    pickOffs: x.PickOffs.Value
+                    pickoffs: x.Pickoffs.Value
                 )
             ).ToList();
     }

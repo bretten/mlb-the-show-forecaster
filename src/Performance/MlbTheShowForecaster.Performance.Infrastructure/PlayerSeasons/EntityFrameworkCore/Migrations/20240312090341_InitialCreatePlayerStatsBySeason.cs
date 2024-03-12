@@ -100,7 +100,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     passed_balls = table.Column<int>(type: "integer", nullable: false),
                     catcher_interferences = table.Column<int>(type: "integer", nullable: false),
                     wild_pitches = table.Column<int>(type: "integer", nullable: false),
-                    pick_offs = table.Column<int>(type: "integer", nullable: false)
+                    pickoffs = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -158,7 +158,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     at_bats = table.Column<int>(type: "integer", nullable: false),
                     stolen_bases = table.Column<int>(type: "integer", nullable: false),
                     caught_stealing = table.Column<int>(type: "integer", nullable: false),
-                    pick_offs = table.Column<int>(type: "integer", nullable: false),
+                    pickoffs = table.Column<int>(type: "integer", nullable: false),
                     inherited_runners = table.Column<int>(type: "integer", nullable: false),
                     inherited_runners_scored = table.Column<int>(type: "integer", nullable: false),
                     catcher_interferences = table.Column<int>(type: "integer", nullable: false),

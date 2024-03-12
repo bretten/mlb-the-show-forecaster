@@ -58,7 +58,7 @@ public class PlayerFieldingStatsByGameTests
         const int passedBalls = 9;
         const int catcherInterferences = 10;
         const int wildPitches = 11;
-        const int pickOffs = 12;
+        const int pickoffs = 12;
 
         // Act
         var actual = PlayerFieldingStatsByGame.Create(mlbId, seasonYear, gameDate, gameId, teamId,
@@ -76,7 +76,7 @@ public class PlayerFieldingStatsByGameTests
             passedBalls: passedBalls,
             catcherInterferences: catcherInterferences,
             wildPitches: wildPitches,
-            pickOffs: pickOffs
+            pickoffs: pickoffs
         );
 
         // Assert
@@ -99,6 +99,6 @@ public class PlayerFieldingStatsByGameTests
         Assert.Equal(9, actual.PassedBalls.Value);
         Assert.Equal(10, actual.CatcherInterferences.Value);
         Assert.Equal(11, actual.WildPitches.Value);
-        Assert.Equal(12, actual.PickOffs.Value);
+        Assert.Equal(12, actual.Pickoffs.Value);
     }
 }

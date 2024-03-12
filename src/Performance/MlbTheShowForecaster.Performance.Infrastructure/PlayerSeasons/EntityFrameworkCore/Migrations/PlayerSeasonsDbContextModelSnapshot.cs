@@ -217,9 +217,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("passed_balls");
 
-                    b.Property<int>("PickOffs")
+                    b.Property<int>("Pickoffs")
                         .HasColumnType("integer")
-                        .HasColumnName("pick_offs");
+                        .HasColumnName("pickoffs");
 
                     b.Property<string>("Position")
                         .IsRequired()
@@ -382,9 +382,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("outs");
 
-                    b.Property<int>("PickOffs")
+                    b.Property<int>("Pickoffs")
                         .HasColumnType("integer")
-                        .HasColumnName("pick_offs");
+                        .HasColumnName("pickoffs");
 
                     b.Property<int>("Runs")
                         .HasColumnType("integer")

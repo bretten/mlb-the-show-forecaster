@@ -12,7 +12,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeaso
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(PlayerSeasonsDbContext))]
-    [Migration("20240312085015_InitialCreatePlayerStatsBySeason")]
+    [Migration("20240312090341_InitialCreatePlayerStatsBySeason")]
     partial class InitialCreatePlayerStatsBySeason
     {
         /// <inheritdoc />
@@ -220,9 +220,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("passed_balls");
 
-                    b.Property<int>("PickOffs")
+                    b.Property<int>("Pickoffs")
                         .HasColumnType("integer")
-                        .HasColumnName("pick_offs");
+                        .HasColumnName("pickoffs");
 
                     b.Property<string>("Position")
                         .IsRequired()
@@ -385,9 +385,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("outs");
 
-                    b.Property<int>("PickOffs")
+                    b.Property<int>("Pickoffs")
                         .HasColumnType("integer")
-                        .HasColumnName("pick_offs");
+                        .HasColumnName("pickoffs");
 
                     b.Property<int>("Runs")
                         .HasColumnType("integer")
