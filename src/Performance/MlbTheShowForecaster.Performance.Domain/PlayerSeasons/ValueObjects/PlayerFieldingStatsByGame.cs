@@ -28,12 +28,12 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <summary>
     /// The MLB ID of the game
     /// </summary>
-    public MlbId GameId { get; }
+    public MlbId GameMlbId { get; }
 
     /// <summary>
     /// The MLB ID of the team
     /// </summary>
-    public MlbId TeamId { get; }
+    public MlbId TeamMlbId { get; }
 
     /// <summary>
     /// Determines the properties that are used in equality
@@ -44,7 +44,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         yield return PlayerMlbId.Value;
         yield return SeasonYear.Value;
         yield return GameDate;
-        yield return GameId.Value;
+        yield return GameMlbId.Value;
     }
 
     /// <summary>
@@ -53,8 +53,8 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
-    /// <param name="gameId">The MLB ID of the game</param>
-    /// <param name="teamId">The MLB ID of the team</param>
+    /// <param name="gameMlbId">The MLB ID of the game</param>
+    /// <param name="teamMlbId">The MLB ID of the team</param>
     /// <param name="position">The position the player is fielding</param>
     /// <param name="gamesStarted">The number of times the player started the game at this <see cref="Position"/></param>
     /// <param name="inningsPlayed">The number of innings this player fielded at this <see cref="Position"/></param>
@@ -67,22 +67,22 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="caughtStealing">Catcher stat: The number of times the catcher was able to throw out a base runner attempting to steal</param>
     /// <param name="stolenBases">Catcher stat: The number of times a base runner successfully stole a base against the catcher</param>
     /// <param name="passedBalls">Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance</param>
-    /// <param name="catchersInterference">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="catcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
-    private PlayerFieldingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
-        MlbId teamId, Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed, NaturalNumber assists,
-        NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors, NaturalNumber doublePlays,
-        NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases, NaturalNumber passedBalls,
-        NaturalNumber catchersInterference, NaturalNumber wildPitches, NaturalNumber pickOffs) : base(position,
-        gamesStarted, inningsPlayed, assists, putOuts, errors, throwingErrors, doublePlays, triplePlays, caughtStealing,
-        stolenBases, passedBalls, catchersInterference, wildPitches, pickOffs)
+    private PlayerFieldingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameMlbId,
+        MlbId teamMlbId, Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed,
+        NaturalNumber assists, NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors,
+        NaturalNumber doublePlays, NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases,
+        NaturalNumber passedBalls, NaturalNumber catcherInterferences, NaturalNumber wildPitches,
+        NaturalNumber pickOffs) : base(position, gamesStarted, inningsPlayed, assists, putOuts, errors, throwingErrors,
+        doublePlays, triplePlays, caughtStealing, stolenBases, passedBalls, catcherInterferences, wildPitches, pickOffs)
     {
         PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
         GameDate = gameDate;
-        GameId = gameId;
-        TeamId = teamId;
+        GameMlbId = gameMlbId;
+        TeamMlbId = teamMlbId;
     }
 
     /// <summary>
@@ -91,8 +91,8 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
-    /// <param name="gameId">The MLB ID of the game</param>
-    /// <param name="teamId">The MLB ID of the team</param>
+    /// <param name="gameMlbId">The MLB ID of the game</param>
+    /// <param name="teamMlbId">The MLB ID of the team</param>
     /// <param name="position">The position the player is fielding</param>
     /// <param name="gameStarted">True if the player started the game at this position</param>
     /// <param name="inningsPlayed">The number of innings this player fielded at this position</param>
@@ -105,14 +105,14 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="caughtStealing">Catcher stat: The number of times the catcher was able to throw out a base runner attempting to steal</param>
     /// <param name="stolenBases">Catcher stat: The number of times a base runner successfully stole a base against the catcher</param>
     /// <param name="passedBalls">Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance</param>
-    /// <param name="catchersInterference">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="catcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     /// <returns><see cref="PlayerFieldingStatsByGame"/></returns>
     public static PlayerFieldingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate,
-        MlbId gameId, MlbId teamId, Position position, bool gameStarted, decimal inningsPlayed, int assists,
+        MlbId gameMlbId, MlbId teamMlbId, Position position, bool gameStarted, decimal inningsPlayed, int assists,
         int putOuts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
-        int stolenBases, int passedBalls, int catchersInterference, int wildPitches, int pickOffs)
+        int stolenBases, int passedBalls, int catcherInterferences, int wildPitches, int pickOffs)
     {
         var gs = gameStarted ? NaturalNumber.Create(1) : NaturalNumber.Create(0);
         var inn = InningsCount.Create(inningsPlayed);
@@ -125,10 +125,10 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         var cs = NaturalNumber.Create(caughtStealing);
         var sb = NaturalNumber.Create(stolenBases);
         var pb = NaturalNumber.Create(passedBalls);
-        var ci = NaturalNumber.Create(catchersInterference);
+        var ci = NaturalNumber.Create(catcherInterferences);
         var wp = NaturalNumber.Create(wildPitches);
         var pk = NaturalNumber.Create(pickOffs);
-        return new PlayerFieldingStatsByGame(playerMlbId, seasonYear, gameDate, gameId, teamId, position,
+        return new PlayerFieldingStatsByGame(playerMlbId, seasonYear, gameDate, gameMlbId, teamMlbId, position,
             gamesStarted: gs,
             inningsPlayed: inn,
             assists: a,
@@ -140,7 +140,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
             caughtStealing: cs,
             stolenBases: sb,
             passedBalls: pb,
-            catchersInterference: ci,
+            catcherInterferences: ci,
             wildPitches: wp,
             pickOffs: pk);
     }

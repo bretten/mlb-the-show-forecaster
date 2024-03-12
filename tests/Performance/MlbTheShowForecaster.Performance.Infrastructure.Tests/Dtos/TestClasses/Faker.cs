@@ -108,7 +108,7 @@ public static class Faker
         int sacFlies = 24,
         string babip = ".666",
         string groundOutsToAirOuts = ".777",
-        int catchersInterference = 25,
+        int catcherInterferences = 25,
         string atBatsPerHomeRun = ".888",
         int scalar = 1)
     {
@@ -146,7 +146,7 @@ public static class Faker
             SacFlies = scalar * sacFlies,
             Babip = babip,
             GroundOutsToAirOuts = groundOutsToAirOuts,
-            CatchersInterference = scalar * catchersInterference,
+            CatchersInterference = scalar * catcherInterferences,
             AtBatsPerHomeRun = atBatsPerHomeRun
         };
     }
@@ -209,7 +209,7 @@ public static class Faker
         string homeRunsPer9 = "",
         int inheritedRunners = 38,
         int inheritedRunnersScored = 39,
-        int catchersInterference = 40,
+        int catcherInterferences = 40,
         int sacBunts = 41,
         int sacFlies = 42,
         int scalar = 1
@@ -275,7 +275,7 @@ public static class Faker
             HomeRunsPer9 = homeRunsPer9,
             InheritedRunners = scalar * inheritedRunners,
             InheritedRunnersScored = scalar * inheritedRunnersScored,
-            CatchersInterference = scalar * catchersInterference,
+            CatchersInterference = scalar * catcherInterferences,
             SacBunts = scalar * sacBunts,
             SacFlies = scalar * sacFlies
         };
@@ -300,7 +300,7 @@ public static class Faker
         int doublePlays = 11,
         int triplePlays = 12,
         string catcherEra = "",
-        int catchersInterference = 13,
+        int catcherInterferences = 13,
         int wildPitches = 14,
         int throwingErrors = 15,
         int pickoffs = 16,
@@ -326,7 +326,7 @@ public static class Faker
             DoublePlays: scalar * doublePlays,
             TriplePlays: scalar * triplePlays,
             CatcherEra: catcherEra,
-            CatchersInterference: scalar * catchersInterference,
+            CatchersInterference: scalar * catcherInterferences,
             WildPitches: scalar * wildPitches,
             ThrowingErrors: scalar * throwingErrors,
             Pickoffs: scalar * pickoffs

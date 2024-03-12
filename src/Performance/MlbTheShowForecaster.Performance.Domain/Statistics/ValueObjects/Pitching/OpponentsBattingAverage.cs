@@ -44,7 +44,7 @@ public sealed class OpponentsBattingAverage : CalculatedStat
     /// <summary>
     /// The number of catcher's interferences
     /// </summary>
-    public NaturalNumber CatchersInterferences { get; }
+    public NaturalNumber CatcherInterferences { get; }
 
     /// <summary>
     /// Constructor
@@ -55,10 +55,10 @@ public sealed class OpponentsBattingAverage : CalculatedStat
     /// <param name="hitBatsmen">The number of hit by pitches</param>
     /// <param name="sacrificeHits">The number of sacrifice hits</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies</param>
-    /// <param name="catchersInterferences">The number of catcher's interferences</param>
+    /// <param name="catcherInterferences">The number of catcher's interferences</param>
     private OpponentsBattingAverage(NaturalNumber hits, NaturalNumber battersFaced, NaturalNumber baseOnBalls,
         NaturalNumber hitBatsmen, NaturalNumber sacrificeHits, NaturalNumber sacrificeFlies,
-        NaturalNumber catchersInterferences)
+        NaturalNumber catcherInterferences)
     {
         Hits = hits;
         BattersFaced = battersFaced;
@@ -66,7 +66,7 @@ public sealed class OpponentsBattingAverage : CalculatedStat
         HitBatsmen = hitBatsmen;
         SacrificeHits = sacrificeHits;
         SacrificeFlies = sacrificeFlies;
-        CatchersInterferences = catchersInterferences;
+        CatcherInterferences = catcherInterferences;
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public sealed class OpponentsBattingAverage : CalculatedStat
     protected override decimal Calculate()
     {
         return (decimal)Hits.Value / (BattersFaced.Value - BaseOnBalls.Value - HitBatsmen.Value -
-                                      SacrificeHits.Value - SacrificeFlies.Value - CatchersInterferences.Value);
+                                      SacrificeHits.Value - SacrificeFlies.Value - CatcherInterferences.Value);
     }
 
     /// <summary>
@@ -88,10 +88,10 @@ public sealed class OpponentsBattingAverage : CalculatedStat
     /// <param name="hitBatsmen">The number of hit by pitches</param>
     /// <param name="sacrificeHits">The number of sacrifice hits</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies</param>
-    /// <param name="catchersInterferences">The number of catcher's interferences</param>
+    /// <param name="catcherInterferences">The number of catcher's interferences</param>
     /// <returns><see cref="OpponentsBattingAverage"/></returns>
     public static OpponentsBattingAverage Create(int hits, int battersFaced, int baseOnBalls, int hitBatsmen,
-        int sacrificeHits, int sacrificeFlies, int catchersInterferences)
+        int sacrificeHits, int sacrificeFlies, int catcherInterferences)
     {
         var hitsValue = NaturalNumber.Create(hits);
         var battersFacedValue = NaturalNumber.Create(battersFaced);
@@ -99,8 +99,8 @@ public sealed class OpponentsBattingAverage : CalculatedStat
         var hitByPitchesValue = NaturalNumber.Create(hitBatsmen);
         var sacrificeHitsValue = NaturalNumber.Create(sacrificeHits);
         var sacrificeFliesValue = NaturalNumber.Create(sacrificeFlies);
-        var catchersInterferencesValue = NaturalNumber.Create(catchersInterferences);
+        var catcherInterferencesValue = NaturalNumber.Create(catcherInterferences);
         return new OpponentsBattingAverage(hitsValue, battersFacedValue, baseOnBallsValue, hitByPitchesValue,
-            sacrificeHitsValue, sacrificeFliesValue, catchersInterferencesValue);
+            sacrificeHitsValue, sacrificeFliesValue, catcherInterferencesValue);
     }
 }

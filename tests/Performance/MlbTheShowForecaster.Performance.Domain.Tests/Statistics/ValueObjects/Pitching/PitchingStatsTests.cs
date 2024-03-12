@@ -45,10 +45,10 @@ public class PitchingStatsTests
         const int hitBatsmen = 11;
         const int sacrificeHits = 0;
         const int sacrificeFlies = 1;
-        const int catchersInterferences = 1;
+        const int catcherInterferences = 1;
         var stats = Faker.FakePitchingStats(hits: hits, battersFaced: battersFaced, baseOnBalls: baseOnBalls,
             hitBatsmen: hitBatsmen, sacrificeBunts: sacrificeHits, sacrificeFlies: sacrificeFlies,
-            catchersInterferences: catchersInterferences);
+            catcherInterferences: catcherInterferences);
 
         // Act
         var actual = stats.OpponentsBattingAverage;
@@ -325,7 +325,7 @@ public class PitchingStatsTests
         const int pickOffs = 34;
         const int inheritedRunners = 35;
         const int inheritedRunnersScored = 36;
-        const int catchersInterferences = 37;
+        const int catcherInterferences = 37;
         const int sacrificeBunts = 38;
         const int sacrificeFlies = 39;
 
@@ -366,7 +366,7 @@ public class PitchingStatsTests
             pickOffs: pickOffs,
             inheritedRunners: inheritedRunners,
             inheritedRunnersScored: inheritedRunnersScored,
-            catchersInterferences: catchersInterferences,
+            catcherInterferences: catcherInterferences,
             sacrificeBunts: sacrificeBunts,
             sacrificeFlies: sacrificeFlies
         );
@@ -408,7 +408,7 @@ public class PitchingStatsTests
         Assert.Equal(34, actual.PickOffs.Value);
         Assert.Equal(35, actual.InheritedRunners.Value);
         Assert.Equal(36, actual.InheritedRunnersScored.Value);
-        Assert.Equal(37, actual.CatchersInterferences.Value);
+        Assert.Equal(37, actual.CatcherInterferences.Value);
         Assert.Equal(38, actual.SacrificeBunts.Value);
         Assert.Equal(39, actual.SacrificeFlies.Value);
     }
@@ -453,7 +453,7 @@ public class PitchingStatsTests
             pickOffs: 34,
             inheritedRunners: 35,
             inheritedRunnersScored: 36,
-            catchersInterferences: 37,
+            catcherInterferences: 37,
             sacrificeBunts: 38,
             sacrificeFlies: 39
         );
@@ -493,7 +493,7 @@ public class PitchingStatsTests
             pickOffs: 34000,
             inheritedRunners: 35000,
             inheritedRunnersScored: 36000,
-            catchersInterferences: 37000,
+            catcherInterferences: 37000,
             sacrificeBunts: 38000,
             sacrificeFlies: 39000
         );
@@ -539,7 +539,7 @@ public class PitchingStatsTests
         Assert.Equal(34034, actual.PickOffs.Value);
         Assert.Equal(35035, actual.InheritedRunners.Value);
         Assert.Equal(36036, actual.InheritedRunnersScored.Value);
-        Assert.Equal(37037, actual.CatchersInterferences.Value);
+        Assert.Equal(37037, actual.CatcherInterferences.Value);
         Assert.Equal(38038, actual.SacrificeBunts.Value);
         Assert.Equal(39039, actual.SacrificeFlies.Value);
     }

@@ -15,7 +15,7 @@ public static class Faker
         int intentionalWalks = 0, int strikeouts = 0, int stolenBases = 0, int caughtStealing = 0, int hitByPitch = 0,
         int sacrificeBunts = 0, int sacrificeFlies = 0, int numberOfPitchesSeen = 0, int leftOnBase = 0,
         int groundOuts = 0, int groundIntoDoublePlays = 0, int groundIntoTriplePlays = 0, int airOuts = 0,
-        int catchersInterference = 0)
+        int catcherInterferences = 0)
     {
         return BattingStats.Create(plateAppearances: plateAppearances,
             atBats: atBats,
@@ -30,7 +30,7 @@ public static class Faker
             strikeouts: strikeouts,
             stolenBases: stolenBases,
             caughtStealing: caughtStealing,
-            hitByPitch: hitByPitch,
+            hitByPitches: hitByPitch,
             sacrificeBunts: sacrificeBunts,
             sacrificeFlies: sacrificeFlies,
             numberOfPitchesSeen: numberOfPitchesSeen,
@@ -39,7 +39,7 @@ public static class Faker
             groundIntoDoublePlays: groundIntoDoublePlays,
             groundIntoTriplePlays: groundIntoTriplePlays,
             airOuts: airOuts,
-            catchersInterference: catchersInterference
+            catcherInterferences: catcherInterferences
         );
     }
 
@@ -50,7 +50,7 @@ public static class Faker
         int intentionalWalks = 0, int hitBatsmen = 0, int outs = 0, int groundOuts = 0, int airOuts = 0,
         int groundIntoDoublePlays = 0, int numberOfPitches = 0, int strikes = 0, int wildPitches = 0, int balks = 0,
         int battersFaced = 0, int atBats = 0, int stolenBases = 0, int caughtStealing = 0, int pickOffs = 0,
-        int inheritedRunners = 0, int inheritedRunnersScored = 0, int catchersInterferences = 0, int sacrificeBunts = 0,
+        int inheritedRunners = 0, int inheritedRunnersScored = 0, int catcherInterferences = 0, int sacrificeBunts = 0,
         int sacrificeFlies = 0)
     {
         return PitchingStats.Create(wins: wins,
@@ -89,7 +89,7 @@ public static class Faker
             pickOffs: pickOffs,
             inheritedRunners: inheritedRunners,
             inheritedRunnersScored: inheritedRunnersScored,
-            catchersInterferences: catchersInterferences,
+            catcherInterferences: catcherInterferences,
             sacrificeBunts: sacrificeBunts,
             sacrificeFlies: sacrificeFlies
         );
@@ -98,7 +98,7 @@ public static class Faker
     public static FieldingStats FakeFieldingStats(Position position = Position.Catcher, int gamesStarted = 0,
         decimal inningsPlayed = 0, int assists = 0, int putOuts = 0, int errors = 0, int throwingErrors = 0,
         int doublePlays = 0, int triplePlays = 0, int caughtStealing = 0, int stolenBases = 0, int passedBalls = 0,
-        int catchersInterference = 0, int wildPitches = 0, int pickOffs = 0)
+        int catcherInterferences = 0, int wildPitches = 0, int pickOffs = 0)
     {
         return FieldingStats.Create(position: position,
             gamesStarted: gamesStarted,
@@ -112,7 +112,7 @@ public static class Faker
             caughtStealing: caughtStealing,
             stolenBases: stolenBases,
             passedBalls: passedBalls,
-            catchersInterference: catchersInterference,
+            catcherInterferences: catcherInterferences,
             wildPitches: wildPitches,
             pickOffs: pickOffs
         );

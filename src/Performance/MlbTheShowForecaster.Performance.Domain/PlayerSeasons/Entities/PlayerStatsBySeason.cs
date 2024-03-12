@@ -85,7 +85,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         .ToDictionary(x => x.Key, FieldingStats.Create);
 
     /// <summary>
-    /// Constructor 
+    /// Constructor
     /// </summary>
     /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
@@ -101,6 +101,20 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         _battingStatsByGames = battingStatsByGames;
         _pitchingStatsByGames = pitchingStatsByGames;
         _fieldingStatsByGames = fieldingStatsByGames;
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="playerMlbId">The MLB ID of the Player</param>
+    /// <param name="seasonYear">The season</param>
+    private PlayerStatsBySeason(MlbId playerMlbId, SeasonYear seasonYear) : base(Guid.NewGuid())
+    {
+        PlayerMlbId = playerMlbId;
+        SeasonYear = seasonYear;
+        _battingStatsByGames = new List<PlayerBattingStatsByGame>();
+        _pitchingStatsByGames = new List<PlayerPitchingStatsByGame>();
+        _fieldingStatsByGames = new List<PlayerFieldingStatsByGame>();
     }
 
     /// <summary>

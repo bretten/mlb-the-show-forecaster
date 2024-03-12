@@ -3,7 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 
-namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.TestClasses;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Tests.TestClasses;
 
 /// <summary>
 /// Creates fakes
@@ -127,7 +127,7 @@ public static class Faker
         );
     }
 
-    public static PlayerStatsBySeason FakePlayerStatsBySeason(int playerMlbId = 1, ushort seasonYear = 2024,
+    public static PlayerStatsBySeason FakePlayerSeasonStats(int playerMlbId = 1, ushort seasonYear = 2024,
         List<PlayerBattingStatsByGame>? battingStatsByGames = null,
         List<PlayerPitchingStatsByGame>? pitchingStatsByGames = null,
         List<PlayerFieldingStatsByGame>? fieldingStatsByGames = null)

@@ -58,7 +58,7 @@ public class MlbApiPlayerStatsMapperTests
         Assert.Equal(22, actual.GameBattingStats[0].LeftOnBase.Value);
         Assert.Equal(23, actual.GameBattingStats[0].SacrificeBunts.Value);
         Assert.Equal(24, actual.GameBattingStats[0].SacrificeFlies.Value);
-        Assert.Equal(25, actual.GameBattingStats[0].CatchersInterference.Value);
+        Assert.Equal(25, actual.GameBattingStats[0].CatcherInterferences.Value);
 
         Assert.Single(actual.GamePitchingStats);
         Assert.Equal(1, actual.GamePitchingStats[0].PlayerMlbId.Value);
@@ -101,7 +101,7 @@ public class MlbApiPlayerStatsMapperTests
         Assert.True(actual.GamePitchingStats[0].GameFinished);
         Assert.Equal(38, actual.GamePitchingStats[0].InheritedRunners.Value);
         Assert.Equal(39, actual.GamePitchingStats[0].InheritedRunnersScored.Value);
-        Assert.Equal(40, actual.GamePitchingStats[0].CatchersInterferences.Value);
+        Assert.Equal(40, actual.GamePitchingStats[0].CatcherInterferences.Value);
         Assert.Equal(41, actual.GamePitchingStats[0].SacrificeBunts.Value);
         Assert.Equal(42, actual.GamePitchingStats[0].SacrificeFlies.Value);
 
@@ -120,7 +120,7 @@ public class MlbApiPlayerStatsMapperTests
         Assert.Equal(10, actual.GameFieldingStats[0].PassedBalls.Value);
         Assert.Equal(11, actual.GameFieldingStats[0].DoublePlays.Value);
         Assert.Equal(12, actual.GameFieldingStats[0].TriplePlays.Value);
-        Assert.Equal(13, actual.GameFieldingStats[0].CatchersInterference.Value);
+        Assert.Equal(13, actual.GameFieldingStats[0].CatcherInterferences.Value);
         Assert.Equal(14, actual.GameFieldingStats[0].WildPitches.Value);
         Assert.Equal(15, actual.GameFieldingStats[0].ThrowingErrors.Value);
         Assert.Equal(16, actual.GameFieldingStats[0].PickOffs.Value);

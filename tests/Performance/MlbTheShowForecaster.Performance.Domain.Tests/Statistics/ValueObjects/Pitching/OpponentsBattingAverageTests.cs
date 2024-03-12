@@ -14,9 +14,9 @@ public class OpponentsBattingAverageTests
         const int hitBatsmen = 11;
         const int sacrificeHits = 0;
         const int sacrificeFlies = 1;
-        const int catchersInterferences = 1;
+        const int catcherInterferences = 1;
         var opponentsBattingAverage = OpponentsBattingAverage.Create(hits, battersFaced, baseOnBalls, hitBatsmen,
-            sacrificeHits, sacrificeFlies, catchersInterferences);
+            sacrificeHits, sacrificeFlies, catcherInterferences);
 
         // Act
         var actual = opponentsBattingAverage.Value;
@@ -29,6 +29,6 @@ public class OpponentsBattingAverageTests
         Assert.Equal(11, opponentsBattingAverage.HitBatsmen.Value);
         Assert.Equal(0, opponentsBattingAverage.SacrificeHits.Value);
         Assert.Equal(1, opponentsBattingAverage.SacrificeFlies.Value);
-        Assert.Equal(1, opponentsBattingAverage.CatchersInterferences.Value);
+        Assert.Equal(1, opponentsBattingAverage.CatcherInterferences.Value);
     }
 }

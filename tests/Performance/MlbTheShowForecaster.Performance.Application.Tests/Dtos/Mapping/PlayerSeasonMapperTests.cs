@@ -53,7 +53,7 @@ public class PlayerSeasonMapperTests
         Assert.Equal(11011, actual.SeasonBattingStats.Strikeouts.Value);
         Assert.Equal(12012, actual.SeasonBattingStats.StolenBases.Value);
         Assert.Equal(13013, actual.SeasonBattingStats.CaughtStealing.Value);
-        Assert.Equal(14014, actual.SeasonBattingStats.HitByPitch.Value);
+        Assert.Equal(14014, actual.SeasonBattingStats.HitByPitches.Value);
         Assert.Equal(15015, actual.SeasonBattingStats.SacrificeBunts.Value);
         Assert.Equal(16016, actual.SeasonBattingStats.SacrificeFlies.Value);
         Assert.Equal(17017, actual.SeasonBattingStats.NumberOfPitchesSeen.Value);
@@ -62,7 +62,7 @@ public class PlayerSeasonMapperTests
         Assert.Equal(20020, actual.SeasonBattingStats.GroundIntoDoublePlays.Value);
         Assert.Equal(21021, actual.SeasonBattingStats.GroundIntoTriplePlays.Value);
         Assert.Equal(22022, actual.SeasonBattingStats.AirOuts.Value);
-        Assert.Equal(23023, actual.SeasonBattingStats.CatchersInterference.Value);
+        Assert.Equal(23023, actual.SeasonBattingStats.CatcherInterferences.Value);
 
         Assert.Equal(1, actual.SeasonPitchingStats.Wins.Value);
         Assert.Equal(1, actual.SeasonPitchingStats.Losses.Value);
@@ -100,7 +100,7 @@ public class PlayerSeasonMapperTests
         Assert.Equal(24024, actual.SeasonPitchingStats.PickOffs.Value);
         Assert.Equal(25025, actual.SeasonPitchingStats.InheritedRunners.Value);
         Assert.Equal(26026, actual.SeasonPitchingStats.InheritedRunnersScored.Value);
-        Assert.Equal(27027, actual.SeasonPitchingStats.CatchersInterferences.Value);
+        Assert.Equal(27027, actual.SeasonPitchingStats.CatcherInterferences.Value);
         Assert.Equal(28028, actual.SeasonPitchingStats.SacrificeBunts.Value);
         Assert.Equal(29029, actual.SeasonPitchingStats.SacrificeFlies.Value);
 
@@ -116,7 +116,7 @@ public class PlayerSeasonMapperTests
         Assert.Equal(8008, actual.SeasonAggregateFieldingStats.CaughtStealing.Value);
         Assert.Equal(9009, actual.SeasonAggregateFieldingStats.StolenBases.Value);
         Assert.Equal(10010, actual.SeasonAggregateFieldingStats.PassedBalls.Value);
-        Assert.Equal(11011, actual.SeasonAggregateFieldingStats.CatchersInterference.Value);
+        Assert.Equal(11011, actual.SeasonAggregateFieldingStats.CatcherInterferences.Value);
         Assert.Equal(12012, actual.SeasonAggregateFieldingStats.WildPitches.Value);
         Assert.Equal(13013, actual.SeasonAggregateFieldingStats.PickOffs.Value);
     }

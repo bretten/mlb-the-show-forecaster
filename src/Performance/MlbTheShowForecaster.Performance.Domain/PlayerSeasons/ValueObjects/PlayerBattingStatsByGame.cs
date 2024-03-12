@@ -26,12 +26,12 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <summary>
     /// The MLB ID of the game
     /// </summary>
-    public MlbId GameId { get; }
+    public MlbId GameMlbId { get; }
 
     /// <summary>
     /// The MLB ID of the team
     /// </summary>
-    public MlbId TeamId { get; }
+    public MlbId TeamMlbId { get; }
 
     /// <summary>
     /// Determines the properties that are used in equality
@@ -42,7 +42,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
         yield return PlayerMlbId.Value;
         yield return SeasonYear.Value;
         yield return GameDate;
-        yield return GameId.Value;
+        yield return GameMlbId.Value;
     }
 
     /// <summary>
@@ -51,8 +51,8 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
-    /// <param name="gameId">The MLB ID of the game</param>
-    /// <param name="teamId">The MLB ID of the team</param>
+    /// <param name="gameMlbId">The MLB ID of the game</param>
+    /// <param name="teamMlbId">The MLB ID of the team</param>
     /// <param name="plateAppearances">The number of plate appearances</param>
     /// <param name="atBats">The number of at bats</param>
     /// <param name="runs">The number of runs scored</param>
@@ -66,7 +66,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <param name="strikeouts">The number of strikeouts</param>
     /// <param name="stolenBases">The number of stolen bases</param>
     /// <param name="caughtStealing">The number of times caught stealing</param>
-    /// <param name="hitByPitch">The number of times the player was hit by a pitch</param>
+    /// <param name="hitByPitches">The number of times the player was hit by a pitch</param>
     /// <param name="sacrificeBunts">The number of sacrifice bunts</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies</param>
     /// <param name="numberOfPitchesSeen">The number of pitches the player saw as a batter</param>
@@ -75,24 +75,24 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <param name="groundIntoDoublePlays">The number of times the batter grounded into a double play</param>
     /// <param name="groundIntoTriplePlays">The number of times the batter grounded into a triple play</param>
     /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
-    /// <param name="catchersInterference">The number of times a catcher interfered with the batter's plate appearance</param>
-    private PlayerBattingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameId,
-        MlbId teamId, NaturalNumber plateAppearances, NaturalNumber atBats, NaturalNumber runs, NaturalNumber hits,
+    /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
+    private PlayerBattingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameMlbId,
+        MlbId teamMlbId, NaturalNumber plateAppearances, NaturalNumber atBats, NaturalNumber runs, NaturalNumber hits,
         NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runsBattedIn,
         NaturalNumber baseOnBalls, NaturalNumber intentionalWalks, NaturalNumber strikeouts, NaturalNumber stolenBases,
-        NaturalNumber caughtStealing, NaturalNumber hitByPitch, NaturalNumber sacrificeBunts,
+        NaturalNumber caughtStealing, NaturalNumber hitByPitches, NaturalNumber sacrificeBunts,
         NaturalNumber sacrificeFlies, NaturalNumber numberOfPitchesSeen, NaturalNumber leftOnBase,
         NaturalNumber groundOuts, NaturalNumber groundIntoDoublePlays, NaturalNumber groundIntoTriplePlays,
-        NaturalNumber airOuts, NaturalNumber catchersInterference) : base(plateAppearances, atBats, runs, hits, doubles,
+        NaturalNumber airOuts, NaturalNumber catcherInterferences) : base(plateAppearances, atBats, runs, hits, doubles,
         triples, homeRuns, runsBattedIn, baseOnBalls, intentionalWalks, strikeouts, stolenBases, caughtStealing,
-        hitByPitch, sacrificeBunts, sacrificeFlies, numberOfPitchesSeen, leftOnBase, groundOuts, groundIntoDoublePlays,
-        groundIntoTriplePlays, airOuts, catchersInterference)
+        hitByPitches, sacrificeBunts, sacrificeFlies, numberOfPitchesSeen, leftOnBase, groundOuts, groundIntoDoublePlays,
+        groundIntoTriplePlays, airOuts, catcherInterferences)
     {
         PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
         GameDate = gameDate;
-        GameId = gameId;
-        TeamId = teamId;
+        GameMlbId = gameMlbId;
+        TeamMlbId = teamMlbId;
     }
 
     /// <summary>
@@ -101,8 +101,8 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
     /// <param name="gameDate">The date of the game</param>
-    /// <param name="gameId">The MLB ID of the game</param>
-    /// <param name="teamId">The MLB ID of the team</param>
+    /// <param name="gameMlbId">The MLB ID of the game</param>
+    /// <param name="teamMlbId">The MLB ID of the team</param>
     /// <param name="plateAppearances">The number of plate appearances</param>
     /// <param name="atBats">The number of at bats</param>
     /// <param name="runs">The number of runs scored</param>
@@ -125,14 +125,14 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <param name="groundIntoDoublePlays">The number of times the batter grounded into a double play</param>
     /// <param name="groundIntoTriplePlays">The number of times the batter grounded into a triple play</param>
     /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
-    /// <param name="catchersInterference">The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
     /// <returns><see cref="PlayerBattingStatsByGame"/></returns>
     public static PlayerBattingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate,
-        MlbId gameId, MlbId teamId, int plateAppearances, int atBats, int runs, int hits, int doubles, int triples,
-        int homeRuns, int runsBattedIn, int baseOnBalls, int intentionalWalks, int strikeouts, int stolenBases,
-        int caughtStealing, int hitByPitch, int sacrificeBunts, int sacrificeFlies, int numberOfPitchesSeen,
-        int leftOnBase, int groundOuts, int groundIntoDoublePlays, int groundIntoTriplePlays, int airOuts,
-        int catchersInterference)
+        MlbId gameMlbId, MlbId teamMlbId, int plateAppearances, int atBats, int runs, int hits, int doubles,
+        int triples, int homeRuns, int runsBattedIn, int baseOnBalls, int intentionalWalks, int strikeouts,
+        int stolenBases, int caughtStealing, int hitByPitch, int sacrificeBunts, int sacrificeFlies,
+        int numberOfPitchesSeen, int leftOnBase, int groundOuts, int groundIntoDoublePlays, int groundIntoTriplePlays,
+        int airOuts, int catcherInterferences)
     {
         var pa = NaturalNumber.Create(plateAppearances);
         var ab = NaturalNumber.Create(atBats);
@@ -156,8 +156,8 @@ public sealed class PlayerBattingStatsByGame : BattingStats
         var goDp = NaturalNumber.Create(groundIntoDoublePlays);
         var goTp = NaturalNumber.Create(groundIntoTriplePlays);
         var ao = NaturalNumber.Create(airOuts);
-        var ci = NaturalNumber.Create(catchersInterference);
-        return new PlayerBattingStatsByGame(playerMlbId, seasonYear, gameDate, gameId, teamId,
+        var ci = NaturalNumber.Create(catcherInterferences);
+        return new PlayerBattingStatsByGame(playerMlbId, seasonYear, gameDate, gameMlbId, teamMlbId,
             plateAppearances: pa,
             atBats: ab,
             runs: r,
@@ -171,7 +171,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
             strikeouts: k,
             stolenBases: sb,
             caughtStealing: cs,
-            hitByPitch: hbp,
+            hitByPitches: hbp,
             sacrificeBunts: sacB,
             sacrificeFlies: sacF,
             numberOfPitchesSeen: pitchCount,
@@ -180,7 +180,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
             groundIntoDoublePlays: goDp,
             groundIntoTriplePlays: goTp,
             airOuts: ao,
-            catchersInterference: ci
+            catcherInterferences: ci
         );
     }
 }
