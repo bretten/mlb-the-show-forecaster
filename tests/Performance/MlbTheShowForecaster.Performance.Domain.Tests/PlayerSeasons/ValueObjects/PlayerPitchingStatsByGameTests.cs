@@ -79,7 +79,7 @@ public class PlayerPitchingStatsByGameTests
         const int pickOffs = 34;
         const int inheritedRunners = 35;
         const int inheritedRunnersScored = 36;
-        const int catchersInterferences = 37;
+        const int catcherInterferences = 37;
         const int sacrificeBunts = 38;
         const int sacrificeFlies = 39;
 
@@ -121,7 +121,7 @@ public class PlayerPitchingStatsByGameTests
             pickOffs: pickOffs,
             inheritedRunners: inheritedRunners,
             inheritedRunnersScored: inheritedRunnersScored,
-            catchersInterferences: catchersInterferences,
+            catcherInterferences: catcherInterferences,
             sacrificeBunts: sacrificeBunts,
             sacrificeFlies: sacrificeFlies
         );
@@ -130,8 +130,8 @@ public class PlayerPitchingStatsByGameTests
         Assert.Equal(1, actual.PlayerMlbId.Value);
         Assert.Equal(2024, actual.SeasonYear.Value);
         Assert.Equal(new DateTime(2024, 4, 1), actual.GameDate);
-        Assert.Equal(10000, actual.GameId.Value);
-        Assert.Equal(100, actual.TeamId.Value);
+        Assert.Equal(10000, actual.GameMlbId.Value);
+        Assert.Equal(100, actual.TeamMlbId.Value);
         Assert.Equal(1, actual.Wins.Value);
         Assert.Equal(0, actual.Losses.Value);
         Assert.Equal(1, actual.GamesStarted.Value);
@@ -168,7 +168,7 @@ public class PlayerPitchingStatsByGameTests
         Assert.Equal(34, actual.PickOffs.Value);
         Assert.Equal(35, actual.InheritedRunners.Value);
         Assert.Equal(36, actual.InheritedRunnersScored.Value);
-        Assert.Equal(37, actual.CatchersInterferences.Value);
+        Assert.Equal(37, actual.CatcherInterferences.Value);
         Assert.Equal(38, actual.SacrificeBunts.Value);
         Assert.Equal(39, actual.SacrificeFlies.Value);
         Assert.True(actual.PitchingResult.Win);

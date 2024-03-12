@@ -47,7 +47,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 /// <param name="PickOffs">The number of pick offs made by this pitcher</param>
 /// <param name="InheritedRunners">The number of runners on base when the pitcher enters the game</param>
 /// <param name="InheritedRunnersScored">The number of inherited runners allowed to score</param>
-/// <param name="CatchersInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
+/// <param name="CatcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
 /// <param name="SacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
 /// <param name="SacrificeFlies">The number of sacrifice flies made against the pitcher</param>
 public readonly record struct PlayerGamePitchingStats(
@@ -92,6 +92,6 @@ public readonly record struct PlayerGamePitchingStats(
     NaturalNumber PickOffs,
     NaturalNumber InheritedRunners,
     NaturalNumber InheritedRunnersScored,
-    NaturalNumber CatchersInterferences,
+    NaturalNumber CatcherInterferences,
     NaturalNumber SacrificeBunts,
     NaturalNumber SacrificeFlies);

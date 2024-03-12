@@ -194,7 +194,7 @@ public class PitchingStats : ValueObject
     /// <summary>
     /// The number of times a catcher interfered with the batter's plate appearance
     /// </summary>
-    public NaturalNumber CatchersInterferences { get; }
+    public NaturalNumber CatcherInterferences { get; }
 
     /// <summary>
     /// The number of sacrifice bunts made against the pitcher
@@ -221,7 +221,7 @@ public class PitchingStats : ValueObject
     /// </summary>
     public OpponentsBattingAverage OpponentsBattingAverage => OpponentsBattingAverage.Create(
         Hits.Value, BattersFaced.Value, BaseOnBalls.Value, HitBatsmen.Value, SacrificeBunts.Value,
-        SacrificeFlies.Value, CatchersInterferences.Value);
+        SacrificeFlies.Value, CatcherInterferences.Value);
 
     /// <summary>
     /// Opponents batting average
@@ -337,7 +337,7 @@ public class PitchingStats : ValueObject
     /// <param name="pickOffs">The number of pick offs made by this pitcher</param>
     /// <param name="inheritedRunners">The number of runners on base when the pitcher enters the game</param>
     /// <param name="inheritedRunnersScored">The number of inherited runners allowed to score</param>
-    /// <param name="catchersInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
     protected PitchingStats(NaturalNumber wins, NaturalNumber losses, NaturalNumber gamesStarted,
@@ -349,7 +349,7 @@ public class PitchingStats : ValueObject
         NaturalNumber groundIntoDoublePlays, NaturalNumber numberOfPitches, NaturalNumber strikes,
         NaturalNumber wildPitches, NaturalNumber balks, NaturalNumber battersFaced, NaturalNumber atBats,
         NaturalNumber stolenBases, NaturalNumber caughtStealing, NaturalNumber pickOffs, NaturalNumber inheritedRunners,
-        NaturalNumber inheritedRunnersScored, NaturalNumber catchersInterferences, NaturalNumber sacrificeBunts,
+        NaturalNumber inheritedRunnersScored, NaturalNumber catcherInterferences, NaturalNumber sacrificeBunts,
         NaturalNumber sacrificeFlies)
     {
         Wins = wins;
@@ -388,7 +388,7 @@ public class PitchingStats : ValueObject
         PickOffs = pickOffs;
         InheritedRunners = inheritedRunners;
         InheritedRunnersScored = inheritedRunnersScored;
-        CatchersInterferences = catchersInterferences;
+        CatcherInterferences = catcherInterferences;
         SacrificeBunts = sacrificeBunts;
         SacrificeFlies = sacrificeFlies;
     }
@@ -432,7 +432,7 @@ public class PitchingStats : ValueObject
     /// <param name="pickOffs">The number of pick offs made by this pitcher</param>
     /// <param name="inheritedRunners">The number of runners on base when the pitcher enters the game</param>
     /// <param name="inheritedRunnersScored">The number of inherited runners allowed to score</param>
-    /// <param name="catchersInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
     /// <returns><see cref="PitchingStats"/></returns>
@@ -441,7 +441,7 @@ public class PitchingStats : ValueObject
         int doubles, int triples, int homeRuns, int runs, int earnedRuns, int strikeouts, int baseOnBalls,
         int intentionalWalks, int hitBatsmen, int outs, int groundOuts, int airOuts, int groundIntoDoublePlays,
         int numberOfPitches, int strikes, int wildPitches, int balks, int battersFaced, int atBats, int stolenBases,
-        int caughtStealing, int pickOffs, int inheritedRunners, int inheritedRunnersScored, int catchersInterferences,
+        int caughtStealing, int pickOffs, int inheritedRunners, int inheritedRunnersScored, int catcherInterferences,
         int sacrificeBunts, int sacrificeFlies)
     {
         var w = NaturalNumber.Create(wins);
@@ -480,7 +480,7 @@ public class PitchingStats : ValueObject
         var pk = NaturalNumber.Create(pickOffs);
         var ir = NaturalNumber.Create(inheritedRunners);
         var irs = NaturalNumber.Create(inheritedRunnersScored);
-        var ci = NaturalNumber.Create(catchersInterferences);
+        var ci = NaturalNumber.Create(catcherInterferences);
         var sh = NaturalNumber.Create(sacrificeBunts);
         var sf = NaturalNumber.Create(sacrificeFlies);
         return new PitchingStats(wins: w,
@@ -519,7 +519,7 @@ public class PitchingStats : ValueObject
             pickOffs: pk,
             inheritedRunners: ir,
             inheritedRunnersScored: irs,
-            catchersInterferences: ci,
+            catcherInterferences: ci,
             sacrificeBunts: sh,
             sacrificeFlies: sf
         );
@@ -569,7 +569,7 @@ public class PitchingStats : ValueObject
             pickOffs: pitchingStatsArray.Sum(x => x.PickOffs.Value),
             inheritedRunners: pitchingStatsArray.Sum(x => x.InheritedRunners.Value),
             inheritedRunnersScored: pitchingStatsArray.Sum(x => x.InheritedRunnersScored.Value),
-            catchersInterferences: pitchingStatsArray.Sum(x => x.CatchersInterferences.Value),
+            catcherInterferences: pitchingStatsArray.Sum(x => x.CatcherInterferences.Value),
             sacrificeBunts: pitchingStatsArray.Sum(x => x.SacrificeBunts.Value),
             sacrificeFlies: pitchingStatsArray.Sum(x => x.SacrificeFlies.Value)
         );

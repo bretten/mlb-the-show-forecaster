@@ -28,7 +28,7 @@ public static class Faker
         int baseOnBalls = 9, int intentionalWalks = 10, int strikeouts = 11, int stolenBases = 12,
         int caughtStealing = 13, int hitByPitch = 14, int sacrificeBunts = 15, int sacrificeFlies = 16,
         int numberOfPitchesSeen = 17, int leftOnBase = 18, int groundOuts = 19, int groundIntoDoublePlays = 20,
-        int groundIntoTriplePlays = 21, int airOuts = 22, int catchersInterference = 23, int scalar = 1)
+        int groundIntoTriplePlays = 21, int airOuts = 22, int catcherInterferences = 23, int scalar = 1)
     {
         return new PlayerGameBattingStats(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
             gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameMlbId), MlbId.Create(teamMlbId),
@@ -54,7 +54,7 @@ public static class Faker
             GroundIntoDoublePlays: NaturalNumber.Create(scalar * groundIntoDoublePlays),
             GroundIntoTriplePlays: NaturalNumber.Create(scalar * groundIntoTriplePlays),
             AirOuts: NaturalNumber.Create(scalar * airOuts),
-            CatchersInterference: NaturalNumber.Create(scalar * catchersInterference)
+            CatcherInterferences: NaturalNumber.Create(scalar * catcherInterferences)
         );
     }
 
@@ -67,7 +67,7 @@ public static class Faker
         int outs = 12, int groundOuts = 13, int airOuts = 14, int groundIntoDoublePlays = 15, int numberOfPitches = 16,
         int strikes = 17, int wildPitches = 18, int balks = 19, int battersFaced = 20, int atBats = 21,
         int stolenBases = 22, int caughtStealing = 23, int pickOffs = 24, int inheritedRunners = 25,
-        int inheritedRunnersScored = 26, int catchersInterferences = 27, int sacrificeBunts = 28,
+        int inheritedRunnersScored = 26, int catcherInterferences = 27, int sacrificeBunts = 28,
         int sacrificeFlies = 29, int scalar = 1)
     {
         return new PlayerGamePitchingStats(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
@@ -108,7 +108,7 @@ public static class Faker
             PickOffs: NaturalNumber.Create(scalar * pickOffs),
             InheritedRunners: NaturalNumber.Create(scalar * inheritedRunners),
             InheritedRunnersScored: NaturalNumber.Create(scalar * inheritedRunnersScored),
-            CatchersInterferences: NaturalNumber.Create(scalar * catchersInterferences),
+            CatcherInterferences: NaturalNumber.Create(scalar * catcherInterferences),
             SacrificeBunts: NaturalNumber.Create(scalar * sacrificeBunts),
             SacrificeFlies: NaturalNumber.Create(scalar * sacrificeFlies)
         );
@@ -118,7 +118,7 @@ public static class Faker
         DateTime? gameDate = null, int gameMlbId = 10000, int teamMlbId = 100, Position position = Position.Catcher,
         bool gameStarted = false, decimal inningsPlayed = 1, int assists = 2, int putOuts = 3, int errors = 4,
         int throwingErrors = 5, int doublePlays = 6, int triplePlays = 7, int caughtStealing = 8, int stolenBases = 9,
-        int passedBalls = 10, int catchersInterference = 11, int wildPitches = 12, int pickOffs = 13, int scalar = 1)
+        int passedBalls = 10, int catcherInterferences = 11, int wildPitches = 12, int pickOffs = 13, int scalar = 1)
     {
         return new PlayerGameFieldingStats(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
             gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameMlbId), MlbId.Create(teamMlbId),
@@ -134,7 +134,7 @@ public static class Faker
             CaughtStealing: NaturalNumber.Create(scalar * caughtStealing),
             StolenBases: NaturalNumber.Create(scalar * stolenBases),
             PassedBalls: NaturalNumber.Create(scalar * passedBalls),
-            CatchersInterference: NaturalNumber.Create(scalar * catchersInterference),
+            CatcherInterferences: NaturalNumber.Create(scalar * catcherInterferences),
             WildPitches: NaturalNumber.Create(scalar * wildPitches),
             PickOffs: NaturalNumber.Create(scalar * pickOffs)
         );

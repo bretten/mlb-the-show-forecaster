@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 
-public sealed class EntityFrameworkPlayerStatsBySeasonRepository : IPlayerStatsBySeasonRepository
+public sealed class EntityFrameworkCorePlayerStatsBySeasonRepository : IPlayerStatsBySeasonRepository
 {
     /// <summary>
     /// The DB context for <see cref="PlayerStatsBySeason"/>
@@ -16,7 +16,7 @@ public sealed class EntityFrameworkPlayerStatsBySeasonRepository : IPlayerStatsB
     /// Constructor
     /// </summary>
     /// <param name="dbContext">The DB context for <see cref="PlayerStatsBySeason"/></param>
-    public EntityFrameworkPlayerStatsBySeasonRepository(PlayerSeasonsDbContext dbContext)
+    public EntityFrameworkCorePlayerStatsBySeasonRepository(PlayerSeasonsDbContext dbContext)
     {
         _dbContext = dbContext;
     }

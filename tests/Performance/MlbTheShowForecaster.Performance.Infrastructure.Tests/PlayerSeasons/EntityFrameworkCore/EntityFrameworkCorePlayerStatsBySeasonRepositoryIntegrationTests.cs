@@ -15,7 +15,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Tests.P
 /// Integration tests that use TestContainers to spin up database containers for the tests. Requires Docker to be
 /// running for these tests
 /// </summary>
-public class EntityFrameworkPlayerStatsBySeasonRepositoryIntegrationTests : IAsyncLifetime
+public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container;
 
@@ -23,7 +23,7 @@ public class EntityFrameworkPlayerStatsBySeasonRepositoryIntegrationTests : IAsy
     /// Configures the container options that will be used for each test
     /// </summary>
     /// <exception cref="DockerNotRunningException">Thrown if Docker is not running</exception>
-    public EntityFrameworkPlayerStatsBySeasonRepositoryIntegrationTests()
+    public EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests()
     {
         try
         {
@@ -73,7 +73,7 @@ public class EntityFrameworkPlayerStatsBySeasonRepositoryIntegrationTests : IAsy
         await using var dbContext = GetDbContext(connection);
         await dbContext.Database.MigrateAsync();
 
-        var repo = new EntityFrameworkPlayerStatsBySeasonRepository(dbContext);
+        var repo = new EntityFrameworkCorePlayerStatsBySeasonRepository(dbContext);
 
         // Act
         await repo.Add(fakePlayerStatsBySeason);
@@ -116,7 +116,7 @@ public class EntityFrameworkPlayerStatsBySeasonRepositoryIntegrationTests : IAsy
         await dbContext.AddAsync(fakePlayerStatsBySeason);
         await dbContext.SaveChangesAsync();
 
-        var repo = new EntityFrameworkPlayerStatsBySeasonRepository(dbContext);
+        var repo = new EntityFrameworkCorePlayerStatsBySeasonRepository(dbContext);
 
         // Act
         fakePlayerStatsBySeason.LogBattingGame(Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 6)));
@@ -189,7 +189,7 @@ public class EntityFrameworkPlayerStatsBySeasonRepositoryIntegrationTests : IAsy
             await GetDbConnection(); // Re-create the context so that the record is freshly retrieved from the database
         await using var assertDbContext = GetDbContext(assertConnection);
         await assertDbContext.Database.MigrateAsync();
-        var repo = new EntityFrameworkPlayerStatsBySeasonRepository(assertDbContext);
+        var repo = new EntityFrameworkCorePlayerStatsBySeasonRepository(assertDbContext);
 
         // Act
         var actual = (await repo.GetAll(seasonYear)).ToList();

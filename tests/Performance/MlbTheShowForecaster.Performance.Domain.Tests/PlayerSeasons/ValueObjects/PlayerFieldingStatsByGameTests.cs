@@ -56,7 +56,7 @@ public class PlayerFieldingStatsByGameTests
         const int caughtStealing = 7;
         const int stolenBases = 8;
         const int passedBalls = 9;
-        const int catchersInterference = 10;
+        const int catcherInterferences = 10;
         const int wildPitches = 11;
         const int pickOffs = 12;
 
@@ -74,7 +74,7 @@ public class PlayerFieldingStatsByGameTests
             caughtStealing: caughtStealing,
             stolenBases: stolenBases,
             passedBalls: passedBalls,
-            catchersInterference: catchersInterference,
+            catcherInterferences: catcherInterferences,
             wildPitches: wildPitches,
             pickOffs: pickOffs
         );
@@ -83,8 +83,8 @@ public class PlayerFieldingStatsByGameTests
         Assert.Equal(1, actual.PlayerMlbId.Value);
         Assert.Equal(2024, actual.SeasonYear.Value);
         Assert.Equal(new DateTime(2024, 4, 1), actual.GameDate);
-        Assert.Equal(10000, actual.GameId.Value);
-        Assert.Equal(100, actual.TeamId.Value);
+        Assert.Equal(10000, actual.GameMlbId.Value);
+        Assert.Equal(100, actual.TeamMlbId.Value);
         Assert.Equal(Position.FirstBase, actual.Position);
         Assert.Equal(1, actual.GamesStarted.Value);
         Assert.Equal(1.333m, actual.InningsPlayed.Value);
@@ -97,7 +97,7 @@ public class PlayerFieldingStatsByGameTests
         Assert.Equal(7, actual.CaughtStealing.Value);
         Assert.Equal(8, actual.StolenBases.Value);
         Assert.Equal(9, actual.PassedBalls.Value);
-        Assert.Equal(10, actual.CatchersInterference.Value);
+        Assert.Equal(10, actual.CatcherInterferences.Value);
         Assert.Equal(11, actual.WildPitches.Value);
         Assert.Equal(12, actual.PickOffs.Value);
     }

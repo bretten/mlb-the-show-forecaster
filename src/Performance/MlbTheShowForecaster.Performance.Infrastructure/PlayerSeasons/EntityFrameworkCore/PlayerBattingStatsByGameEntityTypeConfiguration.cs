@@ -18,7 +18,7 @@ public sealed class PlayerBattingStatsByGameEntityTypeConfiguration : IEntityTyp
     {
         builder.ToTable(Constants.PlayerBattingStatsByGames.TableName, Constants.Schema);
 
-        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameId });
+        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameMlbId });
 
         builder.Property(e => e.PlayerMlbId)
             .IsRequired()
@@ -37,13 +37,13 @@ public sealed class PlayerBattingStatsByGameEntityTypeConfiguration : IEntityTyp
             .HasColumnType("date")
             .HasColumnName(Constants.PlayerBattingStatsByGames.GameDate);
 
-        builder.Property(e => e.GameId)
+        builder.Property(e => e.GameMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerBattingStatsByGames.GameMlbId)
             .HasConversion(v => v.Value,
                 v => MlbId.Create(v));
 
-        builder.Property(e => e.TeamId)
+        builder.Property(e => e.TeamMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerBattingStatsByGames.TeamMlbId)
             .HasConversion(v => v.Value,
@@ -140,7 +140,7 @@ public sealed class PlayerBattingStatsByGameEntityTypeConfiguration : IEntityTyp
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
-        builder.Property(e => e.HitByPitch)
+        builder.Property(e => e.HitByPitches)
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerBattingStatsByGames.HitByPitch)
@@ -203,10 +203,10 @@ public sealed class PlayerBattingStatsByGameEntityTypeConfiguration : IEntityTyp
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
-        builder.Property(e => e.CatchersInterference)
+        builder.Property(e => e.CatcherInterferences)
             .IsRequired()
             .HasColumnType("integer")
-            .HasColumnName(Constants.PlayerBattingStatsByGames.CatchersInterference)
+            .HasColumnName(Constants.PlayerBattingStatsByGames.CatcherInterferences)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
     }

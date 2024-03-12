@@ -187,7 +187,7 @@ public static class Constants
         /// <summary>
         /// The number of times a catcher interfered with the batter's plate appearance
         /// </summary>
-        public const string CatchersInterference = "catchers_interference";
+        public const string CatcherInterferences = "catcher_interferences";
     }
 
     /// <summary>
@@ -408,7 +408,7 @@ public static class Constants
         /// <summary>
         /// The number of times a catcher interfered with the batter's plate appearance
         /// </summary>
-        public const string CatchersInterferences = "catchers_interferences";
+        public const string CatcherInterferences = "catcher_interferences";
 
         /// <summary>
         /// The number of sacrifice bunts made against the pitcher
@@ -519,7 +519,7 @@ public static class Constants
         /// <summary>
         /// Catcher stat: The number of times a catcher interfered with the batter's plate appearance
         /// </summary>
-        public const string CatchersInterference = "catchers_interference";
+        public const string CatcherInterferences = "catcher_interferences";
 
         /// <summary>
         /// Catcher stat: The number of wild pitches the catcher saw from the pitcher

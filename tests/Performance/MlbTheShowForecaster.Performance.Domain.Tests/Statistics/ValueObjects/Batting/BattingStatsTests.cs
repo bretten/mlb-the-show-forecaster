@@ -158,7 +158,7 @@ public class BattingStatsTests
         const int groundIntoDoublePlays = 20;
         const int groundIntoTriplePlays = 21;
         const int airOuts = 22;
-        const int catchersInterference = 23;
+        const int catcherInterferences = 23;
 
         // Act
         var actual = BattingStats.Create(plateAppearances: plateAppearances,
@@ -174,7 +174,7 @@ public class BattingStatsTests
             strikeouts: strikeouts,
             stolenBases: stolenBases,
             caughtStealing: caughtStealing,
-            hitByPitch: hitByPitch,
+            hitByPitches: hitByPitch,
             sacrificeBunts: sacrificeBunts,
             sacrificeFlies: sacrificeFlies,
             numberOfPitchesSeen: numberOfPitchesSeen,
@@ -183,7 +183,7 @@ public class BattingStatsTests
             groundIntoDoublePlays: groundIntoDoublePlays,
             groundIntoTriplePlays: groundIntoTriplePlays,
             airOuts: airOuts,
-            catchersInterference: catchersInterference
+            catcherInterferences: catcherInterferences
         );
 
         // Assert
@@ -200,7 +200,7 @@ public class BattingStatsTests
         Assert.Equal(strikeouts, actual.Strikeouts.Value);
         Assert.Equal(stolenBases, actual.StolenBases.Value);
         Assert.Equal(caughtStealing, actual.CaughtStealing.Value);
-        Assert.Equal(hitByPitch, actual.HitByPitch.Value);
+        Assert.Equal(hitByPitch, actual.HitByPitches.Value);
         Assert.Equal(sacrificeBunts, actual.SacrificeBunts.Value);
         Assert.Equal(sacrificeFlies, actual.SacrificeFlies.Value);
         Assert.Equal(numberOfPitchesSeen, actual.NumberOfPitchesSeen.Value);
@@ -209,7 +209,7 @@ public class BattingStatsTests
         Assert.Equal(groundIntoDoublePlays, actual.GroundIntoDoublePlays.Value);
         Assert.Equal(groundIntoTriplePlays, actual.GroundIntoTriplePlays.Value);
         Assert.Equal(airOuts, actual.AirOuts.Value);
-        Assert.Equal(catchersInterference, actual.CatchersInterference.Value);
+        Assert.Equal(catcherInterferences, actual.CatcherInterferences.Value);
     }
 
     [Fact]
@@ -239,7 +239,7 @@ public class BattingStatsTests
             groundIntoDoublePlays: 20,
             groundIntoTriplePlays: 21,
             airOuts: 22,
-            catchersInterference: 23
+            catcherInterferences: 23
         );
         var stats2 = Faker.FakeBattingStats(
             plateAppearances: 1000, // Values are the previous one multiplied by 1000 to make expected values easy to calculate
@@ -264,7 +264,7 @@ public class BattingStatsTests
             groundIntoDoublePlays: 20000,
             groundIntoTriplePlays: 21000,
             airOuts: 22000,
-            catchersInterference: 23000
+            catcherInterferences: 23000
         );
         var statsCollection = new List<BattingStats>() { stats1, stats2 };
 
@@ -285,7 +285,7 @@ public class BattingStatsTests
         Assert.Equal(11011, actual.Strikeouts.Value);
         Assert.Equal(12012, actual.StolenBases.Value);
         Assert.Equal(13013, actual.CaughtStealing.Value);
-        Assert.Equal(14014, actual.HitByPitch.Value);
+        Assert.Equal(14014, actual.HitByPitches.Value);
         Assert.Equal(15015, actual.SacrificeBunts.Value);
         Assert.Equal(16016, actual.SacrificeFlies.Value);
         Assert.Equal(17017, actual.NumberOfPitchesSeen.Value);
@@ -294,6 +294,6 @@ public class BattingStatsTests
         Assert.Equal(20020, actual.GroundIntoDoublePlays.Value);
         Assert.Equal(21021, actual.GroundIntoTriplePlays.Value);
         Assert.Equal(22022, actual.AirOuts.Value);
-        Assert.Equal(23023, actual.CatchersInterference.Value);
+        Assert.Equal(23023, actual.CatcherInterferences.Value);
     }
 }

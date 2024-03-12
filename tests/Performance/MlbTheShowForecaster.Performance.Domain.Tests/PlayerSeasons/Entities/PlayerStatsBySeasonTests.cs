@@ -105,7 +105,7 @@ public class PlayerStatsBySeasonTests
             groundIntoDoublePlays: 20,
             groundIntoTriplePlays: 21,
             airOuts: 22,
-            catchersInterference: 23
+            catcherInterferences: 23
         );
         var game2 = Faker.FakePlayerBattingStats(
             plateAppearances: 1000, // Game2 is simply the previous one multiplied by 1000 to make expected values easy to calculate
@@ -130,7 +130,7 @@ public class PlayerStatsBySeasonTests
             groundIntoDoublePlays: 20000,
             groundIntoTriplePlays: 21000,
             airOuts: 22000,
-            catchersInterference: 23000
+            catcherInterferences: 23000
         );
         var battingStatsByGames = new List<PlayerBattingStatsByGame>() { game1, game2 };
         var seasonStats = Faker.FakePlayerSeasonStats(battingStatsByGames: battingStatsByGames);
@@ -152,7 +152,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(11011, actual.Strikeouts.Value);
         Assert.Equal(12012, actual.StolenBases.Value);
         Assert.Equal(13013, actual.CaughtStealing.Value);
-        Assert.Equal(14014, actual.HitByPitch.Value);
+        Assert.Equal(14014, actual.HitByPitches.Value);
         Assert.Equal(15015, actual.SacrificeBunts.Value);
         Assert.Equal(16016, actual.SacrificeFlies.Value);
         Assert.Equal(17017, actual.NumberOfPitchesSeen.Value);
@@ -161,7 +161,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(20020, actual.GroundIntoDoublePlays.Value);
         Assert.Equal(21021, actual.GroundIntoTriplePlays.Value);
         Assert.Equal(22022, actual.AirOuts.Value);
-        Assert.Equal(23023, actual.CatchersInterference.Value);
+        Assert.Equal(23023, actual.CatcherInterferences.Value);
     }
 
     [Fact]
@@ -204,7 +204,7 @@ public class PlayerStatsBySeasonTests
             pickOffs: 24,
             inheritedRunners: 25,
             inheritedRunnersScored: 26,
-            catchersInterferences: 27,
+            catcherInterferences: 27,
             sacrificeBunts: 28,
             sacrificeFlies: 29
         );
@@ -244,7 +244,7 @@ public class PlayerStatsBySeasonTests
             pickOffs: 24000,
             inheritedRunners: 25000,
             inheritedRunnersScored: 26000,
-            catchersInterferences: 27000,
+            catcherInterferences: 27000,
             sacrificeBunts: 28000,
             sacrificeFlies: 29000
         );
@@ -293,7 +293,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(24024, actual.PickOffs.Value);
         Assert.Equal(25025, actual.InheritedRunners.Value);
         Assert.Equal(26026, actual.InheritedRunnersScored.Value);
-        Assert.Equal(27027, actual.CatchersInterferences.Value);
+        Assert.Equal(27027, actual.CatcherInterferences.Value);
         Assert.Equal(28028, actual.SacrificeBunts.Value);
         Assert.Equal(29029, actual.SacrificeFlies.Value);
     }
@@ -314,7 +314,7 @@ public class PlayerStatsBySeasonTests
             caughtStealing: 8,
             stolenBases: 9,
             passedBalls: 10,
-            catchersInterference: 11,
+            catcherInterferences: 11,
             wildPitches: 12,
             pickOffs: 13
         );
@@ -330,7 +330,7 @@ public class PlayerStatsBySeasonTests
             caughtStealing: 8000,
             stolenBases: 9000,
             passedBalls: 10000,
-            catchersInterference: 11000,
+            catcherInterferences: 11000,
             wildPitches: 12000,
             pickOffs: 13000
         );
@@ -353,7 +353,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(8008, actual.CaughtStealing.Value);
         Assert.Equal(9009, actual.StolenBases.Value);
         Assert.Equal(10010, actual.PassedBalls.Value);
-        Assert.Equal(11011, actual.CatchersInterference.Value);
+        Assert.Equal(11011, actual.CatcherInterferences.Value);
         Assert.Equal(12012, actual.WildPitches.Value);
         Assert.Equal(13013, actual.PickOffs.Value);
     }
@@ -374,7 +374,7 @@ public class PlayerStatsBySeasonTests
             caughtStealing: 8,
             stolenBases: 9,
             passedBalls: 10,
-            catchersInterference: 11,
+            catcherInterferences: 11,
             wildPitches: 12,
             pickOffs: 13
         );
@@ -390,7 +390,7 @@ public class PlayerStatsBySeasonTests
             caughtStealing: 8000,
             stolenBases: 9000,
             passedBalls: 10000,
-            catchersInterference: 11000,
+            catcherInterferences: 11000,
             wildPitches: 12000,
             pickOffs: 13000
         );
@@ -413,7 +413,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(8, actual[Position.RightField].CaughtStealing.Value);
         Assert.Equal(9, actual[Position.RightField].StolenBases.Value);
         Assert.Equal(10, actual[Position.RightField].PassedBalls.Value);
-        Assert.Equal(11, actual[Position.RightField].CatchersInterference.Value);
+        Assert.Equal(11, actual[Position.RightField].CatcherInterferences.Value);
         Assert.Equal(12, actual[Position.RightField].WildPitches.Value);
         Assert.Equal(13, actual[Position.RightField].PickOffs.Value);
 
@@ -429,7 +429,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(8000, actual[Position.LeftField].CaughtStealing.Value);
         Assert.Equal(9000, actual[Position.LeftField].StolenBases.Value);
         Assert.Equal(10000, actual[Position.LeftField].PassedBalls.Value);
-        Assert.Equal(11000, actual[Position.LeftField].CatchersInterference.Value);
+        Assert.Equal(11000, actual[Position.LeftField].CatcherInterferences.Value);
         Assert.Equal(12000, actual[Position.LeftField].WildPitches.Value);
         Assert.Equal(13000, actual[Position.LeftField].PickOffs.Value);
     }
@@ -450,7 +450,7 @@ public class PlayerStatsBySeasonTests
         Assert.Equal(3, seasonStats.SeasonBattingStats.PlateAppearances.Value);
         Assert.Equal(2, seasonStats.SeasonBattingStats.AtBats.Value);
         Assert.Equal(1, seasonStats.SeasonBattingStats.Hits.Value);
-        Assert.Equal(1, seasonStats.SeasonBattingStats.HitByPitch.Value);
+        Assert.Equal(1, seasonStats.SeasonBattingStats.HitByPitches.Value);
 
         Assert.Equal(1, seasonStats.DomainEvents.Count);
         Assert.IsType<PlayerBattedInGameEvent>(seasonStats.DomainEvents[0]);

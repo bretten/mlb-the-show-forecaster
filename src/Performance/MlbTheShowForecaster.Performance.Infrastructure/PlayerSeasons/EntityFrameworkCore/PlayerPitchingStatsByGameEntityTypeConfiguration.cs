@@ -20,7 +20,7 @@ public sealed class
     {
         builder.ToTable(Constants.PlayerPitchingStatsByGames.TableName, Constants.Schema);
 
-        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameId });
+        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameMlbId });
 
         builder.Property(e => e.PlayerMlbId)
             .IsRequired()
@@ -39,13 +39,13 @@ public sealed class
             .HasColumnType("date")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.GameDate);
 
-        builder.Property(e => e.GameId)
+        builder.Property(e => e.GameMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerPitchingStatsByGames.GameMlbId)
             .HasConversion(v => v.Value,
                 v => MlbId.Create(v));
 
-        builder.Property(e => e.TeamId)
+        builder.Property(e => e.TeamMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerPitchingStatsByGames.TeamMlbId)
             .HasConversion(v => v.Value,
@@ -303,10 +303,10 @@ public sealed class
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
-        builder.Property(e => e.CatchersInterferences)
+        builder.Property(e => e.CatcherInterferences)
             .IsRequired()
             .HasColumnType("integer")
-            .HasColumnName(Constants.PlayerPitchingStatsByGames.CatchersInterferences)
+            .HasColumnName(Constants.PlayerPitchingStatsByGames.CatcherInterferences)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 

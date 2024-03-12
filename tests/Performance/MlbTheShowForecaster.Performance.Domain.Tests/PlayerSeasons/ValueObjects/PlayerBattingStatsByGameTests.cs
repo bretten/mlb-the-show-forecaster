@@ -65,7 +65,7 @@ public class PlayerBattingStatsByGameTests
         const int groundIntoDoublePlays = 20;
         const int groundIntoTriplePlays = 21;
         const int airOuts = 22;
-        const int catchersInterference = 23;
+        const int catcherInterferences = 23;
 
         // Act
         var actual = PlayerBattingStatsByGame.Create(mlbId, seasonYear, gameDate, gameId, teamId,
@@ -91,15 +91,15 @@ public class PlayerBattingStatsByGameTests
             groundIntoDoublePlays: groundIntoDoublePlays,
             groundIntoTriplePlays: groundIntoTriplePlays,
             airOuts: airOuts,
-            catchersInterference: catchersInterference
+            catcherInterferences: catcherInterferences
         );
 
         // Assert
         Assert.Equal(mlbId, actual.PlayerMlbId);
         Assert.Equal(seasonYear, actual.SeasonYear);
         Assert.Equal(gameDate, actual.GameDate);
-        Assert.Equal(gameId, actual.GameId);
-        Assert.Equal(teamId, actual.TeamId);
+        Assert.Equal(gameId, actual.GameMlbId);
+        Assert.Equal(teamId, actual.TeamMlbId);
         Assert.Equal(plateAppearances, actual.PlateAppearances.Value);
         Assert.Equal(atBats, actual.AtBats.Value);
         Assert.Equal(runs, actual.Runs.Value);
@@ -113,7 +113,7 @@ public class PlayerBattingStatsByGameTests
         Assert.Equal(strikeouts, actual.Strikeouts.Value);
         Assert.Equal(stolenBases, actual.StolenBases.Value);
         Assert.Equal(caughtStealing, actual.CaughtStealing.Value);
-        Assert.Equal(hitByPitch, actual.HitByPitch.Value);
+        Assert.Equal(hitByPitch, actual.HitByPitches.Value);
         Assert.Equal(sacrificeBunts, actual.SacrificeBunts.Value);
         Assert.Equal(sacrificeFlies, actual.SacrificeFlies.Value);
         Assert.Equal(numberOfPitchesSeen, actual.NumberOfPitchesSeen.Value);
@@ -122,6 +122,6 @@ public class PlayerBattingStatsByGameTests
         Assert.Equal(groundIntoDoublePlays, actual.GroundIntoDoublePlays.Value);
         Assert.Equal(groundIntoTriplePlays, actual.GroundIntoTriplePlays.Value);
         Assert.Equal(airOuts, actual.AirOuts.Value);
-        Assert.Equal(catchersInterference, actual.CatchersInterference.Value);
+        Assert.Equal(catcherInterferences, actual.CatcherInterferences.Value);
     }
 }

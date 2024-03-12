@@ -77,7 +77,7 @@ public class BattingStats : ValueObject
     /// <summary>
     /// The number of times the player was hit by a pitch
     /// </summary>
-    public NaturalNumber HitByPitch { get; }
+    public NaturalNumber HitByPitches { get; }
 
     /// <summary>
     /// The number of sacrifice bunts
@@ -122,7 +122,7 @@ public class BattingStats : ValueObject
     /// <summary>
     /// The number of times a catcher interfered with the batter's plate appearance
     /// </summary>
-    public NaturalNumber CatchersInterference { get; }
+    public NaturalNumber CatcherInterferences { get; }
 
     /// <summary>
     /// Batting average
@@ -133,7 +133,7 @@ public class BattingStats : ValueObject
     /// On-base percentage
     /// </summary>
     public OnBasePercentage OnBasePercentage =>
-        OnBasePercentage.Create(Hits.Value, BaseOnBalls.Value, HitByPitch.Value, AtBats.Value, SacrificeFlies.Value);
+        OnBasePercentage.Create(Hits.Value, BaseOnBalls.Value, HitByPitches.Value, AtBats.Value, SacrificeFlies.Value);
 
     /// <summary>
     /// Batting average on balls in play
@@ -179,7 +179,7 @@ public class BattingStats : ValueObject
     /// <param name="strikeouts">The number of strikeouts</param>
     /// <param name="stolenBases">The number of stolen bases</param>
     /// <param name="caughtStealing">The number of times caught stealing</param>
-    /// <param name="hitByPitch">The number of times the player was hit by a pitch</param>
+    /// <param name="hitByPitches">The number of times the player was hit by a pitch</param>
     /// <param name="sacrificeBunts">The number of sacrifice bunts</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies</param>
     /// <param name="numberOfPitchesSeen">The number of pitches the player saw as a batter</param>
@@ -188,14 +188,14 @@ public class BattingStats : ValueObject
     /// <param name="groundIntoDoublePlays">The number of times the batter grounded into a double play</param>
     /// <param name="groundIntoTriplePlays">The number of times the batter grounded into a triple play</param>
     /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
-    /// <param name="catchersInterference">The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
     protected BattingStats(NaturalNumber plateAppearances, NaturalNumber atBats, NaturalNumber runs, NaturalNumber hits,
         NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runsBattedIn,
         NaturalNumber baseOnBalls, NaturalNumber intentionalWalks, NaturalNumber strikeouts, NaturalNumber stolenBases,
-        NaturalNumber caughtStealing, NaturalNumber hitByPitch, NaturalNumber sacrificeBunts,
+        NaturalNumber caughtStealing, NaturalNumber hitByPitches, NaturalNumber sacrificeBunts,
         NaturalNumber sacrificeFlies, NaturalNumber numberOfPitchesSeen, NaturalNumber leftOnBase,
         NaturalNumber groundOuts, NaturalNumber groundIntoDoublePlays, NaturalNumber groundIntoTriplePlays,
-        NaturalNumber airOuts, NaturalNumber catchersInterference)
+        NaturalNumber airOuts, NaturalNumber catcherInterferences)
     {
         PlateAppearances = plateAppearances;
         AtBats = atBats;
@@ -210,7 +210,7 @@ public class BattingStats : ValueObject
         Strikeouts = strikeouts;
         StolenBases = stolenBases;
         CaughtStealing = caughtStealing;
-        HitByPitch = hitByPitch;
+        HitByPitches = hitByPitches;
         SacrificeBunts = sacrificeBunts;
         SacrificeFlies = sacrificeFlies;
         NumberOfPitchesSeen = numberOfPitchesSeen;
@@ -219,7 +219,7 @@ public class BattingStats : ValueObject
         GroundIntoDoublePlays = groundIntoDoublePlays;
         GroundIntoTriplePlays = groundIntoTriplePlays;
         AirOuts = airOuts;
-        CatchersInterference = catchersInterference;
+        CatcherInterferences = catcherInterferences;
     }
 
     /// <summary>
@@ -238,7 +238,7 @@ public class BattingStats : ValueObject
     /// <param name="strikeouts">The number of strikeouts</param>
     /// <param name="stolenBases">The number of stolen bases</param>
     /// <param name="caughtStealing">The number of times caught stealing</param>
-    /// <param name="hitByPitch">The number of times the player was hit by a pitch</param>
+    /// <param name="hitByPitches">The number of times the player was hit by a pitch</param>
     /// <param name="sacrificeBunts">The number of sacrifice bunts</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies</param>
     /// <param name="numberOfPitchesSeen">The number of pitches the player saw as a batter</param>
@@ -247,13 +247,13 @@ public class BattingStats : ValueObject
     /// <param name="groundIntoDoublePlays">The number of times the batter grounded into a double play</param>
     /// <param name="groundIntoTriplePlays">The number of times the batter grounded into a triple play</param>
     /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
-    /// <param name="catchersInterference">The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
     /// <returns><see cref="BattingStats"/></returns>
     public static BattingStats Create(int plateAppearances, int atBats, int runs, int hits, int doubles, int triples,
         int homeRuns, int runsBattedIn, int baseOnBalls, int intentionalWalks, int strikeouts, int stolenBases,
-        int caughtStealing, int hitByPitch, int sacrificeBunts, int sacrificeFlies, int numberOfPitchesSeen,
+        int caughtStealing, int hitByPitches, int sacrificeBunts, int sacrificeFlies, int numberOfPitchesSeen,
         int leftOnBase, int groundOuts, int groundIntoDoublePlays, int groundIntoTriplePlays, int airOuts,
-        int catchersInterference)
+        int catcherInterferences)
     {
         var pa = NaturalNumber.Create(plateAppearances);
         var ab = NaturalNumber.Create(atBats);
@@ -268,7 +268,7 @@ public class BattingStats : ValueObject
         var k = NaturalNumber.Create(strikeouts);
         var sb = NaturalNumber.Create(stolenBases);
         var cs = NaturalNumber.Create(caughtStealing);
-        var hbp = NaturalNumber.Create(hitByPitch);
+        var hbp = NaturalNumber.Create(hitByPitches);
         var sacB = NaturalNumber.Create(sacrificeBunts);
         var sacF = NaturalNumber.Create(sacrificeFlies);
         var pitchCount = NaturalNumber.Create(numberOfPitchesSeen);
@@ -277,7 +277,7 @@ public class BattingStats : ValueObject
         var goDp = NaturalNumber.Create(groundIntoDoublePlays);
         var goTp = NaturalNumber.Create(groundIntoTriplePlays);
         var ao = NaturalNumber.Create(airOuts);
-        var ci = NaturalNumber.Create(catchersInterference);
+        var ci = NaturalNumber.Create(catcherInterferences);
         return new BattingStats(plateAppearances: pa,
             atBats: ab,
             runs: r,
@@ -291,7 +291,7 @@ public class BattingStats : ValueObject
             strikeouts: k,
             stolenBases: sb,
             caughtStealing: cs,
-            hitByPitch: hbp,
+            hitByPitches: hbp,
             sacrificeBunts: sacB,
             sacrificeFlies: sacF,
             numberOfPitchesSeen: pitchCount,
@@ -300,7 +300,7 @@ public class BattingStats : ValueObject
             groundIntoDoublePlays: goDp,
             groundIntoTriplePlays: goTp,
             airOuts: ao,
-            catchersInterference: ci
+            catcherInterferences: ci
         );
     }
 
@@ -326,7 +326,7 @@ public class BattingStats : ValueObject
             strikeouts: battingStatsArray.Sum(x => x.Strikeouts.Value),
             stolenBases: battingStatsArray.Sum(x => x.StolenBases.Value),
             caughtStealing: battingStatsArray.Sum(x => x.CaughtStealing.Value),
-            hitByPitch: battingStatsArray.Sum(x => x.HitByPitch.Value),
+            hitByPitches: battingStatsArray.Sum(x => x.HitByPitches.Value),
             sacrificeBunts: battingStatsArray.Sum(x => x.SacrificeBunts.Value),
             sacrificeFlies: battingStatsArray.Sum(x => x.SacrificeFlies.Value),
             numberOfPitchesSeen: battingStatsArray.Sum(x => x.NumberOfPitchesSeen.Value),
@@ -335,7 +335,7 @@ public class BattingStats : ValueObject
             groundIntoDoublePlays: battingStatsArray.Sum(x => x.GroundIntoDoublePlays.Value),
             groundIntoTriplePlays: battingStatsArray.Sum(x => x.GroundIntoTriplePlays.Value),
             airOuts: battingStatsArray.Sum(x => x.AirOuts.Value),
-            catchersInterference: battingStatsArray.Sum(x => x.CatchersInterference.Value)
+            catcherInterferences: battingStatsArray.Sum(x => x.CatcherInterferences.Value)
         );
     }
 }

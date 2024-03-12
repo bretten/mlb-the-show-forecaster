@@ -12,7 +12,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeaso
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(PlayerSeasonsDbContext))]
-    [Migration("20240310220215_InitialCreatePlayerStatsBySeason")]
+    [Migration("20240312073351_InitialCreatePlayerStatsBySeason")]
     partial class InitialCreatePlayerStatsBySeason
     {
         /// <inheritdoc />
@@ -43,7 +43,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
 
                     b.HasKey("Id");
 
-                    b.ToTable("player_stats_by_season", "performance");
+                    b.ToTable("player_stats_by_seasons", "performance");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerBattingStatsByGame", b =>
@@ -60,7 +60,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("date")
                         .HasColumnName("date");
 
-                    b.Property<int>("GameId")
+                    b.Property<int>("GameMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("game_mlb_id");
 
@@ -76,9 +76,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("base_on_balls");
 
-                    b.Property<int>("CatchersInterference")
+                    b.Property<int>("CatcherInterferences")
                         .HasColumnType("integer")
-                        .HasColumnName("catchers_interference");
+                        .HasColumnName("catcher_interferences");
 
                     b.Property<int>("CaughtStealing")
                         .HasColumnType("integer")
@@ -100,7 +100,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("ground_outs");
 
-                    b.Property<int>("HitByPitch")
+                    b.Property<int>("HitByPitches")
                         .HasColumnType("integer")
                         .HasColumnName("hit_by_pitch");
 
@@ -152,7 +152,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("strikeouts");
 
-                    b.Property<int>("TeamId")
+                    b.Property<int>("TeamMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("team_mlb_id");
 
@@ -163,11 +163,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     b.Property<Guid>("player_stats_by_season_id")
                         .HasColumnType("uuid");
 
-                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameId");
+                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameMlbId");
 
                     b.HasIndex("player_stats_by_season_id");
 
-                    b.ToTable("player_batting_stats_by_game", "performance");
+                    b.ToTable("player_batting_stats_by_games", "performance");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerFieldingStatsByGame", b =>
@@ -184,7 +184,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("date")
                         .HasColumnName("date");
 
-                    b.Property<int>("GameId")
+                    b.Property<int>("GameMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("game_mlb_id");
 
@@ -192,9 +192,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("assists");
 
-                    b.Property<int>("CatchersInterference")
+                    b.Property<int>("CatcherInterferences")
                         .HasColumnType("integer")
-                        .HasColumnName("catchers_interference");
+                        .HasColumnName("catcher_interferences");
 
                     b.Property<int>("CaughtStealing")
                         .HasColumnType("integer")
@@ -237,7 +237,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("stolen_bases");
 
-                    b.Property<int>("TeamId")
+                    b.Property<int>("TeamMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("team_mlb_id");
 
@@ -256,11 +256,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     b.Property<Guid>("player_stats_by_season_id")
                         .HasColumnType("uuid");
 
-                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameId");
+                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameMlbId");
 
                     b.HasIndex("player_stats_by_season_id");
 
-                    b.ToTable("player_fielding_stats_by_game", "performance");
+                    b.ToTable("player_fielding_stats_by_games", "performance");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerPitchingStatsByGame", b =>
@@ -277,7 +277,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("date")
                         .HasColumnName("date");
 
-                    b.Property<int>("GameId")
+                    b.Property<int>("GameMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("game_mlb_id");
 
@@ -305,9 +305,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("blown_saves");
 
-                    b.Property<int>("CatchersInterferences")
+                    b.Property<int>("CatcherInterferences")
                         .HasColumnType("integer")
-                        .HasColumnName("catchers_interferences");
+                        .HasColumnName("catcher_interferences");
 
                     b.Property<int>("CaughtStealing")
                         .HasColumnType("integer")
@@ -425,7 +425,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("strikes");
 
-                    b.Property<int>("TeamId")
+                    b.Property<int>("TeamMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("team_mlb_id");
 
@@ -444,11 +444,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     b.Property<Guid>("player_stats_by_season_id")
                         .HasColumnType("uuid");
 
-                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameId");
+                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameMlbId");
 
                     b.HasIndex("player_stats_by_season_id");
 
-                    b.ToTable("player_pitching_stats_by_game", "performance");
+                    b.ToTable("player_pitching_stats_by_games", "performance");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerBattingStatsByGame", b =>

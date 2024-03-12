@@ -32,7 +32,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 /// <param name="GroundIntoDoublePlays">The number of times the batter grounded into a double play</param>
 /// <param name="GroundIntoTriplePlays">The number of times the batter grounded into a triple play</param>
 /// <param name="AirOuts">The number of times the batter hit a fly ball that led to an out</param>
-/// <param name="CatchersInterference">The number of times a catcher interfered with the batter's plate appearance</param>
+/// <param name="CatcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
 public readonly record struct PlayerGameBattingStats(
     MlbId PlayerMlbId,
     SeasonYear SeasonYear,
@@ -61,4 +61,4 @@ public readonly record struct PlayerGameBattingStats(
     NaturalNumber GroundIntoDoublePlays,
     NaturalNumber GroundIntoTriplePlays,
     NaturalNumber AirOuts,
-    NaturalNumber CatchersInterference);
+    NaturalNumber CatcherInterferences);

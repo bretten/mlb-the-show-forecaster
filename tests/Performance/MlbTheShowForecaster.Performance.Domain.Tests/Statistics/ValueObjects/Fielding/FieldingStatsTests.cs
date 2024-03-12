@@ -85,7 +85,7 @@ public class FieldingStatsTests
         const int caughtStealing = 7;
         const int stolenBases = 8;
         const int passedBalls = 9;
-        const int catchersInterference = 10;
+        const int catcherInterferences = 10;
         const int wildPitches = 11;
         const int pickOffs = 12;
 
@@ -102,7 +102,7 @@ public class FieldingStatsTests
             caughtStealing: caughtStealing,
             stolenBases: stolenBases,
             passedBalls: passedBalls,
-            catchersInterference: catchersInterference,
+            catcherInterferences: catcherInterferences,
             wildPitches: wildPitches,
             pickOffs: pickOffs
         );
@@ -120,7 +120,7 @@ public class FieldingStatsTests
         Assert.Equal(7, actual.CaughtStealing.Value);
         Assert.Equal(8, actual.StolenBases.Value);
         Assert.Equal(9, actual.PassedBalls.Value);
-        Assert.Equal(10, actual.CatchersInterference.Value);
+        Assert.Equal(10, actual.CatcherInterferences.Value);
         Assert.Equal(11, actual.WildPitches.Value);
         Assert.Equal(12, actual.PickOffs.Value);
     }
@@ -141,7 +141,7 @@ public class FieldingStatsTests
             caughtStealing: 9,
             stolenBases: 10,
             passedBalls: 11,
-            catchersInterference: 12,
+            catcherInterferences: 12,
             wildPitches: 13,
             pickOffs: 14
         );
@@ -157,7 +157,7 @@ public class FieldingStatsTests
             caughtStealing: 9000,
             stolenBases: 10000,
             passedBalls: 11000,
-            catchersInterference: 12000,
+            catcherInterferences: 12000,
             wildPitches: 13000,
             pickOffs: 14000
         );
@@ -179,7 +179,7 @@ public class FieldingStatsTests
         Assert.Equal(9009, actual.CaughtStealing.Value);
         Assert.Equal(10010, actual.StolenBases.Value);
         Assert.Equal(11011, actual.PassedBalls.Value);
-        Assert.Equal(12012, actual.CatchersInterference.Value);
+        Assert.Equal(12012, actual.CatcherInterferences.Value);
         Assert.Equal(13013, actual.WildPitches.Value);
         Assert.Equal(14014, actual.PickOffs.Value);
     }

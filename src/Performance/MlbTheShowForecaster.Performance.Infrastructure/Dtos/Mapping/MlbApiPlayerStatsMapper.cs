@@ -59,7 +59,7 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
             GroundIntoDoublePlays: NaturalNumber.Create(x.Stat.GroundIntoDoublePlay),
             GroundIntoTriplePlays: NaturalNumber.Create(x.Stat.GroundIntoTriplePlay),
             AirOuts: NaturalNumber.Create(x.Stat.AirOuts),
-            CatchersInterference: NaturalNumber.Create(x.Stat.CatchersInterference)
+            CatcherInterferences: NaturalNumber.Create(x.Stat.CatchersInterference)
         )).ToList();
     }
 
@@ -112,7 +112,7 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
             PickOffs: NaturalNumber.Create(x.Stat.Pickoffs),
             InheritedRunners: NaturalNumber.Create(x.Stat.InheritedRunners),
             InheritedRunnersScored: NaturalNumber.Create(x.Stat.InheritedRunnersScored),
-            CatchersInterferences: NaturalNumber.Create(x.Stat.CatchersInterference),
+            CatcherInterferences: NaturalNumber.Create(x.Stat.CatchersInterference),
             SacrificeBunts: NaturalNumber.Create(x.Stat.SacBunts),
             SacrificeFlies: NaturalNumber.Create(x.Stat.SacFlies)
         )).ToList();
@@ -145,7 +145,7 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
             CaughtStealing: NaturalNumber.Create(x.Stat.CaughtStealing),
             StolenBases: NaturalNumber.Create(x.Stat.StolenBases),
             PassedBalls: NaturalNumber.Create(x.Stat.PassedBall),
-            CatchersInterference: NaturalNumber.Create(x.Stat.CatchersInterference),
+            CatcherInterferences: NaturalNumber.Create(x.Stat.CatchersInterference),
             WildPitches: NaturalNumber.Create(x.Stat.WildPitches),
             PickOffs: NaturalNumber.Create(x.Stat.Pickoffs)
         )).ToList();

@@ -91,7 +91,7 @@ public class FieldingStats : ValueObject
     /// <summary>
     /// Catcher stat: The number of times a catcher interfered with the batter's plate appearance
     /// </summary>
-    public NaturalNumber CatchersInterference { get; }
+    public NaturalNumber CatcherInterferences { get; }
 
     /// <summary>
     /// Catcher stat: The number of wild pitches the catcher saw from the pitcher
@@ -124,13 +124,13 @@ public class FieldingStats : ValueObject
     /// <param name="caughtStealing">Catcher stat: The number of times the catcher was able to throw out a base runner attempting to steal</param>
     /// <param name="stolenBases">Catcher stat: The number of times a base runner successfully stole a base against the catcher</param>
     /// <param name="passedBalls">Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance</param>
-    /// <param name="catchersInterference">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="catcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     protected FieldingStats(Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed,
         NaturalNumber assists, NaturalNumber putOuts, NaturalNumber errors, NaturalNumber throwingErrors,
         NaturalNumber doublePlays, NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases,
-        NaturalNumber passedBalls, NaturalNumber catchersInterference, NaturalNumber wildPitches,
+        NaturalNumber passedBalls, NaturalNumber catcherInterferences, NaturalNumber wildPitches,
         NaturalNumber pickOffs)
     {
         Position = position;
@@ -145,7 +145,7 @@ public class FieldingStats : ValueObject
         CaughtStealing = caughtStealing;
         StolenBases = stolenBases;
         PassedBalls = passedBalls;
-        CatchersInterference = catchersInterference;
+        CatcherInterferences = catcherInterferences;
         WildPitches = wildPitches;
         PickOffs = pickOffs;
     }
@@ -165,13 +165,13 @@ public class FieldingStats : ValueObject
     /// <param name="caughtStealing">Catcher stat: The number of times the catcher was able to throw out a base runner attempting to steal</param>
     /// <param name="stolenBases">Catcher stat: The number of times a base runner successfully stole a base against the catcher</param>
     /// <param name="passedBalls">Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance</param>
-    /// <param name="catchersInterference">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
+    /// <param name="catcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     /// <returns><see cref="FieldingStats"/></returns>
     public static FieldingStats Create(Position position, int gamesStarted, decimal inningsPlayed, int assists,
         int putOuts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
-        int stolenBases, int passedBalls, int catchersInterference, int wildPitches, int pickOffs)
+        int stolenBases, int passedBalls, int catcherInterferences, int wildPitches, int pickOffs)
     {
         var gs = NaturalNumber.Create(gamesStarted);
         var inn = InningsCount.Create(inningsPlayed);
@@ -184,7 +184,7 @@ public class FieldingStats : ValueObject
         var cs = NaturalNumber.Create(caughtStealing);
         var sb = NaturalNumber.Create(stolenBases);
         var pb = NaturalNumber.Create(passedBalls);
-        var ci = NaturalNumber.Create(catchersInterference);
+        var ci = NaturalNumber.Create(catcherInterferences);
         var wp = NaturalNumber.Create(wildPitches);
         var pk = NaturalNumber.Create(pickOffs);
         return new FieldingStats(position,
@@ -199,7 +199,7 @@ public class FieldingStats : ValueObject
             caughtStealing: cs,
             stolenBases: sb,
             passedBalls: pb,
-            catchersInterference: ci,
+            catcherInterferences: ci,
             wildPitches: wp,
             pickOffs: pk);
     }
@@ -225,7 +225,7 @@ public class FieldingStats : ValueObject
             caughtStealing: fieldingStatsArray.Sum(x => x.CaughtStealing.Value),
             stolenBases: fieldingStatsArray.Sum(x => x.StolenBases.Value),
             passedBalls: fieldingStatsArray.Sum(x => x.PassedBalls.Value),
-            catchersInterference: fieldingStatsArray.Sum(x => x.CatchersInterference.Value),
+            catcherInterferences: fieldingStatsArray.Sum(x => x.CatcherInterferences.Value),
             wildPitches: fieldingStatsArray.Sum(x => x.WildPitches.Value),
             pickOffs: fieldingStatsArray.Sum(x => x.PickOffs.Value)
         );

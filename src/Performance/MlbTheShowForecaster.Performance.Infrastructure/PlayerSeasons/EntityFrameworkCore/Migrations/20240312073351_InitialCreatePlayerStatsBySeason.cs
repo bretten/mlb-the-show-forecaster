@@ -15,7 +15,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 name: "performance");
 
             migrationBuilder.CreateTable(
-                name: "player_stats_by_season",
+                name: "player_stats_by_seasons",
                 schema: "performance",
                 columns: table => new
                 {
@@ -25,11 +25,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_player_stats_by_season", x => x.id);
+                    table.PrimaryKey("PK_player_stats_by_seasons", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "player_batting_stats_by_game",
+                name: "player_batting_stats_by_games",
                 schema: "performance",
                 columns: table => new
                 {
@@ -61,22 +61,22 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     ground_into_double_plays = table.Column<int>(type: "integer", nullable: false),
                     ground_into_triple_plays = table.Column<int>(type: "integer", nullable: false),
                     air_outs = table.Column<int>(type: "integer", nullable: false),
-                    catchers_interference = table.Column<int>(type: "integer", nullable: false)
+                    catcher_interferences = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_player_batting_stats_by_game", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
+                    table.PrimaryKey("PK_player_batting_stats_by_games", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
                     table.ForeignKey(
-                        name: "FK_player_batting_stats_by_game_player_stats_by_season_player_~",
+                        name: "FK_player_batting_stats_by_games_player_stats_by_seasons_playe~",
                         column: x => x.player_stats_by_season_id,
                         principalSchema: "performance",
-                        principalTable: "player_stats_by_season",
+                        principalTable: "player_stats_by_seasons",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "player_fielding_stats_by_game",
+                name: "player_fielding_stats_by_games",
                 schema: "performance",
                 columns: table => new
                 {
@@ -98,24 +98,24 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     caught_stealing = table.Column<int>(type: "integer", nullable: false),
                     stolen_bases = table.Column<int>(type: "integer", nullable: false),
                     passed_balls = table.Column<int>(type: "integer", nullable: false),
-                    catchers_interference = table.Column<int>(type: "integer", nullable: false),
+                    catcher_interferences = table.Column<int>(type: "integer", nullable: false),
                     wild_pitches = table.Column<int>(type: "integer", nullable: false),
                     pick_offs = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_player_fielding_stats_by_game", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
+                    table.PrimaryKey("PK_player_fielding_stats_by_games", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
                     table.ForeignKey(
-                        name: "FK_player_fielding_stats_by_game_player_stats_by_season_player~",
+                        name: "FK_player_fielding_stats_by_games_player_stats_by_seasons_play~",
                         column: x => x.player_stats_by_season_id,
                         principalSchema: "performance",
-                        principalTable: "player_stats_by_season",
+                        principalTable: "player_stats_by_seasons",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "player_pitching_stats_by_game",
+                name: "player_pitching_stats_by_games",
                 schema: "performance",
                 columns: table => new
                 {
@@ -161,38 +161,38 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     pick_offs = table.Column<int>(type: "integer", nullable: false),
                     inherited_runners = table.Column<int>(type: "integer", nullable: false),
                     inherited_runners_scored = table.Column<int>(type: "integer", nullable: false),
-                    catchers_interferences = table.Column<int>(type: "integer", nullable: false),
+                    catcher_interferences = table.Column<int>(type: "integer", nullable: false),
                     sacrifice_bunts = table.Column<int>(type: "integer", nullable: false),
                     sacrifice_flies = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_player_pitching_stats_by_game", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
+                    table.PrimaryKey("PK_player_pitching_stats_by_games", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
                     table.ForeignKey(
-                        name: "FK_player_pitching_stats_by_game_player_stats_by_season_player~",
+                        name: "FK_player_pitching_stats_by_games_player_stats_by_seasons_play~",
                         column: x => x.player_stats_by_season_id,
                         principalSchema: "performance",
-                        principalTable: "player_stats_by_season",
+                        principalTable: "player_stats_by_seasons",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_player_batting_stats_by_game_player_stats_by_season_id",
+                name: "IX_player_batting_stats_by_games_player_stats_by_season_id",
                 schema: "performance",
-                table: "player_batting_stats_by_game",
+                table: "player_batting_stats_by_games",
                 column: "player_stats_by_season_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_player_fielding_stats_by_game_player_stats_by_season_id",
+                name: "IX_player_fielding_stats_by_games_player_stats_by_season_id",
                 schema: "performance",
-                table: "player_fielding_stats_by_game",
+                table: "player_fielding_stats_by_games",
                 column: "player_stats_by_season_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_player_pitching_stats_by_game_player_stats_by_season_id",
+                name: "IX_player_pitching_stats_by_games_player_stats_by_season_id",
                 schema: "performance",
-                table: "player_pitching_stats_by_game",
+                table: "player_pitching_stats_by_games",
                 column: "player_stats_by_season_id");
         }
 
@@ -200,19 +200,19 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "player_batting_stats_by_game",
+                name: "player_batting_stats_by_games",
                 schema: "performance");
 
             migrationBuilder.DropTable(
-                name: "player_fielding_stats_by_game",
+                name: "player_fielding_stats_by_games",
                 schema: "performance");
 
             migrationBuilder.DropTable(
-                name: "player_pitching_stats_by_game",
+                name: "player_pitching_stats_by_games",
                 schema: "performance");
 
             migrationBuilder.DropTable(
-                name: "player_stats_by_season",
+                name: "player_stats_by_seasons",
                 schema: "performance");
         }
     }

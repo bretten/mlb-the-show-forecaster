@@ -24,7 +24,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 /// <param name="CaughtStealing">Catcher stat: The number of times the catcher was able to throw out a base runner attempting to steal</param>
 /// <param name="StolenBases">Catcher stat: The number of times a base runner successfully stole a base against the catcher</param>
 /// <param name="PassedBalls">Catcher stat: The number of times the catcher dropped the ball and a runner was able to advance</param>
-/// <param name="CatchersInterference">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
+/// <param name="CatcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
 /// <param name="WildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
 /// <param name="PickOffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
 public readonly record struct PlayerGameFieldingStats(
@@ -45,6 +45,6 @@ public readonly record struct PlayerGameFieldingStats(
     NaturalNumber CaughtStealing,
     NaturalNumber StolenBases,
     NaturalNumber PassedBalls,
-    NaturalNumber CatchersInterference,
+    NaturalNumber CatcherInterferences,
     NaturalNumber WildPitches,
     NaturalNumber PickOffs);
