@@ -142,7 +142,7 @@ public static class Constants
         /// <summary>
         /// The number of times the player was hit by a pitch
         /// </summary>
-        public const string HitByPitch = "hit_by_pitch";
+        public const string HitByPitches = "hit_by_pitches";
 
         /// <summary>
         /// The number of sacrifice bunts

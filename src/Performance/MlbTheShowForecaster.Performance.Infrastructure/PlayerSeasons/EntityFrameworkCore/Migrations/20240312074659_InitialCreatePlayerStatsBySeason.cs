@@ -52,7 +52,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     strikeouts = table.Column<int>(type: "integer", nullable: false),
                     stolen_bases = table.Column<int>(type: "integer", nullable: false),
                     caught_stealing = table.Column<int>(type: "integer", nullable: false),
-                    hit_by_pitch = table.Column<int>(type: "integer", nullable: false),
+                    hit_by_pitches = table.Column<int>(type: "integer", nullable: false),
                     sacrifice_bunts = table.Column<int>(type: "integer", nullable: false),
                     sacrifice_flies = table.Column<int>(type: "integer", nullable: false),
                     number_of_pitches_seen = table.Column<int>(type: "integer", nullable: false),

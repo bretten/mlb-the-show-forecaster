@@ -143,7 +143,7 @@ public sealed class PlayerBattingStatsByGameEntityTypeConfiguration : IEntityTyp
         builder.Property(e => e.HitByPitches)
             .IsRequired()
             .HasColumnType("integer")
-            .HasColumnName(Constants.PlayerBattingStatsByGames.HitByPitch)
+            .HasColumnName(Constants.PlayerBattingStatsByGames.HitByPitches)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 

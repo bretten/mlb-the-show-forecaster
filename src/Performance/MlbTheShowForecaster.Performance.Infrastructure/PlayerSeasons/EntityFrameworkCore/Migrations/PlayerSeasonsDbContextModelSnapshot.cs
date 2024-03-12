@@ -99,7 +99,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
 
                     b.Property<int>("HitByPitches")
                         .HasColumnType("integer")
-                        .HasColumnName("hit_by_pitch");
+                        .HasColumnName("hit_by_pitches");
 
                     b.Property<int>("Hits")
                         .HasColumnType("integer")
