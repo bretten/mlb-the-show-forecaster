@@ -64,6 +64,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Perfor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Performance.Infrastructure.Tests", "tests\Performance\MlbTheShowForecaster.Performance.Infrastructure.Tests\MlbTheShowForecaster.Performance.Infrastructure.Tests.csproj", "{B89F68C7-D5DD-45F5-BA07-DFDA9094E459}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GameCards", "GameCards", "{E69C6300-6E19-47AD-9D80-E105E8414C75}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GameCards", "GameCards", "{D6A311BE-2E3B-4CB4-B556-B46F30A3DEA7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.GameCards.Domain", "src\GameCards\MlbTheShowForecaster.GameCards.Domain\MlbTheShowForecaster.GameCards.Domain.csproj", "{60927B83-9AE6-4C23-BB53-D0DC484861C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.GameCards.Domain.Tests", "tests\GameCards\MlbTheShowForecaster.GameCards.Domain.Tests\MlbTheShowForecaster.GameCards.Domain.Tests.csproj", "{C4A837EF-E2A3-43E3-B7C9-D489F5EB8335}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.GameCards.Application", "src\GameCards\MlbTheShowForecaster.GameCards.Application\MlbTheShowForecaster.GameCards.Application.csproj", "{72A6FFDE-E3A0-4E76-8E46-014E3075F88F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.GameCards.Application.Tests", "tests\GameCards\MlbTheShowForecaster.GameCards.Application.Tests\MlbTheShowForecaster.GameCards.Application.Tests.csproj", "{3DE4C47E-86A0-41CD-8208-6240189E0F5B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.GameCards.Infrastructure", "src\GameCards\MlbTheShowForecaster.GameCards.Infrastructure\MlbTheShowForecaster.GameCards.Infrastructure.csproj", "{5CE89A46-A206-4755-BA8E-28B08FEDF777}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.GameCards.Infrastructure.Tests", "tests\GameCards\MlbTheShowForecaster.GameCards.Infrastructure.Tests\MlbTheShowForecaster.GameCards.Infrastructure.Tests.csproj", "{6E678709-99C8-49DE-8838-4EF40F11FF42}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -100,6 +116,14 @@ Global
 		{DA988368-CFD6-41EC-A4A3-82DAB748ABD1} = {E77BF9FC-BDF1-4A3F-B21C-EA368485CB1F}
 		{8A6BA1AF-821B-4A41-9D73-EA35BFA1958E} = {AD7A948A-1C43-474C-AAC7-BDC4A1F525AC}
 		{B89F68C7-D5DD-45F5-BA07-DFDA9094E459} = {E77BF9FC-BDF1-4A3F-B21C-EA368485CB1F}
+		{E69C6300-6E19-47AD-9D80-E105E8414C75} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
+		{D6A311BE-2E3B-4CB4-B556-B46F30A3DEA7} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
+		{60927B83-9AE6-4C23-BB53-D0DC484861C8} = {E69C6300-6E19-47AD-9D80-E105E8414C75}
+		{C4A837EF-E2A3-43E3-B7C9-D489F5EB8335} = {D6A311BE-2E3B-4CB4-B556-B46F30A3DEA7}
+		{72A6FFDE-E3A0-4E76-8E46-014E3075F88F} = {E69C6300-6E19-47AD-9D80-E105E8414C75}
+		{3DE4C47E-86A0-41CD-8208-6240189E0F5B} = {D6A311BE-2E3B-4CB4-B556-B46F30A3DEA7}
+		{5CE89A46-A206-4755-BA8E-28B08FEDF777} = {E69C6300-6E19-47AD-9D80-E105E8414C75}
+		{6E678709-99C8-49DE-8838-4EF40F11FF42} = {D6A311BE-2E3B-4CB4-B556-B46F30A3DEA7}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{037B88D0-DEA8-4F3E-83B8-94E49DF2641B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -190,5 +214,29 @@ Global
 		{B89F68C7-D5DD-45F5-BA07-DFDA9094E459}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B89F68C7-D5DD-45F5-BA07-DFDA9094E459}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B89F68C7-D5DD-45F5-BA07-DFDA9094E459}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60927B83-9AE6-4C23-BB53-D0DC484861C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60927B83-9AE6-4C23-BB53-D0DC484861C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60927B83-9AE6-4C23-BB53-D0DC484861C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60927B83-9AE6-4C23-BB53-D0DC484861C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4A837EF-E2A3-43E3-B7C9-D489F5EB8335}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4A837EF-E2A3-43E3-B7C9-D489F5EB8335}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4A837EF-E2A3-43E3-B7C9-D489F5EB8335}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4A837EF-E2A3-43E3-B7C9-D489F5EB8335}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72A6FFDE-E3A0-4E76-8E46-014E3075F88F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72A6FFDE-E3A0-4E76-8E46-014E3075F88F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72A6FFDE-E3A0-4E76-8E46-014E3075F88F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72A6FFDE-E3A0-4E76-8E46-014E3075F88F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DE4C47E-86A0-41CD-8208-6240189E0F5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DE4C47E-86A0-41CD-8208-6240189E0F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DE4C47E-86A0-41CD-8208-6240189E0F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DE4C47E-86A0-41CD-8208-6240189E0F5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CE89A46-A206-4755-BA8E-28B08FEDF777}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CE89A46-A206-4755-BA8E-28B08FEDF777}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CE89A46-A206-4755-BA8E-28B08FEDF777}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CE89A46-A206-4755-BA8E-28B08FEDF777}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E678709-99C8-49DE-8838-4EF40F11FF42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E678709-99C8-49DE-8838-4EF40F11FF42}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E678709-99C8-49DE-8838-4EF40F11FF42}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E678709-99C8-49DE-8838-4EF40F11FF42}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
