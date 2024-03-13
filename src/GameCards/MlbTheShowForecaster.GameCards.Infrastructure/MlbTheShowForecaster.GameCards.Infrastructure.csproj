@@ -7,4 +7,9 @@
         <RootNamespace>com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\..\Common\MlbTheShowForecaster.Common.Infrastructure\MlbTheShowForecaster.Common.Infrastructure.csproj" />
+      <ProjectReference Include="..\MlbTheShowForecaster.GameCards.Application\MlbTheShowForecaster.GameCards.Application.csproj" />
+    </ItemGroup>
+
 </Project>
