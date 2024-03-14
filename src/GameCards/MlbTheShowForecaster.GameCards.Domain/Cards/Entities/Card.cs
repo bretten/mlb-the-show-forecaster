@@ -1,5 +1,4 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
@@ -43,7 +42,7 @@ public sealed class Card : AggregateRoot
     /// <summary>
     /// The overall rating of the card
     /// </summary>
-    public NaturalNumber? OverallRating { get; }
+    public OverallRating? OverallRating { get; }
 
     /// <summary>
     /// The series of the card
