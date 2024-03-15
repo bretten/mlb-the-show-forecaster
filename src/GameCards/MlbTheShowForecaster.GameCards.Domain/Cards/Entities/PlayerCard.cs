@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
@@ -40,7 +41,7 @@ public sealed class PlayerCard : Card
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="theShowId">The ID from MLB The Show</param>
+    /// <param name="theShowId">The card ID from MLB The Show</param>
     /// <param name="type">The card type</param>
     /// <param name="image">The card image</param>
     /// <param name="name">The name of the card</param>
@@ -63,9 +64,9 @@ public sealed class PlayerCard : Card
     /// Changes the player rating
     /// </summary>
     /// <param name="date">The date the rating change took place</param>
-    /// <param name="overallRating">The new overall rating</param>
-    /// <param name="attributes">The player's attributes</param>
-    public void ChangePlayerRating(DateOnly date, OverallRating overallRating, PlayerCardAttributes attributes)
+    /// <param name="newOverallRating">The new overall rating</param>
+    /// <param name="newAttributes">The player's new attributes</param>
+    public void ChangePlayerRating(DateOnly date, OverallRating newOverallRating, PlayerCardAttributes newAttributes)
     {
         if (_historicalRatings.Any(x => x.StartDate <= date && x.EndDate > date))
         {
@@ -80,23 +81,39 @@ public sealed class PlayerCard : Card
         _historicalRatings.Add(
             PlayerCardHistoricalRating.Create(previousEndDate, date, OverallRating, PlayerCardAttributes));
 
-        OverallRating = overallRating;
-        PlayerCardAttributes = attributes;
+        // Notify subscribers that the player card overall rating has changed
+        if (OverallRating.Value < newOverallRating.Value)
+        {
+            RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(TheShowId, PreviousOverallRating: OverallRating,
+                PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
+                NewPlayerCardAttributes: PlayerCardAttributes));
+        }
+        else if (OverallRating.Value > newOverallRating.Value)
+        {
+            RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(TheShowId, PreviousOverallRating: OverallRating,
+                PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
+                NewPlayerCardAttributes: PlayerCardAttributes));
+        }
+        // If the overall rating hasn't changed, it means the player has negligible changes, and is not important or actionable
+
+        // Set the new values
+        OverallRating = newOverallRating;
+        PlayerCardAttributes = newAttributes;
     }
 
     /// <summary>
     /// Changes the player card's team
     /// </summary>
-    /// <param name="teamShortName">The new team</param>
-    public void ChangeTeam(TeamShortName teamShortName)
+    /// <param name="newTeamShortName">The new team</param>
+    public void ChangeTeam(TeamShortName newTeamShortName)
     {
-        TeamShortName = teamShortName;
+        TeamShortName = newTeamShortName;
     }
 
     /// <summary>
     /// Creates a <see cref="PlayerCard"/>
     /// </summary>
-    /// <param name="theShowId">The ID from MLB The Show</param>
+    /// <param name="theShowId">The card ID from MLB The Show</param>
     /// <param name="type">The card type</param>
     /// <param name="image">The card image</param>
     /// <param name="name">The name of the card</param>

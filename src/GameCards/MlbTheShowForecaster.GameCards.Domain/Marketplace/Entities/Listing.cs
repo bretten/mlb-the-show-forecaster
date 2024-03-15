@@ -72,12 +72,12 @@ public sealed class Listing : AggregateRoot
     /// <summary>
     /// Updates the prices for this listing
     /// </summary>
-    /// <param name="buyPrice">The new best buy price</param>
-    /// <param name="sellPrice">The new best sell price</param>
-    public void UpdatePrices(NaturalNumber buyPrice, NaturalNumber sellPrice)
+    /// <param name="newBuyPrice">The new best buy price</param>
+    /// <param name="newSellPrice">The new best sell price</param>
+    public void UpdatePrices(NaturalNumber newBuyPrice, NaturalNumber newSellPrice)
     {
-        BuyPrice = buyPrice;
-        SellPrice = sellPrice;
+        BuyPrice = newBuyPrice;
+        SellPrice = newSellPrice;
     }
 
     /// <summary>

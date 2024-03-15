@@ -10,7 +10,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 public abstract class Card : AggregateRoot
 {
     /// <summary>
-    /// The ID from MLB The Show
+    /// The card ID from MLB The Show
     /// </summary>
     public CardId TheShowId { get; }
 
@@ -42,7 +42,7 @@ public abstract class Card : AggregateRoot
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="theShowId">The ID from MLB The Show</param>
+    /// <param name="theShowId">The card ID from MLB The Show</param>
     /// <param name="type">The card type</param>
     /// <param name="image">The card image</param>
     /// <param name="name">The name of the card</param>

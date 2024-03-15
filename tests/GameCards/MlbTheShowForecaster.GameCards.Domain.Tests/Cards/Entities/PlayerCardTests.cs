@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.Entities;
@@ -84,6 +85,77 @@ public class PlayerCardTests
         Assert.Equal(newPlayerAttributes, card.PlayerCardAttributes);
         Assert.Equal(expected1, card.HistoricalRatingsChronologically[0]);
         Assert.Equal(expected2, card.HistoricalRatingsChronologically[1]);
+    }
+
+    [Fact]
+    public void ChangePlayerRating_HigherOverallRating_RaisesOverallRatingImprovedDomainEvent()
+    {
+        // Arrange
+        var currentOverallRating = Faker.FakeOverallRating(48);
+        var currentPlayerCardAttributes = Faker.FakePlayerCardAttributes();
+        var card = Faker.FakePlayerCard(overallRating: currentOverallRating,
+            playerCardAttributes: currentPlayerCardAttributes);
+
+        var newOverallRating = Faker.FakeOverallRating(49);
+        var newPlayerAttributes = Faker.FakePlayerCardAttributes();
+
+        // Act
+        card.ChangePlayerRating(new DateOnly(2024, 4, 1), newOverallRating, newPlayerAttributes);
+
+        // Assert
+        Assert.Single(card.DomainEvents);
+        Assert.IsType<PlayerCardOverallRatingImprovedEvent>(card.DomainEvents[0]);
+        var e = card.DomainEvents[0] as PlayerCardOverallRatingImprovedEvent;
+        Assert.Equal(card.TheShowId, e!.CardId);
+        Assert.Equal(48, e.PreviousOverallRating.Value);
+        Assert.Equal(currentPlayerCardAttributes, e.PreviousPlayerCardAttributes);
+        Assert.Equal(49, e.NewOverallRating.Value);
+        Assert.Equal(newPlayerAttributes, e.NewPlayerCardAttributes);
+    }
+
+    [Fact]
+    public void ChangePlayerRating_LowerOverallRating_RaisesOverallRatingDeclinedDomainEvent()
+    {
+        // Arrange
+        var currentOverallRating = Faker.FakeOverallRating(48);
+        var currentPlayerCardAttributes = Faker.FakePlayerCardAttributes();
+        var card = Faker.FakePlayerCard(overallRating: currentOverallRating,
+            playerCardAttributes: currentPlayerCardAttributes);
+
+        var newOverallRating = Faker.FakeOverallRating(47);
+        var newPlayerAttributes = Faker.FakePlayerCardAttributes();
+
+        // Act
+        card.ChangePlayerRating(new DateOnly(2024, 4, 1), newOverallRating, newPlayerAttributes);
+
+        // Assert
+        Assert.Single(card.DomainEvents);
+        Assert.IsType<PlayerCardOverallRatingDeclinedEvent>(card.DomainEvents[0]);
+        var e = card.DomainEvents[0] as PlayerCardOverallRatingDeclinedEvent;
+        Assert.Equal(card.TheShowId, e!.CardId);
+        Assert.Equal(48, e.PreviousOverallRating.Value);
+        Assert.Equal(currentPlayerCardAttributes, e.PreviousPlayerCardAttributes);
+        Assert.Equal(47, e.NewOverallRating.Value);
+        Assert.Equal(newPlayerAttributes, e.NewPlayerCardAttributes);
+    }
+
+    [Fact]
+    public void ChangePlayerRating_SameOverallRating_NoDomainEventRaised()
+    {
+        // Arrange
+        var currentOverallRating = Faker.FakeOverallRating(48);
+        var currentPlayerCardAttributes = Faker.FakePlayerCardAttributes(scalar: 1);
+        var card = Faker.FakePlayerCard(overallRating: currentOverallRating,
+            playerCardAttributes: currentPlayerCardAttributes);
+
+        var newOverallRating = Faker.FakeOverallRating(48);
+        var newPlayerAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
+
+        // Act
+        card.ChangePlayerRating(new DateOnly(2024, 4, 1), newOverallRating, newPlayerAttributes);
+
+        // Assert
+        Assert.Empty(card.DomainEvents);
     }
 
     [Fact]
