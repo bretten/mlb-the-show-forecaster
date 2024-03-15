@@ -1,6 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
-namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
 /// <summary>
 /// Represents all the ability attributes on a player card

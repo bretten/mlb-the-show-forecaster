@@ -1,6 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
-namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.ValueObjects;
+namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.ValueObjects.PlayerCards;
 
 public class PlayerCardAttributesTests
 {

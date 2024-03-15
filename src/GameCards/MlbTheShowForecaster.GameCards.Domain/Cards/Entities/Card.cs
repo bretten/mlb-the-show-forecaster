@@ -7,7 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 /// <summary>
 /// Represents a Card in MLB The Show
 /// </summary>
-public sealed class Card : AggregateRoot
+public abstract class Card : AggregateRoot
 {
     /// <summary>
     /// The ID from MLB The Show
@@ -35,21 +35,27 @@ public sealed class Card : AggregateRoot
     public Rarity Rarity { get; }
 
     /// <summary>
-    /// The short name of the team associated with the card
-    /// </summary>
-    public TeamShortName? TeamShortName { get; }
-
-    /// <summary>
-    /// The overall rating of the card
-    /// </summary>
-    public OverallRating? OverallRating { get; }
-
-    /// <summary>
     /// The series of the card
     /// </summary>
     public CardSeries Series { get; }
 
-    public Card(Guid id) : base(id)
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="theShowId">The ID from MLB The Show</param>
+    /// <param name="type">The card type</param>
+    /// <param name="image">The card image</param>
+    /// <param name="name">The name of the card</param>
+    /// <param name="rarity">The rarity of the card</param>
+    /// <param name="series">The series of the card</param>
+    protected Card(CardId theShowId, CardType type, CardImage image, string name, Rarity rarity, CardSeries series) :
+        base(Guid.NewGuid())
     {
+        TheShowId = theShowId;
+        Type = type;
+        Image = image;
+        Name = name;
+        Rarity = rarity;
+        Series = series;
     }
 }
