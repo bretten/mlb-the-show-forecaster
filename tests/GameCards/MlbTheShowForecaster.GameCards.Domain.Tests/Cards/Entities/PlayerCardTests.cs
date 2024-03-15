@@ -12,12 +12,13 @@ public class PlayerCardTests
     {
         // Arrange
         var card = Faker.FakePlayerCard();
-        var date = new DateOnly(2024, 4, 1);
+
         var newOverallRating = Faker.FakeOverallRating(49);
-        ;
         var newPlayerAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
-        card.ChangePlayerRating(date, newOverallRating, newPlayerAttributes);
-        var action = () => card.ChangePlayerRating(date.AddDays(-1), newOverallRating, newPlayerAttributes);
+
+        var date = new DateOnly(2024, 4, 1);
+        card.ChangePlayerRating(date, newOverallRating, newPlayerAttributes); // Set up the historical rating
+        var action = () => card.ChangePlayerRating(date.AddDays(-1), newOverallRating, newPlayerAttributes); // Repeat
 
         // Act
         var actual = Record.Exception(action);
@@ -28,45 +29,59 @@ public class PlayerCardTests
     }
 
     [Fact]
-    public void ChangePlayerRating_HasNoPreviousRating_AddsRatingToHistoricalCollection()
+    public void ChangePlayerRating_HasNoPreviousHistoricalRating_AddsCurrentRatingToHistoricalCollection()
     {
         // Arrange
-        var card = Faker.FakePlayerCard();
-        var date = new DateOnly(2024, 4, 2);
-        var newOverallRating = Faker.FakeOverallRating(49);
+        var currentOverallRating = Faker.FakeOverallRating(48);
+        var currentPlayerCardAttributes = Faker.FakePlayerCardAttributes(scalar: 1);
+        var card = Faker.FakePlayerCard(overallRating: currentOverallRating,
+            playerCardAttributes: currentPlayerCardAttributes);
 
+        var newOverallRating = Faker.FakeOverallRating(49);
         var newPlayerAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
-        var expected =
-            Faker.FakePlayerCardHistoricalRating(DateOnly.MinValue, date, newOverallRating, newPlayerAttributes);
+
+        var date = new DateOnly(2024, 4, 2);
+        var expectedHistoricalRating = Faker.FakePlayerCardHistoricalRating(DateOnly.MinValue, date,
+            currentOverallRating, currentPlayerCardAttributes);
 
         // Act
         card.ChangePlayerRating(date, newOverallRating, newPlayerAttributes);
 
         // Assert
-        Assert.Equal(expected, card.HistoricalRatingsChronologically[0]);
+        Assert.Equal(49, card.OverallRating.Value);
+        Assert.Equal(newPlayerAttributes, card.PlayerCardAttributes);
+        Assert.Equal(expectedHistoricalRating, card.HistoricalRatingsChronologically[0]);
     }
 
     [Fact]
-    public void ChangePlayerRating_HasPreviousRatings_AddsRatingToHistoricalCollection()
+    public void ChangePlayerRating_HasPreviousHistoricalRatings_AddsCurrentRatingToHistoricalCollection()
     {
         // Arrange
-        var card = Faker.FakePlayerCard();
+        var previousOverallRating = Faker.FakeOverallRating(48);
+        var previousPlayerCardAttributes = Faker.FakePlayerCardAttributes(scalar: 1);
+        var card = Faker.FakePlayerCard(overallRating: previousOverallRating,
+            playerCardAttributes: previousPlayerCardAttributes);
+
+        var currentOverallRating = Faker.FakeOverallRating(49);
+        var currentPlayerCardAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
         var date1 = new DateOnly(2024, 4, 1);
-        card.ChangePlayerRating(date1, Faker.FakeOverallRating(), Faker.FakePlayerCardAttributes());
+        card.ChangePlayerRating(date1, currentOverallRating, currentPlayerCardAttributes);
 
+        var newOverallRating = Faker.FakeOverallRating(51);
+        var newPlayerAttributes = Faker.FakePlayerCardAttributes(scalar: 3);
         var date2 = new DateOnly(2024, 4, 2);
-        var newOverallRating = Faker.FakeOverallRating(49);
 
-        var newPlayerAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
-
-        var expected1 = Faker.FakePlayerCardHistoricalRating(DateOnly.MinValue, date1, Faker.FakeOverallRating(),
-            Faker.FakePlayerCardAttributes());
-        var expected2 = Faker.FakePlayerCardHistoricalRating(date1, date2, newOverallRating, newPlayerAttributes);
+        var expected1 = Faker.FakePlayerCardHistoricalRating(DateOnly.MinValue, date1, previousOverallRating,
+            previousPlayerCardAttributes);
+        var expected2 =
+            Faker.FakePlayerCardHistoricalRating(date1, date2, currentOverallRating, currentPlayerCardAttributes);
 
         // Act
         card.ChangePlayerRating(date2, newOverallRating, newPlayerAttributes);
 
         // Assert
+        Assert.Equal(51, card.OverallRating.Value);
+        Assert.Equal(newPlayerAttributes, card.PlayerCardAttributes);
         Assert.Equal(expected1, card.HistoricalRatingsChronologically[0]);
         Assert.Equal(expected2, card.HistoricalRatingsChronologically[1]);
     }

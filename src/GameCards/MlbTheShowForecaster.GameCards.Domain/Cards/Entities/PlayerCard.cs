@@ -73,13 +73,15 @@ public sealed class PlayerCard : Card
                 $"A player rating already exists for card = {TheShowId.Value} and date = {date.ToShortDateString()}");
         }
 
-        OverallRating = overallRating;
-        PlayerCardAttributes = attributes;
-
         // The end date of the last rating state is the beginning of the rating state that is currently being replaced
         var previousEndDate = _historicalRatings.MaxBy(x => x.EndDate)?.EndDate ?? DateOnly.MinValue;
 
-        _historicalRatings.Add(PlayerCardHistoricalRating.Create(previousEndDate, date, overallRating, attributes));
+        // Add previous values to history before updating with new values
+        _historicalRatings.Add(
+            PlayerCardHistoricalRating.Create(previousEndDate, date, OverallRating, PlayerCardAttributes));
+
+        OverallRating = overallRating;
+        PlayerCardAttributes = attributes;
     }
 
     /// <summary>
