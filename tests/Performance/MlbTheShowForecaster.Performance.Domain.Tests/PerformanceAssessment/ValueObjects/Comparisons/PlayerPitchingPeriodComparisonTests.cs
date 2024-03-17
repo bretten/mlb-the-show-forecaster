@@ -37,6 +37,6 @@ public class PlayerPitchingPeriodComparisonTests
         Assert.Equal(30.0m, actual.InningsPitchedSinceComparisonDate.Value);
         Assert.Equal(121, actual.BattersFacedSinceComparisonDate.Value);
         Assert.Equal(2.21m, actual.EarnedRunAverageSinceComparisonDate.Value);
-        Assert.Equal(-29.62m, actual.PercentageChange);
+        Assert.Equal(-29.62m, actual.PercentageChangeValue);
     }
 }
