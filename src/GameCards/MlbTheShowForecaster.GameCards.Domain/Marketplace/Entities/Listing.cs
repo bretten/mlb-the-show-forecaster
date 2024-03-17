@@ -4,6 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
@@ -74,10 +75,52 @@ public sealed class Listing : AggregateRoot
     /// </summary>
     /// <param name="newBuyPrice">The new best buy price</param>
     /// <param name="newSellPrice">The new best sell price</param>
-    public void UpdatePrices(NaturalNumber newBuyPrice, NaturalNumber newSellPrice)
+    public void UpdatePrices(NaturalNumber newBuyPrice, NaturalNumber newSellPrice,
+        IListingPriceSignificantChangeThreshold changeThreshold)
     {
+        CheckNewBuyPriceForSignificantChange(newBuyPrice, changeThreshold);
+        CheckNewSellPriceForSignificantChange(newSellPrice, changeThreshold);
+
         BuyPrice = newBuyPrice;
         SellPrice = newSellPrice;
+    }
+
+    private void CheckNewBuyPriceForSignificantChange(NaturalNumber newBuyPrice,
+        IListingPriceSignificantChangeThreshold t)
+    {
+        // Calculate the percentage difference between the previous buy price and the new buy price
+        var priceDiffPercentage = PercentageChange.Create(referenceValue: BuyPrice, newValue: newBuyPrice);
+
+        // Check if the price increased or decreased significantly
+        if (priceDiffPercentage.PercentageChangeValue > t.BuyPricePercentageChangeThreshold)
+        {
+            RaiseDomainEvent(new ListingBuyPriceIncreasedEvent(BuyPrice, newBuyPrice, priceDiffPercentage));
+        }
+        else if (priceDiffPercentage.PercentageChangeValue < -t.BuyPricePercentageChangeThreshold)
+        {
+            RaiseDomainEvent(new ListingBuyPriceDecreasedEvent(BuyPrice, newBuyPrice, priceDiffPercentage));
+        }
+
+        // If the price percentage change threshold was not crossed, this is a negligible event
+    }
+
+    private void CheckNewSellPriceForSignificantChange(NaturalNumber newSellPrice,
+        IListingPriceSignificantChangeThreshold t)
+    {
+        // Calculate the percentage difference between the previous sell price and the new sell price
+        var priceDiffPercentage = PercentageChange.Create(referenceValue: SellPrice, newValue: newSellPrice);
+
+        // Check if the price increased or decreased significantly
+        if (priceDiffPercentage.PercentageChangeValue > t.SellPricePercentageChangeThreshold)
+        {
+            RaiseDomainEvent(new ListingSellPriceIncreasedEvent(SellPrice, newSellPrice, priceDiffPercentage));
+        }
+        else if (priceDiffPercentage.PercentageChangeValue < -t.SellPricePercentageChangeThreshold)
+        {
+            RaiseDomainEvent(new ListingSellPriceDecreasedEvent(SellPrice, newSellPrice, priceDiffPercentage));
+        }
+
+        // If the price percentage change threshold was not crossed, this is a negligible event
     }
 
     /// <summary>
