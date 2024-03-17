@@ -30,6 +30,6 @@ public class PlayerFieldingPeriodComparisonTests
         Assert.Equal(0.931m, actual.FieldingPercentageBeforeComparisonDate.Value);
         Assert.Equal(53, actual.TotalChancesSinceComparisonDate.Value);
         Assert.Equal(0.983m, actual.FieldingPercentageSinceComparisonDate.Value);
-        Assert.Equal(5.59m, actual.PercentageChange);
+        Assert.Equal(5.59m, actual.PercentageChangeValue);
     }
 }
