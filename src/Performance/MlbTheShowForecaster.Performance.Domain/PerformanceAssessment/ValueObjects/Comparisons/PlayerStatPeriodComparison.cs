@@ -1,5 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
@@ -7,13 +6,8 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAsse
 /// <summary>
 /// Represents a comparison between a stat before a specified date to the same stat since the specified date
 /// </summary>
-public abstract class PlayerStatPeriodComparison : ValueObject
+public abstract class PlayerStatPeriodComparison : PercentageChange
 {
-    /// <summary>
-    /// The underlying percentage change
-    /// </summary>
-    private decimal? _percentageChange;
-
     /// <summary>
     /// The player's stat before the comparison date
     /// </summary>
@@ -43,36 +37,11 @@ public abstract class PlayerStatPeriodComparison : ValueObject
     /// <param name="statBeforeComparisonDate">The player's stat before the comparison date</param>
     /// <param name="statSinceComparisonDate">The player's stat since the comparison date</param>
     protected PlayerStatPeriodComparison(MlbId playerMlbId, DateTime comparisonDate, IStat statBeforeComparisonDate,
-        IStat statSinceComparisonDate)
+        IStat statSinceComparisonDate) : base(statBeforeComparisonDate.Value, statSinceComparisonDate.Value)
     {
         PlayerMlbId = playerMlbId;
         ComparisonDate = comparisonDate;
         StatBeforeComparisonDate = statBeforeComparisonDate;
         StatSinceComparisonDate = statSinceComparisonDate;
-    }
-
-    /// <summary>
-    /// The percentage of change over the previous value
-    /// </summary>
-    public decimal PercentageChange
-    {
-        get
-        {
-            if (!_percentageChange.HasValue)
-            {
-                _percentageChange = Math.Round(CalculatePercentageChange(), 2, MidpointRounding.AwayFromZero);
-            }
-
-            return _percentageChange.Value;
-        }
-    }
-
-    /// <summary>
-    /// Calculates the percentage of change over the previous value
-    /// </summary>
-    private decimal CalculatePercentageChange()
-    {
-        return 100 * ((StatSinceComparisonDate.Value - StatBeforeComparisonDate.Value) /
-                      StatBeforeComparisonDate.Value);
     }
 }

@@ -31,6 +31,6 @@ public class PlayerBattingPeriodComparisonTests
         Assert.Equal(1.013m, actual.OnBasePlusSluggingBeforeComparisonDate.Value);
         Assert.Equal(125, actual.PlateAppearancesSinceComparisonDate.Value);
         Assert.Equal(1.066m, actual.OnBasePlusSluggingSinceComparisonDate.Value);
-        Assert.Equal(5.23m, actual.PercentageChange);
+        Assert.Equal(5.23m, actual.PercentageChangeValue);
     }
 }
