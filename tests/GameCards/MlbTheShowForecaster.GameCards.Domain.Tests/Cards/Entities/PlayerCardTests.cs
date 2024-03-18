@@ -196,7 +196,7 @@ public class PlayerCardTests
         // Assert
         Assert.Equal("id1", actual.TheShowId.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
-        Assert.Equal("img.png", actual.Image.Value);
+        Assert.Equal(new Uri("img.png", UriKind.Relative), actual.ImageLocation.Value);
         Assert.Equal("cardName", actual.Name);
         Assert.Equal(Rarity.Silver, actual.Rarity);
         Assert.Equal(CardSeries.Live, actual.Series);

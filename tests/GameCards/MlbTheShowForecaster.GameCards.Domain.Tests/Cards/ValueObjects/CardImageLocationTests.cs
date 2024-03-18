@@ -3,14 +3,14 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.Ex
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.ValueObjects;
 
-public class CardImageTests
+public class CardImageLocationTests
 {
     [Fact]
     public void Create_EmptyCardImage_ThrowsException()
     {
         // Arrange
         const string cardImage = "";
-        var action = () => CardImage.Create(cardImage);
+        var action = () => CardImageLocation.Create(cardImage);
 
         // Act
         var actual = Record.Exception(action);
@@ -21,15 +21,30 @@ public class CardImageTests
     }
 
     [Fact]
+    public void Create_AbsoluteUrl_ThrowsException()
+    {
+        // Arrange
+        const string cardImage = "https://brettnamba.com/assets/main.jpg";
+        var action = () => CardImageLocation.Create(cardImage);
+
+        // Act
+        var actual = Record.Exception(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<InvalidCardImageLocationException>(actual);
+    }
+
+    [Fact]
     public void Create_ValidCardImage_ReturnsCardImage()
     {
         // Arrange
-        const string cardImage = "image.jpg";
+        const string cardImage = "/assets/main.jpg";
 
         // Act
-        var actual = CardImage.Create(cardImage);
+        var actual = CardImageLocation.Create(cardImage);
 
         // Assert
-        Assert.Equal("image.jpg", actual.Value);
+        Assert.Equal("/assets/main.jpg", actual.Value.OriginalString);
     }
 }

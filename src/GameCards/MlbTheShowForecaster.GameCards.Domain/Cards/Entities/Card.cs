@@ -20,9 +20,9 @@ public abstract class Card : AggregateRoot
     public CardType Type { get; }
 
     /// <summary>
-    /// The card image
+    /// The card image location
     /// </summary>
-    public CardImage Image { get; }
+    public CardImageLocation ImageLocation { get; }
 
     /// <summary>
     /// The name of the card
@@ -44,16 +44,16 @@ public abstract class Card : AggregateRoot
     /// </summary>
     /// <param name="theShowId">The card ID from MLB The Show</param>
     /// <param name="type">The card type</param>
-    /// <param name="image">The card image</param>
+    /// <param name="imageLocation">The card image location</param>
     /// <param name="name">The name of the card</param>
     /// <param name="rarity">The rarity of the card</param>
     /// <param name="series">The series of the card</param>
-    protected Card(CardId theShowId, CardType type, CardImage image, string name, Rarity rarity, CardSeries series) :
-        base(Guid.NewGuid())
+    protected Card(CardId theShowId, CardType type, CardImageLocation imageLocation, string name, Rarity rarity,
+        CardSeries series) : base(Guid.NewGuid())
     {
         TheShowId = theShowId;
         Type = type;
-        Image = image;
+        ImageLocation = imageLocation;
         Name = name;
         Rarity = rarity;
         Series = series;
