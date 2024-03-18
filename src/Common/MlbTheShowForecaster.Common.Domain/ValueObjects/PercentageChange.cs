@@ -57,7 +57,7 @@ public class PercentageChange : ValueObject
     /// <returns>True if it increased by the specified amount, otherwise false</returns>
     public bool HasIncreasedBy(decimal threshold)
     {
-        return PercentageChangeValue > 0 && PercentageChangeValue > Math.Abs(threshold);
+        return PercentageChangeValue > 0 && PercentageChangeValue >= Math.Abs(threshold);
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public class PercentageChange : ValueObject
     /// <returns>True if it decreased by the specified amount, otherwise false</returns>
     public bool HasDecreasedBy(decimal threshold)
     {
-        return PercentageChangeValue < 0 && Math.Abs(PercentageChangeValue) > Math.Abs(threshold);
+        return PercentageChangeValue < 0 && Math.Abs(PercentageChangeValue) >= Math.Abs(threshold);
     }
 
     /// <summary>

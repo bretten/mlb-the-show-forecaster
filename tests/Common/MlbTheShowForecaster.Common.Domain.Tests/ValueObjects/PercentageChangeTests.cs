@@ -50,6 +50,21 @@ public class PercentageChangeTests
     }
 
     [Fact]
+    public void HasIncreasedBy_ThresholdMagnitudeEqualToActualMagnitude_ReturnsTrue()
+    {
+        // Arrange
+        const decimal referenceValue = 1.024m;
+        const decimal newValue = 1.078m;
+        var percentageChange = PercentageChange.Create(referenceValue, newValue);
+
+        // Act
+        var actual = percentageChange.HasIncreasedBy(5.27m);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
     public void HasIncreasedBy_ThresholdMagnitudeGreaterThanActualMagnitude_ReturnsFalse()
     {
         // Arrange
@@ -74,6 +89,21 @@ public class PercentageChangeTests
 
         // Act
         var actual = percentageChange.HasDecreasedBy(5.00m);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void HasDecreasedBy_ThresholdMagnitudeEqualToActualMagnitude_ReturnsTrue()
+    {
+        // Arrange
+        const decimal referenceValue = 1.078m;
+        const decimal newValue = 1.024m;
+        var percentageChange = PercentageChange.Create(referenceValue, newValue);
+
+        // Act
+        var actual = percentageChange.HasDecreasedBy(5.01m);
 
         // Assert
         Assert.True(actual);
