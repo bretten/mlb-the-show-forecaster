@@ -176,11 +176,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         );
 
         // If the stats have improved, raise an event. If they have declined, raise an event
-        if (comparison.PercentageChangeValue >= assessmentRequirements.StatPercentChangeThreshold)
+        if (comparison.HasIncreasedBy(assessmentRequirements.StatPercentChangeThreshold))
         {
             RaiseDomainEvent(new BattingImprovementEvent(comparison));
         }
-        else if (comparison.PercentageChangeValue <= -assessmentRequirements.StatPercentChangeThreshold)
+        else if (comparison.HasDecreasedBy(assessmentRequirements.StatPercentChangeThreshold))
         {
             RaiseDomainEvent(new BattingDeclineEvent(comparison));
         }
@@ -217,12 +217,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         );
 
         // If the stats have improved, raise an event. If they have declined, raise an event
-        if (comparison.PercentageChangeValue <=
-            -assessmentRequirements.StatPercentChangeThreshold) // Lower ERA is better
+        if (comparison.HasDecreasedBy(assessmentRequirements.StatPercentChangeThreshold)) // Lower ERA is better
         {
             RaiseDomainEvent(new PitchingImprovementEvent(comparison));
         }
-        else if (comparison.PercentageChangeValue >= assessmentRequirements.StatPercentChangeThreshold)
+        else if (comparison.HasIncreasedBy(assessmentRequirements.StatPercentChangeThreshold))
         {
             RaiseDomainEvent(new PitchingDeclineEvent(comparison));
         }
@@ -256,11 +255,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         );
 
         // If the stats have improved, raise an event. If they have declined, raise an event
-        if (comparison.PercentageChangeValue >= assessmentRequirements.StatPercentChangeThreshold)
+        if (comparison.HasIncreasedBy(assessmentRequirements.StatPercentChangeThreshold))
         {
             RaiseDomainEvent(new FieldingImprovementEvent(comparison));
         }
-        else if (comparison.PercentageChangeValue <= -assessmentRequirements.StatPercentChangeThreshold)
+        else if (comparison.HasDecreasedBy(assessmentRequirements.StatPercentChangeThreshold))
         {
             RaiseDomainEvent(new FieldingDeclineEvent(comparison));
         }
