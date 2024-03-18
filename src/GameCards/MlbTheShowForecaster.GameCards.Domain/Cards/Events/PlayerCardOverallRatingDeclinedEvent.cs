@@ -1,5 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
@@ -20,4 +19,4 @@ public record PlayerCardOverallRatingDeclinedEvent(
     PlayerCardAttributes NewPlayerCardAttributes,
     OverallRating PreviousOverallRating,
     PlayerCardAttributes PreviousPlayerCardAttributes,
-    bool RarityChanged) : IDomainEvent;
+    bool RarityChanged) : IPlayerCardOverallRatingChangedEvent;

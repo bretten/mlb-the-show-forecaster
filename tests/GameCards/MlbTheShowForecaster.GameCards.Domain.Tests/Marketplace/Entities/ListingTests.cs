@@ -93,7 +93,8 @@ public class ListingTests
         Assert.Single(listing.DomainEvents);
         Assert.IsType<ListingBuyPriceIncreasedEvent>(listing.DomainEvents[0]);
         var e = listing.DomainEvents[0] as ListingBuyPriceIncreasedEvent;
-        Assert.Equal(10, e!.OriginalPrice.Value);
+        Assert.Equal("1", e!.CardId.Value);
+        Assert.Equal(10, e.OriginalPrice.Value);
         Assert.Equal(20, e.NewPrice.Value);
         Assert.Equal(100, e.PercentageChange.PercentageChangeValue);
     }
@@ -114,7 +115,8 @@ public class ListingTests
         Assert.Single(listing.DomainEvents);
         Assert.IsType<ListingBuyPriceDecreasedEvent>(listing.DomainEvents[0]);
         var e = listing.DomainEvents[0] as ListingBuyPriceDecreasedEvent;
-        Assert.Equal(20, e!.OriginalPrice.Value);
+        Assert.Equal("1", e!.CardId.Value);
+        Assert.Equal(20, e.OriginalPrice.Value);
         Assert.Equal(10, e.NewPrice.Value);
         Assert.Equal(-50m, e.PercentageChange.PercentageChangeValue);
     }
@@ -151,7 +153,8 @@ public class ListingTests
         Assert.Single(listing.DomainEvents);
         Assert.IsType<ListingSellPriceIncreasedEvent>(listing.DomainEvents[0]);
         var e = listing.DomainEvents[0] as ListingSellPriceIncreasedEvent;
-        Assert.Equal(10, e!.OriginalPrice.Value);
+        Assert.Equal("1", e!.CardId.Value);
+        Assert.Equal(10, e.OriginalPrice.Value);
         Assert.Equal(20, e.NewPrice.Value);
         Assert.Equal(100, e.PercentageChange.PercentageChangeValue);
     }
@@ -172,7 +175,8 @@ public class ListingTests
         Assert.Single(listing.DomainEvents);
         Assert.IsType<ListingSellPriceDecreasedEvent>(listing.DomainEvents[0]);
         var e = listing.DomainEvents[0] as ListingSellPriceDecreasedEvent;
-        Assert.Equal(20, e!.OriginalPrice.Value);
+        Assert.Equal("1", e!.CardId.Value);
+        Assert.Equal(20, e.OriginalPrice.Value);
         Assert.Equal(10, e.NewPrice.Value);
         Assert.Equal(-50m, e.PercentageChange.PercentageChangeValue);
     }

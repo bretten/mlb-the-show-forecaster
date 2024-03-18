@@ -100,11 +100,11 @@ public sealed class Listing : AggregateRoot
         // Check if the price increased or decreased significantly
         if (priceDiffPercentage.HasIncreasedBy(t.BuyPricePercentageChangeThreshold))
         {
-            RaiseDomainEvent(new ListingBuyPriceIncreasedEvent(BuyPrice, newBuyPrice, priceDiffPercentage));
+            RaiseDomainEvent(new ListingBuyPriceIncreasedEvent(CardId, BuyPrice, newBuyPrice, priceDiffPercentage));
         }
         else if (priceDiffPercentage.HasDecreasedBy(t.BuyPricePercentageChangeThreshold))
         {
-            RaiseDomainEvent(new ListingBuyPriceDecreasedEvent(BuyPrice, newBuyPrice, priceDiffPercentage));
+            RaiseDomainEvent(new ListingBuyPriceDecreasedEvent(CardId, BuyPrice, newBuyPrice, priceDiffPercentage));
         }
 
         // If the price percentage change threshold was not crossed, this is a negligible event
@@ -124,11 +124,11 @@ public sealed class Listing : AggregateRoot
         // Check if the price increased or decreased significantly
         if (priceDiffPercentage.HasIncreasedBy(t.SellPricePercentageChangeThreshold))
         {
-            RaiseDomainEvent(new ListingSellPriceIncreasedEvent(SellPrice, newSellPrice, priceDiffPercentage));
+            RaiseDomainEvent(new ListingSellPriceIncreasedEvent(CardId, SellPrice, newSellPrice, priceDiffPercentage));
         }
         else if (priceDiffPercentage.HasDecreasedBy(t.SellPricePercentageChangeThreshold))
         {
-            RaiseDomainEvent(new ListingSellPriceDecreasedEvent(SellPrice, newSellPrice, priceDiffPercentage));
+            RaiseDomainEvent(new ListingSellPriceDecreasedEvent(CardId, SellPrice, newSellPrice, priceDiffPercentage));
         }
 
         // If the price percentage change threshold was not crossed, this is a negligible event
