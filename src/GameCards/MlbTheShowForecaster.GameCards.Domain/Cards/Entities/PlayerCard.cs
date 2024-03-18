@@ -86,13 +86,15 @@ public sealed class PlayerCard : Card
         {
             RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(TheShowId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
-                NewPlayerCardAttributes: PlayerCardAttributes));
+                NewPlayerCardAttributes: PlayerCardAttributes,
+                RarityChanged: OverallRating.Rarity != newOverallRating.Rarity));
         }
         else if (OverallRating.Value > newOverallRating.Value)
         {
             RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(TheShowId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
-                NewPlayerCardAttributes: PlayerCardAttributes));
+                NewPlayerCardAttributes: PlayerCardAttributes,
+                RarityChanged: OverallRating.Rarity != newOverallRating.Rarity));
         }
         // If the overall rating hasn't changed, it means the player has negligible changes, and is not important or actionable
 

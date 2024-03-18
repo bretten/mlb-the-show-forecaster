@@ -97,7 +97,7 @@ public class PlayerCardTests
         var card = Faker.FakePlayerCard(overallRating: currentOverallRating,
             playerCardAttributes: currentPlayerCardAttributes);
 
-        var newOverallRating = Faker.FakeOverallRating(49);
+        var newOverallRating = Faker.FakeOverallRating(70);
         var newPlayerAttributes = Faker.FakePlayerCardAttributes();
 
         // Act
@@ -110,8 +110,9 @@ public class PlayerCardTests
         Assert.Equal(card.TheShowId, e!.CardId);
         Assert.Equal(48, e.PreviousOverallRating.Value);
         Assert.Equal(currentPlayerCardAttributes, e.PreviousPlayerCardAttributes);
-        Assert.Equal(49, e.NewOverallRating.Value);
+        Assert.Equal(70, e.NewOverallRating.Value);
         Assert.Equal(newPlayerAttributes, e.NewPlayerCardAttributes);
+        Assert.True(e.RarityChanged);
     }
 
     [Fact]
@@ -138,6 +139,7 @@ public class PlayerCardTests
         Assert.Equal(currentPlayerCardAttributes, e.PreviousPlayerCardAttributes);
         Assert.Equal(47, e.NewOverallRating.Value);
         Assert.Equal(newPlayerAttributes, e.NewPlayerCardAttributes);
+        Assert.False(e.RarityChanged);
     }
 
     [Fact]
