@@ -3,7 +3,10 @@
 namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 
 /// <summary>
-/// Represents the percentage change from a <see cref="ReferenceValue"/> to a <see cref="NewValue"/>
+/// Represents the percentage change from a <see cref="ReferenceValue"/> to a <see cref="NewValue"/> expressed on the
+/// 100% scale
+///
+/// <para>The formula is PercentageChange = 100 * (NewValue - ReferenceValue) / ReferenceValue</para>
 /// </summary>
 public class PercentageChange : ValueObject
 {
@@ -28,7 +31,9 @@ public class PercentageChange : ValueObject
     protected virtual int FractionalDigitCount => 2;
 
     /// <summary>
-    /// The percentage change from the <see cref="ReferenceValue"/> to the <see cref="NewValue"/>
+    /// The percentage change from the <see cref="ReferenceValue"/> to the <see cref="NewValue"/> on the 100% scale
+    ///
+    /// <para>In other words, a value of 0.1 is a 0.1% change and a value of 10 is a 10% change</para>
     /// </summary>
     public decimal PercentageChangeValue
     {
@@ -42,6 +47,28 @@ public class PercentageChange : ValueObject
 
             return _percentageChange.Value;
         }
+    }
+
+    /// <summary>
+    /// Checks if the percentage change from <see cref="ReferenceValue"/> to <see cref="NewValue"/> was an increase
+    /// and if its magnitude is greater than the specified amount
+    /// </summary>
+    /// <param name="threshold">The percentage change increase amount threshold</param>
+    /// <returns>True if it increased by the specified amount, otherwise false</returns>
+    public bool HasIncreasedBy(decimal threshold)
+    {
+        return PercentageChangeValue > 0 && PercentageChangeValue > Math.Abs(threshold);
+    }
+
+    /// <summary>
+    /// Checks if the percentage change from <see cref="ReferenceValue"/> to <see cref="NewValue"/> was a decrease
+    /// and if its magnitude is greater than the specified amount
+    /// </summary>
+    /// <param name="threshold">The percentage change decrease amount threshold</param>
+    /// <returns>True if it decreased by the specified amount, otherwise false</returns>
+    public bool HasDecreasedBy(decimal threshold)
+    {
+        return PercentageChangeValue < 0 && Math.Abs(PercentageChangeValue) > Math.Abs(threshold);
     }
 
     /// <summary>
