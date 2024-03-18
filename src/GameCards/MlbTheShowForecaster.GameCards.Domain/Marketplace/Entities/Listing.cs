@@ -75,6 +75,7 @@ public sealed class Listing : AggregateRoot
     /// </summary>
     /// <param name="newBuyPrice">The new best buy price</param>
     /// <param name="newSellPrice">The new best sell price</param>
+    /// <param name="changeThreshold">The percentage change threshold that determine significant listing price changes</param>
     public void UpdatePrices(NaturalNumber newBuyPrice, NaturalNumber newSellPrice,
         IListingPriceSignificantChangeThreshold changeThreshold)
     {
@@ -85,6 +86,11 @@ public sealed class Listing : AggregateRoot
         SellPrice = newSellPrice;
     }
 
+    /// <summary>
+    /// Checks for significant changes between the old buy price and the specified new buy price
+    /// </summary>
+    /// <param name="newBuyPrice">The new buy price</param>
+    /// <param name="t">The percentage change threshold that a price must change by for it to be deemed significant</param>
     private void CheckNewBuyPriceForSignificantChange(NaturalNumber newBuyPrice,
         IListingPriceSignificantChangeThreshold t)
     {
@@ -92,11 +98,11 @@ public sealed class Listing : AggregateRoot
         var priceDiffPercentage = PercentageChange.Create(referenceValue: BuyPrice, newValue: newBuyPrice);
 
         // Check if the price increased or decreased significantly
-        if (priceDiffPercentage.PercentageChangeValue > t.BuyPricePercentageChangeThreshold)
+        if (priceDiffPercentage.HasIncreasedBy(t.BuyPricePercentageChangeThreshold))
         {
             RaiseDomainEvent(new ListingBuyPriceIncreasedEvent(BuyPrice, newBuyPrice, priceDiffPercentage));
         }
-        else if (priceDiffPercentage.PercentageChangeValue < -t.BuyPricePercentageChangeThreshold)
+        else if (priceDiffPercentage.HasDecreasedBy(t.BuyPricePercentageChangeThreshold))
         {
             RaiseDomainEvent(new ListingBuyPriceDecreasedEvent(BuyPrice, newBuyPrice, priceDiffPercentage));
         }
@@ -104,6 +110,11 @@ public sealed class Listing : AggregateRoot
         // If the price percentage change threshold was not crossed, this is a negligible event
     }
 
+    /// <summary>
+    /// Checks for significant changes between the old sell price and the specified new sell price
+    /// </summary>
+    /// <param name="newSellPrice">The new sell price</param>
+    /// <param name="t">The percentage change threshold that a price must change by for it to be deemed significant</param>
     private void CheckNewSellPriceForSignificantChange(NaturalNumber newSellPrice,
         IListingPriceSignificantChangeThreshold t)
     {
@@ -111,11 +122,11 @@ public sealed class Listing : AggregateRoot
         var priceDiffPercentage = PercentageChange.Create(referenceValue: SellPrice, newValue: newSellPrice);
 
         // Check if the price increased or decreased significantly
-        if (priceDiffPercentage.PercentageChangeValue > t.SellPricePercentageChangeThreshold)
+        if (priceDiffPercentage.HasIncreasedBy(t.SellPricePercentageChangeThreshold))
         {
             RaiseDomainEvent(new ListingSellPriceIncreasedEvent(SellPrice, newSellPrice, priceDiffPercentage));
         }
-        else if (priceDiffPercentage.PercentageChangeValue < -t.SellPricePercentageChangeThreshold)
+        else if (priceDiffPercentage.HasDecreasedBy(t.SellPricePercentageChangeThreshold))
         {
             RaiseDomainEvent(new ListingSellPriceDecreasedEvent(SellPrice, newSellPrice, priceDiffPercentage));
         }
