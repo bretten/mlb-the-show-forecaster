@@ -52,13 +52,14 @@ public class ListingTests
         var date = new DateOnly(2024, 4, 1);
         var listing = Faker.FakeListing(buyPrice: 1, sellPrice: 1);
 
+        var expected = Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1), 1, 1);
+
         // Act
         listing.ArchivePrice(date);
 
         // Assert
         Assert.Equal(1, listing.HistoricalPricesChronologically.Count);
-        Assert.Equal(Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1), 1, 1),
-            listing.HistoricalPricesChronologically[0]);
+        Assert.Equal(expected, listing.HistoricalPricesChronologically[0]);
     }
 
     [Fact]

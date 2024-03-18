@@ -83,6 +83,7 @@ public class PlayerCardTests
         // Assert
         Assert.Equal(51, card.OverallRating.Value);
         Assert.Equal(newPlayerAttributes, card.PlayerCardAttributes);
+        Assert.Equal(2, card.HistoricalRatingsChronologically.Count);
         Assert.Equal(expected1, card.HistoricalRatingsChronologically[0]);
         Assert.Equal(expected2, card.HistoricalRatingsChronologically[1]);
     }

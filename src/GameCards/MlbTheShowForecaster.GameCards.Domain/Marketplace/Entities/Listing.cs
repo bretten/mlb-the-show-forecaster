@@ -75,7 +75,7 @@ public sealed class Listing : AggregateRoot
     /// </summary>
     /// <param name="newBuyPrice">The new best buy price</param>
     /// <param name="newSellPrice">The new best sell price</param>
-    /// <param name="changeThreshold">The percentage change threshold that determine significant listing price changes</param>
+    /// <param name="changeThreshold">The percentage change threshold that determines significant listing price changes</param>
     public void UpdatePrices(NaturalNumber newBuyPrice, NaturalNumber newSellPrice,
         IListingPriceSignificantChangeThreshold changeThreshold)
     {
