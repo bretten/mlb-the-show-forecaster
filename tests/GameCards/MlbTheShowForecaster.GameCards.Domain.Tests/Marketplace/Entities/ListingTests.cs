@@ -128,7 +128,7 @@ public class ListingTests
             .Returns(50);
 
         // Act
-        listing.UpdatePrices(NaturalNumber.Create(10), NaturalNumber.Create(11), stubPriceChangeThresholds.Object);
+        listing.UpdatePrices(NaturalNumber.Create(11), NaturalNumber.Create(10), stubPriceChangeThresholds.Object);
 
         // Assert
         Assert.Empty(listing.DomainEvents);
