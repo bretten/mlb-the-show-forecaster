@@ -1,5 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Items;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Listings;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Items;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Listings;
 using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
@@ -13,4 +15,7 @@ public interface IMlbTheShowApi
 {
     [Get("/apis/items.json?type=mlb_card&page={request.Page}")]
     Task<GetMlbCardItemsResponse> GetMlbCardItems(GetMlbCardItemsRequest request);
+
+    [Get("/apis/listings.json")]
+    Task<GetListingsPaginatedResponse> GetListings([Query] GetListingsRequest request);
 }

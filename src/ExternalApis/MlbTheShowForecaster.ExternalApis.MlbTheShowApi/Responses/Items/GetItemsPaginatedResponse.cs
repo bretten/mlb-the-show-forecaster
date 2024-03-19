@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 
-namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses;
+namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Items;
 
 /// <summary>
 /// Defines a paginated response for Items
@@ -11,7 +11,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Respons
 /// <param name="TotalPages">The total number of pages</param>
 /// <param name="Items">The Items on this page</param>
 /// <typeparam name="T">Any derivation of <see cref="ItemDto"/></typeparam>
-public abstract record PaginatedItemsResponse<T>(
+public abstract record GetItemsPaginatedResponse<T>(
     int Page,
     int PerPage,
     int TotalPages,

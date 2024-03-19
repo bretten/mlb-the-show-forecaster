@@ -14,4 +14,4 @@ public sealed record GetMlbCardItemsResponse(
     int PerPage,
     int TotalPages,
     IEnumerable<MlbCardDto> Items
-) : PaginatedItemsResponse<MlbCardDto>(Page, PerPage, TotalPages, Items);
+) : GetItemsPaginatedResponse<MlbCardDto>(Page, PerPage, TotalPages, Items);
