@@ -27,4 +27,22 @@
       <ProjectReference Include="..\..\..\src\ExternalApis\MlbTheShowForecaster.ExternalApis.MlbTheShowApi\MlbTheShowForecaster.ExternalApis.MlbTheShowApi.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="TestFiles\Objects\Item_Equipment.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestFiles\Objects\Item_MlbCard.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestFiles\Objects\Item_Sponsorship.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestFiles\Objects\Item_Stadium.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="TestFiles\Objects\Item_Unlockable.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

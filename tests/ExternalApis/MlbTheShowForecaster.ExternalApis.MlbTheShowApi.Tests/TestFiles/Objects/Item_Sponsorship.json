@@ -1,0 +1,12 @@
+﻿{
+  "uuid": "0fe297769a5113a8c7b5942ebbef4d96",
+  "type": "sponsorship",
+  "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCTDdKRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--dc09e114b344777ad20f5e6ec1900e3a116325e0/default-sponsorship.webp",
+  "baked_img": "https://cards.theshow.com/mlb24/0fe297769a5113a8c7b5942ebbef4d96-baked.webp",
+  "name": "Diamond Sponsorship",
+  "rarity": "Diamond",
+  "brand": "Oakley&reg;",
+  "brand_logo_name": "Oakley",
+  "bonus": "$ 2,500 Per Hit",
+  "is_sellable": true
+}

@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
-using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Converters;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 
 /// <summary>
-/// Represents the basic fields of an Item
+/// An <see cref="ItemDto"/> that represents baseball equipment
 /// </summary>
 /// <param name="Uuid">The unique ID</param>
 /// <param name="Type">The type of item</param>
@@ -12,18 +11,20 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.It
 /// <param name="Name">The name of the item</param>
 /// <param name="Rarity">The rarity of the item</param>
 /// <param name="IsSellable">True if the item is sellable on the marketplace, otherwise false</param>
-[JsonConverter(typeof(ItemJsonConverter))]
-public abstract record ItemDto(
-    [property: JsonPropertyName("uuid")]
+/// <param name="Brand">The item brand</param>
+/// <param name="Slot">The slot that this equipment occupies</param>
+/// <param name="Description">The equipment's description</param>
+public sealed record EquipmentDto(
     string Uuid,
-    [property: JsonPropertyName("type")]
     string Type,
-    [property: JsonPropertyName("img")]
     string ImageUrl,
-    [property: JsonPropertyName("name")]
     string Name,
-    [property: JsonPropertyName("rarity")]
     string Rarity,
-    [property: JsonPropertyName("is_sellable")]
-    bool IsSellable
-);
+    bool IsSellable,
+    [property: JsonPropertyName("brand")]
+    string Brand,
+    [property: JsonPropertyName("slot")]
+    string Slot,
+    [property: JsonPropertyName("description")]
+    string Description
+) : ItemDto(Uuid, Type, ImageUrl, Name, Rarity, IsSellable);

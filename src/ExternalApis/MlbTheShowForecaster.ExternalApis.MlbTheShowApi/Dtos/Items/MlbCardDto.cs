@@ -10,6 +10,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.It
 /// <param name="ImageUrl">The URL of the image associated with the item</param>
 /// <param name="Name">The name of the item</param>
 /// <param name="Rarity">The rarity of the item</param>
+/// <param name="IsSellable">True if the item is sellable on the marketplace, otherwise false</param>
 /// <param name="Series">The series the item is a part of</param>
 /// <param name="TeamShortName">The player's team name abbreviation</param>
 /// <param name="Overall">The player's overall rating</param>
@@ -47,6 +48,8 @@ public sealed record MlbCardDto(
     string ImageUrl,
     string Name,
     string Rarity,
+    bool IsSellable,
+    [property: JsonPropertyName("series")]
     string Series,
     [property: JsonPropertyName("team_short_name")]
     string TeamShortName,
@@ -108,4 +111,4 @@ public sealed record MlbCardDto(
     int BaseRunningAbility,
     [property: JsonPropertyName("baserunning_aggression")]
     int BaseRunningAggression
-) : ItemDto(Uuid, Type, ImageUrl, Name, Rarity, Series);
+) : ItemDto(Uuid, Type, ImageUrl, Name, Rarity, IsSellable);

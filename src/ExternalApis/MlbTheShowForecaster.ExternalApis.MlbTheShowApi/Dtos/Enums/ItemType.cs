@@ -10,25 +10,30 @@ public enum ItemType
     /// <summary>
     /// A MLB player card
     /// </summary>
-    [EnumMember(Value = "mlb_card")] MlbCard,
+    [EnumMember(Value = Constants.ItemTypes.MlbCard)]
+    MlbCard,
 
     /// <summary>
     /// A stadium
     /// </summary>
-    [EnumMember(Value = "stadium")] Stadium,
+    [EnumMember(Value = Constants.ItemTypes.Stadium)]
+    Stadium,
 
     /// <summary>
     /// Baseball equipment
     /// </summary>
-    [EnumMember(Value = "equipment")] Equipment,
+    [EnumMember(Value = Constants.ItemTypes.Equipment)]
+    Equipment,
 
     /// <summary>
     /// Sponsorship
     /// </summary>
-    [EnumMember(Value = "sponsorship")] Sponsorship,
+    [EnumMember(Value = Constants.ItemTypes.Sponsorship)]
+    Sponsorship,
 
     /// <summary>
     /// Unlockables like avatars
     /// </summary>
-    [EnumMember(Value = "unlockable")] Unlockable
+    [EnumMember(Value = Constants.ItemTypes.Unlockable)]
+    Unlockable
 }

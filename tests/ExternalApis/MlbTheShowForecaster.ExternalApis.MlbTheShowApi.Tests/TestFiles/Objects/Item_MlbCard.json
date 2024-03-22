@@ -1,0 +1,157 @@
+﻿{
+  "uuid": "a71cdf423ea5906c5fa85fff95d90360",
+  "type": "mlb_card",
+  "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCR2MvRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--a6aeae283163aa6cb6bf114e18ab406978aabf4f/2d1fb7af6a8075ea3e67b28d066e2556.webp",
+  "baked_img": "https://cards.theshow.com/mlb24/a71cdf423ea5906c5fa85fff95d90360-baked.webp",
+  "sc_baked_img": null,
+  "name": "Shohei Ohtani",
+  "rarity": "Diamond",
+  "team": "Dodgers",
+  "team_short_name": "LAD",
+  "ovr": 94,
+  "series": "Live",
+  "series_texture_name": "",
+  "series_year": 2017,
+  "display_position": "SP",
+  "display_secondary_positions": "LF, CF, RF",
+  "jersey_number": "17",
+  "age": 29,
+  "bat_hand": "L",
+  "throw_hand": "R",
+  "weight": "210 lbs",
+  "height": "6'4\"",
+  "born": "Belgium",
+  "is_hitter": false,
+  "stamina": 86,
+  "pitching_clutch": 106,
+  "hits_per_bf": 101,
+  "k_per_bf": 89,
+  "bb_per_bf": 51,
+  "hr_per_bf": 85,
+  "pitch_velocity": 96,
+  "pitch_control": 69,
+  "pitch_movement": 93,
+  "contact_left": 68,
+  "contact_right": 83,
+  "power_left": 93,
+  "power_right": 102,
+  "plate_vision": 49,
+  "plate_discipline": 93,
+  "batting_clutch": 88,
+  "bunting_ability": 35,
+  "drag_bunting_ability": 25,
+  "hitting_durability": 0,
+  "fielding_durability": 96,
+  "fielding_ability": 62,
+  "arm_strength": 94,
+  "arm_accuracy": 66,
+  "reaction_time": 55,
+  "blocking": 0,
+  "speed": 86,
+  "baserunning_ability": 62,
+  "baserunning_aggression": 72,
+  "hit_rank_image": "",
+  "fielding_rank_image": "",
+  "pitches": [
+    {
+      "name": "Slurve",
+      "speed": 84,
+      "control": 83,
+      "movement": 93
+    },
+    {
+      "name": "4-Seam Fastball",
+      "speed": 97,
+      "control": 87,
+      "movement": 53
+    },
+    {
+      "name": "Cutter",
+      "speed": 89,
+      "control": 53,
+      "movement": 83
+    },
+    {
+      "name": "Splitter",
+      "speed": 89,
+      "control": 58,
+      "movement": 64
+    },
+    {
+      "name": "Sinker",
+      "speed": 95,
+      "control": 67,
+      "movement": 91
+    }
+  ],
+  "quirks": [
+    {
+      "name": "Road Warrior",
+      "description": "Performs better when playing on the road",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCR3ZJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--8cf1bad69bfbf6ac533982a47253a0852f9d3459/GPerk_RoadWarrior.webp"
+    },
+    {
+      "name": "Dead Red",
+      "description": "Excels at hitting fastballs",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRlRJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--db44f0a054586c55ad68a6f800f7d51cc36693ce/GPerk_DeadRed.webp"
+    },
+    {
+      "name": "Breaking Ball Hitter",
+      "description": "Excels at hitting breaking balls",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRTNJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--e87730bcfcb826a98a259b03aadaacf4694a348e/GPerk_BreakingBallHitter.webp"
+    },
+    {
+      "name": "Unfazed",
+      "description": "Excels at hitting with 2 strikes",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCSGZJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--c0fb3899be93d62dc1ab06693111af04678c2157/GPerk_Unfazed.webp"
+    },
+    {
+      "name": "Fighter",
+      "description": "Performs better in the 9th inning or later",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRmJJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--8f23909fb601a2a295b076ddaa280b50840ba8cf/GPerk_Fighter.webp"
+    },
+    {
+      "name": "Rally Monkey",
+      "description": "Performs better when team is behind",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCR3JJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--2be5ee052e8ae81fff6731387e32c0c73f7ddfb7/GPerk_RallyMonkey.webp"
+    },
+    {
+      "name": "Bad Ball Hitter",
+      "description": "Excels at hitting balls out of the strike zone",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRXJJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--43d65053dcfd43617888d95ad5fccb4417a4924a/GPerk_BadballHitter.webp"
+    },
+    {
+      "name": "Situational Hitter",
+      "description": "Excels at driving in a runner from third with less than 2 outs",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRzdJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--5b732f06279d15e1142ef4bc9c64ec94710def76/GPerk_SituationalHitter.webp"
+    },
+    {
+      "name": "Day Player",
+      "description": "Performs better when playing day games",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRlBJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--093a0de99d964090171bb5d5b3cb1732d4a4ca49/GPerk_DayPlayer.webp"
+    },
+    {
+      "name": "Break Outlier",
+      "description": "Pitchers lose less break when tired",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRXpJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--c27503f86e0377df366518ad89d207b74536206c/GPerk_BreakOutlier.webp"
+    },
+    {
+      "name": "Table Setter",
+      "description": "Performs better when no runners are on",
+      "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCSFRJRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--5d8af48109ed315e49ceb076570e7ddc562bb6b0/GPerk_TableSetter.webp"
+    }
+  ],
+  "is_sellable": true,
+  "has_augment": false,
+  "augment_text": null,
+  "augment_end_date": null,
+  "has_matchup": false,
+  "stars": null,
+  "trend": null,
+  "new_rank": 94,
+  "has_rank_change": false,
+  "event": true,
+  "set_name": "CORE",
+  "is_live_set": true,
+  "ui_anim_index": 1
+}
