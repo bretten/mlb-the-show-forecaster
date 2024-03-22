@@ -16,7 +16,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Request
 /// <param name="MaximumBestSellPrice">The maximum, best sell price</param>
 /// <param name="MinimumBestBuyPrice">The minimum, best buy price</param>
 /// <param name="MaximumBestBuyPrice">The maximum, best buy price</param>
-public record GetListingsRequest(
+public sealed record GetListingsRequest(
     int Page,
     [property: AliasAs("type")]
     ItemType? Type = null,

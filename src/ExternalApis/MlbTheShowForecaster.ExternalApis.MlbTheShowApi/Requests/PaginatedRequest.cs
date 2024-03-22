@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests;
 
@@ -7,6 +8,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Request
 /// </summary>
 /// <param name="Page">The desired page</param>
 public abstract record PaginatedRequest(
+    [property: AliasAs("page")]
     [property: JsonPropertyName("page")]
     int Page
 );
