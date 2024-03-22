@@ -2,8 +2,10 @@
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Listings;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.RosterUpdates;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Listings;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.RosterUpdates;
 using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
@@ -46,4 +48,19 @@ public interface IMlbTheShowApi
     /// <returns>The matching Listings</returns>
     [Get("/apis/listings.json")]
     Task<GetListingsPaginatedResponse> GetListings([Query] GetListingsRequest request);
+
+    /// <summary>
+    /// Requests a single Roster Update
+    /// </summary>
+    /// <param name="request">The request query parameters</param>
+    /// <returns>The matching Roster Update</returns>
+    [Get("/apis/roster_update.json")]
+    Task<GetRosterUpdateResponse> GetRosterUpdate([Query] GetRosterUpdateRequest request);
+
+    /// <summary>
+    /// Requests all Roster Update IDs and dates
+    /// </summary>
+    /// <returns>A collection of all the Roster Updates with their IDs and dates</returns>
+    [Get("/apis/roster_updates.json")]
+    Task<GetRosterUpdatesResponse> GetRosterUpdates();
 }

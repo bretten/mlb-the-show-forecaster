@@ -4,6 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Enums;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Listings;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.RosterUpdates;
 using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Tests;
@@ -192,9 +193,78 @@ public class MlbTheShowApiIntegrationTests
         Assert.IsType<StadiumDto>(actual.Listings.ElementAt(0).Item);
     }
 
-    private static IMlbTheShowApi GetClient()
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task GetRosterUpdate_Id_ReturnsRosterUpdate()
     {
-        return RestService.For<IMlbTheShowApi>(Constants.BaseUrl2024,
+        // Arrange
+        var request = new GetRosterUpdateRequest(Id: 4);
+        var mlbApi = GetClient(Constants.BaseUrl2023);
+
+        // Act
+        var actual = await mlbApi.GetRosterUpdate(request);
+
+        // Assert
+        Assert.Equal(384, actual.PlayerAttributeChanges.Count());
+        var actualPlayerAttributeChange = actual.PlayerAttributeChanges.ElementAt(0);
+        Assert.Equal("f1105c2f23b2c673114e6c8a16b135b2", actualPlayerAttributeChange.ObfuscatedId);
+        Assert.Equal("Shohei Ohtani", actualPlayerAttributeChange.Name);
+        Assert.Equal("f1105c2f23b2c673114e6c8a16b135b2", actualPlayerAttributeChange.Item.Uuid);
+        Assert.Equal("Angels", actualPlayerAttributeChange.Team);
+        Assert.Equal(96, actualPlayerAttributeChange.CurrentRank);
+        Assert.Equal("Diamond", actualPlayerAttributeChange.CurrentRarity);
+        Assert.Equal(96, actualPlayerAttributeChange.OldRank);
+        Assert.Equal("Diamond", actualPlayerAttributeChange.OldRarity);
+        var actualAttributeChange = actualPlayerAttributeChange.Changes.ElementAt(0);
+        Assert.Equal("H/9", actualAttributeChange.Name);
+        Assert.Equal("103", actualAttributeChange.CurrentValue);
+        Assert.Equal("positive", actualAttributeChange.Direction);
+        Assert.Equal("+5", actualAttributeChange.Delta);
+        Assert.Equal("orange", actualAttributeChange.Color);
+
+        Assert.Equal(45, actual.PlayerPositionChanges.Count());
+        var actualPlayerPositionChange = actual.PlayerPositionChanges.ElementAt(0);
+        Assert.Equal("a6f6b649715373a58392de57da7b4dff", actualPlayerPositionChange.ObfuscatedId);
+        Assert.Equal("Yandy Diaz", actualPlayerPositionChange.Name);
+        Assert.Equal("a6f6b649715373a58392de57da7b4dff", actualPlayerPositionChange.Item.Uuid);
+        Assert.Equal("1B", actualPlayerPositionChange.Position);
+        Assert.Equal("Rays", actualPlayerPositionChange.Team);
+
+        Assert.Equal(15, actual.NewlyAddedPlayers.Count());
+        var actualNewlyAddedPlayer = actual.NewlyAddedPlayers.ElementAt(0);
+        Assert.Equal("acec9b353f1bb1005cdcec9ec34a0142", actualNewlyAddedPlayer.ObfuscatedId);
+        Assert.Equal("Jake Marisnick", actualNewlyAddedPlayer.Name);
+        Assert.Equal("White Sox", actualNewlyAddedPlayer.Team);
+        Assert.Equal("CF", actualNewlyAddedPlayer.Position);
+        Assert.Equal(72, actualNewlyAddedPlayer.CurrentRank);
+        Assert.Equal("Bronze", actualNewlyAddedPlayer.CurrentRarity);
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task GetRosterUpdates_NoParameter_ReturnsRosterUpdates()
+    {
+        // Arrange
+        var mlbApi = GetClient(Constants.BaseUrl2023);
+
+        // Act
+        var actual = await mlbApi.GetRosterUpdates();
+
+        // Assert
+        Assert.Equal(26, actual.RosterUpdates.Count());
+        var actualFirstUpdate = actual.RosterUpdates.ElementAt(25);
+        Assert.Equal(1, actualFirstUpdate.Id);
+        Assert.Equal("April 21, 2023", actualFirstUpdate.Name);
+        Assert.Equal(new DateOnly(2023, 4, 21), actualFirstUpdate.Date);
+        var actualLastUpdate = actual.RosterUpdates.ElementAt(0);
+        Assert.Equal(26, actualLastUpdate.Id);
+        Assert.Equal("November 10, 2023", actualLastUpdate.Name);
+        Assert.Equal(new DateOnly(2023, 11, 10), actualLastUpdate.Date);
+    }
+
+    private static IMlbTheShowApi GetClient(string baseUrl = Constants.BaseUrl2024)
+    {
+        return RestService.For<IMlbTheShowApi>(baseUrl,
             new RefitSettings
             {
                 ContentSerializer = new SystemTextJsonContentSerializer(

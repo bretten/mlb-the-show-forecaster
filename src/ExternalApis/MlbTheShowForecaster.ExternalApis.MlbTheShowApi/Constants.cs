@@ -11,6 +11,11 @@ public static class Constants
     public const string BaseUrl2024 = "https://mlb24.theshow.com";
 
     /// <summary>
+    /// Base URL for MLB the Show 2023
+    /// </summary>
+    public const string BaseUrl2023 = "https://mlb23.theshow.com";
+
+    /// <summary>
     /// Item types
     /// </summary>
     public static class ItemTypes
