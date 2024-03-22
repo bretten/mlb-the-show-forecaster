@@ -160,4 +160,79 @@ public class ItemJsonConverterTests
         Assert.Equal(10002, actualItem.CategoryId);
         Assert.Equal(10006, actualItem.SubCategoryId);
     }
+
+    [Fact]
+    public void Write_MlbCard_SerializesMlbCard()
+    {
+        // Arrange
+        var json = File.ReadAllText(TestFilesConstants.Objects.ItemsMlbCard);
+        var dto = JsonSerializer.Deserialize<ItemDto>(json);
+        var expected = File.ReadAllText(TestFilesConstants.ExpectedJson.ItemsMlbCard);
+
+        // Act
+        var actual = JsonSerializer.Serialize(dto);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Write_Stadium_SerializesStadium()
+    {
+        // Arrange
+        var json = File.ReadAllText(TestFilesConstants.Objects.ItemsStadium);
+        var dto = JsonSerializer.Deserialize<ItemDto>(json);
+        var expected = File.ReadAllText(TestFilesConstants.ExpectedJson.ItemsStadium);
+
+        // Act
+        var actual = JsonSerializer.Serialize(dto);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Write_Equipment_SerializesEquipment()
+    {
+        // Arrange
+        var json = File.ReadAllText(TestFilesConstants.Objects.ItemsEquipment);
+        var dto = JsonSerializer.Deserialize<ItemDto>(json);
+        var expected = File.ReadAllText(TestFilesConstants.ExpectedJson.ItemsEquipment);
+
+        // Act
+        var actual = JsonSerializer.Serialize(dto);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Write_Sponsorship_SerializesSponsorship()
+    {
+        // Arrange
+        var json = File.ReadAllText(TestFilesConstants.Objects.ItemsSponsorship);
+        var dto = JsonSerializer.Deserialize<ItemDto>(json);
+        var expected = File.ReadAllText(TestFilesConstants.ExpectedJson.ItemsSponsorship);
+
+        // Act
+        var actual = JsonSerializer.Serialize(dto);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Write_Unlockable_SerializesUnlockable()
+    {
+        // Arrange
+        var json = File.ReadAllText(TestFilesConstants.Objects.ItemsUnlockable);
+        var dto = JsonSerializer.Deserialize<ItemDto>(json);
+        var expected = File.ReadAllText(TestFilesConstants.ExpectedJson.ItemsUnlockable);
+
+        // Act
+        var actual = JsonSerializer.Serialize(dto);
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
 }
