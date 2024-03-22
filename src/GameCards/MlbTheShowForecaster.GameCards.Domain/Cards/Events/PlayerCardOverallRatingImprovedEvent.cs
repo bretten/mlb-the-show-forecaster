@@ -13,7 +13,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 /// <param name="PreviousOverallRating">The previous overall rating being replaced</param>
 /// <param name="PreviousPlayerCardAttributes">The previous player attributes being replaced</param>
 /// <param name="RarityChanged">True if the card rarity changed, otherwise false</param>
-public record PlayerCardOverallRatingImprovedEvent(
+public sealed record PlayerCardOverallRatingImprovedEvent(
     CardId CardId,
     OverallRating NewOverallRating,
     PlayerCardAttributes NewPlayerCardAttributes,

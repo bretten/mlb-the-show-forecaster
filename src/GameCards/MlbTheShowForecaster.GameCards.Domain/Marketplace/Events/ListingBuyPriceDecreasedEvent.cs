@@ -11,7 +11,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Event
 /// <param name="OriginalPrice">The original price</param>
 /// <param name="NewPrice">The new price</param>
 /// <param name="PercentageChange">The percentage change from the old to new price</param>
-public record ListingBuyPriceDecreasedEvent(
+public sealed record ListingBuyPriceDecreasedEvent(
     CardId CardId,
     NaturalNumber OriginalPrice,
     NaturalNumber NewPrice,
