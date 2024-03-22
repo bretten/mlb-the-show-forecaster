@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Converters.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Tests.TestFiles;
 
@@ -162,6 +163,20 @@ public class ItemJsonConverterTests
     }
 
     [Fact]
+    public void Read_UnknownItemType_ThrowsException()
+    {
+        var json = File.ReadAllText(TestFilesConstants.Objects.ItemsUnknown);
+        var action = () => JsonSerializer.Deserialize<ItemDto>(json);
+
+        // Act
+        var actual = Record.Exception(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<UnknownItemTypeException>(actual);
+    }
+
+    [Fact]
     public void Write_MlbCard_SerializesMlbCard()
     {
         // Arrange
@@ -234,5 +249,20 @@ public class ItemJsonConverterTests
 
         // Assert
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void Write_UnknownItemType_ThrowsException()
+    {
+        // Arrange
+        var dto = new SponsorshipDto("id1", "unknownType", "imgUrl", "Unknown Name", "Diamond", true, "brand", "bonus");
+        var action = () => JsonSerializer.Serialize(dto as ItemDto);
+
+        // Act
+        var actual = Record.Exception(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<UnknownItemTypeException>(actual);
     }
 }

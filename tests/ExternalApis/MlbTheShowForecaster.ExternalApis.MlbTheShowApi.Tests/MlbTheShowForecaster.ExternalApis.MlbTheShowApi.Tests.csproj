@@ -58,6 +58,9 @@
       <None Update="TestFiles\ExpectedJson\Item_Unlockable.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="TestFiles\Objects\Item_Unknown.json">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

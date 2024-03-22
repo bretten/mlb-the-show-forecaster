@@ -18,6 +18,9 @@ public static class TestFilesConstants
 
         public static readonly string ItemsUnlockable =
             $"TestFiles{Path.DirectorySeparatorChar}Objects{Path.DirectorySeparatorChar}Item_Unlockable.json";
+
+        public static readonly string ItemsUnknown =
+            $"TestFiles{Path.DirectorySeparatorChar}Objects{Path.DirectorySeparatorChar}Item_Unknown.json";
     }
 
     public static class ExpectedJson
