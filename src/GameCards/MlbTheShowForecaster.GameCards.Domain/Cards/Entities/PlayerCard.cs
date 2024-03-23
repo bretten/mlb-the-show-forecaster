@@ -41,7 +41,7 @@ public sealed class PlayerCard : Card
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="theShowId">The card ID from MLB The Show</param>
+    /// <param name="externalId">The card ID from MLB The Show</param>
     /// <param name="type">The card type</param>
     /// <param name="imageLocation">The card image location</param>
     /// <param name="name">The name of the card</param>
@@ -50,9 +50,9 @@ public sealed class PlayerCard : Card
     /// <param name="teamShortName">The player's team name abbreviated</param>
     /// <param name="overallRating">The overall rating of the card</param>
     /// <param name="playerCardAttributes">The player ability attributes</param>
-    private PlayerCard(CardId theShowId, CardType type, CardImageLocation imageLocation, string name, Rarity rarity,
-        CardSeries series, TeamShortName teamShortName, OverallRating overallRating,
-        PlayerCardAttributes playerCardAttributes) : base(theShowId, type, imageLocation, name, rarity, series)
+    private PlayerCard(CardExternalId externalId, CardType type, CardImageLocation imageLocation, string name,
+        Rarity rarity, CardSeries series, TeamShortName teamShortName, OverallRating overallRating,
+        PlayerCardAttributes playerCardAttributes) : base(externalId, type, imageLocation, name, rarity, series)
     {
         TeamShortName = teamShortName;
         OverallRating = overallRating;
@@ -71,7 +71,7 @@ public sealed class PlayerCard : Card
         if (_historicalRatings.Any(x => x.StartDate <= date && x.EndDate > date))
         {
             throw new PlayerCardHistoricalRatingExistsException(
-                $"A player rating already exists for card = {TheShowId.Value} and date = {date.ToShortDateString()}");
+                $"A player rating already exists for card = {ExternalId.Value} and date = {date.ToShortDateString()}");
         }
 
         // The end date of the last rating state is the beginning of the rating state that is currently being replaced
@@ -84,14 +84,14 @@ public sealed class PlayerCard : Card
         // Notify subscribers that the player card overall rating has changed
         if (OverallRating.Value < newOverallRating.Value)
         {
-            RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(TheShowId, PreviousOverallRating: OverallRating,
+            RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(ExternalId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
                 NewPlayerCardAttributes: PlayerCardAttributes,
                 RarityChanged: OverallRating.Rarity != newOverallRating.Rarity));
         }
         else if (OverallRating.Value > newOverallRating.Value)
         {
-            RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(TheShowId, PreviousOverallRating: OverallRating,
+            RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(ExternalId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
                 NewPlayerCardAttributes: PlayerCardAttributes,
                 RarityChanged: OverallRating.Rarity != newOverallRating.Rarity));
@@ -115,7 +115,7 @@ public sealed class PlayerCard : Card
     /// <summary>
     /// Creates a <see cref="PlayerCard"/>
     /// </summary>
-    /// <param name="theShowId">The card ID from MLB The Show</param>
+    /// <param name="cardExternalId">The card ID from MLB The Show</param>
     /// <param name="type">The card type</param>
     /// <param name="imageLocation">The card image location</param>
     /// <param name="name">The name of the card</param>
@@ -125,11 +125,11 @@ public sealed class PlayerCard : Card
     /// <param name="overallRating">The overall rating of the card</param>
     /// <param name="playerCardAttributes">The player ability attributes</param>
     /// <returns><see cref="PlayerCard"/></returns>
-    public static PlayerCard Create(CardId theShowId, CardType type, CardImageLocation imageLocation, string name,
-        Rarity rarity, CardSeries series, TeamShortName teamShortName, OverallRating overallRating,
+    public static PlayerCard Create(CardExternalId cardExternalId, CardType type, CardImageLocation imageLocation,
+        string name, Rarity rarity, CardSeries series, TeamShortName teamShortName, OverallRating overallRating,
         PlayerCardAttributes playerCardAttributes)
     {
-        return new PlayerCard(theShowId, type, imageLocation, name, rarity, series, teamShortName, overallRating,
+        return new PlayerCard(cardExternalId, type, imageLocation, name, rarity, series, teamShortName, overallRating,
             playerCardAttributes);
     }
 }

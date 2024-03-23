@@ -20,9 +20,9 @@ public sealed class Listing : AggregateRoot
     private readonly List<ListingHistoricalPrice> _historicalPrices;
 
     /// <summary>
-    /// The ID of the card that this listing is for
+    /// The external ID of the card that this listing is for
     /// </summary>
-    public CardId CardId { get; }
+    public CardExternalId CardExternalId { get; }
 
     /// <summary>
     /// The current, best buy price
@@ -43,12 +43,13 @@ public sealed class Listing : AggregateRoot
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="cardId">The ID of the card that this listing is for</param>
+    /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
-    private Listing(CardId cardId, NaturalNumber buyPrice, NaturalNumber sellPrice) : base(Guid.NewGuid())
+    private Listing(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice) : base(
+        Guid.NewGuid())
     {
-        CardId = cardId;
+        CardExternalId = cardExternalId;
         BuyPrice = buyPrice;
         SellPrice = sellPrice;
         _historicalPrices = new List<ListingHistoricalPrice>();
@@ -64,7 +65,7 @@ public sealed class Listing : AggregateRoot
         if (_historicalPrices.Any(x => x.Date == date))
         {
             throw new ListingHistoricalPriceExistsException(
-                $"Listing historical price already exists for card = {CardId.Value} and date = {date.ToShortDateString()}");
+                $"Listing historical price already exists for card = {CardExternalId.Value} and date = {date.ToShortDateString()}");
         }
 
         _historicalPrices.Add(ListingHistoricalPrice.Create(date, BuyPrice, SellPrice));
@@ -100,11 +101,13 @@ public sealed class Listing : AggregateRoot
         // Check if the price increased or decreased significantly
         if (priceDiffPercentage.HasIncreasedBy(t.BuyPricePercentageChangeThreshold))
         {
-            RaiseDomainEvent(new ListingBuyPriceIncreasedEvent(CardId, BuyPrice, newBuyPrice, priceDiffPercentage));
+            RaiseDomainEvent(
+                new ListingBuyPriceIncreasedEvent(CardExternalId, BuyPrice, newBuyPrice, priceDiffPercentage));
         }
         else if (priceDiffPercentage.HasDecreasedBy(t.BuyPricePercentageChangeThreshold))
         {
-            RaiseDomainEvent(new ListingBuyPriceDecreasedEvent(CardId, BuyPrice, newBuyPrice, priceDiffPercentage));
+            RaiseDomainEvent(
+                new ListingBuyPriceDecreasedEvent(CardExternalId, BuyPrice, newBuyPrice, priceDiffPercentage));
         }
 
         // If the price percentage change threshold was not crossed, this is a negligible event
@@ -124,11 +127,13 @@ public sealed class Listing : AggregateRoot
         // Check if the price increased or decreased significantly
         if (priceDiffPercentage.HasIncreasedBy(t.SellPricePercentageChangeThreshold))
         {
-            RaiseDomainEvent(new ListingSellPriceIncreasedEvent(CardId, SellPrice, newSellPrice, priceDiffPercentage));
+            RaiseDomainEvent(new ListingSellPriceIncreasedEvent(CardExternalId, SellPrice, newSellPrice,
+                priceDiffPercentage));
         }
         else if (priceDiffPercentage.HasDecreasedBy(t.SellPricePercentageChangeThreshold))
         {
-            RaiseDomainEvent(new ListingSellPriceDecreasedEvent(CardId, SellPrice, newSellPrice, priceDiffPercentage));
+            RaiseDomainEvent(new ListingSellPriceDecreasedEvent(CardExternalId, SellPrice, newSellPrice,
+                priceDiffPercentage));
         }
 
         // If the price percentage change threshold was not crossed, this is a negligible event
@@ -137,12 +142,12 @@ public sealed class Listing : AggregateRoot
     /// <summary>
     /// Creates a <see cref="Listing"/>
     /// </summary>
-    /// <param name="cardId">The ID of the card that this listing is for</param>
+    /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
     /// <returns><see cref="Listing"/></returns>
-    public static Listing Create(CardId cardId, NaturalNumber buyPrice, NaturalNumber sellPrice)
+    public static Listing Create(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice)
     {
-        return new Listing(cardId, buyPrice, sellPrice);
+        return new Listing(cardExternalId, buyPrice, sellPrice);
     }
 }

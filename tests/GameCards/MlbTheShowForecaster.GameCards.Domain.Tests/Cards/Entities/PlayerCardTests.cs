@@ -107,7 +107,7 @@ public class PlayerCardTests
         Assert.Single(card.DomainEvents);
         Assert.IsType<PlayerCardOverallRatingImprovedEvent>(card.DomainEvents[0]);
         var e = card.DomainEvents[0] as PlayerCardOverallRatingImprovedEvent;
-        Assert.Equal(card.TheShowId, e!.CardId);
+        Assert.Equal(card.ExternalId, e!.CardExternalId);
         Assert.Equal(48, e.PreviousOverallRating.Value);
         Assert.Equal(currentPlayerCardAttributes, e.PreviousPlayerCardAttributes);
         Assert.Equal(70, e.NewOverallRating.Value);
@@ -134,7 +134,7 @@ public class PlayerCardTests
         Assert.Single(card.DomainEvents);
         Assert.IsType<PlayerCardOverallRatingDeclinedEvent>(card.DomainEvents[0]);
         var e = card.DomainEvents[0] as PlayerCardOverallRatingDeclinedEvent;
-        Assert.Equal(card.TheShowId, e!.CardId);
+        Assert.Equal(card.ExternalId, e!.CardExternalId);
         Assert.Equal(48, e.PreviousOverallRating.Value);
         Assert.Equal(currentPlayerCardAttributes, e.PreviousPlayerCardAttributes);
         Assert.Equal(47, e.NewOverallRating.Value);
@@ -179,7 +179,7 @@ public class PlayerCardTests
     public void Create_ValidValues_ReturnsPlayerCard()
     {
         // Arrange
-        var cardId = Faker.FakeCardId("id1");
+        var externalId = Faker.FakeCardExternalId("id1");
         const CardType cardType = CardType.MlbCard;
         var cardImage = Faker.FakeCardImage("img.png");
         const string cardName = "cardName";
@@ -190,11 +190,11 @@ public class PlayerCardTests
         var playerAttributes = Faker.FakePlayerCardAttributes(2);
 
         // Act
-        var actual = PlayerCard.Create(cardId, cardType, cardImage, cardName, rarity, cardSeries, teamShortName,
+        var actual = PlayerCard.Create(externalId, cardType, cardImage, cardName, rarity, cardSeries, teamShortName,
             overallRating, playerAttributes);
 
         // Assert
-        Assert.Equal("id1", actual.TheShowId.Value);
+        Assert.Equal("id1", actual.ExternalId.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
         Assert.Equal(new Uri("img.png", UriKind.Relative), actual.ImageLocation.Value);
         Assert.Equal("cardName", actual.Name);

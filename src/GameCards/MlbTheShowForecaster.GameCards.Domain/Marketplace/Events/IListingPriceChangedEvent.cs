@@ -13,7 +13,7 @@ public interface IListingPriceChangedEvent : IDomainEvent
     /// <summary>
     /// The card ID from MLB The Show
     /// </summary>
-    CardId CardId { get; }
+    CardExternalId CardExternalId { get; }
 
     /// <summary>
     /// The original price

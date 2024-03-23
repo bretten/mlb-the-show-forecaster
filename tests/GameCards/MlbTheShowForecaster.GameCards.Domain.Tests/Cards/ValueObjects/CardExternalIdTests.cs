@@ -3,31 +3,31 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.Ex
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.ValueObjects;
 
-public class CardIdTests
+public class CardExternalIdTests
 {
     [Fact]
-    public void Create_EmptyCardId_ThrowsException()
+    public void Create_EmptyExternalId_ThrowsException()
     {
         // Arrange
-        const string cardId = "";
-        var action = () => CardId.Create(cardId);
+        const string externalId = "";
+        var action = () => CardExternalId.Create(externalId);
 
         // Act
         var actual = Record.Exception(action);
 
         // Assert
         Assert.NotNull(actual);
-        Assert.IsType<EmptyCardIdException>(actual);
+        Assert.IsType<EmptyCardExternalIdException>(actual);
     }
 
     [Fact]
-    public void Create_ValidCardId_ReturnsCardId()
+    public void Create_ValidExternalId_ReturnsCardExternalId()
     {
         // Arrange
-        const string cardId = "id1";
+        const string externalId = "id1";
 
         // Act
-        var actual = CardId.Create(cardId);
+        var actual = CardExternalId.Create(externalId);
 
         // Assert
         Assert.Equal("id1", actual.Value);
