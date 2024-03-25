@@ -1,0 +1,21 @@
+﻿{
+  "uuid": "5ef8cf77201dc48f2a2f22cd14ec648c",
+  "type": "equipment",
+  "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCTnRMRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--6a2788233bdefd14e277d29cdd07909d979ab18d/c402564d08b21bb9d94a7513b79c98f8.webp",
+  "baked_img": "https://cards.theshow.com/mlb24/5ef8cf77201dc48f2a2f22cd14ec648c-baked.webp",
+  "name": "1989-2010 Ken Griffey Jr. C271 Ash",
+  "rarity": "Diamond",
+  "brand": "Louisville Slugger&reg;",
+  "brand_logo_name": "Louisville Slugger",
+  "slot": "Bat",
+  "attribute_names": [
+    "PWR",
+    "CON"
+  ],
+  "attribute_values": [
+    "+7",
+    "+7"
+  ],
+  "description": "The legendary Louisville Slugger Ken Griffey Jr. C271 Ash\"As long as I have fun playing, the stats will take care of themselves.\" - Ken Griffey Jr.",
+  "is_sellable": true
+}

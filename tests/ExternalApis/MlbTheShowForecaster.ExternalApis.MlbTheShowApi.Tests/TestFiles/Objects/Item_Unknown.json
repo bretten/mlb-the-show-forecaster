@@ -1,0 +1,9 @@
+﻿{
+  "uuid": "id1",
+  "type": "unknown",
+  "img": "img_url",
+  "baked_img": "baked_img_urk",
+  "name": "Unknown Name",
+  "rarity": "Diamond",
+  "is_sellable": true
+}

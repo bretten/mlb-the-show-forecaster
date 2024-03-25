@@ -1,0 +1,15 @@
+﻿{
+  "uuid": "7520fa31d14f45add6d61e52df5a03ff",
+  "type": "stadium",
+  "img": "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRUtsRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--1cde10216309186128b5554d70496996a8598e9f/4d92741ae4ca5675c82b335638d512fa.webp",
+  "baked_img": "https://cards.theshow.com/mlb24/7520fa31d14f45add6d61e52df5a03ff-baked.webp",
+  "name": "Crosley Field",
+  "rarity": "Diamond",
+  "team": "Free Agents",
+  "team_short_name": "FA",
+  "capacity": "29,603",
+  "surface": "Grass",
+  "elevation": "550ft",
+  "built": 1912,
+  "is_sellable": true
+}
