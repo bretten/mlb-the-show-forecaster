@@ -3,7 +3,7 @@
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 
 /// <summary>
-/// Represents a previous listing price in MLB The Show
+/// Represents a the prices of a MLB The Show card on a specific date
 /// </summary>
 /// <param name="Date">The date of the prices</param>
 /// <param name="BestSellPrice">The best sell price for the day</param>

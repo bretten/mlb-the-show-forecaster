@@ -14,4 +14,5 @@ public readonly record struct CardListing(
     string ListingName,
     NaturalNumber BestSellPrice,
     NaturalNumber BestBuyPrice,
-    CardExternalId CardExternalId);
+    CardExternalId CardExternalId
+);

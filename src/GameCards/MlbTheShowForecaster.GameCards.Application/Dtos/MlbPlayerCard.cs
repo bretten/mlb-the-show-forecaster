@@ -84,7 +84,12 @@ public readonly record struct MlbPlayerCard(
 )
 {
     /// <summary>
-    /// Determines if the card is rare
+    /// Determines the process priority of the card
     /// </summary>
-    public bool IsRare => Rarity == Rarity.Gold || Rarity == Rarity.Diamond;
+    public int Priority => (int)Rarity;
+
+    /// <summary>
+    /// Returns true if this card is supported by the system, otherwise false
+    /// </summary>
+    public bool IsSupported => Series == CardSeries.Live;
 };
