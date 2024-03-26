@@ -21,7 +21,7 @@ public class MlbTheShowApiFactoryTests
         // Assert
         var actualUnderlyingHttpClient = actual.GetType().GetMethod("get_Client")!.Invoke(actual, null) as HttpClient;
         var actualBaseUrl = actualUnderlyingHttpClient!.BaseAddress!.OriginalString;
-        Assert.Equal(actualBaseUrl, expectedBaseUrl);
+        Assert.Equal(expectedBaseUrl, actualBaseUrl);
     }
 
     [Fact]
