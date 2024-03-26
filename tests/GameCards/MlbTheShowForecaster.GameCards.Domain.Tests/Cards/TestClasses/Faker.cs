@@ -11,14 +11,14 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestC
 public static class Faker
 {
     public static PlayerCard FakePlayerCard(CardExternalId? externalId = null, CardType type = CardType.MlbCard,
-        CardImageLocation? image = null, string? name = null, Rarity rarity = Rarity.Bronze,
+        CardImageLocation? image = null, CardName? name = null, Rarity rarity = Rarity.Bronze,
         CardSeries series = CardSeries.Live, TeamShortName? teamShortName = null, OverallRating? overallRating = null,
         PlayerCardAttributes? playerCardAttributes = null)
     {
         return PlayerCard.Create(externalId ?? FakeCardExternalId(),
             type,
             image ?? FakeCardImage(),
-            name ?? "Ken Griffey Jr.",
+            name ?? FakeCardName(),
             rarity,
             series,
             teamShortName ?? FakeTeamShortName(),
@@ -45,6 +45,11 @@ public static class Faker
     public static CardImageLocation FakeCardImage(string cardImage = "img.jpg")
     {
         return CardImageLocation.Create(cardImage);
+    }
+
+    public static CardName FakeCardName(string cardName = "cardA")
+    {
+        return CardName.Create(cardName);
     }
 
     public static TeamShortName FakeTeamShortName(string teamShortName = "SEA")

@@ -27,7 +27,7 @@ public abstract class Card : AggregateRoot
     /// <summary>
     /// The name of the card
     /// </summary>
-    public string Name { get; }
+    public CardName Name { get; }
 
     /// <summary>
     /// The rarity of the card
@@ -48,7 +48,7 @@ public abstract class Card : AggregateRoot
     /// <param name="name">The name of the card</param>
     /// <param name="rarity">The rarity of the card</param>
     /// <param name="series">The series of the card</param>
-    protected Card(CardExternalId externalId, CardType type, CardImageLocation imageLocation, string name,
+    protected Card(CardExternalId externalId, CardType type, CardImageLocation imageLocation, CardName name,
         Rarity rarity, CardSeries series) : base(Guid.NewGuid())
     {
         ExternalId = externalId;
