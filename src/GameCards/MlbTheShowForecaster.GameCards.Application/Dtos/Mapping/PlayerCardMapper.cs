@@ -15,12 +15,14 @@ public sealed class PlayerCardMapper : IPlayerCardMapper
     /// <returns><see cref="PlayerCard"/></returns>
     public PlayerCard Map(MlbPlayerCard card)
     {
-        return PlayerCard.Create(card.ExternalUuid,
+        return PlayerCard.Create(card.Year,
+            card.ExternalUuid,
             card.Type,
             card.ImageUrl,
             card.Name,
             card.Rarity,
             card.Series,
+            card.Position,
             card.TeamShortName,
             card.Overall,
             PlayerCardAttributes.Create(

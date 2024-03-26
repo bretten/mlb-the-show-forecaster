@@ -1,4 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
@@ -12,6 +14,7 @@ public class PlayerCardMapperTests
     {
         // Arrange
         var mlbPlayerCard = new MlbPlayerCard(
+            Year: SeasonYear.Create(2024),
             ExternalUuid: CardExternalId.Create("id1"),
             Type: CardType.MlbCard,
             ImageUrl: CardImageLocation.Create("img.png"),
@@ -19,6 +22,7 @@ public class PlayerCardMapperTests
             Rarity: Rarity.Gold,
             IsSellable: true,
             Series: CardSeries.Live,
+            Position: Position.FirstBase,
             TeamShortName: TeamShortName.Create("DOT"),
             Overall: OverallRating.Create(90),
             Stamina: AbilityAttribute.Create(1),
@@ -56,12 +60,14 @@ public class PlayerCardMapperTests
         var actual = mapper.Map(mlbPlayerCard);
 
         // Assert
+        Assert.Equal(2024, actual.Year.Value);
         Assert.Equal("id1", actual.ExternalId.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
         Assert.Equal("img.png", actual.ImageLocation.Value.OriginalString);
         Assert.Equal("name1", actual.Name.Value);
         Assert.Equal(Rarity.Gold, actual.Rarity);
         Assert.Equal(CardSeries.Live, actual.Series);
+        Assert.Equal(Position.FirstBase, actual.Position);
         Assert.Equal("DOT", actual.TeamShortName.Value);
         Assert.Equal(90, actual.OverallRating.Value);
         Assert.Equal(1, actual.PlayerCardAttributes.Stamina.Value);

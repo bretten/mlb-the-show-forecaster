@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
@@ -16,6 +18,11 @@ public sealed class PlayerCard : Card
     /// The different ratings this player card has had
     /// </summary>
     private readonly List<PlayerCardHistoricalRating> _historicalRatings;
+
+    /// <summary>
+    /// The player card's primary position
+    /// </summary>
+    public Position Position { get; private set; }
 
     /// <summary>
     /// The player's team name abbreviated
@@ -41,19 +48,23 @@ public sealed class PlayerCard : Card
     /// <summary>
     /// Constructor
     /// </summary>
+    /// <param name="year">The year of MLB The Show</param>
     /// <param name="externalId">The card ID from MLB The Show</param>
     /// <param name="type">The card type</param>
     /// <param name="imageLocation">The card image location</param>
     /// <param name="name">The name of the card</param>
     /// <param name="rarity">The rarity of the card</param>
     /// <param name="series">The series of the card</param>
+    /// <param name="position">The player card's primary position</param>
     /// <param name="teamShortName">The player's team name abbreviated</param>
     /// <param name="overallRating">The overall rating of the card</param>
     /// <param name="playerCardAttributes">The player ability attributes</param>
-    private PlayerCard(CardExternalId externalId, CardType type, CardImageLocation imageLocation, CardName name,
-        Rarity rarity, CardSeries series, TeamShortName teamShortName, OverallRating overallRating,
-        PlayerCardAttributes playerCardAttributes) : base(externalId, type, imageLocation, name, rarity, series)
+    private PlayerCard(SeasonYear year, CardExternalId externalId, CardType type, CardImageLocation imageLocation,
+        CardName name, Rarity rarity, CardSeries series, Position position, TeamShortName teamShortName,
+        OverallRating overallRating, PlayerCardAttributes playerCardAttributes) : base(year, externalId, type,
+        imageLocation, name, rarity, series)
     {
+        Position = position;
         TeamShortName = teamShortName;
         OverallRating = overallRating;
         PlayerCardAttributes = playerCardAttributes;
@@ -104,6 +115,17 @@ public sealed class PlayerCard : Card
     }
 
     /// <summary>
+    /// Changes the player card's primary position
+    /// </summary>
+    /// <param name="newPosition">The new position</param>
+    public void ChangePosition(Position newPosition)
+    {
+        RaiseDomainEvent(
+            new PlayerCardPositionChangedEvent(ExternalId, OldPosition: Position, NewPosition: newPosition));
+        Position = newPosition;
+    }
+
+    /// <summary>
     /// Changes the player card's team
     /// </summary>
     /// <param name="newTeamShortName">The new team</param>
@@ -115,21 +137,23 @@ public sealed class PlayerCard : Card
     /// <summary>
     /// Creates a <see cref="PlayerCard"/>
     /// </summary>
+    /// <param name="year">The year of MLB The Show</param>
     /// <param name="cardExternalId">The card ID from MLB The Show</param>
     /// <param name="type">The card type</param>
     /// <param name="imageLocation">The card image location</param>
     /// <param name="name">The name of the card</param>
     /// <param name="rarity">The rarity of the card</param>
     /// <param name="series">The series of the card</param>
+    /// <param name="position">The player card's primary position</param>
     /// <param name="teamShortName">The player's team name abbreviated</param>
     /// <param name="overallRating">The overall rating of the card</param>
     /// <param name="playerCardAttributes">The player ability attributes</param>
     /// <returns><see cref="PlayerCard"/></returns>
-    public static PlayerCard Create(CardExternalId cardExternalId, CardType type, CardImageLocation imageLocation,
-        CardName name, Rarity rarity, CardSeries series, TeamShortName teamShortName, OverallRating overallRating,
-        PlayerCardAttributes playerCardAttributes)
+    public static PlayerCard Create(SeasonYear year, CardExternalId cardExternalId, CardType type,
+        CardImageLocation imageLocation, CardName name, Rarity rarity, CardSeries series, Position position,
+        TeamShortName teamShortName, OverallRating overallRating, PlayerCardAttributes playerCardAttributes)
     {
-        return new PlayerCard(cardExternalId, type, imageLocation, name, rarity, series, teamShortName, overallRating,
-            playerCardAttributes);
+        return new PlayerCard(year, cardExternalId, type, imageLocation, name, rarity, series, position, teamShortName,
+            overallRating, playerCardAttributes);
     }
 }
