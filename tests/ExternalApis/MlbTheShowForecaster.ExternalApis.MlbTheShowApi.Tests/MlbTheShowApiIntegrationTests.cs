@@ -128,6 +128,8 @@ public class MlbTheShowApiIntegrationTests
         Assert.Equal("Diamond", actualItem.Rarity);
         Assert.Equal("Live", actualItem.Series);
         Assert.Equal("LAD", actualItem.TeamShortName);
+        Assert.NotNull(actual.PriceHistory);
+        Assert.True(0 < actual.PriceHistory.Count);
     }
 
     [Fact]
@@ -155,6 +157,8 @@ public class MlbTheShowApiIntegrationTests
         Assert.Equal("Crosley Field", actualItem.Name);
         Assert.Equal("Diamond", actualItem.Rarity);
         Assert.Equal("FA", actualItem.TeamShortName);
+        Assert.NotNull(actual.PriceHistory);
+        Assert.True(0 < actual.PriceHistory.Count);
     }
 
     [Fact]
@@ -173,6 +177,7 @@ public class MlbTheShowApiIntegrationTests
         Assert.Equal(25, actual.PerPage);
         Assert.True(0 < actual.TotalPages);
         Assert.IsType<MlbCardDto>(actual.Listings.ElementAt(0).Item);
+        Assert.Null(actual.Listings.ElementAt(0).PriceHistory); // No price history when getting all listings
     }
 
     [Fact]
@@ -191,6 +196,7 @@ public class MlbTheShowApiIntegrationTests
         Assert.Equal(25, actual.PerPage);
         Assert.True(0 < actual.TotalPages);
         Assert.IsType<StadiumDto>(actual.Listings.ElementAt(0).Item);
+        Assert.Null(actual.Listings.ElementAt(0).PriceHistory); // No price history when getting all listings
     }
 
     [Fact]

@@ -182,7 +182,7 @@ public class PlayerCardTests
         var externalId = Faker.FakeCardExternalId("id1");
         const CardType cardType = CardType.MlbCard;
         var cardImage = Faker.FakeCardImage("img.png");
-        const string cardName = "cardName";
+        var cardName = Faker.FakeCardName("cardName");
         const Rarity rarity = Rarity.Silver;
         const CardSeries cardSeries = CardSeries.Live;
         var teamShortName = Faker.FakeTeamShortName("DOT");
@@ -197,7 +197,7 @@ public class PlayerCardTests
         Assert.Equal("id1", actual.ExternalId.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
         Assert.Equal(new Uri("img.png", UriKind.Relative), actual.ImageLocation.Value);
-        Assert.Equal("cardName", actual.Name);
+        Assert.Equal("cardName", actual.Name.Value);
         Assert.Equal(Rarity.Silver, actual.Rarity);
         Assert.Equal(CardSeries.Live, actual.Series);
         Assert.Equal("DOT", actual.TeamShortName.Value);

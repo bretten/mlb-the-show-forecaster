@@ -50,7 +50,7 @@ public sealed class PlayerCard : Card
     /// <param name="teamShortName">The player's team name abbreviated</param>
     /// <param name="overallRating">The overall rating of the card</param>
     /// <param name="playerCardAttributes">The player ability attributes</param>
-    private PlayerCard(CardExternalId externalId, CardType type, CardImageLocation imageLocation, string name,
+    private PlayerCard(CardExternalId externalId, CardType type, CardImageLocation imageLocation, CardName name,
         Rarity rarity, CardSeries series, TeamShortName teamShortName, OverallRating overallRating,
         PlayerCardAttributes playerCardAttributes) : base(externalId, type, imageLocation, name, rarity, series)
     {
@@ -126,7 +126,7 @@ public sealed class PlayerCard : Card
     /// <param name="playerCardAttributes">The player ability attributes</param>
     /// <returns><see cref="PlayerCard"/></returns>
     public static PlayerCard Create(CardExternalId cardExternalId, CardType type, CardImageLocation imageLocation,
-        string name, Rarity rarity, CardSeries series, TeamShortName teamShortName, OverallRating overallRating,
+        CardName name, Rarity rarity, CardSeries series, TeamShortName teamShortName, OverallRating overallRating,
         PlayerCardAttributes playerCardAttributes)
     {
         return new PlayerCard(cardExternalId, type, imageLocation, name, rarity, series, teamShortName, overallRating,
