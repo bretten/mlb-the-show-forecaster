@@ -1,4 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
@@ -6,6 +8,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// <summary>
 /// Represents a MLB Player Card from MLB The Show
 /// </summary>
+/// <param name="Year">The year of MLB The Show</param>
 /// <param name="ExternalUuid">The unique ID</param>
 /// <param name="Type">The type of item</param>
 /// <param name="ImageUrl">The URL of the image associated with the item</param>
@@ -13,6 +16,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// <param name="Rarity">The rarity of the item</param>
 /// <param name="IsSellable">True if the item is sellable on the marketplace, otherwise false</param>
 /// <param name="Series">The series the item is a part of</param>
+/// <param name="Position">The player's primary position</param>
 /// <param name="TeamShortName">The player's team name abbreviation</param>
 /// <param name="Overall">The player's overall rating</param>
 /// <param name="Stamina">Pitcher's stamina</param>
@@ -44,6 +48,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// <param name="BaseRunningAbility">How well the player can run around the bases</param>
 /// <param name="BaseRunningAggression">How likely it is the player can steal a base</param>
 public readonly record struct MlbPlayerCard(
+    SeasonYear Year,
     CardExternalId ExternalUuid,
     CardType Type,
     CardImageLocation ImageUrl,
@@ -51,6 +56,7 @@ public readonly record struct MlbPlayerCard(
     Rarity Rarity,
     bool IsSellable,
     CardSeries Series,
+    Position Position,
     TeamShortName TeamShortName,
     OverallRating Overall,
     AbilityAttribute Stamina,

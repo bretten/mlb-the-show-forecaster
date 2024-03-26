@@ -1,4 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
@@ -10,17 +12,20 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestC
 /// </summary>
 public static class Faker
 {
-    public static PlayerCard FakePlayerCard(CardExternalId? externalId = null, CardType type = CardType.MlbCard,
-        CardImageLocation? image = null, CardName? name = null, Rarity rarity = Rarity.Bronze,
-        CardSeries series = CardSeries.Live, TeamShortName? teamShortName = null, OverallRating? overallRating = null,
+    public static PlayerCard FakePlayerCard(ushort? year = null, CardExternalId? externalId = null,
+        CardType type = CardType.MlbCard, CardImageLocation? image = null, CardName? name = null,
+        Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
+        TeamShortName? teamShortName = null, OverallRating? overallRating = null,
         PlayerCardAttributes? playerCardAttributes = null)
     {
-        return PlayerCard.Create(externalId ?? FakeCardExternalId(),
+        return PlayerCard.Create(year.HasValue ? SeasonYear.Create(year.Value) : SeasonYear.Create(2024),
+            externalId ?? FakeCardExternalId(),
             type,
             image ?? FakeCardImage(),
             name ?? FakeCardName(),
             rarity,
             series,
+            position,
             teamShortName ?? FakeTeamShortName(),
             overallRating ?? FakeOverallRating(),
             playerCardAttributes ?? FakePlayerCardAttributes());

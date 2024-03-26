@@ -1,4 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
@@ -162,6 +164,26 @@ public class PlayerCardTests
     }
 
     [Fact]
+    public void ChangePosition_NewPosition_ChangesPositionAndRaisesPositionChangedEvent()
+    {
+        // Arrange
+        const Position newPosition = Position.Catcher;
+        var card = Faker.FakePlayerCard(position: Position.FirstBase);
+
+        // Act
+        card.ChangePosition(newPosition);
+
+        // Assert
+        Assert.Equal(Position.Catcher, card.Position);
+        Assert.Single(card.DomainEvents);
+        Assert.IsType<PlayerCardPositionChangedEvent>(card.DomainEvents[0]);
+        var e = card.DomainEvents[0] as PlayerCardPositionChangedEvent;
+        Assert.Equal(card.ExternalId, e!.CardExternalId);
+        Assert.Equal(Position.Catcher, e.NewPosition);
+        Assert.Equal(Position.FirstBase, e.OldPosition);
+    }
+
+    [Fact]
     public void ChangeTeam_NewTeam_ChangesTeam()
     {
         // Arrange
@@ -179,27 +201,31 @@ public class PlayerCardTests
     public void Create_ValidValues_ReturnsPlayerCard()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var externalId = Faker.FakeCardExternalId("id1");
         const CardType cardType = CardType.MlbCard;
         var cardImage = Faker.FakeCardImage("img.png");
         var cardName = Faker.FakeCardName("cardName");
         const Rarity rarity = Rarity.Silver;
         const CardSeries cardSeries = CardSeries.Live;
+        const Position position = Position.CenterField;
         var teamShortName = Faker.FakeTeamShortName("DOT");
         var overallRating = Faker.FakeOverallRating(80);
         var playerAttributes = Faker.FakePlayerCardAttributes(2);
 
         // Act
-        var actual = PlayerCard.Create(externalId, cardType, cardImage, cardName, rarity, cardSeries, teamShortName,
-            overallRating, playerAttributes);
+        var actual = PlayerCard.Create(year, externalId, cardType, cardImage, cardName, rarity, cardSeries, position,
+            teamShortName, overallRating, playerAttributes);
 
         // Assert
+        Assert.Equal(2024, actual.Year.Value);
         Assert.Equal("id1", actual.ExternalId.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
         Assert.Equal(new Uri("img.png", UriKind.Relative), actual.ImageLocation.Value);
         Assert.Equal("cardName", actual.Name.Value);
         Assert.Equal(Rarity.Silver, actual.Rarity);
         Assert.Equal(CardSeries.Live, actual.Series);
+        Assert.Equal(Position.CenterField, actual.Position);
         Assert.Equal("DOT", actual.TeamShortName.Value);
         Assert.Equal(80, actual.OverallRating.Value);
         Assert.Equal(Faker.FakePlayerCardAttributes(2), actual.PlayerCardAttributes);
