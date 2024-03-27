@@ -12,4 +12,8 @@
       <ProjectReference Include="..\MlbTheShowForecaster.GameCards.Domain\MlbTheShowForecaster.GameCards.Domain.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <InternalsVisibleTo Include="MlbTheShowForecaster.GameCards.Application.Tests" />
+    </ItemGroup>
+
 </Project>
