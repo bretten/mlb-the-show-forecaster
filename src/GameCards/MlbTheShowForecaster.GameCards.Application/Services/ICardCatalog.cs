@@ -6,7 +6,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 /// <summary>
 /// Defines a service that will retrieve cards from an external source
 /// </summary>
-public interface ICardMarketplace
+public interface ICardCatalog
 {
     /// <summary>
     /// Should return all player cards for the specified season

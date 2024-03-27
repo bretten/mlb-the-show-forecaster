@@ -15,7 +15,7 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
     /// <summary>
     /// The external source of player cards
     /// </summary>
-    private readonly ICardMarketplace _cardMarketplace;
+    private readonly ICardCatalog _cardCatalog;
 
     /// <summary>
     /// Sends queries to retrieve state from the system
@@ -30,12 +30,12 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="cardMarketplace">The external source of player cards</param>
+    /// <param name="cardCatalog">The external source of player cards</param>
     /// <param name="querySender">Sends queries to retrieve state from the system</param>
     /// <param name="commandSender">Sends commands to mutate the system</param>
-    public PlayerCardTracker(ICardMarketplace cardMarketplace, IQuerySender querySender, ICommandSender commandSender)
+    public PlayerCardTracker(ICardCatalog cardCatalog, IQuerySender querySender, ICommandSender commandSender)
     {
-        _cardMarketplace = cardMarketplace;
+        _cardCatalog = cardCatalog;
         _querySender = querySender;
         _commandSender = commandSender;
     }
@@ -49,7 +49,7 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
     public async Task TrackPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken = default)
     {
         // Get all player cards from the external system
-        var mlbPlayerCards = await _cardMarketplace.GetAllMlbPlayerCards(seasonYear, cancellationToken);
+        var mlbPlayerCards = await _cardCatalog.GetAllMlbPlayerCards(seasonYear, cancellationToken);
 
         foreach (var mlbPlayerCard in mlbPlayerCards)
         {
