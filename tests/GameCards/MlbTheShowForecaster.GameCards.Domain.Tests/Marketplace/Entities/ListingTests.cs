@@ -13,11 +13,11 @@ public class ListingTests
     public void HistoricalPricesChronologically_MultipleHistoricalPrices_ReturnsHistoricalPricesInOrderOfDate()
     {
         // Arrange
-        var listing = Faker.FakeListing(buyPrice: 2, sellPrice: 2);
-        listing.ArchivePrice(new DateOnly(2024, 4, 2));
-        listing.UpdatePrices(NaturalNumber.Create(1), NaturalNumber.Create(1),
-            Mock.Of<IListingPriceSignificantChangeThreshold>());
-        listing.ArchivePrice(new DateOnly(2024, 4, 1));
+        var listing = Faker.FakeListing();
+        listing.LogHistoricalPrice(new DateOnly(2024, 4, 2), buyPrice: NaturalNumber.Create(2),
+            sellPrice: NaturalNumber.Create(2));
+        listing.LogHistoricalPrice(new DateOnly(2024, 4, 1), buyPrice: NaturalNumber.Create(1),
+            sellPrice: NaturalNumber.Create(1));
 
         // Act
         var actual = listing.HistoricalPricesChronologically;
@@ -29,13 +29,15 @@ public class ListingTests
     }
 
     [Fact]
-    public void ArchivePrice_ArchiveDateAlreadyExists_ThrowsException()
+    public void LogHistoricalPrice_DateAlreadyExists_ThrowsException()
     {
         // Arrange
         var date = new DateOnly(2024, 4, 1);
-        var listing = Faker.FakeListing(buyPrice: 1, sellPrice: 1);
-        listing.ArchivePrice(date);
-        var action = () => listing.ArchivePrice(date);
+        var buyPrice = NaturalNumber.Create(1);
+        var sellPrice = NaturalNumber.Create(2);
+        var listing = Faker.FakeListing();
+        listing.LogHistoricalPrice(date, buyPrice: buyPrice, sellPrice: sellPrice);
+        var action = () => listing.LogHistoricalPrice(date, buyPrice: buyPrice, sellPrice: sellPrice);
 
         // Act
         var actual = Record.Exception(action);
@@ -46,7 +48,7 @@ public class ListingTests
     }
 
     [Fact]
-    public void ArchivePrice_ListingWithCurrentPrices_AddsPricesToHistoricalCollection()
+    public void LogHistoricalPrice_DateAndPrices_AddsPricesToHistoricalCollectionForDate()
     {
         // Arrange
         var date = new DateOnly(2024, 4, 1);
@@ -55,7 +57,7 @@ public class ListingTests
         var expected = Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1), 1, 1);
 
         // Act
-        listing.ArchivePrice(date);
+        listing.LogHistoricalPrice(date, buyPrice: NaturalNumber.Create(1), sellPrice: NaturalNumber.Create(1));
 
         // Assert
         Assert.Equal(1, listing.HistoricalPricesChronologically.Count);

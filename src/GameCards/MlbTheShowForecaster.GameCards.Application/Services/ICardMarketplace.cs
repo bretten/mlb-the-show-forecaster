@@ -1,0 +1,18 @@
+﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+
+namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+
+/// <summary>
+/// Defines a service that can retrieve marketplace information on cards such as pricing
+/// </summary>
+public interface ICardMarketplace
+{
+    /// <summary>
+    /// Should return the prices for a card by its <see cref="CardExternalId"/>
+    /// </summary>
+    /// <param name="cardExternalId">The <see cref="CardExternalId"/> of the card</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <returns>The prices for the card</returns>
+    Task<CardListing> GetCardPrice(CardExternalId cardExternalId, CancellationToken cancellationToken = default);
+}

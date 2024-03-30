@@ -91,7 +91,6 @@ public sealed class OverallRating : ValueObject
     /// <summary>
     /// The rarity implied by the rating
     /// </summary>
-    /// <exception cref="OverallRatingCannotDetermineRarityException">Thrown when the <see cref="Value"/> does not correspond to a rarity</exception>
     public Rarity Rarity
     {
         get

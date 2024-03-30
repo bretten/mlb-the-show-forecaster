@@ -11,10 +11,10 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.T
 /// </summary>
 public static class Faker
 {
-    public static MlbPlayerCard FakeMlbPlayerCard(ushort? year = null, string? externalId = null,
-        CardType type = CardType.MlbCard, string? image = null, string? name = null,
+    public static MlbPlayerCard FakeMlbPlayerCard(ushort year = 2024, string externalId = "id1",
+        CardType type = CardType.MlbCard, string image = "img.png", string name = "name1",
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
-        string? teamShortName = null, int? overallRating = null, int stamina = 1, int pitchingClutch = 2,
+        string teamShortName = "DOT", int overallRating = 90, int stamina = 1, int pitchingClutch = 2,
         int hitsPerNine = 3, int strikeoutsPerNine = 4, int baseOnBallsPerNine = 5, int homeRunsPerNine = 6,
         int pitchVelocity = 7, int pitchControl = 8, int pitchMovement = 9, int contactLeft = 10, int contactRight = 1,
         int powerLeft = 2, int powerRight = 3, int plateVision = 4, int plateDiscipline = 5, int battingClutch = 6,
@@ -23,23 +23,17 @@ public static class Faker
         int speed = 6, int baseRunningAbility = 7, int baseRunningAggression = 8, int scalar = 1)
     {
         return new MlbPlayerCard(
-            Year: year.HasValue ? SeasonYear.Create(year.Value) : SeasonYear.Create(2024),
-            ExternalUuid: !string.IsNullOrWhiteSpace(externalId)
-                ? CardExternalId.Create(externalId)
-                : CardExternalId.Create("id1"),
+            Year: SeasonYear.Create(year),
+            ExternalUuid: CardExternalId.Create(externalId),
             Type: type,
-            ImageUrl: !string.IsNullOrWhiteSpace(image)
-                ? CardImageLocation.Create(image)
-                : CardImageLocation.Create("img.png"),
-            Name: !string.IsNullOrWhiteSpace(name) ? CardName.Create(name) : CardName.Create("name1"),
+            ImageUrl: CardImageLocation.Create(image),
+            Name: CardName.Create(name),
             Rarity: rarity,
             IsSellable: true,
             Series: series,
             Position: position,
-            TeamShortName: !string.IsNullOrWhiteSpace(teamShortName)
-                ? TeamShortName.Create(teamShortName)
-                : TeamShortName.Create("DOT"),
-            Overall: overallRating.HasValue ? OverallRating.Create(overallRating.Value) : OverallRating.Create(90),
+            TeamShortName: TeamShortName.Create(teamShortName),
+            Overall: OverallRating.Create(overallRating),
             Stamina: AbilityAttribute.Create(scalar * stamina),
             PitchingClutch: AbilityAttribute.Create(scalar * pitchingClutch),
             HitsPerBf: AbilityAttribute.Create(scalar * hitsPerNine),
@@ -68,6 +62,28 @@ public static class Faker
             Speed: AbilityAttribute.Create(scalar * speed),
             BaseRunningAbility: AbilityAttribute.Create(scalar * baseRunningAbility),
             BaseRunningAggression: AbilityAttribute.Create(scalar * baseRunningAggression)
+        );
+    }
+
+    public static CardListing FakeCardListing(string listingName = "listingName1", int bestBuyPrice = 0,
+        int bestSellPrice = 0, string cardExternalId = "card", IReadOnlyList<CardListingPrice>? historicalPrices = null)
+    {
+        return new CardListing(
+            ListingName: listingName,
+            BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
+            BestSellPrice: NaturalNumber.Create(bestSellPrice),
+            CardExternalId: CardExternalId.Create(cardExternalId),
+            HistoricalPrices: historicalPrices ?? new List<CardListingPrice>()
+        );
+    }
+
+    public static CardListingPrice FakeCardListingPrice(DateOnly? date = null, int bestBuyPrice = 0,
+        int bestSellPrice = 0)
+    {
+        return new CardListingPrice(
+            Date: date ?? new DateOnly(2024, 4, 1),
+            BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
+            BestSellPrice: NaturalNumber.Create(bestSellPrice)
         );
     }
 }

@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Queries.GetPlayerCardByExternalId;
@@ -11,8 +12,8 @@ public class GetPlayerCardByExternalIdQueryHandlerTests
     public async Task Handle_ExternalIdQuery_ReturnsPlayerCard()
     {
         // Arrange
-        var cardExternalId = Faker.FakeCardExternalId("externalId1");
-        var fakeDomainPlayerCard = Faker.FakePlayerCard(externalId: cardExternalId);
+        var cardExternalId = CardExternalId.Create("externalId1");
+        var fakeDomainPlayerCard = Faker.FakePlayerCard(externalId: cardExternalId.Value);
 
         var stubPlayerCardRepository = Mock.Of<IPlayerCardRepository>(x =>
             x.GetByExternalId(cardExternalId) == Task.FromResult(fakeDomainPlayerCard));

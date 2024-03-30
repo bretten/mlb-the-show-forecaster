@@ -46,21 +46,24 @@ public sealed class Listing : AggregateRoot
     /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
-    private Listing(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice) : base(
-        Guid.NewGuid())
+    /// <param name="historicalPrices">The price history of this listing</param>
+    private Listing(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice,
+        List<ListingHistoricalPrice> historicalPrices) : base(Guid.NewGuid())
     {
         CardExternalId = cardExternalId;
         BuyPrice = buyPrice;
         SellPrice = sellPrice;
-        _historicalPrices = new List<ListingHistoricalPrice>();
+        _historicalPrices = historicalPrices;
     }
 
     /// <summary>
-    /// Archives the current prices by adding them to the historical price collection under the specified date
+    /// Logs the specified prices by adding them to the historical price collection under the specified date
     /// </summary>
     /// <param name="date">The date to archive the prices under</param>
+    /// <param name="buyPrice">The best buy price for the date</param>
+    /// <param name="sellPrice">The best sell price for the date</param>
     /// <exception cref="ListingHistoricalPriceExistsException">Thrown when there is already a historical price for the specified date</exception>
-    public void ArchivePrice(DateOnly date)
+    public void LogHistoricalPrice(DateOnly date, NaturalNumber buyPrice, NaturalNumber sellPrice)
     {
         if (_historicalPrices.Any(x => x.Date == date))
         {
@@ -68,7 +71,7 @@ public sealed class Listing : AggregateRoot
                 $"Listing historical price already exists for card = {CardExternalId.Value} and date = {date.ToShortDateString()}");
         }
 
-        _historicalPrices.Add(ListingHistoricalPrice.Create(date, BuyPrice, SellPrice));
+        _historicalPrices.Add(ListingHistoricalPrice.Create(date, buyPrice, sellPrice));
     }
 
     /// <summary>
@@ -145,9 +148,11 @@ public sealed class Listing : AggregateRoot
     /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
+    /// <param name="historicalPrices">The price history of this listing</param>
     /// <returns><see cref="Listing"/></returns>
-    public static Listing Create(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice)
+    public static Listing Create(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice,
+        List<ListingHistoricalPrice>? historicalPrices = null)
     {
-        return new Listing(cardExternalId, buyPrice, sellPrice);
+        return new Listing(cardExternalId, buyPrice, sellPrice, historicalPrices ?? new List<ListingHistoricalPrice>());
     }
 }

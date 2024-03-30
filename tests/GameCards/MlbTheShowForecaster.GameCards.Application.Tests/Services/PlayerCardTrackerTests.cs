@@ -17,14 +17,15 @@ public class PlayerCardTrackerTests
     public async Task TrackPlayerCards_SeasonYear_CreatesNewPlayerCards()
     {
         /*
-         * Act
+         * Arrange
          */
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
         // Player card #1 already exists in the domain, so no action will take place
         var playerExternalId1 = CardExternalId.Create("id1");
         var externalCard1 = Faker.FakeMlbPlayerCard(externalId: playerExternalId1.Value); // Card from MLB The Show
-        var domainPlayerCard1 = TestClasses.Faker.FakePlayerCard(externalId: playerExternalId1); // Card in this domain
+        var domainPlayerCard1 =
+            TestClasses.Faker.FakePlayerCard(externalId: playerExternalId1.Value); // Card in this domain
         var query1 = new GetPlayerCardByExternalIdQuery(playerExternalId1);
 
         // Player card #2 does not exist in the domain, so it will be created

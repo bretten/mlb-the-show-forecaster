@@ -10,7 +10,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetP
 ///
 /// <para>Returns a <see cref="PlayerCard"/> that corresponds to the specified <see cref="CardExternalId"/></para>
 /// </summary>
-internal sealed class GetPlayerCardByExternalIdQueryHandler : IQueryHandler<GetPlayerCardByExternalIdQuery, PlayerCard>
+internal sealed class GetPlayerCardByExternalIdQueryHandler : IQueryHandler<GetPlayerCardByExternalIdQuery, PlayerCard?>
 {
     /// <summary>
     /// The <see cref="PlayerCard"/> repository
