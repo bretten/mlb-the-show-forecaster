@@ -4,7 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreateP
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using Moq;
@@ -21,18 +21,21 @@ public class PlayerCardTrackerTests
          */
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
-        // Player card #1 already exists in the domain, so no action will take place
-        var playerExternalId1 = CardExternalId.Create("id1");
-        var externalCard1 = Faker.FakeMlbPlayerCard(externalId: playerExternalId1.Value); // Card from MLB The Show
-        var domainPlayerCard1 =
-            TestClasses.Faker.FakePlayerCard(externalId: playerExternalId1.Value); // Card in this domain
-        var query1 = new GetPlayerCardByExternalIdQuery(playerExternalId1);
+        // PlayerCard 1 already exists in the domain, so no action will take place
+        var cardExternalId1 = CardExternalId.Create("id1");
+        var domainPlayerCard1 = Faker.FakePlayerCard(externalId: cardExternalId1.Value);
+        // External Card 1 from MLB The Show
+        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(externalId: cardExternalId1.Value);
+        // Query to get PlayerCard1
+        var query1 = new GetPlayerCardByExternalIdQuery(cardExternalId1);
 
-        // Player card #2 does not exist in the domain, so it will be created
-        var playerExternalId2 = CardExternalId.Create("id2");
-        var externalCard2 = Faker.FakeMlbPlayerCard(externalId: playerExternalId2.Value); // Card from MLB The Show
+        // PlayerCard 2 does not exist in the domain, so it will be created
+        var cardExternalId2 = CardExternalId.Create("id2");
         PlayerCard? domainPlayerCard2 = null; // Card does not exist in the domain
-        var query2 = new GetPlayerCardByExternalIdQuery(playerExternalId2);
+        // External Card 2 from MLB The Show
+        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(externalId: cardExternalId2.Value);
+        // Query to get PlayerCard2
+        var query2 = new GetPlayerCardByExternalIdQuery(cardExternalId2);
 
         // The card marketplace should return all external cards in MLB The Show
         var allExternalPlayerCards = new List<MlbPlayerCard>() { externalCard1, externalCard2 };
@@ -45,11 +48,11 @@ public class PlayerCardTrackerTests
         stubQuerySender.Setup(x => x.Send(query1, cToken)).ReturnsAsync(domainPlayerCard1);
         stubQuerySender.Setup(x => x.Send(query2, cToken)).ReturnsAsync(domainPlayerCard2);
 
-        // The command sender should expect to send a create command for player card #2
+        // No commands should be expected for PlayerCard 1
         var mockCommandSender = Mock.Of<ICommandSender>();
-        var expectedPlayerCard2Command = new CreatePlayerCardCommand(externalCard2);
-        // The command sender should not expect any commands for player card #1
         var notExpectedPlayerCard1Command = new CreatePlayerCardCommand(externalCard1);
+        // The command sender should expect to send a create command for PlayerCard 2
+        var expectedPlayerCard2Command = new CreatePlayerCardCommand(externalCard2);
 
         // Tracker
         var tracker = new PlayerCardTracker(stubCardCatalog.Object, stubQuerySender.Object, mockCommandSender);
@@ -69,9 +72,9 @@ public class PlayerCardTrackerTests
         stubQuerySender.Verify(x => x.Send(query1, cToken), Times.Once);
         stubQuerySender.Verify(x => x.Send(query2, cToken), Times.Once);
 
-        // Was a command sent to create a card for player card 2 in this domain?
-        Mock.Get(mockCommandSender).Verify(x => x.Send(expectedPlayerCard2Command, cToken), Times.Once);
         // A command should not have been sent for player card 1
         Mock.Get(mockCommandSender).Verify(x => x.Send(notExpectedPlayerCard1Command, cToken), Times.Never);
+        // Was a command sent to create a card for player card 2 in this domain?
+        Mock.Get(mockCommandSender).Verify(x => x.Send(expectedPlayerCard2Command, cToken), Times.Once);
     }
 }

@@ -6,7 +6,7 @@ using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Queries.GetListingByCardExternalId;
 
-public class GetListingByExternalCardIdQueryHandlerTests
+public class GetListingByCardExternalIdQueryHandlerTests
 {
     [Fact]
     public async Task Handle_QueryWithExternalId_ReturnsListings()

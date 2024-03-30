@@ -21,10 +21,21 @@ public readonly record struct CardListing(
     IReadOnlyList<CardListingPrice> HistoricalPrices
 )
 {
+    /// <summary>
+    /// Returns true if this <see cref="CardListing"/> has historical prices that the domain <see cref="Listing"/>
+    /// does not have, otherwise false
+    /// </summary>
+    /// <param name="domainListing">The domain <see cref="Listing"/></param>
+    /// <returns>True if there are new historical prices for the <see cref="Listing"/></returns>
     public bool HasNewHistoricalPrices(Listing domainListing) =>
         domainListing.HistoricalPricesChronologically.Select(x => x.Date).OrderBy(x => x)
         != HistoricalPrices.Select(x => x.Date).OrderBy(x => x);
 
+    /// <summary>
+    /// Returns new historical prices for the <see cref="Listing"/>
+    /// </summary>
+    /// <param name="domainListing">The domain <see cref="Listing"/></param>
+    /// <returns>The new historical prices for the <see cref="Listing"/></returns>
     public IReadOnlyList<CardListingPrice> GetNewHistoricalPrices(Listing domainListing)
     {
         return HistoricalPrices

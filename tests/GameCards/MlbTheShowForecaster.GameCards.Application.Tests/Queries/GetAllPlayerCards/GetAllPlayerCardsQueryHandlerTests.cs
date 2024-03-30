@@ -20,7 +20,7 @@ public class GetAllPlayerCardsQueryHandlerTests
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
         stubPlayerCardRepository.Setup(x => x.GetAll(year))
-            .ReturnsAsync(new List<PlayerCard>() { playerCard1, playerCard3 });
+            .ReturnsAsync(new List<PlayerCard>() { playerCard1, playerCard3 }); // Only return 2024 player cards
 
         var cToken = CancellationToken.None;
         var query = new GetAllPlayerCardsQuery(year);
@@ -33,7 +33,7 @@ public class GetAllPlayerCardsQueryHandlerTests
         stubPlayerCardRepository.Verify(x => x.GetAll(year), Times.Once);
         Assert.NotNull(actual);
         Assert.Contains(playerCard1, actual);
-        Assert.DoesNotContain(playerCard2, actual);
+        Assert.DoesNotContain(playerCard2, actual); // No 2023 player card
         Assert.Contains(playerCard3, actual);
     }
 }

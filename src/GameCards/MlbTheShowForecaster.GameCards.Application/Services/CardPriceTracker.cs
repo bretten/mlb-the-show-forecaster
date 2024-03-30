@@ -68,7 +68,7 @@ public sealed class CardPriceTracker : ICardPriceTracker
                 await _querySender.Send(new GetListingByCardExternalIdQuery(domainPlayerCard.ExternalId),
                     cancellationToken);
 
-            // Check the external marketplace has new pricing information for the card
+            // Get the pricing information from the external card marketplace
             var externalPrices = await _cardMarketplace.GetCardPrice(domainPlayerCard.ExternalId, cancellationToken);
 
             // If the Listing doesn't exist in this domain yet, create it
