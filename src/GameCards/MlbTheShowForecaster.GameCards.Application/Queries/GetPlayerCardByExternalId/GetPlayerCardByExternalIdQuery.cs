@@ -10,4 +10,4 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetP
 /// <param name="CardExternalId">The external card ID</param>
 internal readonly record struct GetPlayerCardByExternalIdQuery(
     CardExternalId CardExternalId
-) : IQuery<PlayerCard>;
+) : IQuery<PlayerCard?>;

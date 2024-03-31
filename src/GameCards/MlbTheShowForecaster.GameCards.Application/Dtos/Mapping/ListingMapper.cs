@@ -18,7 +18,8 @@ public sealed class ListingMapper : IListingMapper
         return Listing.Create(
             listing.CardExternalId,
             listing.BestBuyPrice,
-            listing.BestSellPrice
+            listing.BestSellPrice,
+            listing.HistoricalPrices.Select(Map).ToList()
         );
     }
 

@@ -4,6 +4,8 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 
@@ -12,59 +14,32 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestCl
 /// </summary>
 public static class Faker
 {
-    public static PlayerCard FakePlayerCard(ushort? year = null, CardExternalId? externalId = null,
-        CardType type = CardType.MlbCard, CardImageLocation? image = null, CardName? name = null,
+    public static PlayerCard FakePlayerCard(ushort year = 2024, string cardExternalId = "1",
+        CardType type = CardType.MlbCard, string image = "img.jpg", string name = "cardA",
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
-        TeamShortName? teamShortName = null, OverallRating? overallRating = null,
-        PlayerCardAttributes? playerCardAttributes = null)
+        string teamShortName = "SEA", int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null)
     {
-        return PlayerCard.Create(year.HasValue ? SeasonYear.Create(year.Value) : SeasonYear.Create(2024),
-            externalId ?? FakeCardExternalId(),
+        return PlayerCard.Create(SeasonYear.Create(year),
+            CardExternalId.Create(cardExternalId),
             type,
-            image ?? FakeCardImage(),
-            name ?? FakeCardName(),
+            CardImageLocation.Create(image),
+            CardName.Create(name),
             rarity,
             series,
             position,
-            teamShortName ?? FakeTeamShortName(),
-            overallRating ?? FakeOverallRating(),
+            TeamShortName.Create(teamShortName),
+            OverallRating.Create(overallRating),
             playerCardAttributes ?? FakePlayerCardAttributes());
     }
 
     public static PlayerCardHistoricalRating FakePlayerCardHistoricalRating(DateOnly? startDate = null,
-        DateOnly? endDate = null, OverallRating? overallRating = null,
-        PlayerCardAttributes? playerCardAttributes = null)
+        DateOnly? endDate = null, int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null)
     {
         return PlayerCardHistoricalRating.Create(startDate: startDate ?? new DateOnly(2024, 4, 1),
             endDate: endDate ?? new DateOnly(2024, 4, 2),
-            overallRating ?? FakeOverallRating(),
+            OverallRating.Create(overallRating),
             playerCardAttributes ?? FakePlayerCardAttributes()
         );
-    }
-
-    public static CardExternalId FakeCardExternalId(string externalId = "1")
-    {
-        return CardExternalId.Create(externalId);
-    }
-
-    public static CardImageLocation FakeCardImage(string cardImage = "img.jpg")
-    {
-        return CardImageLocation.Create(cardImage);
-    }
-
-    public static CardName FakeCardName(string cardName = "cardA")
-    {
-        return CardName.Create(cardName);
-    }
-
-    public static TeamShortName FakeTeamShortName(string teamShortName = "SEA")
-    {
-        return TeamShortName.Create(teamShortName);
-    }
-
-    public static OverallRating FakeOverallRating(int rating = 50)
-    {
-        return OverallRating.Create(rating);
     }
 
     public static PlayerCardAttributes FakePlayerCardAttributes(int stamina = 1, int pitchingClutch = 2,
@@ -104,5 +79,17 @@ public static class Faker
             baseRunningAbility: scalar * baseRunningAbility,
             baseRunningAggression: scalar * baseRunningAggression
         );
+    }
+
+    public static Listing FakeListing(string cardExternalId = "1", int buyPrice = 0, int sellPrice = 0,
+        List<ListingHistoricalPrice>? historicalPrices = null)
+    {
+        return Listing.Create(CardExternalId.Create(cardExternalId), NaturalNumber.Create(buyPrice),
+            NaturalNumber.Create(sellPrice), historicalPrices ?? new List<ListingHistoricalPrice>());
+    }
+
+    public static ListingHistoricalPrice FakeListingHistoricalPrice(DateOnly date, int buyPrice = 0, int sellPrice = 0)
+    {
+        return ListingHistoricalPrice.Create(date, NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice));
     }
 }

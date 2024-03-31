@@ -13,9 +13,16 @@ public class ListingMapperTests
         // Arrange
         var cardListing = new CardListing(
             "listingName",
-            BestSellPrice: NaturalNumber.Create(10),
-            BestBuyPrice: NaturalNumber.Create(20),
-            CardExternalId.Create("id1")
+            BestBuyPrice: NaturalNumber.Create(10),
+            BestSellPrice: NaturalNumber.Create(20),
+            CardExternalId.Create("id1"),
+            new List<CardListingPrice>()
+            {
+                new(new DateOnly(2024, 3, 25), BestBuyPrice: NaturalNumber.Create(15),
+                    BestSellPrice: NaturalNumber.Create(25)),
+                new(new DateOnly(2024, 3, 24), BestBuyPrice: NaturalNumber.Create(10),
+                    BestSellPrice: NaturalNumber.Create(20))
+            }
         );
         var mapper = new ListingMapper();
 
@@ -24,9 +31,16 @@ public class ListingMapperTests
 
         // Assert
         Assert.Equal("listingName", cardListing.ListingName);
-        Assert.Equal(10, actual.SellPrice.Value);
-        Assert.Equal(20, actual.BuyPrice.Value);
+        Assert.Equal(10, actual.BuyPrice.Value);
+        Assert.Equal(20, actual.SellPrice.Value);
         Assert.Equal("id1", actual.CardExternalId.Value);
+        Assert.Equal(2, actual.HistoricalPricesChronologically.Count);
+        Assert.Equal(new DateOnly(2024, 3, 24), actual.HistoricalPricesChronologically[0].Date);
+        Assert.Equal(10, actual.HistoricalPricesChronologically[0].BuyPrice.Value);
+        Assert.Equal(20, actual.HistoricalPricesChronologically[0].SellPrice.Value);
+        Assert.Equal(new DateOnly(2024, 3, 25), actual.HistoricalPricesChronologically[1].Date);
+        Assert.Equal(15, actual.HistoricalPricesChronologically[1].BuyPrice.Value);
+        Assert.Equal(25, actual.HistoricalPricesChronologically[1].SellPrice.Value);
     }
 
     [Fact]
@@ -34,8 +48,8 @@ public class ListingMapperTests
     {
         // Arrange
         var cardListingPrice = new CardListingPrice(new DateOnly(2024, 3, 25),
-            BestSellPrice: NaturalNumber.Create(10),
-            NaturalNumber.Create(20)
+            BestBuyPrice: NaturalNumber.Create(10),
+            BestSellPrice: NaturalNumber.Create(20)
         );
         var mapper = new ListingMapper();
 
@@ -44,7 +58,7 @@ public class ListingMapperTests
 
         // Assert
         Assert.Equal(new DateOnly(2024, 3, 25), actual.Date);
-        Assert.Equal(10, actual.SellPrice.Value);
-        Assert.Equal(20, actual.BuyPrice.Value);
+        Assert.Equal(10, actual.BuyPrice.Value);
+        Assert.Equal(20, actual.SellPrice.Value);
     }
 }

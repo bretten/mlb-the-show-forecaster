@@ -14,5 +14,6 @@ public interface ICardCatalog
     /// <param name="seasonYear">The season</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="MlbPlayerCard"/> for the specified season</returns>
-    Task<IReadOnlyList<MlbPlayerCard>> GetAllMlbPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken);
+    Task<IReadOnlyList<MlbPlayerCard>?>
+        GetAllMlbPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken);
 }
