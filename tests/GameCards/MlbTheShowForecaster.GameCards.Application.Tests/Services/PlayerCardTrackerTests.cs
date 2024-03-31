@@ -1,9 +1,11 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+﻿using System.Collections.Immutable;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
@@ -14,6 +16,33 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Servic
 public class PlayerCardTrackerTests
 {
     [Fact]
+    public async Task TrackPlayerCards_NoCards_ThrowsException()
+    {
+        // Arrange
+        var cToken = CancellationToken.None;
+        var seasonYear = SeasonYear.Create(2024);
+
+        var stubCardCatalog = new Mock<ICardCatalog>();
+        stubCardCatalog.Setup(x => x.GetAllMlbPlayerCards(seasonYear, cToken))
+            .ReturnsAsync(ImmutableList<MlbPlayerCard>.Empty); // No player cards returned
+
+        var mockQuerySender = Mock.Of<IQuerySender>();
+        var mockCommandSender = Mock.Of<ICommandSender>();
+
+        var tracker = new PlayerCardTracker(stubCardCatalog.Object, mockQuerySender, mockCommandSender);
+        var action = () => tracker.TrackPlayerCards(seasonYear, cToken);
+
+        // Act
+        var actual = await Record.ExceptionAsync(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<PlayerCardTrackerFoundNoCardsException>(actual);
+        Mock.Get(mockQuerySender).Verify(x => x.Send(It.IsAny<GetPlayerCardByExternalIdQuery>(), cToken), Times.Never);
+        Mock.Get(mockCommandSender).Verify(x => x.Send(It.IsAny<CreatePlayerCardCommand>(), cToken), Times.Never);
+    }
+
+    [Fact]
     public async Task TrackPlayerCards_SeasonYear_CreatesNewPlayerCards()
     {
         /*
@@ -23,9 +52,9 @@ public class PlayerCardTrackerTests
         var seasonYear = SeasonYear.Create(2024);
         // PlayerCard 1 already exists in the domain, so no action will take place
         var cardExternalId1 = CardExternalId.Create("id1");
-        var domainPlayerCard1 = Faker.FakePlayerCard(externalId: cardExternalId1.Value);
+        var domainPlayerCard1 = Faker.FakePlayerCard(cardExternalId: cardExternalId1.Value);
         // External Card 1 from MLB The Show
-        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(externalId: cardExternalId1.Value);
+        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId1.Value);
         // Query to get PlayerCard1
         var query1 = new GetPlayerCardByExternalIdQuery(cardExternalId1);
 
@@ -33,7 +62,7 @@ public class PlayerCardTrackerTests
         var cardExternalId2 = CardExternalId.Create("id2");
         PlayerCard? domainPlayerCard2 = null; // Card does not exist in the domain
         // External Card 2 from MLB The Show
-        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(externalId: cardExternalId2.Value);
+        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId2.Value);
         // Query to get PlayerCard2
         var query2 = new GetPlayerCardByExternalIdQuery(cardExternalId2);
 

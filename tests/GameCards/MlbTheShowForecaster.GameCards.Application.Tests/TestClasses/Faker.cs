@@ -14,13 +14,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestCl
 /// </summary>
 public static class Faker
 {
-    public static PlayerCard FakePlayerCard(ushort year = 2024, string externalId = "1",
+    public static PlayerCard FakePlayerCard(ushort year = 2024, string cardExternalId = "1",
         CardType type = CardType.MlbCard, string image = "img.jpg", string name = "cardA",
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
         string teamShortName = "SEA", int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null)
     {
         return PlayerCard.Create(SeasonYear.Create(year),
-            CardExternalId.Create(externalId),
+            CardExternalId.Create(cardExternalId),
             type,
             CardImageLocation.Create(image),
             CardName.Create(name),
@@ -81,10 +81,11 @@ public static class Faker
         );
     }
 
-    public static Listing FakeListing(string cardExternalId = "1", int buyPrice = 0, int sellPrice = 0)
+    public static Listing FakeListing(string cardExternalId = "1", int buyPrice = 0, int sellPrice = 0,
+        List<ListingHistoricalPrice>? historicalPrices = null)
     {
         return Listing.Create(CardExternalId.Create(cardExternalId), NaturalNumber.Create(buyPrice),
-            NaturalNumber.Create(sellPrice));
+            NaturalNumber.Create(sellPrice), historicalPrices ?? new List<ListingHistoricalPrice>());
     }
 
     public static ListingHistoricalPrice FakeListingHistoricalPrice(DateOnly date, int buyPrice = 0, int sellPrice = 0)

@@ -4,7 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreateL
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetAllPlayerCards;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -55,11 +55,17 @@ public sealed class CardPriceTracker : ICardPriceTracker
     /// </summary>
     /// <param name="year">The year to check card prices for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <exception cref="CardPriceTrackerFoundNoCardsException">Thrown if no PlayerCards are found in the domain</exception>
     public async Task TrackCardPrices(SeasonYear year, CancellationToken cancellationToken = default)
     {
         // Get all PlayerCards in the domain
-        var domainPlayerCards = await _querySender.Send(new GetAllPlayerCardsQuery(year), cancellationToken)
-                                ?? new List<PlayerCard>().AsReadOnly();
+        var domainPlayerCards = await _querySender.Send(new GetAllPlayerCardsQuery(year), cancellationToken);
+
+        // There should always be PlayerCards in the domain, or else the system has not been properly populated
+        if (domainPlayerCards == null || !domainPlayerCards.Any())
+        {
+            throw new CardPriceTrackerFoundNoCardsException($"No PlayerCards found for {year.Value}");
+        }
 
         foreach (var domainPlayerCard in domainPlayerCards)
         {
@@ -79,7 +85,7 @@ public sealed class CardPriceTracker : ICardPriceTracker
             }
 
             // If there is new pricing information from the external source, update the domain Listing with the new data
-            if (externalPrices.HasNewHistoricalPrices(domainListing))
+            if (externalPrices.HasNewPrices(domainListing) || externalPrices.HasNewHistoricalPrices(domainListing))
             {
                 await _commandSender.Send(
                     new UpdateListingCommand(domainListing, externalPrices, _listingPriceSignificantChangeThreshold),

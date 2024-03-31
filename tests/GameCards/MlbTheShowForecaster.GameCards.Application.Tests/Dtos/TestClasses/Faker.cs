@@ -11,7 +11,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.T
 /// </summary>
 public static class Faker
 {
-    public static MlbPlayerCard FakeMlbPlayerCard(ushort year = 2024, string externalId = "id1",
+    public static MlbPlayerCard FakeMlbPlayerCard(ushort year = 2024, string cardExternalId = "id1",
         CardType type = CardType.MlbCard, string image = "img.png", string name = "name1",
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
         string teamShortName = "DOT", int overallRating = 90, int stamina = 1, int pitchingClutch = 2,
@@ -24,7 +24,7 @@ public static class Faker
     {
         return new MlbPlayerCard(
             Year: SeasonYear.Create(year),
-            ExternalUuid: CardExternalId.Create(externalId),
+            ExternalUuid: CardExternalId.Create(cardExternalId),
             Type: type,
             ImageUrl: CardImageLocation.Create(image),
             Name: CardName.Create(name),
@@ -84,6 +84,30 @@ public static class Faker
             Date: date ?? new DateOnly(2024, 4, 1),
             BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
             BestSellPrice: NaturalNumber.Create(bestSellPrice)
+        );
+    }
+
+    public static AttributeChange FakeAttributeChange(string attributeName = "attributeName1", int newValue = 10,
+        int changeAmount = 1)
+    {
+        return new AttributeChange(
+            AttributeName: attributeName,
+            NewValue: NaturalNumber.Create(newValue),
+            ChangeAmount: changeAmount
+        );
+    }
+
+    public static PlayerRatingChange FakePlayerRatingChange(string cardExternalId = "id1", int newOverallRating = 90,
+        Rarity newRarity = Rarity.Diamond, int oldOverallRating = 50, Rarity oldRarity = Rarity.Common,
+        List<AttributeChange>? attributeChanges = null)
+    {
+        return new PlayerRatingChange(
+            CardExternalId: CardExternalId.Create(cardExternalId),
+            NewRating: OverallRating.Create(newOverallRating),
+            NewRarity: newRarity,
+            OldRating: OverallRating.Create(oldOverallRating),
+            OldRarity: oldRarity,
+            AttributeChanges: attributeChanges ?? new List<AttributeChange>()
         );
     }
 }

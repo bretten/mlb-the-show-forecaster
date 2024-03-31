@@ -22,14 +22,22 @@ public readonly record struct CardListing(
 )
 {
     /// <summary>
+    /// Returns true if the <see cref="BestBuyPrice"/> or <see cref="BestSellPrice"/> is different from the prices
+    /// on the domain <see cref="Listing"/>
+    /// </summary>
+    /// <param name="domainListing">The domain <see cref="Listing"/> to check against</param>
+    /// <returns>True if the prices are different than the <see cref="Listing"/></returns>
+    public bool HasNewPrices(Listing domainListing) =>
+        BestBuyPrice != domainListing.BuyPrice || BestSellPrice != domainListing.SellPrice;
+
+    /// <summary>
     /// Returns true if this <see cref="CardListing"/> has historical prices that the domain <see cref="Listing"/>
     /// does not have, otherwise false
     /// </summary>
     /// <param name="domainListing">The domain <see cref="Listing"/></param>
     /// <returns>True if there are new historical prices for the <see cref="Listing"/></returns>
-    public bool HasNewHistoricalPrices(Listing domainListing) =>
-        domainListing.HistoricalPricesChronologically.Select(x => x.Date).OrderBy(x => x)
-        != HistoricalPrices.Select(x => x.Date).OrderBy(x => x);
+    public bool HasNewHistoricalPrices(Listing domainListing) => HistoricalPrices
+        .Any(x => !domainListing.HistoricalPricesChronologically.Select(y => y.Date).Contains(x.Date));
 
     /// <summary>
     /// Returns new historical prices for the <see cref="Listing"/>

@@ -13,7 +13,7 @@ public class GetPlayerCardByExternalIdQueryHandlerTests
     {
         // Arrange
         var cardExternalId = CardExternalId.Create("externalId1");
-        var fakeDomainPlayerCard = Faker.FakePlayerCard(externalId: cardExternalId.Value);
+        var fakeDomainPlayerCard = Faker.FakePlayerCard(cardExternalId: cardExternalId.Value);
 
         var stubPlayerCardRepository = Mock.Of<IPlayerCardRepository>(x =>
             x.GetByExternalId(cardExternalId) == Task.FromResult(fakeDomainPlayerCard));

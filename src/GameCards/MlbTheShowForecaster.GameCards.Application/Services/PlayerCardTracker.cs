@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -46,12 +47,19 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
     /// </summary>
     /// <param name="seasonYear">The year to retrieve cards for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <exception cref="PlayerCardTrackerFoundNoCardsException">Thrown if the <see cref="ICardCatalog"/> provided no player cards</exception>
     public async Task TrackPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken = default)
     {
         // Get all player cards from the external system
         var mlbPlayerCards = await _cardCatalog.GetAllMlbPlayerCards(seasonYear, cancellationToken);
 
-        foreach (var mlbPlayerCard in mlbPlayerCards)
+        // It is not a real world scenario for there to be no player cards, so stop execution if none are found
+        if (mlbPlayerCards == null || !mlbPlayerCards.Any())
+        {
+            throw new PlayerCardTrackerFoundNoCardsException($"No player cards were found for {seasonYear.Value}");
+        }
+
+        foreach (var mlbPlayerCard in mlbPlayerCards.Where(x => x.IsSupported).OrderByDescending(x => x.Priority))
         {
             var existingPlayerCard =
                 await _querySender.Send(new GetPlayerCardByExternalIdQuery(mlbPlayerCard.ExternalUuid),
