@@ -50,19 +50,19 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
     /// <exception cref="PlayerCardTrackerFoundNoCardsException">Thrown if the <see cref="ICardCatalog"/> provided no player cards</exception>
     public async Task TrackPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken = default)
     {
-        // Get all player cards from the external system
-        var mlbPlayerCards = await _cardCatalog.GetAllMlbPlayerCards(seasonYear, cancellationToken);
+        // Get all player cards from the external source
+        var externalCards = await _cardCatalog.GetActiveRosterMlbPlayerCards(seasonYear, cancellationToken);
 
         // It is not a real world scenario for there to be no player cards, so stop execution if none are found
-        if (mlbPlayerCards == null || !mlbPlayerCards.Any())
+        if (externalCards == null || !externalCards.Any())
         {
             throw new PlayerCardTrackerFoundNoCardsException($"No player cards were found for {seasonYear.Value}");
         }
 
-        foreach (var mlbPlayerCard in mlbPlayerCards.Where(x => x.IsSupported).OrderByDescending(x => x.Priority))
+        foreach (var externalCard in externalCards.Where(x => x.IsSupported).OrderByDescending(x => x.Priority))
         {
             var existingPlayerCard =
-                await _querySender.Send(new GetPlayerCardByExternalIdQuery(mlbPlayerCard.ExternalUuid),
+                await _querySender.Send(new GetPlayerCardByExternalIdQuery(externalCard.ExternalUuid),
                     cancellationToken);
             // If the card already exists, no further action is needed
             if (existingPlayerCard != null)
@@ -71,7 +71,7 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
             }
 
             // The card does not exist in this domain, so create it
-            await _commandSender.Send(new CreatePlayerCardCommand(mlbPlayerCard), cancellationToken);
+            await _commandSender.Send(new CreatePlayerCardCommand(externalCard), cancellationToken);
         }
     }
 }

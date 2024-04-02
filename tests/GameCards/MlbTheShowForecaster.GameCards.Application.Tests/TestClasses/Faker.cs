@@ -42,6 +42,11 @@ public static class Faker
         );
     }
 
+    public static OverallRating FakeOverallRating(int rating = 50)
+    {
+        return OverallRating.Create(rating);
+    }
+
     public static PlayerCardAttributes FakePlayerCardAttributes(int stamina = 1, int pitchingClutch = 2,
         int hitsPerNine = 3, int strikeoutsPerNine = 4, int baseOnBallsPerNine = 5, int homeRunsPerNine = 6,
         int pitchVelocity = 7, int pitchControl = 8, int pitchMovement = 9, int contactLeft = 10, int contactRight = 1,

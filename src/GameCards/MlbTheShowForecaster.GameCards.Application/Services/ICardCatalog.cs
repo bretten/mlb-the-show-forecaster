@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 
@@ -9,11 +10,21 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 public interface ICardCatalog
 {
     /// <summary>
-    /// Should return all player cards for the specified season
+    /// Should return active roster MLB player cards for the specified season
     /// </summary>
     /// <param name="seasonYear">The season</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="MlbPlayerCard"/> for the specified season</returns>
-    Task<IReadOnlyList<MlbPlayerCard>?>
-        GetAllMlbPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken);
+    Task<IReadOnlyList<MlbPlayerCard>?> GetActiveRosterMlbPlayerCards(SeasonYear seasonYear,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Should return a single MLB player card with the specified <see cref="CardExternalId"/> and season
+    /// </summary>
+    /// <param name="seasonYear">The season</param>
+    /// <param name="cardExternalId">The <see cref="CardExternalId"/></param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <returns><see cref="MlbPlayerCard"/> with the same <see cref="CardExternalId"/> and season year</returns>
+    Task<MlbPlayerCard?> GetMlbPlayerCard(SeasonYear seasonYear, CardExternalId cardExternalId,
+        CancellationToken cancellationToken = default);
 }

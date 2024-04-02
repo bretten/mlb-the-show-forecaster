@@ -112,6 +112,7 @@ public sealed class PlayerCard : Card
         // Set the new values
         OverallRating = newOverallRating;
         PlayerCardAttributes = newAttributes;
+        ChangeRarity(newOverallRating.Rarity);
     }
 
     /// <summary>
@@ -132,6 +133,16 @@ public sealed class PlayerCard : Card
     public void ChangeTeam(TeamShortName newTeamShortName)
     {
         TeamShortName = newTeamShortName;
+    }
+
+    /// <summary>
+    /// Returns true if a rating change has already been applied for the specified date
+    /// </summary>
+    /// <param name="date">The date to check if a rating was applied for</param>
+    /// <returns>True if a rating change has already been applied for the specified date, otherwise false</returns>
+    public bool IsRatingAppliedFor(DateOnly date)
+    {
+        return _historicalRatings.Any(x => x.EndDate == date);
     }
 
     /// <summary>

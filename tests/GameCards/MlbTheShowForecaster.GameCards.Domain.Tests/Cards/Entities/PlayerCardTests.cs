@@ -198,6 +198,36 @@ public class PlayerCardTests
     }
 
     [Fact]
+    public void IsRatingAppliedFor_DateOfHistoricalRating_ReturnsTrue()
+    {
+        // Arrange
+        var date = new DateOnly(2024, 4, 1);
+        var card = Faker.FakePlayerCard();
+        card.ChangePlayerRating(date, Faker.FakeOverallRating(), Faker.FakePlayerCardAttributes());
+
+        // Act
+        var actual = card.IsRatingAppliedFor(date);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void IsRatingAppliedFor_DateDoesNotMatchAnyHistoricalRatings_ReturnsFalse()
+    {
+        // Arrange
+        var date = new DateOnly(2024, 4, 1);
+        var card = Faker.FakePlayerCard();
+        card.ChangePlayerRating(date, Faker.FakeOverallRating(), Faker.FakePlayerCardAttributes());
+
+        // Act
+        var actual = card.IsRatingAppliedFor(new DateOnly(2024, 5, 1));
+
+        // Assert
+        Assert.False(actual);
+    }
+
+    [Fact]
     public void Create_ValidValues_ReturnsPlayerCard()
     {
         // Arrange
