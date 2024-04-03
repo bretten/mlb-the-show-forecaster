@@ -141,4 +141,30 @@ public static class Faker
             AttributeChanges: attributeChanges ?? default(MlbPlayerAttributeChanges)
         );
     }
+
+    public static PlayerPositionChange FakePlayerPositionChange(string cardExternalId = "id1",
+        Position newPosition = Position.Shortstop)
+    {
+        return new PlayerPositionChange(
+            CardExternalId: CardExternalId.Create(cardExternalId),
+            NewPosition: newPosition
+        );
+    }
+
+    public static PlayerAddition FakePlayerAddition(string cardExternalId = "id1")
+    {
+        return new PlayerAddition(CardExternalId: CardExternalId.Create(cardExternalId));
+    }
+
+    public static RosterUpdate FakeRosterUpdate(DateOnly? date = null,
+        IReadOnlyList<PlayerRatingChange>? ratingChanges = null,
+        IReadOnlyList<PlayerPositionChange>? positionChanges = null, IReadOnlyList<PlayerAddition>? newPlayers = null)
+    {
+        return new RosterUpdate(
+            Date: date ?? new DateOnly(2024, 4, 1),
+            RatingChanges: ratingChanges ?? new List<PlayerRatingChange>(),
+            PositionChanges: positionChanges ?? new List<PlayerPositionChange>(),
+            NewPlayers: newPlayers ?? new List<PlayerAddition>()
+        );
+    }
 }
