@@ -279,6 +279,9 @@ public class RosterUpdateOrchestratorTests
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(seasonYear, cToken))
             .ReturnsAsync(new List<RosterUpdate>() { rosterUpdate1, rosterUpdate2, rosterUpdate3 });
+        var capturedCompleteRosterUpdateInvocations = new List<RosterUpdate>();
+        stubRosterUpdateFeed.Setup(x =>
+            x.CompleteRosterUpdate(Capture.In(capturedCompleteRosterUpdateInvocations), cToken));
 
         // Card catalog
         var stubCardCatalog = new Mock<ICardCatalog>();
@@ -316,5 +319,8 @@ public class RosterUpdateOrchestratorTests
         stubRosterUpdateFeed.Verify(x => x.CompleteRosterUpdate(rosterUpdate1, cToken), Times.Once);
         stubRosterUpdateFeed.Verify(x => x.CompleteRosterUpdate(rosterUpdate2, cToken), Times.Once);
         stubRosterUpdateFeed.Verify(x => x.CompleteRosterUpdate(rosterUpdate3, cToken), Times.Once);
+        // Was the order of the roster updates correct?
+        Assert.Equal(new List<RosterUpdate>() { rosterUpdate1, rosterUpdate2, rosterUpdate3 },
+            capturedCompleteRosterUpdateInvocations);
     }
 }

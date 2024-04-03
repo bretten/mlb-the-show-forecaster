@@ -92,27 +92,29 @@ public sealed class PlayerCard : Card
         _historicalRatings.Add(
             PlayerCardHistoricalRating.Create(previousEndDate, date, OverallRating, PlayerCardAttributes));
 
+        var rarityChanged = OverallRating.Rarity != newOverallRating.Rarity;
         // Notify subscribers that the player card overall rating has changed
         if (OverallRating.Value < newOverallRating.Value)
         {
             RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(ExternalId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
-                NewPlayerCardAttributes: PlayerCardAttributes,
-                RarityChanged: OverallRating.Rarity != newOverallRating.Rarity));
+                NewPlayerCardAttributes: PlayerCardAttributes, RarityChanged: rarityChanged));
         }
         else if (OverallRating.Value > newOverallRating.Value)
         {
             RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(ExternalId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
-                NewPlayerCardAttributes: PlayerCardAttributes,
-                RarityChanged: OverallRating.Rarity != newOverallRating.Rarity));
+                NewPlayerCardAttributes: PlayerCardAttributes, RarityChanged: rarityChanged));
         }
         // If the overall rating hasn't changed, it means the player has negligible changes, and is not important or actionable
 
         // Set the new values
         OverallRating = newOverallRating;
         PlayerCardAttributes = newAttributes;
-        ChangeRarity(newOverallRating.Rarity);
+        if (rarityChanged)
+        {
+            ChangeRarity(newOverallRating.Rarity);
+        }
     }
 
     /// <summary>
