@@ -92,26 +92,29 @@ public sealed class PlayerCard : Card
         _historicalRatings.Add(
             PlayerCardHistoricalRating.Create(previousEndDate, date, OverallRating, PlayerCardAttributes));
 
+        var rarityChanged = OverallRating.Rarity != newOverallRating.Rarity;
         // Notify subscribers that the player card overall rating has changed
         if (OverallRating.Value < newOverallRating.Value)
         {
             RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(ExternalId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
-                NewPlayerCardAttributes: PlayerCardAttributes,
-                RarityChanged: OverallRating.Rarity != newOverallRating.Rarity));
+                NewPlayerCardAttributes: PlayerCardAttributes, RarityChanged: rarityChanged));
         }
         else if (OverallRating.Value > newOverallRating.Value)
         {
             RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(ExternalId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
-                NewPlayerCardAttributes: PlayerCardAttributes,
-                RarityChanged: OverallRating.Rarity != newOverallRating.Rarity));
+                NewPlayerCardAttributes: PlayerCardAttributes, RarityChanged: rarityChanged));
         }
         // If the overall rating hasn't changed, it means the player has negligible changes, and is not important or actionable
 
         // Set the new values
         OverallRating = newOverallRating;
         PlayerCardAttributes = newAttributes;
+        if (rarityChanged)
+        {
+            ChangeRarity(newOverallRating.Rarity);
+        }
     }
 
     /// <summary>
@@ -132,6 +135,16 @@ public sealed class PlayerCard : Card
     public void ChangeTeam(TeamShortName newTeamShortName)
     {
         TeamShortName = newTeamShortName;
+    }
+
+    /// <summary>
+    /// Returns true if a rating change has already been applied for the specified date
+    /// </summary>
+    /// <param name="date">The date to check if a rating was applied for</param>
+    /// <returns>True if a rating change has already been applied for the specified date, otherwise false</returns>
+    public bool IsRatingAppliedFor(DateOnly date)
+    {
+        return _historicalRatings.Any(x => x.EndDate == date);
     }
 
     /// <summary>

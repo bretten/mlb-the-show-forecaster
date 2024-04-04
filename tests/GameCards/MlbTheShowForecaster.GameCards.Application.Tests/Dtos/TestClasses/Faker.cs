@@ -87,27 +87,84 @@ public static class Faker
         );
     }
 
-    public static AttributeChange FakeAttributeChange(string attributeName = "attributeName1", int newValue = 10,
-        int changeAmount = 1)
+    public static MlbPlayerAttributeChanges FakeMlbPlayerAttributeChanges(int stamina = 1, int pitchingClutch = 2,
+        int hitsPerNine = 3, int strikeoutsPerNine = 4, int baseOnBallsPerNine = 5, int homeRunsPerNine = 6,
+        int pitchVelocity = 7, int pitchControl = 8, int pitchMovement = 9, int contactLeft = 10, int contactRight = 1,
+        int powerLeft = 2, int powerRight = 3, int plateVision = 4, int plateDiscipline = 5, int battingClutch = 6,
+        int buntingAbility = 7, int dragBuntingAbility = 8, int hittingDurability = 9, int fieldingDurability = 10,
+        int fieldingAbility = 1, int armStrength = 2, int armAccuracy = 3, int reactionTime = 4, int blocking = 5,
+        int speed = 6, int baseRunningAbility = 7, int baseRunningAggression = 8, int scalar = 1)
     {
-        return new AttributeChange(
-            AttributeName: attributeName,
-            NewValue: NaturalNumber.Create(newValue),
-            ChangeAmount: changeAmount
+        return new MlbPlayerAttributeChanges(
+            Stamina: scalar * stamina,
+            PitchingClutch: scalar * pitchingClutch,
+            HitsPerBf: scalar * hitsPerNine,
+            KPerBf: scalar * strikeoutsPerNine,
+            BbPerBf: scalar * baseOnBallsPerNine,
+            HrPerBf: scalar * homeRunsPerNine,
+            PitchVelocity: scalar * pitchVelocity,
+            PitchControl: scalar * pitchControl,
+            PitchMovement: scalar * pitchMovement,
+            ContactLeft: scalar * contactLeft,
+            ContactRight: scalar * contactRight,
+            PowerLeft: scalar * powerLeft,
+            PowerRight: scalar * powerRight,
+            PlateVision: scalar * plateVision,
+            PlateDiscipline: scalar * plateDiscipline,
+            BattingClutch: scalar * battingClutch,
+            BuntingAbility: scalar * buntingAbility,
+            DragBuntingAbility: scalar * dragBuntingAbility,
+            HittingDurability: scalar * hittingDurability,
+            FieldingDurability: scalar * fieldingDurability,
+            FieldingAbility: scalar * fieldingAbility,
+            ArmStrength: scalar * armStrength,
+            ArmAccuracy: scalar * armAccuracy,
+            ReactionTime: scalar * reactionTime,
+            Blocking: scalar * blocking,
+            Speed: scalar * speed,
+            BaseRunningAbility: scalar * baseRunningAbility,
+            BaseRunningAggression: scalar * baseRunningAggression
         );
     }
 
-    public static PlayerRatingChange FakePlayerRatingChange(string cardExternalId = "id1", int newOverallRating = 90,
-        Rarity newRarity = Rarity.Diamond, int oldOverallRating = 50, Rarity oldRarity = Rarity.Common,
-        List<AttributeChange>? attributeChanges = null)
+    public static PlayerRatingChange FakePlayerRatingChange(DateOnly? date = null, string cardExternalId = "id1",
+        int newOverallRating = 90, Rarity newRarity = Rarity.Diamond, int oldOverallRating = 50,
+        Rarity oldRarity = Rarity.Common, MlbPlayerAttributeChanges? attributeChanges = null)
     {
         return new PlayerRatingChange(
+            Date: date ?? new DateOnly(2024, 4, 1),
             CardExternalId: CardExternalId.Create(cardExternalId),
             NewRating: OverallRating.Create(newOverallRating),
             NewRarity: newRarity,
             OldRating: OverallRating.Create(oldOverallRating),
             OldRarity: oldRarity,
-            AttributeChanges: attributeChanges ?? new List<AttributeChange>()
+            AttributeChanges: attributeChanges ?? default(MlbPlayerAttributeChanges)
+        );
+    }
+
+    public static PlayerPositionChange FakePlayerPositionChange(string cardExternalId = "id1",
+        Position newPosition = Position.Shortstop)
+    {
+        return new PlayerPositionChange(
+            CardExternalId: CardExternalId.Create(cardExternalId),
+            NewPosition: newPosition
+        );
+    }
+
+    public static PlayerAddition FakePlayerAddition(string cardExternalId = "id1")
+    {
+        return new PlayerAddition(CardExternalId: CardExternalId.Create(cardExternalId));
+    }
+
+    public static RosterUpdate FakeRosterUpdate(DateOnly? date = null,
+        IReadOnlyList<PlayerRatingChange>? ratingChanges = null,
+        IReadOnlyList<PlayerPositionChange>? positionChanges = null, IReadOnlyList<PlayerAddition>? newPlayers = null)
+    {
+        return new RosterUpdate(
+            Date: date ?? new DateOnly(2024, 4, 1),
+            RatingChanges: ratingChanges ?? new List<PlayerRatingChange>(),
+            PositionChanges: positionChanges ?? new List<PlayerPositionChange>(),
+            NewPlayers: newPlayers ?? new List<PlayerAddition>()
         );
     }
 }

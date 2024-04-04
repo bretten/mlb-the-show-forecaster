@@ -38,7 +38,7 @@ public abstract class Card : AggregateRoot
     /// <summary>
     /// The rarity of the card
     /// </summary>
-    public Rarity Rarity { get; }
+    public Rarity Rarity { get; private set; }
 
     /// <summary>
     /// The series of the card
@@ -65,5 +65,14 @@ public abstract class Card : AggregateRoot
         Name = name;
         Rarity = rarity;
         Series = series;
+    }
+
+    /// <summary>
+    /// Sets the rarity
+    /// </summary>
+    /// <param name="rarity">The new rarity</param>
+    protected virtual void ChangeRarity(Rarity rarity)
+    {
+        Rarity = rarity;
     }
 }

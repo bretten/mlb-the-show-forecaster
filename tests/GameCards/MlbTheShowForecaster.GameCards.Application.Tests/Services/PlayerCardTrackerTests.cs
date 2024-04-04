@@ -23,7 +23,7 @@ public class PlayerCardTrackerTests
         var seasonYear = SeasonYear.Create(2024);
 
         var stubCardCatalog = new Mock<ICardCatalog>();
-        stubCardCatalog.Setup(x => x.GetAllMlbPlayerCards(seasonYear, cToken))
+        stubCardCatalog.Setup(x => x.GetActiveRosterMlbPlayerCards(seasonYear, cToken))
             .ReturnsAsync(ImmutableList<MlbPlayerCard>.Empty); // No player cards returned
 
         var mockQuerySender = Mock.Of<IQuerySender>();
@@ -69,7 +69,7 @@ public class PlayerCardTrackerTests
         // The card marketplace should return all external cards in MLB The Show
         var allExternalPlayerCards = new List<MlbPlayerCard>() { externalCard1, externalCard2 };
         var stubCardCatalog = new Mock<ICardCatalog>();
-        stubCardCatalog.Setup(x => x.GetAllMlbPlayerCards(seasonYear, cToken))
+        stubCardCatalog.Setup(x => x.GetActiveRosterMlbPlayerCards(seasonYear, cToken))
             .ReturnsAsync(allExternalPlayerCards);
 
         // Stub the behavior of the query handler
@@ -95,7 +95,7 @@ public class PlayerCardTrackerTests
          * Assert
          */
         // Were all the player cards in MLB The Show retrieved?
-        stubCardCatalog.Verify(x => x.GetAllMlbPlayerCards(seasonYear, cToken), Times.Once);
+        stubCardCatalog.Verify(x => x.GetActiveRosterMlbPlayerCards(seasonYear, cToken), Times.Once);
 
         // Was each card from MLB The Show checked to see if it existed in this domain?
         stubQuerySender.Verify(x => x.Send(query1, cToken), Times.Once);

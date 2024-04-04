@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
@@ -11,4 +12,12 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 public readonly record struct PlayerPositionChange(
     CardExternalId CardExternalId,
     Position NewPosition
-);
+)
+{
+    /// <summary>
+    /// Returns true if the new position has already been applied to the <see cref="PlayerCard"/>, otherwise false
+    /// </summary>
+    /// <param name="playerCard">The <see cref="PlayerCard"/> to check</param>
+    /// <returns>True if the new position has already been applied to the <see cref="PlayerCard"/>, otherwise false</returns>
+    public bool IsApplied(PlayerCard playerCard) => playerCard.Position == NewPosition;
+};

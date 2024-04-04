@@ -115,6 +115,7 @@ public class PlayerCardTests
         Assert.Equal(70, e.NewOverallRating.Value);
         Assert.Equal(newPlayerAttributes, e.NewPlayerCardAttributes);
         Assert.True(e.RarityChanged);
+        Assert.Equal(newOverallRating.Rarity, card.Rarity);
     }
 
     [Fact]
@@ -124,7 +125,7 @@ public class PlayerCardTests
         var currentOverallRating = Faker.FakeOverallRating(48);
         var currentPlayerCardAttributes = Faker.FakePlayerCardAttributes();
         var card = Faker.FakePlayerCard(overallRating: currentOverallRating,
-            playerCardAttributes: currentPlayerCardAttributes);
+            playerCardAttributes: currentPlayerCardAttributes, rarity: Rarity.Common);
 
         var newOverallRating = Faker.FakeOverallRating(47);
         var newPlayerAttributes = Faker.FakePlayerCardAttributes();
@@ -142,6 +143,7 @@ public class PlayerCardTests
         Assert.Equal(47, e.NewOverallRating.Value);
         Assert.Equal(newPlayerAttributes, e.NewPlayerCardAttributes);
         Assert.False(e.RarityChanged);
+        Assert.Equal(newOverallRating.Rarity, card.Rarity);
     }
 
     [Fact]
@@ -195,6 +197,36 @@ public class PlayerCardTests
 
         // Assert
         Assert.Equal("DOT", card.TeamShortName.Value);
+    }
+
+    [Fact]
+    public void IsRatingAppliedFor_DateOfHistoricalRating_ReturnsTrue()
+    {
+        // Arrange
+        var date = new DateOnly(2024, 4, 1);
+        var card = Faker.FakePlayerCard();
+        card.ChangePlayerRating(date, Faker.FakeOverallRating(), Faker.FakePlayerCardAttributes());
+
+        // Act
+        var actual = card.IsRatingAppliedFor(date);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void IsRatingAppliedFor_DateDoesNotMatchAnyHistoricalRatings_ReturnsFalse()
+    {
+        // Arrange
+        var date = new DateOnly(2024, 4, 1);
+        var card = Faker.FakePlayerCard();
+        card.ChangePlayerRating(date, Faker.FakeOverallRating(), Faker.FakePlayerCardAttributes());
+
+        // Act
+        var actual = card.IsRatingAppliedFor(new DateOnly(2024, 5, 1));
+
+        // Assert
+        Assert.False(actual);
     }
 
     [Fact]
