@@ -5,6 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Listings;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.RosterUpdates;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Items;
 using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Tests;
@@ -35,6 +36,7 @@ public class MlbTheShowApiIntegrationTests
         Assert.True(actualItem.IsSellable);
         Assert.Equal("Live", actualItem.Series);
         Assert.Equal("LAD", actualItem.TeamShortName);
+        Assert.Equal("SP", actualItem.DisplayPosition);
     }
 
     [Fact]

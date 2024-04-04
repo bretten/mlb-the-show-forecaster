@@ -13,6 +13,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.It
 /// <param name="IsSellable">True if the item is sellable on the marketplace, otherwise false</param>
 /// <param name="Series">The series the item is a part of</param>
 /// <param name="TeamShortName">The player's team name abbreviation</param>
+/// <param name="DisplayPosition">The player's primary position</param>
 /// <param name="Overall">The player's overall rating</param>
 /// <param name="Stamina">Pitcher's stamina</param>
 /// <param name="PitchingClutch">Pitcher's ability to pitch with runners in scoring position</param>
@@ -53,6 +54,8 @@ public sealed record MlbCardDto(
     string Series,
     [property: JsonPropertyName("team_short_name")]
     string TeamShortName,
+    [property: JsonPropertyName("display_position")]
+    string DisplayPosition,
     [property: JsonPropertyName("ovr")]
     int Overall,
     [property: JsonPropertyName("stamina")]
