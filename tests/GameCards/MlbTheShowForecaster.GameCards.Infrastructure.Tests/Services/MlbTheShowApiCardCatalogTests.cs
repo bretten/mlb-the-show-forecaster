@@ -42,7 +42,7 @@ public class MlbTheShowApiCardCatalogTests
 
         // Assert
         Assert.NotNull(actual);
-        Assert.IsType<MlbPlayerCardActiveRosterEmptyException>(actual);
+        Assert.IsType<ActiveRosterMlbPlayerCardsNotFoundInCatalogException>(actual);
     }
 
     [Fact]
@@ -128,7 +128,7 @@ public class MlbTheShowApiCardCatalogTests
 
         // Assert
         Assert.NotNull(actual);
-        Assert.IsType<MlbPlayerCardNotFoundException>(actual);
+        Assert.IsType<MlbPlayerCardNotFoundInCatalogException>(actual);
     }
 
     [Fact]

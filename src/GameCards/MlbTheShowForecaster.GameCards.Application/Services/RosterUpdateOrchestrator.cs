@@ -232,7 +232,7 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
             // Create the player card in this domain
             await _commandSender.Send(new CreatePlayerCardCommand(externalCard), cancellationToken);
         }
-        catch (MlbPlayerCardNotFoundException)
+        catch (MlbPlayerCardNotFoundInCatalogException)
         {
             throw new NoExternalPlayerCardFoundForRosterUpdateException(
                 $"Roster Update had a new player {playerAddition.CardExternalId}, but no external data could be found");

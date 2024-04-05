@@ -190,7 +190,7 @@ public class RosterUpdateOrchestratorTests
         // Card catalog
         var stubCardCatalog = new Mock<ICardCatalog>();
         stubCardCatalog.Setup(x => x.GetMlbPlayerCard(seasonYear, cardExternalId1, cToken))
-            .ThrowsAsync(new MlbPlayerCardNotFoundException("Card not found"));
+            .ThrowsAsync(new MlbPlayerCardNotFoundInCatalogException("Card not found"));
 
         // Orchestrator
         var orchestrator = new RosterUpdateOrchestrator(stubRosterUpdateFeed.Object, stubCardCatalog.Object,

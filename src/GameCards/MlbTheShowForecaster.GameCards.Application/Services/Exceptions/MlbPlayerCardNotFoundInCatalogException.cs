@@ -3,9 +3,9 @@
 /// <summary>
 /// Thrown when <see cref="ICardCatalog"/> cannot find the specified card
 /// </summary>
-public sealed class MlbPlayerCardNotFoundException : Exception
+public sealed class MlbPlayerCardNotFoundInCatalogException : Exception
 {
-    public MlbPlayerCardNotFoundException(string? message) : base(message)
+    public MlbPlayerCardNotFoundInCatalogException(string? message) : base(message)
     {
     }
 }
