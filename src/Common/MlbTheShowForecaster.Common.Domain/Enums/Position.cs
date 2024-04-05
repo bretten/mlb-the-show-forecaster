@@ -81,6 +81,21 @@ public enum Position
     [Display(Name = "TWP")] TwoWayPlayer,
 
     /// <summary>
+    /// Starting pitcher (SP)
+    /// </summary>
+    [Display(Name = "SP")] StartingPitcher,
+
+    /// <summary>
+    /// Relief pitcher (RP)
+    /// </summary>
+    [Display(Name = "RP")] ReliefPitcher,
+
+    /// <summary>
+    /// Closing pitcher (CP)
+    /// </summary>
+    [Display(Name = "CP")] ClosingPitcher,
+
+    /// <summary>
     /// None
     /// </summary>
     [Display(Name = "NONE")] None

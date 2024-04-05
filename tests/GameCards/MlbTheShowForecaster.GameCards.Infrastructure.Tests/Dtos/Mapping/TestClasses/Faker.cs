@@ -58,4 +58,23 @@ public static class Faker
             BaseRunningAggression: scalar * baseRunningAggression
         );
     }
+
+    public static StadiumDto FakeStadiumDto(string uuid = "id1", string type = "mlb_card", string imageUrl = "img1.png",
+        string name = "name1", string rarity = "Bronze", bool isSellable = false, string teamShortName = "SEA",
+        string capacity = "12300", string surface = "Grass", string elevation = "10000", int built = 2000)
+    {
+        return new StadiumDto(
+            Uuid: uuid,
+            Type: type,
+            ImageUrl: imageUrl,
+            Name: name,
+            Rarity: rarity,
+            IsSellable: isSellable,
+            TeamShortName: teamShortName,
+            Capacity: capacity,
+            Surface: surface,
+            Elevation: elevation,
+            Built: built
+        );
+    }
 }

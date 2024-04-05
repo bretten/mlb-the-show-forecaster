@@ -3,8 +3,7 @@
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping.Exceptions;
 
 /// <summary>
-/// Thrown when trying to map a string value from MLB The Show to a <see cref="Rarity"/>, but the string value does
-/// not match our domain
+/// Thrown when a string value for rarity from MLB The Show cannot be mapped to this domain's <see cref="Rarity"/>
 /// </summary>
 public sealed class InvalidTheShowRarityException : Exception
 {

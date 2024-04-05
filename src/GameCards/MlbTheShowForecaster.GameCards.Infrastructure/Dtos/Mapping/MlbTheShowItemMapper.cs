@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+﻿using System.ComponentModel;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
@@ -8,14 +9,24 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping.
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 
+/// <summary>
+/// Mapper that maps <see cref="ItemDto"/>s from MLB The Show to application-level DTOs
+/// </summary>
 public sealed class MlbTheShowItemMapper : IMlbTheShowItemMapper
 {
+    /// <summary>
+    /// Maps a MLB The Show <see cref="ItemDto"/> to an application <see cref="MlbPlayerCard"/>
+    /// </summary>
+    /// <param name="year">The year of the player card</param>
+    /// <param name="item">The <see cref="ItemDto"/> to map</param>
+    /// <returns><see cref="MlbPlayerCard"/></returns>
+    /// <exception cref="UnexpectedTheShowItemException">Thrown when the <see cref="ItemDto"/> is not of a type that can be mapped to <see cref="MlbPlayerCard"/></exception>
     public MlbPlayerCard Map(SeasonYear year, ItemDto item)
     {
         if (item is not MlbCardDto dto)
         {
             throw new UnexpectedTheShowItemException(
-                $"Trying to map to {nameof(MlbPlayerCard)}, but could not map from {item.GetType().Name}");
+                $"Trying to map item to {nameof(MlbPlayerCard)}, but could not map from {item.GetType().Name}");
         }
 
         return new MlbPlayerCard(
@@ -26,8 +37,8 @@ public sealed class MlbTheShowItemMapper : IMlbTheShowItemMapper
             Name: CardName.Create(dto.Name),
             Rarity: MapRarity(dto.Rarity),
             IsSellable: dto.IsSellable,
-            Series: MapSeries(dto.Series),
-            Position: Position.Catcher, // TODO
+            Series: MapCardSeries(dto.Series),
+            Position: MapPosition(dto.DisplayPosition),
             TeamShortName: TeamShortName.Create(dto.TeamShortName),
             Overall: OverallRating.Create(dto.Overall),
             Stamina: AbilityAttribute.Create(dto.Stamina),
@@ -61,6 +72,12 @@ public sealed class MlbTheShowItemMapper : IMlbTheShowItemMapper
         );
     }
 
+    /// <summary>
+    /// Maps a rarity value from MLB The Show to <see cref="Rarity"/>
+    /// </summary>
+    /// <param name="rarity">The rarity string value from MLB The Show</param>
+    /// <returns><see cref="Rarity"/></returns>
+    /// <exception cref="InvalidTheShowRarityException">Thrown if the rarity string value is invalid</exception>
     public Rarity MapRarity(string rarity)
     {
         return rarity switch
@@ -74,13 +91,48 @@ public sealed class MlbTheShowItemMapper : IMlbTheShowItemMapper
         };
     }
 
-    public CardSeries MapSeries(string series)
+    /// <summary>
+    /// Maps a card series value from MLB The Show to <see cref="CardSeries"/>
+    /// </summary>
+    /// <param name="cardSeries">The card series string value from MLB The Show</param>
+    /// <returns><see cref="CardSeries"/></returns>
+    /// <exception cref="InvalidTheShowCardSeriesException">Thrown if the card series string value is invalid</exception>
+    public CardSeries MapCardSeries(string cardSeries)
     {
-        return series switch
+        return cardSeries switch
         {
             "Live" => CardSeries.Live,
             "Rookie" => CardSeries.Rookie,
-            _ => throw new InvalidTheShowSeriesException($"Could not map series from MLB The Show: {series}")
+            _ => throw new InvalidTheShowCardSeriesException(
+                $"Could not map card series from MLB The Show: {cardSeries}")
         };
+    }
+
+    /// <summary>
+    /// Maps a position value from MLB The Show to <see cref="Position"/>
+    /// </summary>
+    /// <param name="position">The position value from MLB The Show</param>
+    /// <returns><see cref="Position"/></returns>
+    /// <exception cref="InvalidTheShowPositionException">Thrown if the position string value is invalid</exception>
+    public Position MapPosition(string position)
+    {
+        switch (position)
+        {
+            case "SP":
+            case "RP":
+            case "LF":
+            case "RF":
+            case "CF":
+            case "1B":
+            case "3B":
+            case "SS":
+            case "2B":
+            case "CP":
+            case "C":
+            case "DH":
+                return (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(position)!;
+            default:
+                throw new InvalidTheShowPositionException($"Could not map position from MLB The Show: {position}");
+        }
     }
 }

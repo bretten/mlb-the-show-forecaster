@@ -3,7 +3,8 @@
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping.Exceptions;
 
 /// <summary>
-/// Thrown when a mapper is trying to map a MLB The Show <see cref="ItemDto"/> but the item is of an unexpected type
+/// Thrown when <see cref="IMlbTheShowItemMapper"/> is trying to map a MLB The Show <see cref="ItemDto"/> to this
+/// domain, but the item is of an unexpected type
 /// </summary>
 public sealed class UnexpectedTheShowItemException : Exception
 {
