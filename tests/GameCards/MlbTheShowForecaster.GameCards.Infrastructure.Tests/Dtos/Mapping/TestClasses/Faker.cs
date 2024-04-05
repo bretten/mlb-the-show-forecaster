@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.Mapping.TestClasses;
 
@@ -75,6 +76,17 @@ public static class Faker
             Surface: surface,
             Elevation: elevation,
             Built: built
+        );
+    }
+
+    public static ListingDto<ItemDto> FakeListingDto(string listingName = "name1", int bestSellPrice = 0,
+        int bestBuyPrice = 0, ItemDto? itemDto = null, IReadOnlyList<ListingPriceDto>? priceHistory = null)
+    {
+        return new ListingDto<ItemDto>(listingName,
+            BestSellPrice: bestSellPrice,
+            BestBuyPrice: bestBuyPrice,
+            Item: itemDto ?? FakeMlbCardDto(),
+            PriceHistory: priceHistory ?? new List<ListingPriceDto>()
         );
     }
 }
