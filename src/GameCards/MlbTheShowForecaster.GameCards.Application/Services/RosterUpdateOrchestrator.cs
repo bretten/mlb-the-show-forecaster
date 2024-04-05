@@ -223,16 +223,19 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
     private async Task ApplyPlayerAddition(SeasonYear seasonYear, PlayerAddition playerAddition,
         CancellationToken cancellationToken)
     {
-        // Get details about the player card
-        var externalCard =
-            await _cardCatalog.GetMlbPlayerCard(seasonYear, playerAddition.CardExternalId, cancellationToken);
-        if (externalCard == null)
+        try
+        {
+            // Get details about the player card
+            var externalCard =
+                await _cardCatalog.GetMlbPlayerCard(seasonYear, playerAddition.CardExternalId, cancellationToken);
+
+            // Create the player card in this domain
+            await _commandSender.Send(new CreatePlayerCardCommand(externalCard), cancellationToken);
+        }
+        catch (MlbPlayerCardNotFoundInCatalogException)
         {
             throw new NoExternalPlayerCardFoundForRosterUpdateException(
                 $"Roster Update had a new player {playerAddition.CardExternalId}, but no external data could be found");
         }
-
-        // Create the player card in this domain
-        await _commandSender.Send(new CreatePlayerCardCommand(externalCard.Value), cancellationToken);
     }
 }

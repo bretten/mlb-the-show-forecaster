@@ -29,6 +29,7 @@ public class ItemJsonConverterTests
         Assert.True(actualItem.IsSellable);
         Assert.Equal("Live", actualItem.Series);
         Assert.Equal("LAD", actualItem.TeamShortName);
+        Assert.Equal("SP", actualItem.DisplayPosition);
         Assert.Equal(94, actualItem.Overall);
         Assert.Equal(86, actualItem.Stamina);
         Assert.Equal(106, actualItem.PitchingClutch);
