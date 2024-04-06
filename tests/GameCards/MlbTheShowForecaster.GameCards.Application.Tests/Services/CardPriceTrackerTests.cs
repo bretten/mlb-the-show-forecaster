@@ -47,7 +47,8 @@ public class CardPriceTrackerTests
         Assert.NotNull(actual);
         Assert.IsType<CardPriceTrackerFoundNoCardsException>(actual);
         stubQuerySender.Verify(x => x.Send(It.IsAny<GetListingByCardExternalIdQuery>(), cToken), Times.Never);
-        Mock.Get(mockCardMarketplace).Verify(x => x.GetCardPrice(It.IsAny<CardExternalId>(), cToken), Times.Never);
+        Mock.Get(mockCardMarketplace)
+            .Verify(x => x.GetCardPrice(year, It.IsAny<CardExternalId>(), cToken), Times.Never);
         Mock.Get(mockCommandSender).Verify(x => x.Send(It.IsAny<CreateListingCommand>(), cToken), Times.Never);
         Mock.Get(mockCommandSender).Verify(x => x.Send(It.IsAny<UpdateListingCommand>(), cToken), Times.Never);
     }
@@ -90,11 +91,11 @@ public class CardPriceTrackerTests
 
         // The card marketplace should return the current prices from the external source
         var stubCardMarketplace = new Mock<ICardMarketplace>();
-        stubCardMarketplace.Setup(x => x.GetCardPrice(cardExternalId1, cToken))
+        stubCardMarketplace.Setup(x => x.GetCardPrice(year, cardExternalId1, cToken))
             .ReturnsAsync(externalListing1);
-        stubCardMarketplace.Setup(x => x.GetCardPrice(cardExternalId2, cToken))
+        stubCardMarketplace.Setup(x => x.GetCardPrice(year, cardExternalId2, cToken))
             .ReturnsAsync(externalListing2);
-        stubCardMarketplace.Setup(x => x.GetCardPrice(cardExternalId3, cToken))
+        stubCardMarketplace.Setup(x => x.GetCardPrice(year, cardExternalId3, cToken))
             .ReturnsAsync(externalListing3);
 
         // Stub the behavior of the query handler
@@ -141,9 +142,9 @@ public class CardPriceTrackerTests
         stubQuerySender.Verify(x => x.Send(getListing2Query, cToken), Times.Once);
         stubQuerySender.Verify(x => x.Send(getListing3Query, cToken), Times.Once);
         // Were the card prices retrieved from the external card marketplace?
-        stubCardMarketplace.Verify(x => x.GetCardPrice(cardExternalId1, cToken), Times.Once);
-        stubCardMarketplace.Verify(x => x.GetCardPrice(cardExternalId2, cToken), Times.Once);
-        stubCardMarketplace.Verify(x => x.GetCardPrice(cardExternalId3, cToken), Times.Once);
+        stubCardMarketplace.Verify(x => x.GetCardPrice(year, cardExternalId1, cToken), Times.Once);
+        stubCardMarketplace.Verify(x => x.GetCardPrice(year, cardExternalId2, cToken), Times.Once);
+        stubCardMarketplace.Verify(x => x.GetCardPrice(year, cardExternalId3, cToken), Times.Once);
         // Was a create command sent for Listing 1?
         Mock.Get(mockCommandSender).Verify(x => x.Send(expectedListing1Command, cToken), Times.Once);
         // Was a update command sent for Listing 2?

@@ -64,4 +64,26 @@ public static class Faker
             BaseRunningAggression: AbilityAttribute.Create(scalar * baseRunningAggression)
         );
     }
+
+    public static CardListing FakeCardListing(string listingName = "listingName1", int bestBuyPrice = 0,
+        int bestSellPrice = 0, string cardExternalId = "card", IReadOnlyList<CardListingPrice>? historicalPrices = null)
+    {
+        return new CardListing(
+            ListingName: listingName,
+            BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
+            BestSellPrice: NaturalNumber.Create(bestSellPrice),
+            CardExternalId: CardExternalId.Create(cardExternalId),
+            HistoricalPrices: historicalPrices ?? new List<CardListingPrice>()
+        );
+    }
+
+    public static CardListingPrice FakeCardListingPrice(DateOnly? date = null, int bestBuyPrice = 0,
+        int bestSellPrice = 0)
+    {
+        return new CardListingPrice(
+            Date: date ?? new DateOnly(2024, 4, 1),
+            BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
+            BestSellPrice: NaturalNumber.Create(bestSellPrice)
+        );
+    }
 }
