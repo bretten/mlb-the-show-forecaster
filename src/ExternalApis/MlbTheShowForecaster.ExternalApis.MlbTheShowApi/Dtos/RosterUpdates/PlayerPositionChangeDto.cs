@@ -12,10 +12,11 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Ro
 /// <param name="Item"><see cref="MlbCardDto"/></param>
 /// <param name="Position">The player's new position</param>
 public sealed record PlayerPositionChangeDto(
-    string ObfuscatedId,
+    ObfuscatedIdDto ObfuscatedId,
     string Name,
     string Team,
+    [property: JsonPropertyName("item")]
     MlbCardDto Item,
     [property: JsonPropertyName("pos")]
     string Position
-) : PlayerChangeDto(ObfuscatedId, Name, Team, Item);
+) : PlayerChangeDto(ObfuscatedId, Name, Team);
