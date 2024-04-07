@@ -28,6 +28,11 @@ public sealed record ObfuscatedIdDto
     public Guid Value { get; }
 
     /// <summary>
+    /// Returns the value in the same string format that MLB The Show returns the value as
+    /// </summary>
+    public string ValueAsString => Value.ToString("N");
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="rawValue">The raw value from MLB The Show. Should either be a UUID or the integer -1</param>

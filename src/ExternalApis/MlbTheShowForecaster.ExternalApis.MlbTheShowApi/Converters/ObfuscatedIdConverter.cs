@@ -36,6 +36,6 @@ public sealed class ObfuscatedIdConverter : JsonConverter<ObfuscatedIdDto>
     /// <param name="options">The options for the serializer</param>
     public override void Write(Utf8JsonWriter writer, ObfuscatedIdDto value, JsonSerializerOptions options)
     {
-        writer.WriteStringValue(value.Value.ToString("N"));
+        writer.WriteStringValue(value.ValueAsString);
     }
 }

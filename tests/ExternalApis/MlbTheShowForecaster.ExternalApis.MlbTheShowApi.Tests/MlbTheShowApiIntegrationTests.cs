@@ -5,7 +5,6 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Listings;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.RosterUpdates;
-using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Items;
 using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Tests;
@@ -215,7 +214,7 @@ public class MlbTheShowApiIntegrationTests
         // Assert
         Assert.Equal(384, actual.PlayerAttributeChanges.Count());
         var actualPlayerAttributeChange = actual.PlayerAttributeChanges.ElementAt(0);
-        Assert.Equal("f1105c2f23b2c673114e6c8a16b135b2", actualPlayerAttributeChange.ObfuscatedId);
+        Assert.Equal("f1105c2f23b2c673114e6c8a16b135b2", actualPlayerAttributeChange.ObfuscatedId.ValueAsString);
         Assert.Equal("Shohei Ohtani", actualPlayerAttributeChange.Name);
         Assert.Equal("f1105c2f23b2c673114e6c8a16b135b2", actualPlayerAttributeChange.Item.Uuid);
         Assert.Equal("Angels", actualPlayerAttributeChange.Team);
@@ -232,7 +231,7 @@ public class MlbTheShowApiIntegrationTests
 
         Assert.Equal(45, actual.PlayerPositionChanges.Count());
         var actualPlayerPositionChange = actual.PlayerPositionChanges.ElementAt(0);
-        Assert.Equal("a6f6b649715373a58392de57da7b4dff", actualPlayerPositionChange.ObfuscatedId);
+        Assert.Equal("a6f6b649715373a58392de57da7b4dff", actualPlayerPositionChange.ObfuscatedId.ValueAsString);
         Assert.Equal("Yandy Diaz", actualPlayerPositionChange.Name);
         Assert.Equal("a6f6b649715373a58392de57da7b4dff", actualPlayerPositionChange.Item.Uuid);
         Assert.Equal("1B", actualPlayerPositionChange.Position);
@@ -240,7 +239,7 @@ public class MlbTheShowApiIntegrationTests
 
         Assert.Equal(15, actual.NewlyAddedPlayers.Count());
         var actualNewlyAddedPlayer = actual.NewlyAddedPlayers.ElementAt(0);
-        Assert.Equal("acec9b353f1bb1005cdcec9ec34a0142", actualNewlyAddedPlayer.ObfuscatedId);
+        Assert.Equal("acec9b353f1bb1005cdcec9ec34a0142", actualNewlyAddedPlayer.ObfuscatedId.ValueAsString);
         Assert.Equal("Jake Marisnick", actualNewlyAddedPlayer.Name);
         Assert.Equal("White Sox", actualNewlyAddedPlayer.Team);
         Assert.Equal("CF", actualNewlyAddedPlayer.Position);

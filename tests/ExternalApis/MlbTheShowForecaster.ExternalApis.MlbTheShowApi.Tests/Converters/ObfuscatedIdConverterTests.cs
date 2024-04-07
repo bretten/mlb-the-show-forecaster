@@ -20,7 +20,7 @@ public class ObfuscatedIdConverterTests
         Assert.NotNull(actual);
         Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actual.ObfuscatedId.RawValue);
         Assert.True(actual.ObfuscatedId.IsValid);
-        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actual.ObfuscatedId.Value.ToString("N"));
+        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actual.ObfuscatedId.ValueAsString);
     }
 
     [Fact]
