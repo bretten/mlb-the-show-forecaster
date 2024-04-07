@@ -14,8 +14,8 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Convert
 public sealed class ObfuscatedIdConverter : JsonConverter<ObfuscatedIdDto>
 {
     /// <summary>
-    /// Uses the reader to check if the obfuscated ID is a number. If it is a number, it will convert it to
-    /// a string. If it is a string, it remains unchanged.
+    /// Uses the reader to check if the obfuscated ID is a number. The raw value of the reader is then passed to
+    /// <see cref="ObfuscatedIdDto"/>
     /// </summary>
     /// <param name="reader">The reader that is parsing the JSON</param>
     /// <param name="typeToConvert">The type being converted</param>
