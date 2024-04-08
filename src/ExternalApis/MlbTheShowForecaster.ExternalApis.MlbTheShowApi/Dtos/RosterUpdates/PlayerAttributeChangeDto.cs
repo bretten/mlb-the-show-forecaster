@@ -16,9 +16,10 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Ro
 /// <param name="OldRarity">The old rarity of the <see cref="MlbCardDto"/></param>
 /// <param name="Changes">A collection of attribute changes</param>
 public sealed record PlayerAttributeChangeDto(
-    string ObfuscatedId,
+    ObfuscatedIdDto ObfuscatedId,
     string Name,
     string Team,
+    [property: JsonPropertyName("item")]
     MlbCardDto Item,
     [property: JsonPropertyName("current_rank")]
     int CurrentRank,
@@ -30,4 +31,4 @@ public sealed record PlayerAttributeChangeDto(
     string OldRarity,
     [property: JsonPropertyName("changes")]
     IEnumerable<AttributeChangeDto> Changes
-) : PlayerChangeDto(ObfuscatedId, Name, Team, Item);
+) : PlayerChangeDto(ObfuscatedId, Name, Team);
