@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.RosterUpdates;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.Mapping.TestClasses;
 
@@ -87,6 +88,58 @@ public static class Faker
             BestBuyPrice: bestBuyPrice,
             Item: itemDto ?? FakeMlbCardDto(),
             PriceHistory: priceHistory ?? new List<ListingPriceDto>()
+        );
+    }
+
+    public static PlayerAttributeChangeDto FakePlayerAttributeChangeDto(string uuid = "id1", string name = "name1",
+        string team = "team1", MlbCardDto? item = null, int currentRank = 70, string currentRarity = "Bronze",
+        int oldRank = 50, string oldRarity = "Common", IEnumerable<AttributeChangeDto>? attributeChangeDtos = null)
+    {
+        return new PlayerAttributeChangeDto(
+            new ObfuscatedIdDto(uuid),
+            Name: name,
+            Team: team,
+            Item: item ?? FakeMlbCardDto(),
+            CurrentRank: currentRank,
+            CurrentRarity: currentRarity,
+            OldRank: oldRank,
+            OldRarity: oldRarity,
+            attributeChangeDtos ?? new List<AttributeChangeDto>()
+        );
+    }
+
+    public static AttributeChangeDto FakeAttributeChangeDto(string name = "acc", string currentValue = "50",
+        string direction = "positive", string delta = "+5", string color = "yellow")
+    {
+        return new AttributeChangeDto(
+            Name: name,
+            CurrentValue: currentValue,
+            Direction: direction,
+            Delta: delta,
+            Color: color
+        );
+    }
+
+    public static PlayerPositionChangeDto FakePlayerPositionChangeDto(string uuid = "id1", string name = "name1",
+        string team = "team1", MlbCardDto? item = null, string position = "1B")
+    {
+        return new PlayerPositionChangeDto(new ObfuscatedIdDto(uuid),
+            Name: name,
+            Team: team,
+            Item: item ?? FakeMlbCardDto(),
+            Position: position
+        );
+    }
+
+    public static NewlyAddedPlayerDto FakeNewlyAddedPlayerDto(string uuid = "id1", string name = "name1",
+        string team = "team1", string position = "1B", int currentRank = 70, string currentRarity = "Bronze")
+    {
+        return new NewlyAddedPlayerDto(new ObfuscatedIdDto(uuid),
+            Name: name,
+            Team: team,
+            Position: position,
+            CurrentRank: currentRank,
+            CurrentRarity: currentRarity
         );
     }
 }
