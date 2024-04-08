@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.RosterUpdates;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.RosterUpdates;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.Mapping.TestClasses;
 
@@ -140,6 +141,17 @@ public static class Faker
             Position: position,
             CurrentRank: currentRank,
             CurrentRarity: currentRarity
+        );
+    }
+
+    public static GetRosterUpdateResponse FakeGetRosterUpdateResponse(
+        IEnumerable<PlayerAttributeChangeDto>? playerAttributeChanges = null,
+        IEnumerable<PlayerPositionChangeDto>? positionChanges = null,
+        IEnumerable<NewlyAddedPlayerDto>? newlyAddedPlayers = null)
+    {
+        return new GetRosterUpdateResponse(playerAttributeChanges ?? new List<PlayerAttributeChangeDto>(),
+            positionChanges ?? new List<PlayerPositionChangeDto>(),
+            newlyAddedPlayers ?? new List<NewlyAddedPlayerDto>()
         );
     }
 }
