@@ -86,4 +86,15 @@ public static class Faker
             BestSellPrice: NaturalNumber.Create(bestSellPrice)
         );
     }
+
+    public static RosterUpdate FakeRosterUpdate(DateOnly? date = null,
+        IReadOnlyList<PlayerRatingChange>? ratingChanges = null,
+        IReadOnlyList<PlayerPositionChange>? positionChanges = null, IReadOnlyList<PlayerAddition>? newPlayers = null)
+    {
+        return new RosterUpdate(date ?? new DateOnly(2024, 4, 1),
+            ratingChanges ?? new List<PlayerRatingChange>(),
+            positionChanges ?? new List<PlayerPositionChange>(),
+            newPlayers ?? new List<PlayerAddition>()
+        );
+    }
 }
