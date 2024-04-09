@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 
@@ -10,25 +11,25 @@ public enum Rarity
     /// <summary>
     /// Diamond, the most rare
     /// </summary>
-    Diamond,
+    [Display(Name = "Diamond")] Diamond,
 
     /// <summary>
     /// Gold
     /// </summary>
-    Gold,
+    [Display(Name = "Gold")] Gold,
 
     /// <summary>
     /// Silver
     /// </summary>
-    Silver,
+    [Display(Name = "Silver")] Silver,
 
     /// <summary>
     /// Bronze
     /// </summary>
-    Bronze,
+    [Display(Name = "Bronze")] Bronze,
 
     /// <summary>
     /// Common, the least rare
     /// </summary>
-    Common
+    [Display(Name = "Common")] Common
 }
