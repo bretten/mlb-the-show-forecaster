@@ -18,17 +18,20 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
 
         builder.Property(e => e.Id)
             .IsRequired()
+            .HasColumnOrder(0)
             .HasColumnName(Constants.Cards.Id);
 
         builder.Property(e => e.Year)
             .IsRequired()
             .HasColumnName(Constants.Cards.Year)
+            .HasColumnOrder(1)
             .HasConversion(v => v.Value,
                 v => SeasonYear.Create(v));
 
         builder.Property(e => e.ExternalId)
             .IsRequired()
             .HasColumnName(Constants.Cards.ExternalId)
+            .HasColumnOrder(2)
             .HasConversion(v => v.Value,
                 v => CardExternalId.Create(v));
 
@@ -36,18 +39,21 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(12)")
             .HasColumnName(Constants.Cards.Type)
+            .HasColumnOrder(3)
             .HasConversion(v => v.GetDisplayName(),
                 v => (CardType)TypeDescriptor.GetConverter(typeof(CardType)).ConvertFrom(v)!);
 
         builder.Property(e => e.ImageLocation)
             .IsRequired()
             .HasColumnName(Constants.Cards.ImageLocation)
+            .HasColumnOrder(4)
             .HasConversion(v => v.Value.OriginalString,
                 v => CardImageLocation.Create(v));
 
         builder.Property(e => e.Name)
             .IsRequired()
             .HasColumnName(Constants.Cards.Name)
+            .HasColumnOrder(5)
             .HasConversion(v => v.Value,
                 v => CardName.Create(v));
 
@@ -55,6 +61,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(8)")
             .HasColumnName(Constants.Cards.Rarity)
+            .HasColumnOrder(6)
             .HasConversion(v => v.GetDisplayName(),
                 v => (Rarity)TypeDescriptor.GetConverter(typeof(Rarity)).ConvertFrom(v)!);
 
@@ -62,6 +69,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(8)")
             .HasColumnName(Constants.Cards.Series)
+            .HasColumnOrder(7)
             .HasConversion(v => v.GetDisplayName(),
                 v => (CardSeries)TypeDescriptor.GetConverter(typeof(CardSeries)).ConvertFrom(v)!);
 
@@ -69,6 +77,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(4)")
             .HasColumnName(Constants.PlayerCards.Position)
+            .HasColumnOrder(8)
             .HasConversion(v => v.GetDisplayName(),
                 v => (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(v)!);
 
@@ -76,6 +85,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(4)")
             .HasColumnName(Constants.PlayerCards.TeamShortName)
+            .HasColumnOrder(9)
             .HasConversion(v => v.Value,
                 v => TeamShortName.Create(v));
 
@@ -83,6 +93,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("smallint")
             .HasColumnName(Constants.PlayerCards.OverallRating)
+            .HasColumnOrder(10)
             .HasConversion(v => v.Value,
                 v => OverallRating.Create(v));
 
