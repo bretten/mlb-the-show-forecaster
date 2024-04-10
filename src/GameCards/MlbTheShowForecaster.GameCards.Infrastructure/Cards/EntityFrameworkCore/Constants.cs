@@ -234,7 +234,12 @@ public static class Constants
         /// Table name
         /// </summary>
         public const string TableName = "player_card_historical_ratings";
-        
+
+        /// <summary>
+        /// Foreign key that references <see cref="PlayerCard"/>
+        /// </summary>
+        public const string PlayerCardId = "player_card_id";
+
         /// <summary>
         /// The first date the player card had this rating
         /// </summary>

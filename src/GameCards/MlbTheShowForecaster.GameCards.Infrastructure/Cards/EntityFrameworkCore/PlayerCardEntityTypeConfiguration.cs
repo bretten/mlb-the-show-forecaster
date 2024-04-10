@@ -16,22 +16,24 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
     {
         builder.ToTable(Constants.PlayerCards.TableName, Constants.Schema);
 
+        var columnOrder = 0;
+
         builder.Property(e => e.Id)
             .IsRequired()
-            .HasColumnOrder(0)
-            .HasColumnName(Constants.Cards.Id);
+            .HasColumnName(Constants.Cards.Id)
+            .HasColumnOrder(columnOrder++);
 
         builder.Property(e => e.Year)
             .IsRequired()
             .HasColumnName(Constants.Cards.Year)
-            .HasColumnOrder(1)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => SeasonYear.Create(v));
 
         builder.Property(e => e.ExternalId)
             .IsRequired()
             .HasColumnName(Constants.Cards.ExternalId)
-            .HasColumnOrder(2)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => CardExternalId.Create(v));
 
@@ -39,21 +41,21 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(12)")
             .HasColumnName(Constants.Cards.Type)
-            .HasColumnOrder(3)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.GetDisplayName(),
                 v => (CardType)TypeDescriptor.GetConverter(typeof(CardType)).ConvertFrom(v)!);
 
         builder.Property(e => e.ImageLocation)
             .IsRequired()
             .HasColumnName(Constants.Cards.ImageLocation)
-            .HasColumnOrder(4)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value.OriginalString,
                 v => CardImageLocation.Create(v));
 
         builder.Property(e => e.Name)
             .IsRequired()
             .HasColumnName(Constants.Cards.Name)
-            .HasColumnOrder(5)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => CardName.Create(v));
 
@@ -61,7 +63,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(8)")
             .HasColumnName(Constants.Cards.Rarity)
-            .HasColumnOrder(6)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.GetDisplayName(),
                 v => (Rarity)TypeDescriptor.GetConverter(typeof(Rarity)).ConvertFrom(v)!);
 
@@ -69,7 +71,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(8)")
             .HasColumnName(Constants.Cards.Series)
-            .HasColumnOrder(7)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.GetDisplayName(),
                 v => (CardSeries)TypeDescriptor.GetConverter(typeof(CardSeries)).ConvertFrom(v)!);
 
@@ -77,7 +79,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(4)")
             .HasColumnName(Constants.PlayerCards.Position)
-            .HasColumnOrder(8)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.GetDisplayName(),
                 v => (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(v)!);
 
@@ -85,7 +87,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("varchar(4)")
             .HasColumnName(Constants.PlayerCards.TeamShortName)
-            .HasColumnOrder(9)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => TeamShortName.Create(v));
 
@@ -93,204 +95,245 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
             .IsRequired()
             .HasColumnType("smallint")
             .HasColumnName(Constants.PlayerCards.OverallRating)
-            .HasColumnOrder(10)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => OverallRating.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.Stamina)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.Stamina)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+        builder.ComplexProperty(e => e.PlayerCardAttributes,
+            b =>
+            {
+                b.Property(e => e.Stamina)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.Stamina)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.PitchingClutch)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.PitchingClutch)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.PitchingClutch)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.PitchingClutch)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.HitsPerNine)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.HitsPerNine)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.HitsPerNine)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.HitsPerNine)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.StrikeoutsPerNine)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.StrikeoutsPerNine)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.StrikeoutsPerNine)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.StrikeoutsPerNine)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.BaseOnBallsPerNine)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.BaseOnBallsPerNine)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.BaseOnBallsPerNine)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.BaseOnBallsPerNine)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.HomeRunsPerNine)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.HomeRunsPerNine)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.HomeRunsPerNine)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.HomeRunsPerNine)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.PitchVelocity)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.PitchVelocity)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.PitchVelocity)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.PitchVelocity)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.PitchControl)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.PitchControl)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.PitchControl)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.PitchControl)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.PitchMovement)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.PitchMovement)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.PitchMovement)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.PitchMovement)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.ContactLeft)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.ContactLeft)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.ContactLeft)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.ContactLeft)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.ContactRight)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.ContactRight)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.ContactRight)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.ContactRight)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.PowerLeft)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.PowerLeft)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.PowerLeft)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.PowerLeft)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.PowerRight)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.PowerRight)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.PowerRight)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.PowerRight)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.PlateVision)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.PlateVision)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.PlateVision)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.PlateVision)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.PlateDiscipline)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.PlateDiscipline)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.PlateDiscipline)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.PlateDiscipline)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.BattingClutch)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.BattingClutch)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.BattingClutch)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.BattingClutch)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.BuntingAbility)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.BuntingAbility)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.BuntingAbility)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.BuntingAbility)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.DragBuntingAbility)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.DragBuntingAbility)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.DragBuntingAbility)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.DragBuntingAbility)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.HittingDurability)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.HittingDurability)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.HittingDurability)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.HittingDurability)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.FieldingDurability)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.FieldingDurability)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.FieldingDurability)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.FieldingDurability)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.FieldingAbility)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.FieldingAbility)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.FieldingAbility)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.FieldingAbility)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.ArmStrength)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.ArmStrength)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.ArmStrength)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.ArmStrength)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.ArmAccuracy)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.ArmAccuracy)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.ArmAccuracy)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.ArmAccuracy)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.ReactionTime)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.ReactionTime)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.ReactionTime)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.ReactionTime)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.Blocking)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.Blocking)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.Blocking)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.Blocking)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.Speed)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.Speed)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.Speed)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.Speed)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.BaseRunningAbility)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.BaseRunningAbility)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.BaseRunningAbility)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.BaseRunningAbility)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
 
-        builder.Property(e => e.PlayerCardAttributes.BaseRunningAggression)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCards.BaseRunningAggression)
-            .HasConversion(v => v.Value,
-                v => AbilityAttribute.Create(v));
+                b.Property(e => e.BaseRunningAggression)
+                    .IsRequired()
+                    .HasColumnType("smallint")
+                    .HasColumnName(Constants.PlayerCards.BaseRunningAggression)
+                    .HasColumnOrder(columnOrder++)
+                    .HasConversion(v => v.Value,
+                        v => AbilityAttribute.Create(v));
+            });
+
+        // Ignore these properties. They are not relationships/navigation properties, but just convenience methods for other members of the class
+        builder.Ignore(x => x.HistoricalRatingsChronologically);
+
+        // Relation is setup on PlayerCardHistoricalRating end
+        // builder.HasMany<PlayerCardHistoricalRating>("_historicalRatings")
+        //     .WithOne()
+        //     .HasForeignKey(Constants.PlayerCardHistoricalRatings.PlayerCardId)
+        //     .IsRequired();
     }
 }
