@@ -25,7 +25,7 @@ public sealed class PlayerCardHistoricalRating : ValueObject
     /// <summary>
     /// The player attributes during this time period
     /// </summary>
-    public PlayerCardAttributes Attributes { get; }
+    public PlayerCardAttributes Attributes { get; } = null!;
 
     /// <summary>
     /// Constructor
@@ -41,6 +41,19 @@ public sealed class PlayerCardHistoricalRating : ValueObject
         EndDate = endDate;
         OverallRating = overallRating;
         Attributes = attributes;
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="startDate">The first date the player card had this rating</param>
+    /// <param name="endDate">The last date the player card had this rating</param>
+    /// <param name="overallRating">The overall rating during this time period</param>
+    private PlayerCardHistoricalRating(DateOnly startDate, DateOnly endDate, OverallRating overallRating)
+    {
+        StartDate = startDate;
+        EndDate = endDate;
+        OverallRating = overallRating;
     }
 
     /// <summary>

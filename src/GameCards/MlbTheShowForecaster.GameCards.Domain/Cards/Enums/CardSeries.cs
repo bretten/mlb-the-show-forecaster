@@ -1,19 +1,23 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using com.brettnamba.MlbTheShowForecaster.Common.Converters;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 
 /// <summary>
 /// Represents the different types of <see cref="Card"/> series
 /// </summary>
+[TypeConverter(typeof(EnumDisplayNameConverter))]
 public enum CardSeries
 {
     /// <summary>
     /// A series of cards for current MLB players
     /// </summary>
-    Live = 1337,
+    [Display(Name = "live")] Live = 1337,
 
     /// <summary>
     /// A series of cards for MLB players in their rookie year
     /// </summary>
-    Rookie = 10001
+    [Display(Name = "rookie")] Rookie = 10001
 }

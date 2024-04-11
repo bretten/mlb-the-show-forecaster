@@ -37,7 +37,7 @@ public sealed class PlayerCard : Card
     /// <summary>
     /// The player ability attributes
     /// </summary>
-    public PlayerCardAttributes PlayerCardAttributes { get; private set; }
+    public PlayerCardAttributes PlayerCardAttributes { get; private set; } = null!;
 
     /// <summary>
     /// The different ratings this player card has had in chronological order
@@ -68,6 +68,29 @@ public sealed class PlayerCard : Card
         TeamShortName = teamShortName;
         OverallRating = overallRating;
         PlayerCardAttributes = playerCardAttributes;
+        _historicalRatings = new List<PlayerCardHistoricalRating>();
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="year">The year of MLB The Show</param>
+    /// <param name="externalId">The card ID from MLB The Show</param>
+    /// <param name="type">The card type</param>
+    /// <param name="imageLocation">The card image location</param>
+    /// <param name="name">The name of the card</param>
+    /// <param name="rarity">The rarity of the card</param>
+    /// <param name="series">The series of the card</param>
+    /// <param name="position">The player card's primary position</param>
+    /// <param name="teamShortName">The player's team name abbreviated</param>
+    /// <param name="overallRating">The overall rating of the card</param>
+    private PlayerCard(SeasonYear year, CardExternalId externalId, CardType type, CardImageLocation imageLocation,
+        CardName name, Rarity rarity, CardSeries series, Position position, TeamShortName teamShortName,
+        OverallRating overallRating) : base(year, externalId, type, imageLocation, name, rarity, series)
+    {
+        Position = position;
+        TeamShortName = teamShortName;
+        OverallRating = overallRating;
         _historicalRatings = new List<PlayerCardHistoricalRating>();
     }
 

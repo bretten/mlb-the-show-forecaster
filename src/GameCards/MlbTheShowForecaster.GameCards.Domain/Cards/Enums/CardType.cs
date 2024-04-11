@@ -1,29 +1,33 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using com.brettnamba.MlbTheShowForecaster.Common.Converters;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 
 /// <summary>
 /// Represents the different types of <see cref="Card"/>s
 /// </summary>
+[TypeConverter(typeof(EnumDisplayNameConverter))]
 public enum CardType
 {
     /// <summary>
     /// A player card
     /// </summary>
-    MlbCard,
+    [Display(Name = "mlb_card")] MlbCard,
 
     /// <summary>
     /// A stadium card
     /// </summary>
-    Stadium,
+    [Display(Name = "stadium")] Stadium,
 
     /// <summary>
     /// An equipment card
     /// </summary>
-    Equipment,
+    [Display(Name = "equipment")] Equipment,
 
     /// <summary>
     /// A sponsorship card
     /// </summary>
-    Sponsorship
+    [Display(Name = "sponsorship")] Sponsorship
 }
