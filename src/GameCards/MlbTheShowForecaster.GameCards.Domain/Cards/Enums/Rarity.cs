@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using com.brettnamba.MlbTheShowForecaster.Common.Converters;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
@@ -6,6 +8,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 /// <summary>
 /// Represents the rarity of a <see cref="Card"/>
 /// </summary>
+[TypeConverter(typeof(EnumDisplayNameConverter))]
 public enum Rarity
 {
     /// <summary>
