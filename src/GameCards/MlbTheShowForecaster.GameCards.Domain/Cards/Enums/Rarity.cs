@@ -11,25 +11,25 @@ public enum Rarity
     /// <summary>
     /// Diamond, the most rare
     /// </summary>
-    [Display(Name = "Diamond")] Diamond,
+    [Display(Name = "diamond")] Diamond,
 
     /// <summary>
     /// Gold
     /// </summary>
-    [Display(Name = "Gold")] Gold,
+    [Display(Name = "gold")] Gold,
 
     /// <summary>
     /// Silver
     /// </summary>
-    [Display(Name = "Silver")] Silver,
+    [Display(Name = "silver")] Silver,
 
     /// <summary>
     /// Bronze
     /// </summary>
-    [Display(Name = "Bronze")] Bronze,
+    [Display(Name = "bronze")] Bronze,
 
     /// <summary>
     /// Common, the least rare
     /// </summary>
-    [Display(Name = "Common")] Common
+    [Display(Name = "common")] Common
 }

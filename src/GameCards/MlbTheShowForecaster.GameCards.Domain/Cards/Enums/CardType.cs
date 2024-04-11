@@ -11,20 +11,20 @@ public enum CardType
     /// <summary>
     /// A player card
     /// </summary>
-    [Display(Name = "MlbCard")] MlbCard,
+    [Display(Name = "mlb_card")] MlbCard,
 
     /// <summary>
     /// A stadium card
     /// </summary>
-    [Display(Name = "Stadium")] Stadium,
+    [Display(Name = "stadium")] Stadium,
 
     /// <summary>
     /// An equipment card
     /// </summary>
-    [Display(Name = "Equipment")] Equipment,
+    [Display(Name = "equipment")] Equipment,
 
     /// <summary>
     /// A sponsorship card
     /// </summary>
-    [Display(Name = "Sponsorship")] Sponsorship
+    [Display(Name = "sponsorship")] Sponsorship
 }

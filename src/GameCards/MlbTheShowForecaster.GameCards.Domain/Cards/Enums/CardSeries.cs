@@ -11,10 +11,10 @@ public enum CardSeries
     /// <summary>
     /// A series of cards for current MLB players
     /// </summary>
-    [Display(Name = "Live")] Live = 1337,
+    [Display(Name = "live")] Live = 1337,
 
     /// <summary>
     /// A series of cards for MLB players in their rookie year
     /// </summary>
-    [Display(Name = "Rookie")] Rookie = 10001
+    [Display(Name = "rookie")] Rookie = 10001
 }
