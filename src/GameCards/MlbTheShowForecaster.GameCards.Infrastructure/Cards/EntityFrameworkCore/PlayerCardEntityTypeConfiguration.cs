@@ -32,6 +32,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
 
         builder.Property(e => e.Year)
             .IsRequired()
+            .HasColumnType("smallint")
             .HasColumnName(Constants.Cards.Year)
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
@@ -337,7 +338,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
         // Ignore these properties. They are not relationships/navigation properties, but just convenience methods for other members of the class
         builder.Ignore(x => x.HistoricalRatingsChronologically);
 
-        // Relation is setup on PlayerCardHistoricalRating end
+        // Relation is defined on PlayerCardHistoricalRating end
         // builder.HasMany<PlayerCardHistoricalRating>("_historicalRatings")
         //     .WithOne()
         //     .HasForeignKey(Constants.PlayerCardHistoricalRatings.PlayerCardId)
