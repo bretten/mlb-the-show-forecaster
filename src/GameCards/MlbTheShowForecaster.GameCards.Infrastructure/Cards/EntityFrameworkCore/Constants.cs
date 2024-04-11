@@ -70,6 +70,11 @@ public static class Constants
         public const string TableName = "player_cards";
 
         /// <summary>
+        /// Primary key
+        /// </summary>
+        public const string PrimaryKeyName = $"{TableName}_pkey";
+
+        /// <summary>
         /// The player card's primary position
         /// </summary>
         public const string Position = "position";
@@ -223,6 +228,17 @@ public static class Constants
         /// How likely it is the player can steal a base
         /// </summary>
         public const string BaseRunningAggression = "base_running_aggression";
+
+        /// <summary>
+        /// Indexes for <see cref="PlayerCard"/>
+        /// </summary>
+        public static class Indexes
+        {
+            /// <summary>
+            /// For querying by game year and then the card's external ID
+            /// </summary>
+            public const string YearAndExternalId = $"{TableName}_{Cards.Year}_{Cards.ExternalId}_idx";
+        }
     }
 
     /// <summary>
@@ -234,6 +250,11 @@ public static class Constants
         /// Table name
         /// </summary>
         public const string TableName = "player_card_historical_ratings";
+
+        /// <summary>
+        /// Primary key
+        /// </summary>
+        public const string PrimaryKeyName = $"{TableName}_pkey";
 
         /// <summary>
         /// Foreign key that references <see cref="PlayerCard"/>
@@ -249,5 +270,16 @@ public static class Constants
         /// The last date the player card had this rating
         /// </summary>
         public const string EndDate = "end_date";
+
+        /// <summary>
+        /// Foreign keys
+        /// </summary>
+        public static class ForeignKeys
+        {
+            /// <summary>
+            /// <see cref="PlayerCardHistoricalRatings"/> references <see cref="PlayerCard"/>
+            /// </summary>
+            public const string PlayerCardsConstraint = $"{TableName}_{PlayerCards.TableName}_{Cards.Id}_fkey";
+        }
     }
 }

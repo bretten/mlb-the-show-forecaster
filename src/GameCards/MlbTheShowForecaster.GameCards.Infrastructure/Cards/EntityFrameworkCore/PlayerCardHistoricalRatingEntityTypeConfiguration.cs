@@ -15,12 +15,13 @@ public sealed class
 
         builder.HasOne<PlayerCard>()
             .WithMany("_historicalRatings")
-            .HasForeignKey(Constants.PlayerCardHistoricalRatings.PlayerCardId);
+            .HasForeignKey(Constants.PlayerCardHistoricalRatings.PlayerCardId)
+            .HasConstraintName(Constants.PlayerCardHistoricalRatings.ForeignKeys.PlayerCardsConstraint);
 
         builder.HasKey([
             Constants.PlayerCardHistoricalRatings.PlayerCardId, nameof(PlayerCardHistoricalRating.StartDate),
             nameof(PlayerCardHistoricalRating.EndDate)
-        ]);
+        ]).HasName(Constants.PlayerCardHistoricalRatings.PrimaryKeyName);
 
         var columnOrder = 0;
 

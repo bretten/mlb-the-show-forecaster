@@ -16,6 +16,13 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
     {
         builder.ToTable(Constants.PlayerCards.TableName, Constants.Schema);
 
+        builder.HasKey(e => e.Id)
+            .HasName(Constants.PlayerCards.PrimaryKeyName);
+
+        // Index for querying by game year and then the card's external ID
+        builder.HasIndex(e => new { e.Year, e.ExternalId }, Constants.PlayerCards.Indexes.YearAndExternalId)
+            .HasMethod("btree");
+
         var columnOrder = 0;
 
         builder.Property(e => e.Id)
