@@ -24,7 +24,7 @@ public class ObfuscatedIdConverterTests
     }
 
     [Fact]
-    public void Read_NegativeOneInteger_ReturnsObfuscatedId()
+    public void Read_NegativeOneInteger_ReturnsNull()
     {
         // Arrange
         const string json = "{\"obfuscated_id\": -1}";
@@ -36,7 +36,7 @@ public class ObfuscatedIdConverterTests
         Assert.NotNull(actual);
         Assert.Equal(-1, actual.ObfuscatedId.RawValue);
         Assert.False(actual.ObfuscatedId.IsValid);
-        Assert.Equal(Guid.Empty, actual.ObfuscatedId.Value);
+        Assert.Null(actual.ObfuscatedId.Value);
     }
 
     [Fact]

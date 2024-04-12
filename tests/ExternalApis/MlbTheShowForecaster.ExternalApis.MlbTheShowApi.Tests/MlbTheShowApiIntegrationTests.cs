@@ -25,7 +25,7 @@ public class MlbTheShowApiIntegrationTests
         // Assert
         Assert.IsType<MlbCardDto>(actual);
         var actualItem = actual as MlbCardDto;
-        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actualItem!.Uuid);
+        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actualItem!.Uuid.ValueAsString);
         Assert.Equal("mlb_card", actualItem.Type);
         Assert.Equal(
             "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCR2MvRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--a6aeae283163aa6cb6bf114e18ab406978aabf4f/2d1fb7af6a8075ea3e67b28d066e2556.webp",
@@ -52,7 +52,7 @@ public class MlbTheShowApiIntegrationTests
         // Assert
         Assert.IsType<StadiumDto>(actual);
         var actualItem = actual as StadiumDto;
-        Assert.Equal("7520fa31d14f45add6d61e52df5a03ff", actualItem!.Uuid);
+        Assert.Equal("7520fa31d14f45add6d61e52df5a03ff", actualItem!.Uuid.ValueAsString);
         Assert.Equal("stadium", actualItem.Type);
         Assert.Equal(
             "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRUtsRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--1cde10216309186128b5554d70496996a8598e9f/4d92741ae4ca5675c82b335638d512fa.webp",
@@ -120,7 +120,7 @@ public class MlbTheShowApiIntegrationTests
         Assert.True(0 < actual.BestSellPrice);
         Assert.IsType<MlbCardDto>(actual.Item);
         var actualItem = actual.Item as MlbCardDto;
-        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actualItem!.Uuid);
+        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actualItem!.Uuid.ValueAsString);
         Assert.Equal("mlb_card", actualItem.Type);
         Assert.Equal(
             "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCR2MvRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--a6aeae283163aa6cb6bf114e18ab406978aabf4f/2d1fb7af6a8075ea3e67b28d066e2556.webp",
@@ -150,7 +150,7 @@ public class MlbTheShowApiIntegrationTests
         Assert.True(0 < actual.BestSellPrice);
         Assert.IsType<StadiumDto>(actual.Item);
         var actualItem = actual.Item as StadiumDto;
-        Assert.Equal("7520fa31d14f45add6d61e52df5a03ff", actualItem!.Uuid);
+        Assert.Equal("7520fa31d14f45add6d61e52df5a03ff", actualItem!.Uuid.ValueAsString);
         Assert.Equal("stadium", actualItem.Type);
         Assert.Equal(
             "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRUtsRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--1cde10216309186128b5554d70496996a8598e9f/4d92741ae4ca5675c82b335638d512fa.webp",
@@ -216,7 +216,7 @@ public class MlbTheShowApiIntegrationTests
         var actualPlayerAttributeChange = actual.PlayerAttributeChanges.ElementAt(0);
         Assert.Equal("f1105c2f23b2c673114e6c8a16b135b2", actualPlayerAttributeChange.ObfuscatedId.ValueAsString);
         Assert.Equal("Shohei Ohtani", actualPlayerAttributeChange.Name);
-        Assert.Equal("f1105c2f23b2c673114e6c8a16b135b2", actualPlayerAttributeChange.Item.Uuid);
+        Assert.Equal("f1105c2f23b2c673114e6c8a16b135b2", actualPlayerAttributeChange.Item.Uuid.ValueAsString);
         Assert.Equal("Angels", actualPlayerAttributeChange.Team);
         Assert.Equal(96, actualPlayerAttributeChange.CurrentRank);
         Assert.Equal("Diamond", actualPlayerAttributeChange.CurrentRarity);
@@ -233,7 +233,7 @@ public class MlbTheShowApiIntegrationTests
         var actualPlayerPositionChange = actual.PlayerPositionChanges.ElementAt(0);
         Assert.Equal("a6f6b649715373a58392de57da7b4dff", actualPlayerPositionChange.ObfuscatedId.ValueAsString);
         Assert.Equal("Yandy Diaz", actualPlayerPositionChange.Name);
-        Assert.Equal("a6f6b649715373a58392de57da7b4dff", actualPlayerPositionChange.Item.Uuid);
+        Assert.Equal("a6f6b649715373a58392de57da7b4dff", actualPlayerPositionChange.Item.Uuid.ValueAsString);
         Assert.Equal("1B", actualPlayerPositionChange.Position);
         Assert.Equal("Rays", actualPlayerPositionChange.Team);
 

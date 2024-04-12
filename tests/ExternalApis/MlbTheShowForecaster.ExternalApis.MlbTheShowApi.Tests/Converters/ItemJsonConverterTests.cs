@@ -19,7 +19,7 @@ public class ItemJsonConverterTests
         // Assert
         Assert.IsType<MlbCardDto>(actual);
         var actualItem = actual as MlbCardDto;
-        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actualItem!.Uuid);
+        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actualItem!.Uuid.ValueAsString);
         Assert.Equal("mlb_card", actualItem.Type);
         Assert.Equal(
             "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCR2MvRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--a6aeae283163aa6cb6bf114e18ab406978aabf4f/2d1fb7af6a8075ea3e67b28d066e2556.webp",
@@ -73,7 +73,7 @@ public class ItemJsonConverterTests
         // Assert
         Assert.IsType<StadiumDto>(actual);
         var actualItem = actual as StadiumDto;
-        Assert.Equal("7520fa31d14f45add6d61e52df5a03ff", actualItem!.Uuid);
+        Assert.Equal("7520fa31d14f45add6d61e52df5a03ff", actualItem!.Uuid.ValueAsString);
         Assert.Equal("stadium", actualItem.Type);
         Assert.Equal(
             "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCRUtsRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--1cde10216309186128b5554d70496996a8598e9f/4d92741ae4ca5675c82b335638d512fa.webp",
@@ -100,7 +100,7 @@ public class ItemJsonConverterTests
         // Assert
         Assert.IsType<EquipmentDto>(actual);
         var actualItem = actual as EquipmentDto;
-        Assert.Equal("5ef8cf77201dc48f2a2f22cd14ec648c", actualItem!.Uuid);
+        Assert.Equal("5ef8cf77201dc48f2a2f22cd14ec648c", actualItem!.Uuid.ValueAsString);
         Assert.Equal("equipment", actualItem.Type);
         Assert.Equal(
             "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCTnRMRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--6a2788233bdefd14e277d29cdd07909d979ab18d/c402564d08b21bb9d94a7513b79c98f8.webp",
@@ -127,7 +127,7 @@ public class ItemJsonConverterTests
         // Assert
         Assert.IsType<SponsorshipDto>(actual);
         var actualItem = actual as SponsorshipDto;
-        Assert.Equal("0fe297769a5113a8c7b5942ebbef4d96", actualItem!.Uuid);
+        Assert.Equal("0fe297769a5113a8c7b5942ebbef4d96", actualItem!.Uuid.ValueAsString);
         Assert.Equal("sponsorship", actualItem.Type);
         Assert.Equal(
             "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCTDdKRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--dc09e114b344777ad20f5e6ec1900e3a116325e0/default-sponsorship.webp",
@@ -151,7 +151,7 @@ public class ItemJsonConverterTests
         // Assert
         Assert.IsType<UnlockableDto>(actual);
         var actualItem = actual as UnlockableDto;
-        Assert.Equal("fe6a68822b44d9bcaa8c858f62f06f34", actualItem!.Uuid);
+        Assert.Equal("fe6a68822b44d9bcaa8c858f62f06f34", actualItem!.Uuid.ValueAsString);
         Assert.Equal("unlockable", actualItem.Type);
         Assert.Equal(
             "https://mlb24.theshow.com/rails/active_storage/blobs/redirect/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaHBCT2VaRFJNPSIsImV4cCI6bnVsbCwicHVyIjoiYmxvYl9pZCJ9fQ==--5ec915bc35e04955ad47fb6f72b6cd68c5dad3eb/c50deac26950085ecf67d4409d506c30.webp",
@@ -256,7 +256,7 @@ public class ItemJsonConverterTests
     public void Write_UnknownItemType_ThrowsException()
     {
         // Arrange
-        var dto = new SponsorshipDto("id1", "unknownType", "imgUrl", "Unknown Name", "Diamond", true, "brand", "bonus");
+        var dto = new SponsorshipDto(new ObfuscatedIdDto(-1), "unknownType", "imgUrl", "Unknown Name", "Diamond", true, "brand", "bonus");
         var action = () => JsonSerializer.Serialize(dto as ItemDto);
 
         // Act

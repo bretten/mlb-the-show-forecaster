@@ -25,12 +25,12 @@ public sealed record ObfuscatedIdDto
     /// <summary>
     /// The UUID value. If the raw value was a -1 integer, the UUID value will be Guid.Empty
     /// </summary>
-    public Guid Value { get; }
+    public Guid? Value { get; }
 
     /// <summary>
     /// Returns the value in the same string format that MLB The Show returns the value as
     /// </summary>
-    public string ValueAsString => Value.ToString("N");
+    public string ValueAsString => Value?.ToString("N") ?? "";
 
     /// <summary>
     /// Constructor
@@ -40,6 +40,6 @@ public sealed record ObfuscatedIdDto
     {
         RawValue = rawValue;
         IsValid = Guid.TryParse(rawValue?.ToString(), out var guid);
-        Value = IsValid ? guid : Guid.Empty;
+        Value = IsValid ? guid : new Guid?();
     }
 }
