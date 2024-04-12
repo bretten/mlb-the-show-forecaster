@@ -234,7 +234,7 @@ public class PlayerCardTests
     {
         // Arrange
         var year = SeasonYear.Create(2024);
-        var externalId = Faker.FakeCardExternalId("id1");
+        var externalId = Faker.FakeCardExternalId(Faker.FakeGuid1);
         const CardType cardType = CardType.MlbCard;
         var cardImage = Faker.FakeCardImage("img.png");
         var cardName = Faker.FakeCardName("cardName");
@@ -251,7 +251,7 @@ public class PlayerCardTests
 
         // Assert
         Assert.Equal(2024, actual.Year.Value);
-        Assert.Equal("id1", actual.ExternalId.Value);
+        Assert.Equal(Faker.FakeGuid1, actual.ExternalId.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
         Assert.Equal(new Uri("img.png", UriKind.Relative), actual.ImageLocation.Value);
         Assert.Equal("cardName", actual.Name.Value);

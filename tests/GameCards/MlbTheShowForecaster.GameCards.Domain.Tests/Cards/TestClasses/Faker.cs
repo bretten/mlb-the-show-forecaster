@@ -12,6 +12,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestC
 /// </summary>
 public static class Faker
 {
+    public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+
+    public static CardExternalId FakeCardExternalId(Guid? guid = null)
+    {
+        return CardExternalId.Create(guid ?? FakeGuid1);
+    }
+
     public static PlayerCard FakePlayerCard(ushort? year = null, CardExternalId? externalId = null,
         CardType type = CardType.MlbCard, CardImageLocation? image = null, CardName? name = null,
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
@@ -40,11 +47,6 @@ public static class Faker
             overallRating ?? FakeOverallRating(),
             playerCardAttributes ?? FakePlayerCardAttributes()
         );
-    }
-
-    public static CardExternalId FakeCardExternalId(string externalId = "1")
-    {
-        return CardExternalId.Create(externalId);
     }
 
     public static CardImageLocation FakeCardImage(string cardImage = "img.jpg")
