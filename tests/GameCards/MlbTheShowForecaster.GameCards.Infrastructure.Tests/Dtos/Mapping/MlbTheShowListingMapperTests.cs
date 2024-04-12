@@ -16,7 +16,7 @@ public class MlbTheShowListingMapperTests
         var listing = Faker.FakeListingDto(listingName: "name1",
             bestBuyPrice: 20,
             bestSellPrice: 10,
-            itemDto: Faker.FakeMlbCardDto(uuid: "externalId1"),
+            itemDto: Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1),
             priceHistory: new List<ListingPriceDto>()
             {
                 new ListingPriceDto("04/01", BestBuyPrice: 2, BestSellPrice: 1),
@@ -31,7 +31,7 @@ public class MlbTheShowListingMapperTests
         Assert.Equal("name1", actual.ListingName);
         Assert.Equal(20, actual.BestBuyPrice.Value);
         Assert.Equal(10, actual.BestSellPrice.Value);
-        Assert.Equal("externalId1", actual.CardExternalId.Value);
+        Assert.Equal("00000000000000000000000000000001", actual.CardExternalId.Value);
         Assert.Equal(2, actual.HistoricalPrices.Count);
         Assert.Equal(new DateOnly(2024, 4, 1), actual.HistoricalPrices[0].Date);
         Assert.Equal(2, actual.HistoricalPrices[0].BestBuyPrice.Value);

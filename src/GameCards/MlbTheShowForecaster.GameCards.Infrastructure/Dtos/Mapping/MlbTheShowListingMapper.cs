@@ -23,7 +23,7 @@ public sealed class MlbTheShowListingMapper : IMlbTheShowListingMapper
         return new CardListing(listing.ListingName,
             BestBuyPrice: NaturalNumber.Create(listing.BestBuyPrice),
             BestSellPrice: NaturalNumber.Create(listing.BestSellPrice),
-            CardExternalId: CardExternalId.Create(listing.Item.Uuid),
+            CardExternalId: CardExternalId.Create(listing.Item.Uuid.ValueAsString),
             HistoricalPrices: listing.PriceHistory?.Select(x => MapPrice(year, x)).ToList() ??
                               new List<CardListingPrice>()
         );

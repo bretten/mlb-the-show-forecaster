@@ -31,7 +31,7 @@ public sealed class MlbTheShowItemMapper : IMlbTheShowItemMapper
 
         return new MlbPlayerCard(
             Year: year,
-            ExternalUuid: CardExternalId.Create(dto.Uuid),
+            ExternalUuid: CardExternalId.Create(dto.Uuid.ValueAsString),
             Type: CardType.MlbCard,
             ImageUrl: CardImageLocation.Create(dto.ImageUrl),
             Name: CardName.Create(dto.Name),

@@ -21,7 +21,7 @@ public class MlbTheShowRosterUpdateMapperTests
         var playerChange = Faker.FakePlayerAttributeChangeDto(currentRank: 80, currentRarity: "Gold",
             attributeChangeDtos: new List<AttributeChangeDto>() { attributeChange });
         var positionChange = Faker.FakePlayerPositionChangeDto(position: "3B");
-        var newPlayer = Faker.FakeNewlyAddedPlayerDto(uuid: "a71cdf423ea5906c5fa85fff95d90360");
+        var newPlayer = Faker.FakeNewlyAddedPlayerDto(uuid: Faker.FakeGuid1);
         var rosterUpdateResponse = new GetRosterUpdateResponse(new List<PlayerAttributeChangeDto>() { playerChange },
             new List<PlayerPositionChangeDto>() { positionChange },
             new List<NewlyAddedPlayerDto>() { newPlayer }
@@ -43,7 +43,7 @@ public class MlbTheShowRosterUpdateMapperTests
         Assert.Single(actual.PositionChanges);
         Assert.Equal(Position.ThirdBase, actual.PositionChanges[0].NewPosition);
         Assert.Single(actual.NewPlayers);
-        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actual.NewPlayers[0].CardExternalId.Value);
+        Assert.Equal("00000000000000000000000000000001", actual.NewPlayers[0].CardExternalId.Value);
     }
 
     [Fact]
@@ -55,7 +55,7 @@ public class MlbTheShowRosterUpdateMapperTests
             new ObfuscatedIdDto("a71cdf423ea5906c5fa85fff95d90360"),
             Name: "name100",
             Team: "team100",
-            Item: Faker.FakeMlbCardDto(uuid: "a71cdf423ea5906c5fa85fff95d90360"),
+            Item: Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1),
             CurrentRank: 80,
             CurrentRarity: "Gold",
             OldRank: 75,

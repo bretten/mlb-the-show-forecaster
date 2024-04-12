@@ -52,13 +52,13 @@ public class MlbTheShowApiCardCatalogTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        var cardDto1 = Faker.FakeMlbCardDto(uuid: "id1");
-        var cardDto2 = Faker.FakeMlbCardDto(uuid: "id2");
-        var cardDto3 = Faker.FakeMlbCardDto(uuid: "id3");
+        var cardDto1 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1);
+        var cardDto2 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid2);
+        var cardDto3 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid3);
 
-        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: "id1");
-        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: "id2");
-        var externalCard3 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: "id3");
+        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto1.Uuid.ValueAsString);
+        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto2.Uuid.ValueAsString);
+        var externalCard3 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto3.Uuid.ValueAsString);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
         stubMlbTheShowApi.Setup(x => x.GetItems(new GetItemsRequest(1, ItemType.MlbCard)))
@@ -138,12 +138,12 @@ public class MlbTheShowApiCardCatalogTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        var cardDto1 = Faker.FakeMlbCardDto(uuid: "id1");
+        var cardDto1 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1);
 
-        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: "id1");
+        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto1.Uuid.ValueAsString);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
-        stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest("id1")))
+        stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest(cardDto1.Uuid.ValueAsString)))
             .ReturnsAsync(cardDto1);
 
         var stubMlbTheShowApiFactory = new Mock<IMlbTheShowApiFactory>();
@@ -157,7 +157,8 @@ public class MlbTheShowApiCardCatalogTests
         var catalog = new MlbTheShowApiCardCatalog(stubMlbTheShowApiFactory.Object, stubItemMapper.Object);
 
         // Act
-        var actual = await catalog.GetMlbPlayerCard(seasonYear, CardExternalId.Create("id1"), cToken);
+        var actual =
+            await catalog.GetMlbPlayerCard(seasonYear, CardExternalId.Create(cardDto1.Uuid.ValueAsString), cToken);
 
         // Assert
         Assert.Equal(externalCard1, actual);

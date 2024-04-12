@@ -10,7 +10,16 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dto
 /// </summary>
 public static class Faker
 {
-    public static MlbCardDto FakeMlbCardDto(string uuid = "id1", string type = "mlb_card", string imageUrl = "img1.png",
+    public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+    public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
+    public static Guid FakeGuid3 = new("00000000-0000-0000-0000-000000000003");
+
+    public static ObfuscatedIdDto FakeUuidDto(Guid? guid = null)
+    {
+        return new ObfuscatedIdDto(guid ?? FakeGuid1);
+    }
+
+    public static MlbCardDto FakeMlbCardDto(Guid? uuid = null, string type = "mlb_card", string imageUrl = "img1.png",
         string name = "name1", string rarity = "Bronze", bool isSellable = false, string series = "Live",
         string teamShortName = "SEA", string displayPosition = "RF", int overall = 50, int stamina = 1,
         int pitchingClutch = 2, int hitsPerBf = 3, int kPerBf = 4, int bbPerBf = 5, int hrPerBf = 6,
@@ -21,7 +30,7 @@ public static class Faker
         int speed = 6, int baseRunningAbility = 7, int baseRunningAggression = 8, int scalar = 1)
     {
         return new MlbCardDto(
-            Uuid: uuid,
+            Uuid: FakeUuidDto(uuid),
             Type: type,
             ImageUrl: imageUrl,
             Name: name,
@@ -62,12 +71,12 @@ public static class Faker
         );
     }
 
-    public static StadiumDto FakeStadiumDto(string uuid = "id1", string type = "mlb_card", string imageUrl = "img1.png",
+    public static StadiumDto FakeStadiumDto(Guid? uuid = null, string type = "mlb_card", string imageUrl = "img1.png",
         string name = "name1", string rarity = "Bronze", bool isSellable = false, string teamShortName = "SEA",
         string capacity = "12300", string surface = "Grass", string elevation = "10000", int built = 2000)
     {
         return new StadiumDto(
-            Uuid: uuid,
+            Uuid: FakeUuidDto(uuid),
             Type: type,
             ImageUrl: imageUrl,
             Name: name,
@@ -92,15 +101,15 @@ public static class Faker
         );
     }
 
-    public static PlayerAttributeChangeDto FakePlayerAttributeChangeDto(string uuid = "id1", string name = "name1",
+    public static PlayerAttributeChangeDto FakePlayerAttributeChangeDto(Guid? uuid = null, string name = "name1",
         string team = "team1", MlbCardDto? item = null, int currentRank = 70, string currentRarity = "Bronze",
         int oldRank = 50, string oldRarity = "Common", IEnumerable<AttributeChangeDto>? attributeChangeDtos = null)
     {
         return new PlayerAttributeChangeDto(
-            new ObfuscatedIdDto(uuid),
+            FakeUuidDto(uuid),
             Name: name,
             Team: team,
-            Item: item ?? FakeMlbCardDto(),
+            Item: item ?? FakeMlbCardDto(uuid),
             CurrentRank: currentRank,
             CurrentRarity: currentRarity,
             OldRank: oldRank,
@@ -121,10 +130,10 @@ public static class Faker
         );
     }
 
-    public static PlayerPositionChangeDto FakePlayerPositionChangeDto(string uuid = "id1", string name = "name1",
+    public static PlayerPositionChangeDto FakePlayerPositionChangeDto(Guid? uuid = null, string name = "name1",
         string team = "team1", MlbCardDto? item = null, string position = "1B")
     {
-        return new PlayerPositionChangeDto(new ObfuscatedIdDto(uuid),
+        return new PlayerPositionChangeDto(FakeUuidDto(uuid),
             Name: name,
             Team: team,
             Item: item ?? FakeMlbCardDto(),
@@ -132,10 +141,10 @@ public static class Faker
         );
     }
 
-    public static NewlyAddedPlayerDto FakeNewlyAddedPlayerDto(string uuid = "id1", string name = "name1",
+    public static NewlyAddedPlayerDto FakeNewlyAddedPlayerDto(Guid? uuid = null, string name = "name1",
         string team = "team1", string position = "1B", int currentRank = 70, string currentRarity = "Bronze")
     {
-        return new NewlyAddedPlayerDto(new ObfuscatedIdDto(uuid),
+        return new NewlyAddedPlayerDto(FakeUuidDto(uuid),
             Name: name,
             Team: team,
             Position: position,
