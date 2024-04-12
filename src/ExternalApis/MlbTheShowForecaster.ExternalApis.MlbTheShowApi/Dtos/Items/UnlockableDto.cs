@@ -14,7 +14,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.It
 /// <param name="CategoryId">The category ID</param>
 /// <param name="SubCategoryId">The sub-category ID</param>
 public sealed record UnlockableDto(
-    string Uuid,
+    UuidDto Uuid,
     string Type,
     string ImageUrl,
     string Name,

@@ -53,7 +53,7 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     {
         return new PlayerRatingChange(
             date,
-            CardExternalId.Create(playerAttributeChange.ObfuscatedId.ValueAsString),
+            CardExternalId.Create(playerAttributeChange.Uuid.ValueAsString),
             NewRating: OverallRating.Create(playerAttributeChange.CurrentRank),
             NewRarity: _itemMapper.MapRarity(playerAttributeChange.CurrentRarity),
             OldRating: OverallRating.Create(playerAttributeChange.OldRank),
@@ -86,7 +86,7 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     /// <returns><see cref="PlayerPositionChange"/></returns>
     public PlayerPositionChange Map(PlayerPositionChangeDto positionChange)
     {
-        return new PlayerPositionChange(CardExternalId.Create(positionChange.ObfuscatedId.ValueAsString),
+        return new PlayerPositionChange(CardExternalId.Create(positionChange.Uuid.ValueAsString),
             _itemMapper.MapPosition(positionChange.Position));
     }
 
@@ -97,7 +97,7 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     /// <returns><see cref="PlayerAddition"/></returns>
     public PlayerAddition Map(NewlyAddedPlayerDto newPlayer)
     {
-        return new PlayerAddition(CardExternalId.Create(newPlayer.ObfuscatedId.ValueAsString));
+        return new PlayerAddition(CardExternalId.Create(newPlayer.Uuid.ValueAsString));
     }
 
     /// <summary>

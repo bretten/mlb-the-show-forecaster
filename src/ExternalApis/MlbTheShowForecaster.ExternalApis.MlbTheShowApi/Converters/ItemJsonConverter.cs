@@ -139,7 +139,7 @@ public sealed class ItemJsonConverter : JsonConverter<ItemDto>
     /// <param name="value">The value being converted</param>
     private void WriteItem(Utf8JsonWriter writer, ItemDto value)
     {
-        writer.WriteString(PreEncodedText.Items.Uuid, value.Uuid);
+        writer.WriteString(PreEncodedText.Items.Uuid, value.Uuid.ValueAsString);
         writer.WriteString(PreEncodedText.Items.Type, value.Type);
         writer.WriteString(PreEncodedText.Items.Image, value.ImageUrl);
         writer.WriteString(PreEncodedText.Items.Name, value.Name);

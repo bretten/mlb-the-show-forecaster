@@ -17,7 +17,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.It
 /// <param name="Elevation">The stadium elevation</param>
 /// <param name="Built">The year the stadium was built</param>
 public sealed record StadiumDto(
-    string Uuid,
+    UuidDto Uuid,
     string Type,
     string ImageUrl,
     string Name,

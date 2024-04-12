@@ -15,7 +15,8 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.It
 [JsonConverter(typeof(ItemJsonConverter))]
 public abstract record ItemDto(
     [property: JsonPropertyName("uuid")]
-    string Uuid,
+    [property: JsonConverter(typeof(UuidJsonConverter))]
+    UuidDto Uuid,
     [property: JsonPropertyName("type")]
     string Type,
     [property: JsonPropertyName("img")]

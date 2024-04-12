@@ -6,7 +6,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Ro
 /// <summary>
 /// Represents a player whose attributes changed
 /// </summary>
-/// <param name="ObfuscatedId">The ID of the <see cref="MlbCardDto"/> associated with the player</param>
+/// <param name="Uuid">The ID of the <see cref="MlbCardDto"/> associated with the player</param>
 /// <param name="Name">The player's name</param>
 /// <param name="Team">The player's team</param>
 /// <param name="Item"><see cref="MlbCardDto"/></param>
@@ -16,7 +16,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Ro
 /// <param name="OldRarity">The old rarity of the <see cref="MlbCardDto"/></param>
 /// <param name="Changes">A collection of attribute changes</param>
 public sealed record PlayerAttributeChangeDto(
-    ObfuscatedIdDto ObfuscatedId,
+    UuidDto Uuid,
     string Name,
     string Team,
     [property: JsonPropertyName("item")]
@@ -31,4 +31,4 @@ public sealed record PlayerAttributeChangeDto(
     string OldRarity,
     [property: JsonPropertyName("changes")]
     IEnumerable<AttributeChangeDto> Changes
-) : PlayerChangeDto(ObfuscatedId, Name, Team);
+) : PlayerChangeDto(Uuid, Name, Team);

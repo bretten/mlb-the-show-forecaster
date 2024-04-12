@@ -15,7 +15,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.It
 /// <param name="Slot">The slot that this equipment occupies</param>
 /// <param name="Description">The equipment's description</param>
 public sealed record EquipmentDto(
-    string Uuid,
+    UuidDto Uuid,
     string Type,
     string ImageUrl,
     string Name,

@@ -33,7 +33,7 @@ public class MlbTheShowItemMapperTests
         // Arrange
         var seasonYear = SeasonYear.Create(2024);
         var item = new MlbCardDto(
-            Uuid: "id1",
+            Uuid: Faker.FakeUuidDto(Faker.FakeGuid1),
             Type: "mlb_card",
             ImageUrl: "img.png",
             Name: "name1",
@@ -79,7 +79,7 @@ public class MlbTheShowItemMapperTests
 
         // Assert
         Assert.Equal(2024, actual.Year.Value);
-        Assert.Equal("id1", actual.ExternalUuid.Value);
+        Assert.Equal("00000000000000000000000000000001", actual.ExternalUuid.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
         Assert.Equal("img.png", actual.ImageUrl.Value.OriginalString);
         Assert.Equal("name1", actual.Name.Value);
