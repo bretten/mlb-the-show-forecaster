@@ -7,13 +7,13 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Ro
 /// <summary>
 /// Represents changes for a player in a Roster Update
 /// </summary>
-/// <param name="ObfuscatedId">The ID of the <see cref="MlbCardDto"/> associated with the player</param>
+/// <param name="Uuid">The ID of the <see cref="MlbCardDto"/> associated with the player</param>
 /// <param name="Name">The player's name</param>
 /// <param name="Team">The player's team</param>
 public abstract record PlayerChangeDto(
     [property: JsonPropertyName("obfuscated_id")]
-    [property: JsonConverter(typeof(ObfuscatedIdConverter))]
-    ObfuscatedIdDto ObfuscatedId,
+    [property: JsonConverter(typeof(UuidJsonConverter))]
+    UuidDto Uuid,
     [property: JsonPropertyName("name")]
     string Name,
     [property: JsonPropertyName("team")]

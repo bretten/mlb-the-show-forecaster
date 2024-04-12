@@ -6,17 +6,17 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Ro
 /// <summary>
 /// Represents a player whose primary position changed
 /// </summary>
-/// <param name="ObfuscatedId">The ID of the <see cref="MlbCardDto"/> associated with the player</param>
+/// <param name="Uuid">The ID of the <see cref="MlbCardDto"/> associated with the player</param>
 /// <param name="Name">The player's name</param>
 /// <param name="Team">The player's team</param>
 /// <param name="Item"><see cref="MlbCardDto"/></param>
 /// <param name="Position">The player's new position</param>
 public sealed record PlayerPositionChangeDto(
-    ObfuscatedIdDto ObfuscatedId,
+    UuidDto Uuid,
     string Name,
     string Team,
     [property: JsonPropertyName("item")]
     MlbCardDto Item,
     [property: JsonPropertyName("pos")]
     string Position
-) : PlayerChangeDto(ObfuscatedId, Name, Team);
+) : PlayerChangeDto(Uuid, Name, Team);

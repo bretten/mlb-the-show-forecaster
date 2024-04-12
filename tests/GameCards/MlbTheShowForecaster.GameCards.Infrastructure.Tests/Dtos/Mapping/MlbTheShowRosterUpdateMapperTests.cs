@@ -52,7 +52,7 @@ public class MlbTheShowRosterUpdateMapperTests
         // Arrange
         var date = new DateOnly(2024, 4, 1);
         var playerAttributeChange = new PlayerAttributeChangeDto(
-            new ObfuscatedIdDto("a71cdf423ea5906c5fa85fff95d90360"),
+            new UuidDto("a71cdf423ea5906c5fa85fff95d90360"),
             Name: "name100",
             Team: "team100",
             Item: Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1),
@@ -91,7 +91,7 @@ public class MlbTheShowRosterUpdateMapperTests
     public void Map_PositionChange_ReturnsPlayerPositionChange()
     {
         // Arrange
-        var id = new ObfuscatedIdDto("a71cdf423ea5906c5fa85fff95d90360");
+        var id = new UuidDto("a71cdf423ea5906c5fa85fff95d90360");
         const string position = "3B";
         var positionChange = new PlayerPositionChangeDto(
             id,
@@ -119,7 +119,7 @@ public class MlbTheShowRosterUpdateMapperTests
     public void Map_NewlyAddedPlayer_ReturnsPlayerAddition()
     {
         // Arrange
-        var id = new ObfuscatedIdDto("a71cdf423ea5906c5fa85fff95d90360");
+        var id = new UuidDto("a71cdf423ea5906c5fa85fff95d90360");
         var newlyAddedPlayer = new NewlyAddedPlayerDto(
             id,
             Name: "name1",

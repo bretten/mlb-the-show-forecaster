@@ -14,9 +14,9 @@ public static class Faker
     public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
     public static Guid FakeGuid3 = new("00000000-0000-0000-0000-000000000003");
 
-    public static ObfuscatedIdDto FakeUuidDto(Guid? guid = null)
+    public static UuidDto FakeUuidDto(Guid? guid = null)
     {
-        return new ObfuscatedIdDto(guid ?? FakeGuid1);
+        return new UuidDto(guid ?? FakeGuid1);
     }
 
     public static MlbCardDto FakeMlbCardDto(Guid? uuid = null, string type = "mlb_card", string imageUrl = "img1.png",

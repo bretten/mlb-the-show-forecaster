@@ -14,7 +14,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.It
 /// <param name="Brand">The sponsorship brand</param>
 /// <param name="Bonus">The sponsorship bonus</param>
 public sealed record SponsorshipDto(
-    ObfuscatedIdDto Uuid,
+    UuidDto Uuid,
     string Type,
     string ImageUrl,
     string Name,

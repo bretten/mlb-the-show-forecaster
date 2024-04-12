@@ -256,7 +256,8 @@ public class ItemJsonConverterTests
     public void Write_UnknownItemType_ThrowsException()
     {
         // Arrange
-        var dto = new SponsorshipDto(new ObfuscatedIdDto(-1), "unknownType", "imgUrl", "Unknown Name", "Diamond", true, "brand", "bonus");
+        var dto = new SponsorshipDto(new UuidDto(-1), "unknownType", "imgUrl", "Unknown Name", "Diamond", true, "brand",
+            "bonus");
         var action = () => JsonSerializer.Serialize(dto as ItemDto);
 
         // Act

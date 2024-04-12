@@ -44,7 +44,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.It
 /// <param name="BaseRunningAbility">How well the player can run around the bases</param>
 /// <param name="BaseRunningAggression">How likely it is the player can steal a base</param>
 public sealed record MlbCardDto(
-    ObfuscatedIdDto Uuid,
+    UuidDto Uuid,
     string Type,
     string ImageUrl,
     string Name,

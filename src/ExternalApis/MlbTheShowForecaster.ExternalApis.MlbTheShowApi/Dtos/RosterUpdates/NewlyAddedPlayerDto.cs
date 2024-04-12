@@ -6,14 +6,14 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Ro
 /// <summary>
 /// Represents a player that was added to MLB The Show
 /// </summary>
-/// <param name="ObfuscatedId">The ID of the <see cref="MlbCardDto"/> associated with the player</param>
+/// <param name="Uuid">The ID of the <see cref="MlbCardDto"/> associated with the player</param>
 /// <param name="Name">The player's name</param>
 /// <param name="Team">The player's team</param>
 /// <param name="Position">The player's position</param>
 /// <param name="CurrentRank">The rank of the <see cref="MlbCardDto"/></param>
 /// <param name="CurrentRarity">The rarity of the <see cref="MlbCardDto"/></param>
 public sealed record NewlyAddedPlayerDto(
-    ObfuscatedIdDto ObfuscatedId,
+    UuidDto Uuid,
     string Name,
     string Team,
     [property: JsonPropertyName("pos")]
@@ -22,4 +22,4 @@ public sealed record NewlyAddedPlayerDto(
     int CurrentRank,
     [property: JsonPropertyName("current_rarity")]
     string CurrentRarity
-) : PlayerChangeDto(ObfuscatedId, Name, Team);
+) : PlayerChangeDto(Uuid, Name, Team);
