@@ -51,7 +51,7 @@ public class PlayerCardTrackerTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
         // PlayerCard 1 already exists in the domain, so no action will take place
-        var cardExternalId1 = CardExternalId.Create("id1");
+        var cardExternalId1 = Faker.FakeCardExternalId(Faker.FakeGuid1);
         var domainPlayerCard1 = Faker.FakePlayerCard(cardExternalId: cardExternalId1.Value);
         // External Card 1 from MLB The Show
         var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId1.Value);
@@ -59,7 +59,7 @@ public class PlayerCardTrackerTests
         var query1 = new GetPlayerCardByExternalIdQuery(cardExternalId1);
 
         // PlayerCard 2 does not exist in the domain, so it will be created
-        var cardExternalId2 = CardExternalId.Create("id2");
+        var cardExternalId2 = Faker.FakeCardExternalId(Faker.FakeGuid2);
         PlayerCard? domainPlayerCard2 = null; // Card does not exist in the domain
         // External Card 2 from MLB The Show
         var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId2.Value);

@@ -14,13 +14,23 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestCl
 /// </summary>
 public static class Faker
 {
-    public static PlayerCard FakePlayerCard(ushort year = 2024, string cardExternalId = "1",
+    public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+    public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
+    public static Guid FakeGuid3 = new("00000000-0000-0000-0000-000000000003");
+    public static Guid FakeGuid4 = new("00000000-0000-0000-0000-000000000004");
+
+    public static CardExternalId FakeCardExternalId(Guid? guid = null)
+    {
+        return CardExternalId.Create(guid ?? FakeGuid1);
+    }
+
+    public static PlayerCard FakePlayerCard(ushort year = 2024, Guid? cardExternalId = null,
         CardType type = CardType.MlbCard, string image = "img.jpg", string name = "cardA",
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
         string teamShortName = "SEA", int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null)
     {
         return PlayerCard.Create(SeasonYear.Create(year),
-            CardExternalId.Create(cardExternalId),
+            FakeCardExternalId(cardExternalId),
             type,
             CardImageLocation.Create(image),
             CardName.Create(name),
@@ -86,11 +96,11 @@ public static class Faker
         );
     }
 
-    public static Listing FakeListing(string cardExternalId = "1", int buyPrice = 0, int sellPrice = 0,
+    public static Listing FakeListing(Guid? cardExternalId = null, int buyPrice = 0, int sellPrice = 0,
         List<ListingHistoricalPrice>? historicalPrices = null)
     {
-        return Listing.Create(CardExternalId.Create(cardExternalId), NaturalNumber.Create(buyPrice),
-            NaturalNumber.Create(sellPrice), historicalPrices ?? new List<ListingHistoricalPrice>());
+        return Listing.Create(FakeCardExternalId(cardExternalId), NaturalNumber.Create(buyPrice),
+            NaturalNumber.Create(sellPrice), historicalPrices ?? []);
     }
 
     public static ListingHistoricalPrice FakeListingHistoricalPrice(DateOnly date, int buyPrice = 0, int sellPrice = 0)

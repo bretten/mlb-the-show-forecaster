@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
@@ -15,7 +16,7 @@ public class PlayerCardMapperTests
         // Arrange
         var mlbPlayerCard = new MlbPlayerCard(
             Year: SeasonYear.Create(2024),
-            ExternalUuid: CardExternalId.Create("id1"),
+            ExternalUuid: Faker.FakeCardExternalId(Faker.FakeGuid1),
             Type: CardType.MlbCard,
             ImageUrl: CardImageLocation.Create("img.png"),
             Name: CardName.Create("name1"),
@@ -61,7 +62,7 @@ public class PlayerCardMapperTests
 
         // Assert
         Assert.Equal(2024, actual.Year.Value);
-        Assert.Equal("id1", actual.ExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.ExternalId.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
         Assert.Equal("img.png", actual.ImageLocation.Value.OriginalString);
         Assert.Equal("name1", actual.Name.Value);

@@ -12,7 +12,7 @@ public class GetListingByCardExternalIdQueryHandlerTests
     public async Task Handle_QueryWithExternalId_ReturnsListings()
     {
         // Arrange
-        var cardExternalId = CardExternalId.Create("1");
+        var cardExternalId = Faker.FakeCardExternalId();
         var domainListing = Faker.FakeListing(cardExternalId: cardExternalId.Value);
 
         var stubListingRepository = new Mock<IListingRepository>();

@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.Mapping;
@@ -15,7 +16,7 @@ public class ListingMapperTests
             "listingName",
             BestBuyPrice: NaturalNumber.Create(10),
             BestSellPrice: NaturalNumber.Create(20),
-            CardExternalId.Create("id1"),
+            Faker.FakeCardExternalId(Faker.FakeGuid1),
             new List<CardListingPrice>()
             {
                 new(new DateOnly(2024, 3, 25), BestBuyPrice: NaturalNumber.Create(15),
@@ -33,7 +34,7 @@ public class ListingMapperTests
         Assert.Equal("listingName", cardListing.ListingName);
         Assert.Equal(10, actual.BuyPrice.Value);
         Assert.Equal(20, actual.SellPrice.Value);
-        Assert.Equal("id1", actual.CardExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(2, actual.HistoricalPricesChronologically.Count);
         Assert.Equal(new DateOnly(2024, 3, 24), actual.HistoricalPricesChronologically[0].Date);
         Assert.Equal(10, actual.HistoricalPricesChronologically[0].BuyPrice.Value);

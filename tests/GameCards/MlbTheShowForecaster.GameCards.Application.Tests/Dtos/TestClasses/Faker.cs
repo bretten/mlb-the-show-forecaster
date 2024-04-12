@@ -11,7 +11,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.T
 /// </summary>
 public static class Faker
 {
-    public static MlbPlayerCard FakeMlbPlayerCard(ushort year = 2024, string cardExternalId = "id1",
+    public static MlbPlayerCard FakeMlbPlayerCard(ushort year = 2024, Guid? cardExternalId = null,
         CardType type = CardType.MlbCard, string image = "img.png", string name = "name1",
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
         string teamShortName = "DOT", int overallRating = 90, int stamina = 1, int pitchingClutch = 2,
@@ -24,7 +24,7 @@ public static class Faker
     {
         return new MlbPlayerCard(
             Year: SeasonYear.Create(year),
-            ExternalUuid: CardExternalId.Create(cardExternalId),
+            ExternalUuid: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             Type: type,
             ImageUrl: CardImageLocation.Create(image),
             Name: CardName.Create(name),
@@ -66,13 +66,13 @@ public static class Faker
     }
 
     public static CardListing FakeCardListing(string listingName = "listingName1", int bestBuyPrice = 0,
-        int bestSellPrice = 0, string cardExternalId = "card", IReadOnlyList<CardListingPrice>? historicalPrices = null)
+        int bestSellPrice = 0, Guid? cardExternalId = null, IReadOnlyList<CardListingPrice>? historicalPrices = null)
     {
         return new CardListing(
             ListingName: listingName,
             BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
             BestSellPrice: NaturalNumber.Create(bestSellPrice),
-            CardExternalId: CardExternalId.Create(cardExternalId),
+            CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             HistoricalPrices: historicalPrices ?? new List<CardListingPrice>()
         );
     }
@@ -127,13 +127,13 @@ public static class Faker
         );
     }
 
-    public static PlayerRatingChange FakePlayerRatingChange(DateOnly? date = null, string cardExternalId = "id1",
+    public static PlayerRatingChange FakePlayerRatingChange(DateOnly? date = null, Guid? cardExternalId = null,
         int newOverallRating = 90, Rarity newRarity = Rarity.Diamond, int oldOverallRating = 50,
         Rarity oldRarity = Rarity.Common, MlbPlayerAttributeChanges? attributeChanges = null)
     {
         return new PlayerRatingChange(
             Date: date ?? new DateOnly(2024, 4, 1),
-            CardExternalId: CardExternalId.Create(cardExternalId),
+            CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             NewRating: OverallRating.Create(newOverallRating),
             NewRarity: newRarity,
             OldRating: OverallRating.Create(oldOverallRating),
@@ -142,18 +142,18 @@ public static class Faker
         );
     }
 
-    public static PlayerPositionChange FakePlayerPositionChange(string cardExternalId = "id1",
+    public static PlayerPositionChange FakePlayerPositionChange(Guid? cardExternalId = null,
         Position newPosition = Position.Shortstop)
     {
         return new PlayerPositionChange(
-            CardExternalId: CardExternalId.Create(cardExternalId),
+            CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             NewPosition: newPosition
         );
     }
 
-    public static PlayerAddition FakePlayerAddition(string cardExternalId = "id1")
+    public static PlayerAddition FakePlayerAddition(Guid? cardExternalId = null)
     {
-        return new PlayerAddition(CardExternalId: CardExternalId.Create(cardExternalId));
+        return new PlayerAddition(CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId));
     }
 
     public static RosterUpdate FakeRosterUpdate(DateOnly? date = null,

@@ -12,7 +12,7 @@ public class GetPlayerCardByExternalIdQueryHandlerTests
     public async Task Handle_ExternalIdQuery_ReturnsPlayerCard()
     {
         // Arrange
-        var cardExternalId = CardExternalId.Create("externalId1");
+        var cardExternalId = Faker.FakeCardExternalId();
         var fakeDomainPlayerCard = Faker.FakePlayerCard(cardExternalId: cardExternalId.Value);
 
         var stubPlayerCardRepository = Mock.Of<IPlayerCardRepository>(x =>

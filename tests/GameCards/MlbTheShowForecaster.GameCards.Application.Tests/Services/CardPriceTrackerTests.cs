@@ -63,12 +63,12 @@ public class CardPriceTrackerTests
         var year = SeasonYear.Create(2024);
         var stubPriceChangeThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
         // Listing 1 for PlayerCard 1 does not exist in the domain and will be created
-        var cardExternalId1 = CardExternalId.Create("1");
+        var cardExternalId1 = TestClasses.Faker.FakeCardExternalId(TestClasses.Faker.FakeGuid1);
         var externalListing1 = Faker.FakeCardListing(cardExternalId: cardExternalId1.Value);
         var domainPlayerCard1 =
             TestClasses.Faker.FakePlayerCard(year: year.Value, cardExternalId: cardExternalId1.Value);
         // Listing 2 for PlayerCard 2 exists but the external listing has new data, so it will be updated
-        var cardExternalId2 = CardExternalId.Create("2");
+        var cardExternalId2 = TestClasses.Faker.FakeCardExternalId(TestClasses.Faker.FakeGuid2);
         var externalListing2 = Faker.FakeCardListing(cardExternalId: cardExternalId2.Value,
             bestBuyPrice: 2, bestSellPrice: 20,
             historicalPrices: new List<CardListingPrice>() { Faker.FakeCardListingPrice() }
@@ -77,7 +77,7 @@ public class CardPriceTrackerTests
         var domainPlayerCard2 =
             TestClasses.Faker.FakePlayerCard(year: year.Value, cardExternalId: cardExternalId2.Value);
         // Listing 3 for PlayerCard 3 exists, but the external listing has no new data, so no action will be taken
-        var cardExternalId3 = CardExternalId.Create("3");
+        var cardExternalId3 = TestClasses.Faker.FakeCardExternalId(TestClasses.Faker.FakeGuid3);
         var externalListing3 =
             Faker.FakeCardListing(cardExternalId: cardExternalId3.Value, bestBuyPrice: 3, bestSellPrice: 30);
         var domainListing3 = TestClasses.Faker.FakeListing(cardExternalId: cardExternalId3.Value, 3, 30);
