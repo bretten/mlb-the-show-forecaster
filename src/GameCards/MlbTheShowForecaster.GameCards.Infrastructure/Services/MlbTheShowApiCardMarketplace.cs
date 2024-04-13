@@ -51,7 +51,7 @@ public sealed class MlbTheShowApiCardMarketplace : ICardMarketplace
         // Get the client for the specified year
         var mlbTheShowApiForSeason = _mlbTheShowApiFactory.GetClient((Year)seasonYear.Value);
 
-        var request = new GetListingRequest(Uuid: cardExternalId.ValueStringDigits);
+        var request = new GetListingRequest(Uuid: cardExternalId.AsStringDigits);
         var listing = await mlbTheShowApiForSeason.GetListing(request);
 
         if (listing == null)

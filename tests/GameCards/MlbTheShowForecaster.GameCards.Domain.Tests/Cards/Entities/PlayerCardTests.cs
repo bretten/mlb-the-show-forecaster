@@ -251,7 +251,7 @@ public class PlayerCardTests
 
         // Assert
         Assert.Equal(2024, actual.Year.Value);
-        Assert.Equal(Faker.FakeGuid1, actual.ExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.ExternalId.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
         Assert.Equal(new Uri("img.png", UriKind.Relative), actual.ImageLocation.Value);
         Assert.Equal("cardName", actual.Name.Value);

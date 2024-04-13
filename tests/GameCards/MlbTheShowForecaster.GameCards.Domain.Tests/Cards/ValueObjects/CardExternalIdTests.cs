@@ -5,13 +5,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.Value
 public class CardExternalIdTests
 {
     [Fact]
-    public void ValueStringDigits_ValidGuid_ReturnsGuidAsStringWithoutHyphens()
+    public void AsStringDigits_ValidGuid_ReturnsGuidAsStringWithoutHyphens()
     {
         // Arrange
         var externalId = CardExternalId.Create(new Guid("00000000-0000-0000-0000-000000000001"));
 
         // Act
-        var actual = externalId.ValueStringDigits;
+        var actual = externalId.AsStringDigits;
 
         // Assert
         Assert.Equal("00000000000000000000000000000001", actual);

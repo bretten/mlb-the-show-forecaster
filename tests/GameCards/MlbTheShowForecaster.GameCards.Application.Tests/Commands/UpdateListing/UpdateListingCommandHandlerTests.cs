@@ -43,7 +43,7 @@ public class UpdateListingCommandHandlerTests
         Mock.Get(mockListingRepository).Verify(x => x.Update(domainListing), Times.Once);
         Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
 
-        Assert.Equal(Faker.FakeGuid1, domainListing.CardExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), domainListing.CardExternalId.Value);
         Assert.Equal(100, domainListing.BuyPrice.Value);
         Assert.Equal(200, domainListing.SellPrice.Value);
         Assert.Equal(2, domainListing.HistoricalPricesChronologically.Count);

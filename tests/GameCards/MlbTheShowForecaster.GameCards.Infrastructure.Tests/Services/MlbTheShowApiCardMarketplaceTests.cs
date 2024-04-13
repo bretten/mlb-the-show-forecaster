@@ -24,7 +24,7 @@ public class MlbTheShowApiCardMarketplaceTests
         var cardExternalId = Faker.FakeCardExternalId(Faker.FakeGuid1);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
-        stubMlbTheShowApi.Setup(x => x.GetListing(new GetListingRequest(cardExternalId.ValueStringDigits)))
+        stubMlbTheShowApi.Setup(x => x.GetListing(new GetListingRequest(cardExternalId.AsStringDigits)))
             .ReturnsAsync((ListingDto<ItemDto>)null!);
 
         var stubMlbTheShowApiFactory = new Mock<IMlbTheShowApiFactory>();
@@ -57,7 +57,7 @@ public class MlbTheShowApiCardMarketplaceTests
         var expectedCardListing = Faker.FakeCardListing(cardExternalId: cardExternalId.Value);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
-        stubMlbTheShowApi.Setup(x => x.GetListing(new GetListingRequest(cardExternalId.ValueStringDigits)))
+        stubMlbTheShowApi.Setup(x => x.GetListing(new GetListingRequest(cardExternalId.AsStringDigits)))
             .ReturnsAsync(listingDto);
 
         var stubMlbTheShowApiFactory = new Mock<IMlbTheShowApiFactory>();

@@ -109,7 +109,7 @@ public class MlbTheShowApiCardCatalogTests
         var cardExternalId = Dtos.TestClasses.Faker.FakeCardExternalId(Dtos.TestClasses.Faker.FakeGuid1);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
-        stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest(cardExternalId.ValueStringDigits)))
+        stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest(cardExternalId.AsStringDigits)))
             .ReturnsAsync((ItemDto)null!);
 
         var stubMlbTheShowApiFactory = new Mock<IMlbTheShowApiFactory>();

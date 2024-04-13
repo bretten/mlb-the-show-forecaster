@@ -16,7 +16,7 @@ public sealed class CardExternalId : ValueObject
     /// <summary>
     /// The value with only digits: 00000000000000000000000000000000
     /// </summary>
-    public string ValueStringDigits => Value.ToString("N");
+    public string AsStringDigits => Value.ToString("N");
 
     /// <summary>
     /// Constructor

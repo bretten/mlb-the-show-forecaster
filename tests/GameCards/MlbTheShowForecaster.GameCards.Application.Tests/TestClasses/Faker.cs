@@ -100,7 +100,7 @@ public static class Faker
         List<ListingHistoricalPrice>? historicalPrices = null)
     {
         return Listing.Create(FakeCardExternalId(cardExternalId), NaturalNumber.Create(buyPrice),
-            NaturalNumber.Create(sellPrice), historicalPrices ?? []);
+            NaturalNumber.Create(sellPrice), historicalPrices ?? new List<ListingHistoricalPrice>());
     }
 
     public static ListingHistoricalPrice FakeListingHistoricalPrice(DateOnly date, int buyPrice = 0, int sellPrice = 0)
