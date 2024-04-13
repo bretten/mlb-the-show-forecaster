@@ -96,7 +96,7 @@ public class ListingTests
         Assert.Single(listing.DomainEvents);
         Assert.IsType<ListingBuyPriceIncreasedEvent>(listing.DomainEvents[0]);
         var e = listing.DomainEvents[0] as ListingBuyPriceIncreasedEvent;
-        Assert.Equal(10, e.OriginalPrice.Value);
+        Assert.Equal(10, e!.OriginalPrice.Value);
         Assert.Equal(20, e.NewPrice.Value);
         Assert.Equal(100, e.PercentageChange.PercentageChangeValue);
     }

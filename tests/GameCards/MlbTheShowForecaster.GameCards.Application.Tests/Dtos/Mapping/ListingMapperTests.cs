@@ -2,7 +2,6 @@
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.Mapping;
 

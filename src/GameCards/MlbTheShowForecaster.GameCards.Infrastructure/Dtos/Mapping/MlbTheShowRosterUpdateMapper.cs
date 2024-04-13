@@ -53,7 +53,9 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     {
         return new PlayerRatingChange(
             date,
-            CardExternalId.Create(playerAttributeChange.Uuid.ValueAsString),
+            CardExternalId.Create(playerAttributeChange.Uuid.Value ??
+                                  throw new InvalidTheShowUuidException(
+                                      $"Could not map the {nameof(PlayerAttributeChangeDto)}'s UUID since it is not valid: ${playerAttributeChange.Uuid.RawValue}")),
             NewRating: OverallRating.Create(playerAttributeChange.CurrentRank),
             NewRarity: _itemMapper.MapRarity(playerAttributeChange.CurrentRarity),
             OldRating: OverallRating.Create(playerAttributeChange.OldRank),
@@ -86,7 +88,9 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     /// <returns><see cref="PlayerPositionChange"/></returns>
     public PlayerPositionChange Map(PlayerPositionChangeDto positionChange)
     {
-        return new PlayerPositionChange(CardExternalId.Create(positionChange.Uuid.ValueAsString),
+        return new PlayerPositionChange(
+            CardExternalId.Create(positionChange.Uuid.Value ?? throw new InvalidTheShowUuidException(
+                $"Could not map the {nameof(PlayerPositionChangeDto)}'s UUID since it is not valid: ${positionChange.Uuid.RawValue}")),
             _itemMapper.MapPosition(positionChange.Position));
     }
 
@@ -97,7 +101,9 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     /// <returns><see cref="PlayerAddition"/></returns>
     public PlayerAddition Map(NewlyAddedPlayerDto newPlayer)
     {
-        return new PlayerAddition(CardExternalId.Create(newPlayer.Uuid.ValueAsString));
+        return new PlayerAddition(CardExternalId.Create(newPlayer.Uuid.Value ??
+                                                        throw new InvalidTheShowUuidException(
+                                                            $"Could not map the {nameof(NewlyAddedPlayerDto)}'s UUID since it is not valid: ${newPlayer.Uuid.RawValue}")));
     }
 
     /// <summary>

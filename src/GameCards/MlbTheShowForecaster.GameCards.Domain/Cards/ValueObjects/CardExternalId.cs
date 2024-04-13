@@ -1,6 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
@@ -26,28 +25,6 @@ public sealed class CardExternalId : ValueObject
     private CardExternalId(Guid value)
     {
         Value = value;
-    }
-
-    /// <summary>
-    /// Creates a <see cref="CardExternalId"/>
-    /// </summary>
-    /// <param name="externalId">The card external ID</param>
-    /// <returns><see cref="CardExternalId"/></returns>
-    /// <exception cref="EmptyCardExternalIdException">Thrown when the external ID value is empty</exception>
-    /// <exception cref="InvalidCardExternalIdException">Thrown when the the external ID value is not a valid GUID</exception>
-    public static CardExternalId Create(string externalId)
-    {
-        if (string.IsNullOrWhiteSpace(externalId))
-        {
-            throw new EmptyCardExternalIdException("A card external ID is required");
-        }
-
-        if (!Guid.TryParse(externalId, out var guid))
-        {
-            throw new InvalidCardExternalIdException($"The card external ID is not a valid GUID: {externalId}");
-        }
-
-        return new CardExternalId(guid);
     }
 
     /// <summary>

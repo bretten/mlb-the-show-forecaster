@@ -1,7 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Queries.GetPlayerCardByExternalId;

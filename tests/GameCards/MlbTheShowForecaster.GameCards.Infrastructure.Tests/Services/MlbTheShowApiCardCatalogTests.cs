@@ -6,7 +6,6 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.It
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Items;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.Mapping.TestClasses;
@@ -56,9 +55,9 @@ public class MlbTheShowApiCardCatalogTests
         var cardDto2 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid2);
         var cardDto3 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid3);
 
-        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto1.Uuid.ValueAsString);
-        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto2.Uuid.ValueAsString);
-        var externalCard3 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto3.Uuid.ValueAsString);
+        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto1.Uuid.Value);
+        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto2.Uuid.Value);
+        var externalCard3 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto3.Uuid.Value);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
         stubMlbTheShowApi.Setup(x => x.GetItems(new GetItemsRequest(1, ItemType.MlbCard)))
@@ -107,10 +106,10 @@ public class MlbTheShowApiCardCatalogTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        var cardExternalId1 = CardExternalId.Create("id1");
+        var cardExternalId = Dtos.TestClasses.Faker.FakeCardExternalId(Dtos.TestClasses.Faker.FakeGuid1);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
-        stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest(cardExternalId1.Value)))
+        stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest(cardExternalId.ValueStringDigits)))
             .ReturnsAsync((ItemDto)null!);
 
         var stubMlbTheShowApiFactory = new Mock<IMlbTheShowApiFactory>();
@@ -121,7 +120,7 @@ public class MlbTheShowApiCardCatalogTests
 
         var catalog = new MlbTheShowApiCardCatalog(stubMlbTheShowApiFactory.Object, mockItemMapper);
 
-        var action = () => catalog.GetMlbPlayerCard(seasonYear, cardExternalId1, cToken);
+        var action = () => catalog.GetMlbPlayerCard(seasonYear, cardExternalId, cToken);
 
         // Act
         var actual = await Record.ExceptionAsync(action);
@@ -138,27 +137,27 @@ public class MlbTheShowApiCardCatalogTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        var cardDto1 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1);
+        var cardExternalId = Dtos.TestClasses.Faker.FakeCardExternalId(Dtos.TestClasses.Faker.FakeGuid1);
+        var cardDto = Faker.FakeMlbCardDto(uuid: cardExternalId.Value);
 
-        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto1.Uuid.ValueAsString);
+        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto.Uuid.Value);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
-        stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest(cardDto1.Uuid.ValueAsString)))
-            .ReturnsAsync(cardDto1);
+        stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest(cardDto.Uuid.ValueAsString)))
+            .ReturnsAsync(cardDto);
 
         var stubMlbTheShowApiFactory = new Mock<IMlbTheShowApiFactory>();
         stubMlbTheShowApiFactory.Setup(x => x.GetClient(Year.Season2024))
             .Returns(stubMlbTheShowApi.Object);
 
         var stubItemMapper = new Mock<IMlbTheShowItemMapper>();
-        stubItemMapper.Setup(x => x.Map(seasonYear, cardDto1))
+        stubItemMapper.Setup(x => x.Map(seasonYear, cardDto))
             .Returns(externalCard1);
 
         var catalog = new MlbTheShowApiCardCatalog(stubMlbTheShowApiFactory.Object, stubItemMapper.Object);
 
         // Act
-        var actual =
-            await catalog.GetMlbPlayerCard(seasonYear, CardExternalId.Create(cardDto1.Uuid.ValueAsString), cToken);
+        var actual = await catalog.GetMlbPlayerCard(seasonYear, cardExternalId, cToken);
 
         // Assert
         Assert.Equal(externalCard1, actual);

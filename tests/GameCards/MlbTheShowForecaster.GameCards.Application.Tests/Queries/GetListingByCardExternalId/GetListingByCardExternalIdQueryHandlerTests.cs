@@ -1,6 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using Moq;
 

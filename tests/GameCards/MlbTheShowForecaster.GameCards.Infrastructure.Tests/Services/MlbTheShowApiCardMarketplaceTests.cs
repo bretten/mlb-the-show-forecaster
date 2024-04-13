@@ -5,10 +5,9 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Listings;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.Mapping.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Services;
@@ -22,10 +21,10 @@ public class MlbTheShowApiCardMarketplaceTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        var cardExternalId1 = CardExternalId.Create("id1");
+        var cardExternalId = Faker.FakeCardExternalId(Faker.FakeGuid1);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
-        stubMlbTheShowApi.Setup(x => x.GetListing(new GetListingRequest(cardExternalId1.Value)))
+        stubMlbTheShowApi.Setup(x => x.GetListing(new GetListingRequest(cardExternalId.ValueStringDigits)))
             .ReturnsAsync((ListingDto<ItemDto>)null!);
 
         var stubMlbTheShowApiFactory = new Mock<IMlbTheShowApiFactory>();
@@ -36,7 +35,7 @@ public class MlbTheShowApiCardMarketplaceTests
 
         var marketplace = new MlbTheShowApiCardMarketplace(stubMlbTheShowApiFactory.Object, mockListingMapper);
 
-        var action = () => marketplace.GetCardPrice(seasonYear, cardExternalId1, cToken);
+        var action = () => marketplace.GetCardPrice(seasonYear, cardExternalId, cToken);
 
         // Act
         var actual = await Record.ExceptionAsync(action);
@@ -53,12 +52,12 @@ public class MlbTheShowApiCardMarketplaceTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        var cardExternalId = CardExternalId.Create("id1");
-        var listingDto = Faker.FakeListingDto("listing1");
-        var expectedCardListing = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId.Value);
+        var cardExternalId = Faker.FakeCardExternalId(Faker.FakeGuid1);
+        var listingDto = Dtos.Mapping.TestClasses.Faker.FakeListingDto("listing1");
+        var expectedCardListing = Faker.FakeCardListing(cardExternalId: cardExternalId.Value);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
-        stubMlbTheShowApi.Setup(x => x.GetListing(new GetListingRequest(cardExternalId.Value)))
+        stubMlbTheShowApi.Setup(x => x.GetListing(new GetListingRequest(cardExternalId.ValueStringDigits)))
             .ReturnsAsync(listingDto);
 
         var stubMlbTheShowApiFactory = new Mock<IMlbTheShowApiFactory>();
