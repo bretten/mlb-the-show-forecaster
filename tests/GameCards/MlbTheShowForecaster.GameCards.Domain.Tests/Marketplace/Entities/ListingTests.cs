@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
@@ -95,8 +96,7 @@ public class ListingTests
         Assert.Single(listing.DomainEvents);
         Assert.IsType<ListingBuyPriceIncreasedEvent>(listing.DomainEvents[0]);
         var e = listing.DomainEvents[0] as ListingBuyPriceIncreasedEvent;
-        Assert.Equal("1", e!.CardExternalId.Value);
-        Assert.Equal(10, e.OriginalPrice.Value);
+        Assert.Equal(10, e!.OriginalPrice.Value);
         Assert.Equal(20, e.NewPrice.Value);
         Assert.Equal(100, e.PercentageChange.PercentageChangeValue);
     }
@@ -117,8 +117,7 @@ public class ListingTests
         Assert.Single(listing.DomainEvents);
         Assert.IsType<ListingBuyPriceDecreasedEvent>(listing.DomainEvents[0]);
         var e = listing.DomainEvents[0] as ListingBuyPriceDecreasedEvent;
-        Assert.Equal("1", e!.CardExternalId.Value);
-        Assert.Equal(20, e.OriginalPrice.Value);
+        Assert.Equal(20, e!.OriginalPrice.Value);
         Assert.Equal(10, e.NewPrice.Value);
         Assert.Equal(-50m, e.PercentageChange.PercentageChangeValue);
     }
@@ -155,8 +154,7 @@ public class ListingTests
         Assert.Single(listing.DomainEvents);
         Assert.IsType<ListingSellPriceIncreasedEvent>(listing.DomainEvents[0]);
         var e = listing.DomainEvents[0] as ListingSellPriceIncreasedEvent;
-        Assert.Equal("1", e!.CardExternalId.Value);
-        Assert.Equal(10, e.OriginalPrice.Value);
+        Assert.Equal(10, e!.OriginalPrice.Value);
         Assert.Equal(20, e.NewPrice.Value);
         Assert.Equal(100, e.PercentageChange.PercentageChangeValue);
     }
@@ -177,8 +175,7 @@ public class ListingTests
         Assert.Single(listing.DomainEvents);
         Assert.IsType<ListingSellPriceDecreasedEvent>(listing.DomainEvents[0]);
         var e = listing.DomainEvents[0] as ListingSellPriceDecreasedEvent;
-        Assert.Equal("1", e!.CardExternalId.Value);
-        Assert.Equal(20, e.OriginalPrice.Value);
+        Assert.Equal(20, e!.OriginalPrice.Value);
         Assert.Equal(10, e.NewPrice.Value);
         Assert.Equal(-50m, e.PercentageChange.PercentageChangeValue);
     }
@@ -197,5 +194,34 @@ public class ListingTests
 
         // Assert
         Assert.Empty(listing.DomainEvents);
+    }
+
+    [Fact]
+    public void Create_ValidValues_ReturnsListing()
+    {
+        // Arrange
+        var cardExternalId = Cards.TestClasses.Faker.FakeCardExternalId(Cards.TestClasses.Faker.FakeGuid1);
+        const int buyPrice = 10;
+        const int sellPrice = 20;
+        var fakeHistoricalPrice = Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1),
+            buyPrice: 1, sellPrice: 2);
+
+        // Act
+        var actual = Listing.Create(cardExternalId,
+            buyPrice: NaturalNumber.Create(buyPrice),
+            sellPrice: NaturalNumber.Create(sellPrice),
+            new List<ListingHistoricalPrice>()
+            {
+                fakeHistoricalPrice
+            });
+
+        // Assert
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
+        Assert.Equal(10, actual.BuyPrice.Value);
+        Assert.Equal(20, actual.SellPrice.Value);
+        Assert.Single(actual.HistoricalPricesChronologically);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual.HistoricalPricesChronologically[0].Date);
+        Assert.Equal(1, actual.HistoricalPricesChronologically[0].BuyPrice.Value);
+        Assert.Equal(2, actual.HistoricalPricesChronologically[0].SellPrice.Value);
     }
 }

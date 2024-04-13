@@ -92,7 +92,7 @@ public sealed class MlbTheShowApiCardCatalog : ICardCatalog
         // Get the client for the specified year
         var mlbTheShowApiForSeason = _mlbTheShowApiFactory.GetClient((Year)seasonYear.Value);
 
-        var request = new GetItemRequest(Uuid: cardExternalId.Value);
+        var request = new GetItemRequest(Uuid: cardExternalId.AsStringDigits);
         var item = await mlbTheShowApiForSeason.GetItem(request);
 
         if (item == null)

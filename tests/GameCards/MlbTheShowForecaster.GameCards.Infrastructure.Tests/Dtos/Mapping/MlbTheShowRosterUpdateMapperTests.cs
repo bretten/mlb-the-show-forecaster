@@ -43,7 +43,7 @@ public class MlbTheShowRosterUpdateMapperTests
         Assert.Single(actual.PositionChanges);
         Assert.Equal(Position.ThirdBase, actual.PositionChanges[0].NewPosition);
         Assert.Single(actual.NewPlayers);
-        Assert.Equal("00000000000000000000000000000001", actual.NewPlayers[0].CardExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.NewPlayers[0].CardExternalId.Value);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class MlbTheShowRosterUpdateMapperTests
         // Arrange
         var date = new DateOnly(2024, 4, 1);
         var playerAttributeChange = new PlayerAttributeChangeDto(
-            new UuidDto("a71cdf423ea5906c5fa85fff95d90360"),
+            new UuidDto(Faker.FakeGuid1),
             Name: "name100",
             Team: "team100",
             Item: Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1),
@@ -79,7 +79,7 @@ public class MlbTheShowRosterUpdateMapperTests
 
         // Assert
         Assert.Equal(new DateOnly(2024, 4, 1), actual.Date);
-        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actual.CardExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(80, actual.NewRating.Value);
         Assert.Equal(Rarity.Gold, actual.NewRarity);
         Assert.Equal(75, actual.OldRating.Value);
@@ -91,7 +91,7 @@ public class MlbTheShowRosterUpdateMapperTests
     public void Map_PositionChange_ReturnsPlayerPositionChange()
     {
         // Arrange
-        var id = new UuidDto("a71cdf423ea5906c5fa85fff95d90360");
+        var id = new UuidDto(Faker.FakeGuid1);
         const string position = "3B";
         var positionChange = new PlayerPositionChangeDto(
             id,
@@ -111,7 +111,7 @@ public class MlbTheShowRosterUpdateMapperTests
         var actual = mapper.Map(positionChange);
 
         // Assert
-        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actual.CardExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(Position.ThirdBase, actual.NewPosition);
     }
 
@@ -119,7 +119,7 @@ public class MlbTheShowRosterUpdateMapperTests
     public void Map_NewlyAddedPlayer_ReturnsPlayerAddition()
     {
         // Arrange
-        var id = new UuidDto("a71cdf423ea5906c5fa85fff95d90360");
+        var id = new UuidDto(Faker.FakeGuid1);
         var newlyAddedPlayer = new NewlyAddedPlayerDto(
             id,
             Name: "name1",
@@ -135,7 +135,7 @@ public class MlbTheShowRosterUpdateMapperTests
         var actual = mapper.Map(newlyAddedPlayer);
 
         // Assert
-        Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actual.CardExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
     }
 
     [Fact]

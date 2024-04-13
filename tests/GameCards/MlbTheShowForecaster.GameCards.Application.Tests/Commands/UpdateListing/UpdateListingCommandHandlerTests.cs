@@ -1,7 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using Moq;
@@ -14,14 +14,14 @@ public class UpdateListingCommandHandlerTests
     public async Task Handle_UpdateListingCommand_UpdatesListing()
     {
         // Arrange
-        const string externalId = "id1";
-        var externalCardListing = Faker.FakeCardListing(cardExternalId: externalId,
+        var externalId = Faker.FakeGuid1;
+        var externalCardListing = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: externalId,
             bestBuyPrice: 100, bestSellPrice: 200, historicalPrices: new List<CardListingPrice>()
             {
-                Faker.FakeCardListingPrice(new DateOnly(2024, 4, 2), 10, 20),
-                Faker.FakeCardListingPrice(new DateOnly(2024, 4, 1), 1, 2)
+                Dtos.TestClasses.Faker.FakeCardListingPrice(new DateOnly(2024, 4, 2), 10, 20),
+                Dtos.TestClasses.Faker.FakeCardListingPrice(new DateOnly(2024, 4, 1), 1, 2)
             });
-        var domainListing = TestClasses.Faker.FakeListing(cardExternalId: externalId, buyPrice: 1, sellPrice: 1);
+        var domainListing = Faker.FakeListing(cardExternalId: externalId, buyPrice: 1, sellPrice: 1);
 
         var stubPriceChangeThreshold = new Mock<IListingPriceSignificantChangeThreshold>();
         stubPriceChangeThreshold.Setup(x => x.BuyPricePercentageChangeThreshold)
@@ -43,7 +43,7 @@ public class UpdateListingCommandHandlerTests
         Mock.Get(mockListingRepository).Verify(x => x.Update(domainListing), Times.Once);
         Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
 
-        Assert.Equal("id1", domainListing.CardExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), domainListing.CardExternalId.Value);
         Assert.Equal(100, domainListing.BuyPrice.Value);
         Assert.Equal(200, domainListing.SellPrice.Value);
         Assert.Equal(2, domainListing.HistoricalPricesChronologically.Count);

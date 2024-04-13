@@ -31,7 +31,7 @@ public class MlbTheShowListingMapperTests
         Assert.Equal("name1", actual.ListingName);
         Assert.Equal(20, actual.BestBuyPrice.Value);
         Assert.Equal(10, actual.BestSellPrice.Value);
-        Assert.Equal("00000000000000000000000000000001", actual.CardExternalId.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(2, actual.HistoricalPrices.Count);
         Assert.Equal(new DateOnly(2024, 4, 1), actual.HistoricalPrices[0].Date);
         Assert.Equal(2, actual.HistoricalPrices[0].BestBuyPrice.Value);

@@ -11,7 +11,14 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dto
 /// </summary>
 public static class Faker
 {
-    public static MlbPlayerCard FakeMlbPlayerCard(ushort year = 2024, string cardExternalId = "id1",
+    public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+
+    public static CardExternalId FakeCardExternalId(Guid? guid = null)
+    {
+        return CardExternalId.Create(guid ?? FakeGuid1);
+    }
+
+    public static MlbPlayerCard FakeMlbPlayerCard(ushort year = 2024, Guid? cardExternalId = null,
         CardType type = CardType.MlbCard, string image = "img.png", string name = "name1",
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
         string teamShortName = "DOT", int overallRating = 90, int stamina = 1, int pitchingClutch = 2,
@@ -24,7 +31,7 @@ public static class Faker
     {
         return new MlbPlayerCard(
             Year: SeasonYear.Create(year),
-            ExternalUuid: CardExternalId.Create(cardExternalId),
+            ExternalUuid: FakeCardExternalId(cardExternalId),
             Type: type,
             ImageUrl: CardImageLocation.Create(image),
             Name: CardName.Create(name),
@@ -66,13 +73,13 @@ public static class Faker
     }
 
     public static CardListing FakeCardListing(string listingName = "listingName1", int bestBuyPrice = 0,
-        int bestSellPrice = 0, string cardExternalId = "card", IReadOnlyList<CardListingPrice>? historicalPrices = null)
+        int bestSellPrice = 0, Guid? cardExternalId = null, IReadOnlyList<CardListingPrice>? historicalPrices = null)
     {
         return new CardListing(
             ListingName: listingName,
             BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
             BestSellPrice: NaturalNumber.Create(bestSellPrice),
-            CardExternalId: CardExternalId.Create(cardExternalId),
+            CardExternalId: FakeCardExternalId(cardExternalId),
             HistoricalPrices: historicalPrices ?? new List<CardListingPrice>()
         );
     }

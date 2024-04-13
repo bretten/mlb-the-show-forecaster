@@ -79,7 +79,7 @@ public class MlbTheShowItemMapperTests
 
         // Assert
         Assert.Equal(2024, actual.Year.Value);
-        Assert.Equal("00000000000000000000000000000001", actual.ExternalUuid.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.ExternalUuid.Value);
         Assert.Equal(CardType.MlbCard, actual.Type);
         Assert.Equal("img.png", actual.ImageUrl.Value.OriginalString);
         Assert.Equal("name1", actual.Name.Value);

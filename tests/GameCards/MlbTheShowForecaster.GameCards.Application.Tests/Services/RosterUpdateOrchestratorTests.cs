@@ -6,9 +6,8 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services;
@@ -25,19 +24,19 @@ public class RosterUpdateOrchestratorTests
         var seasonYear = SeasonYear.Create(2024);
         // RosterUpdate 1 with RatingChange1
         PlayerCard? playerCard1 = null; // RatingChange 1 has no corresponding PlayerCard
-        var cardExternalId1 = CardExternalId.Create("1");
-        var ratingChange1 = Faker.FakePlayerRatingChange(cardExternalId: cardExternalId1.Value);
+        var cardExternalId1 = Faker.FakeGuid1;
+        var ratingChange1 = Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId1);
         var getPlayerCardQuery1 = new GetPlayerCardByExternalIdQuery(ratingChange1.CardExternalId);
 
-        var rosterUpdate1 = Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
+        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
             new List<PlayerRatingChange>() { ratingChange1 });
 
         // RosterUpdate 2 with RatingChange2
-        var cardExternalId2 = CardExternalId.Create("2");
-        var ratingChange2 = Faker.FakePlayerRatingChange(cardExternalId: cardExternalId2.Value);
+        var cardExternalId2 = Faker.FakeCardExternalId(Faker.FakeGuid2);
+        var ratingChange2 = Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId2.Value);
         var getPlayerCardQuery2 = new GetPlayerCardByExternalIdQuery(ratingChange2.CardExternalId);
 
-        var rosterUpdate2 = Faker.FakeRosterUpdate(new DateOnly(2024, 4, 2),
+        var rosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 2),
             new List<PlayerRatingChange>() { ratingChange2 });
 
         // Query sender
@@ -92,19 +91,19 @@ public class RosterUpdateOrchestratorTests
         var seasonYear = SeasonYear.Create(2024);
         // RosterUpdate 1 with PositionChange1
         PlayerCard? playerCard1 = null; // RatingChange 1 has no corresponding PlayerCard
-        var cardExternalId1 = CardExternalId.Create("1");
-        var positionChange1 = Faker.FakePlayerPositionChange(cardExternalId: cardExternalId1.Value);
+        var cardExternalId1 = Faker.FakeGuid1;
+        var positionChange1 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId1);
         var getPlayerCardQuery1 = new GetPlayerCardByExternalIdQuery(positionChange1.CardExternalId);
 
-        var rosterUpdate1 = Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
+        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
             positionChanges: new List<PlayerPositionChange>() { positionChange1 });
 
         // RosterUpdate 2 with PositionChange2
-        var cardExternalId2 = CardExternalId.Create("2");
-        var positionChange2 = Faker.FakePlayerPositionChange(cardExternalId: cardExternalId2.Value);
+        var cardExternalId2 = Faker.FakeGuid2;
+        var positionChange2 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId2);
         var getPlayerCardQuery2 = new GetPlayerCardByExternalIdQuery(positionChange2.CardExternalId);
 
-        var rosterUpdate2 = Faker.FakeRosterUpdate(new DateOnly(2024, 4, 2),
+        var rosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 2),
             positionChanges: new List<PlayerPositionChange>() { positionChange2 });
 
         // Query sender
@@ -159,19 +158,19 @@ public class RosterUpdateOrchestratorTests
         var seasonYear = SeasonYear.Create(2024);
         // RosterUpdate 1 with PlayerAddition1
         PlayerCard? playerCard1 = null; // RatingChange 1 has no corresponding PlayerCard
-        var cardExternalId1 = CardExternalId.Create("1");
-        var playerAddition1 = Faker.FakePlayerAddition(cardExternalId: cardExternalId1.Value);
+        var cardExternalId1 = Faker.FakeGuid1;
+        var playerAddition1 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId: cardExternalId1);
         var getPlayerCardQuery1 = new GetPlayerCardByExternalIdQuery(playerAddition1.CardExternalId);
 
-        var rosterUpdate1 = Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
+        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
             newPlayers: new List<PlayerAddition>() { playerAddition1 });
 
         // RosterUpdate 2 with PlayerAddition2
-        var cardExternalId2 = CardExternalId.Create("2");
-        var playerAddition2 = Faker.FakePlayerAddition(cardExternalId: cardExternalId2.Value);
+        var cardExternalId2 = Faker.FakeGuid2;
+        var playerAddition2 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId: cardExternalId2);
         var getPlayerCardQuery2 = new GetPlayerCardByExternalIdQuery(playerAddition2.CardExternalId);
 
-        var rosterUpdate2 = Faker.FakeRosterUpdate(new DateOnly(2024, 4, 2),
+        var rosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 2),
             newPlayers: new List<PlayerAddition>() { playerAddition2 });
 
         // Query sender
@@ -189,7 +188,7 @@ public class RosterUpdateOrchestratorTests
 
         // Card catalog
         var stubCardCatalog = new Mock<ICardCatalog>();
-        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(seasonYear, cardExternalId1, cToken))
+        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(seasonYear, playerAddition1.CardExternalId, cToken))
             .ThrowsAsync(new MlbPlayerCardNotFoundInCatalogException("Card not found"));
 
         // Orchestrator
@@ -229,49 +228,49 @@ public class RosterUpdateOrchestratorTests
 
         // RosterUpdate 1 - PlayerCard 1 is already up-to-date, so no command will be sent
         var rosterUpdate1Date = new DateOnly(2024, 4, 1);
-        var cardExternalId1 = CardExternalId.Create("1");
-        var playerCard1 = TestClasses.Faker.FakePlayerCard(cardExternalId: cardExternalId1.Value);
-        playerCard1.ChangePlayerRating(rosterUpdate1Date, TestClasses.Faker.FakeOverallRating(),
-            TestClasses.Faker.FakePlayerCardAttributes());
+        var cardExternalId1 = Faker.FakeGuid1;
+        var playerCard1 = Faker.FakePlayerCard(cardExternalId: cardExternalId1);
+        playerCard1.ChangePlayerRating(rosterUpdate1Date, Faker.FakeOverallRating(),
+            Faker.FakePlayerCardAttributes());
         var ratingChange1 =
-            Faker.FakePlayerRatingChange(cardExternalId: cardExternalId1.Value, date: rosterUpdate1Date);
+            Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId1, date: rosterUpdate1Date);
 
-        var rosterUpdate1 = Faker.FakeRosterUpdate(date: rosterUpdate1Date,
+        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(date: rosterUpdate1Date,
             ratingChanges: new List<PlayerRatingChange>() { ratingChange1 });
 
         // RosterUpdate 2 - PlayerCard 2 has both a rating change and a position change
         var rosterUpdate2Date = new DateOnly(2024, 4, 2);
-        var cardExternalId2 = CardExternalId.Create("2");
-        var playerCard2 = TestClasses.Faker.FakePlayerCard(cardExternalId: cardExternalId2.Value);
+        var cardExternalId2 = Faker.FakeGuid2;
+        var playerCard2 = Faker.FakePlayerCard(cardExternalId: cardExternalId2);
         var ratingChange2 =
-            Faker.FakePlayerRatingChange(cardExternalId: cardExternalId2.Value, date: rosterUpdate2Date);
-        var positionChange2 = Faker.FakePlayerPositionChange(cardExternalId: cardExternalId2.Value);
+            Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId2, date: rosterUpdate2Date);
+        var positionChange2 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId2);
 
         // RosterUpdate 2 - PlayerCard 3 only has a position change
-        var cardExternalId3 = CardExternalId.Create("3");
-        var playerCard3 = TestClasses.Faker.FakePlayerCard(cardExternalId: cardExternalId3.Value);
-        var positionChange3 = Faker.FakePlayerPositionChange(cardExternalId: cardExternalId3.Value);
+        var cardExternalId3 = Faker.FakeGuid3;
+        var playerCard3 = Faker.FakePlayerCard(cardExternalId: cardExternalId3);
+        var positionChange3 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId3);
 
-        var rosterUpdate2 = Faker.FakeRosterUpdate(date: rosterUpdate2Date,
+        var rosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(date: rosterUpdate2Date,
             ratingChanges: new List<PlayerRatingChange>() { ratingChange2 },
             positionChanges: new List<PlayerPositionChange>() { positionChange2, positionChange3 });
 
         // RosterUpdate 3 - PlayerCard 4 is a new addition to the domain
         var rosterUpdate3Date = new DateOnly(2024, 4, 3);
-        var cardExternalId4 = CardExternalId.Create("4");
-        var playerAddition4 = Faker.FakePlayerAddition(cardExternalId4.Value);
-        var externalCard4 = Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId4.Value);
+        var cardExternalId4 = Faker.FakeGuid4;
+        var playerAddition4 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId4);
+        var externalCard4 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId4);
 
-        var rosterUpdate3 = Faker.FakeRosterUpdate(date: rosterUpdate3Date,
+        var rosterUpdate3 = Dtos.TestClasses.Faker.FakeRosterUpdate(date: rosterUpdate3Date,
             newPlayers: new List<PlayerAddition>() { playerAddition4 });
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
-        stubQuerySender.Setup(x => x.Send(new GetPlayerCardByExternalIdQuery(cardExternalId1), cToken))
+        stubQuerySender.Setup(x => x.Send(new GetPlayerCardByExternalIdQuery(ratingChange1.CardExternalId), cToken))
             .ReturnsAsync(playerCard1);
-        stubQuerySender.Setup(x => x.Send(new GetPlayerCardByExternalIdQuery(cardExternalId2), cToken))
+        stubQuerySender.Setup(x => x.Send(new GetPlayerCardByExternalIdQuery(ratingChange2.CardExternalId), cToken))
             .ReturnsAsync(playerCard2);
-        stubQuerySender.Setup(x => x.Send(new GetPlayerCardByExternalIdQuery(cardExternalId3), cToken))
+        stubQuerySender.Setup(x => x.Send(new GetPlayerCardByExternalIdQuery(positionChange3.CardExternalId), cToken))
             .ReturnsAsync(playerCard3);
 
         // Command sender
@@ -287,7 +286,7 @@ public class RosterUpdateOrchestratorTests
 
         // Card catalog
         var stubCardCatalog = new Mock<ICardCatalog>();
-        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(seasonYear, cardExternalId4, cToken))
+        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(seasonYear, playerAddition4.CardExternalId, cToken))
             .ReturnsAsync(externalCard4);
 
         // Orchestrator

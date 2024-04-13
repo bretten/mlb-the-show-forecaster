@@ -1,6 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using Moq;
 
@@ -12,7 +11,7 @@ public class GetListingByCardExternalIdQueryHandlerTests
     public async Task Handle_QueryWithExternalId_ReturnsListings()
     {
         // Arrange
-        var cardExternalId = CardExternalId.Create("1");
+        var cardExternalId = Faker.FakeCardExternalId();
         var domainListing = Faker.FakeListing(cardExternalId: cardExternalId.Value);
 
         var stubListingRepository = new Mock<IListingRepository>();

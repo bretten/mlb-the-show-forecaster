@@ -31,7 +31,9 @@ public sealed class MlbTheShowItemMapper : IMlbTheShowItemMapper
 
         return new MlbPlayerCard(
             Year: year,
-            ExternalUuid: CardExternalId.Create(dto.Uuid.ValueAsString),
+            ExternalUuid: CardExternalId.Create(item.Uuid.Value ??
+                                                throw new InvalidTheShowUuidException(
+                                                    $"Could not map the {nameof(ItemDto)}'s UUID since it is not valid: ${item.Uuid.RawValue}")),
             Type: CardType.MlbCard,
             ImageUrl: CardImageLocation.Create(dto.ImageUrl),
             Name: CardName.Create(dto.Name),

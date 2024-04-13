@@ -23,7 +23,9 @@ public sealed class MlbTheShowListingMapper : IMlbTheShowListingMapper
         return new CardListing(listing.ListingName,
             BestBuyPrice: NaturalNumber.Create(listing.BestBuyPrice),
             BestSellPrice: NaturalNumber.Create(listing.BestSellPrice),
-            CardExternalId: CardExternalId.Create(listing.Item.Uuid.ValueAsString),
+            CardExternalId: CardExternalId.Create(listing.Item.Uuid.Value ??
+                                                  throw new InvalidTheShowUuidException(
+                                                      $"Could not map the {nameof(ListingDto<ItemDto>)}'s UUID since it is not valid: ${listing.Item.Uuid.RawValue}")),
             HistoricalPrices: listing.PriceHistory?.Select(x => MapPrice(year, x)).ToList() ??
                               new List<CardListingPrice>()
         );

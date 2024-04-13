@@ -14,9 +14,9 @@ public class GetAllPlayerCardsQueryHandlerTests
     {
         // Arrange
         var year = SeasonYear.Create(2024);
-        var playerCard1 = Faker.FakePlayerCard(year: 2024, cardExternalId: "1");
-        var playerCard2 = Faker.FakePlayerCard(year: 2023, cardExternalId: "2"); // Year is different, 2023
-        var playerCard3 = Faker.FakePlayerCard(year: 2024, cardExternalId: "3");
+        var playerCard1 = Faker.FakePlayerCard(year: 2024, cardExternalId: Faker.FakeGuid1);
+        var playerCard2 = Faker.FakePlayerCard(year: 2023, cardExternalId: Faker.FakeGuid2); // Year is different, 2023
+        var playerCard3 = Faker.FakePlayerCard(year: 2024, cardExternalId: Faker.FakeGuid3);
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
         stubPlayerCardRepository.Setup(x => x.GetAll(year))

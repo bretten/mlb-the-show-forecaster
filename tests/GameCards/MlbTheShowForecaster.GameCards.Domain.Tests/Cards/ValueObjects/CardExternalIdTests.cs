@@ -1,35 +1,32 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.ValueObjects;
 
 public class CardExternalIdTests
 {
     [Fact]
-    public void Create_EmptyExternalId_ThrowsException()
+    public void AsStringDigits_ValidGuid_ReturnsGuidAsStringWithoutHyphens()
     {
         // Arrange
-        const string externalId = "";
-        var action = () => CardExternalId.Create(externalId);
+        var externalId = CardExternalId.Create(new Guid("00000000-0000-0000-0000-000000000001"));
 
         // Act
-        var actual = Record.Exception(action);
+        var actual = externalId.AsStringDigits;
 
         // Assert
-        Assert.NotNull(actual);
-        Assert.IsType<EmptyCardExternalIdException>(actual);
+        Assert.Equal("00000000000000000000000000000001", actual);
     }
 
     [Fact]
-    public void Create_ValidExternalId_ReturnsCardExternalId()
+    public void Create_ValidGuid_ReturnsCardExternalId()
     {
         // Arrange
-        const string externalId = "id1";
+        var externalId = new Guid("00000000-0000-0000-0000-000000000001");
 
         // Act
         var actual = CardExternalId.Create(externalId);
 
         // Assert
-        Assert.Equal("id1", actual.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.Value);
     }
 }

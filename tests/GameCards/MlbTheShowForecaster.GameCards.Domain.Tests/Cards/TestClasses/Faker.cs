@@ -12,6 +12,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestC
 /// </summary>
 public static class Faker
 {
+    public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+
+    public static CardExternalId FakeCardExternalId(Guid? guid = null)
+    {
+        return CardExternalId.Create(guid ?? FakeGuid1);
+    }
+
     public static PlayerCard FakePlayerCard(ushort? year = null, CardExternalId? externalId = null,
         CardType type = CardType.MlbCard, CardImageLocation? image = null, CardName? name = null,
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
@@ -42,11 +49,6 @@ public static class Faker
         );
     }
 
-    public static CardExternalId FakeCardExternalId(string externalId = "1")
-    {
-        return CardExternalId.Create(externalId);
-    }
-
     public static CardImageLocation FakeCardImage(string cardImage = "img.jpg")
     {
         return CardImageLocation.Create(cardImage);
@@ -75,34 +77,34 @@ public static class Faker
         int fieldingAbility = 1, int armStrength = 2, int armAccuracy = 3, int reactionTime = 4, int blocking = 5,
         int speed = 6, int baseRunningAbility = 7, int baseRunningAggression = 8, int scalar = 1)
     {
-        return PlayerCardAttributes.Create(stamina: stamina,
-            pitchingClutch: pitchingClutch,
-            hitsPerNine: hitsPerNine,
-            strikeoutsPerNine: strikeoutsPerNine,
-            baseOnBallsPerNine: baseOnBallsPerNine,
-            homeRunsPerNine: homeRunsPerNine,
-            pitchVelocity: pitchVelocity,
-            pitchControl: pitchControl,
-            pitchMovement: pitchMovement,
-            contactLeft: contactLeft,
-            contactRight: contactRight,
-            powerLeft: powerLeft,
-            powerRight: powerRight,
-            plateVision: plateVision,
-            plateDiscipline: plateDiscipline,
-            battingClutch: battingClutch,
-            buntingAbility: buntingAbility,
-            dragBuntingAbility: dragBuntingAbility,
-            hittingDurability: hittingDurability,
-            fieldingDurability: fieldingDurability,
-            fieldingAbility: fieldingAbility,
-            armStrength: armStrength,
-            armAccuracy: armAccuracy,
-            reactionTime: reactionTime,
-            blocking: blocking,
-            speed: speed,
-            baseRunningAbility: baseRunningAbility,
-            baseRunningAggression: baseRunningAggression
+        return PlayerCardAttributes.Create(stamina: scalar * stamina,
+            pitchingClutch: scalar * pitchingClutch,
+            hitsPerNine: scalar * hitsPerNine,
+            strikeoutsPerNine: scalar * strikeoutsPerNine,
+            baseOnBallsPerNine: scalar * baseOnBallsPerNine,
+            homeRunsPerNine: scalar * homeRunsPerNine,
+            pitchVelocity: scalar * pitchVelocity,
+            pitchControl: scalar * pitchControl,
+            pitchMovement: scalar * pitchMovement,
+            contactLeft: scalar * contactLeft,
+            contactRight: scalar * contactRight,
+            powerLeft: scalar * powerLeft,
+            powerRight: scalar * powerRight,
+            plateVision: scalar * plateVision,
+            plateDiscipline: scalar * plateDiscipline,
+            battingClutch: scalar * battingClutch,
+            buntingAbility: scalar * buntingAbility,
+            dragBuntingAbility: scalar * dragBuntingAbility,
+            hittingDurability: scalar * hittingDurability,
+            fieldingDurability: scalar * fieldingDurability,
+            fieldingAbility: scalar * fieldingAbility,
+            armStrength: scalar * armStrength,
+            armAccuracy: scalar * armAccuracy,
+            reactionTime: scalar * reactionTime,
+            blocking: scalar * blocking,
+            speed: scalar * speed,
+            baseRunningAbility: scalar * baseRunningAbility,
+            baseRunningAggression: scalar * baseRunningAggression
         );
     }
 }
