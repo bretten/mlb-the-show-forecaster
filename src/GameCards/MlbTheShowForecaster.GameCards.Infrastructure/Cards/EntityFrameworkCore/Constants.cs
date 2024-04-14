@@ -29,7 +29,7 @@ public static class Constants
         public const string Year = "year";
 
         /// <summary>
-        /// The card ID from MLB The Show
+        /// The external ID of the card
         /// </summary>
         public const string ExternalId = "external_id";
 
@@ -68,11 +68,6 @@ public static class Constants
         /// Table name
         /// </summary>
         public const string TableName = "player_cards";
-
-        /// <summary>
-        /// Primary key
-        /// </summary>
-        public const string PrimaryKeyName = $"{TableName}_pkey";
 
         /// <summary>
         /// The player card's primary position
@@ -230,7 +225,18 @@ public static class Constants
         public const string BaseRunningAggression = "base_running_aggression";
 
         /// <summary>
-        /// Indexes for <see cref="PlayerCard"/>
+        /// Key names for <see cref="PlayerCard"/>
+        /// </summary>
+        public static class Keys
+        {
+            /// <summary>
+            /// Primary key
+            /// </summary>
+            public const string PrimaryKey = $"{TableName}_pkey";
+        }
+
+        /// <summary>
+        /// Index names for <see cref="PlayerCard"/>
         /// </summary>
         public static class Indexes
         {
@@ -252,12 +258,7 @@ public static class Constants
         public const string TableName = "player_card_historical_ratings";
 
         /// <summary>
-        /// Primary key
-        /// </summary>
-        public const string PrimaryKeyName = $"{TableName}_pkey";
-
-        /// <summary>
-        /// Foreign key that references <see cref="PlayerCard"/>
+        /// Foreign key column name that references <see cref="PlayerCard"/>
         /// </summary>
         public const string PlayerCardId = "player_card_id";
 
@@ -272,14 +273,20 @@ public static class Constants
         public const string EndDate = "end_date";
 
         /// <summary>
-        /// Foreign keys
+        /// Key names for <see cref="PlayerCardHistoricalRatings"/>
         /// </summary>
-        public static class ForeignKeys
+        public static class Keys
         {
+            /// <summary>
+            /// Primary key
+            /// </summary>
+            public const string PrimaryKey = $"{TableName}_pkey";
+
             /// <summary>
             /// <see cref="PlayerCardHistoricalRatings"/> references <see cref="PlayerCard"/>
             /// </summary>
-            public const string PlayerCardsConstraint = $"{TableName}_{PlayerCards.TableName}_{Cards.Id}_fkey";
+            public const string PlayerCardsForeignKeyConstraint =
+                $"{TableName}_{PlayerCards.TableName}_{Cards.Id}_fkey";
         }
     }
 }
