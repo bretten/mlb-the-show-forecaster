@@ -5,7 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
-namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
+namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.TestClasses;
 
 /// <summary>
 /// Creates fakes
@@ -13,6 +13,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestC
 public static class Faker
 {
     public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+    public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
 
     public static CardExternalId FakeCardExternalId(Guid? guid = null)
     {

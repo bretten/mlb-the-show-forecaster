@@ -35,5 +35,5 @@ public interface IPlayerCardRepository
     /// </summary>
     /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="PlayerCard"/></param>
     /// <returns>The corresponding <see cref="PlayerCard"/></returns>
-    Task<PlayerCard> GetByExternalId(CardExternalId externalId);
+    Task<PlayerCard?> GetByExternalId(CardExternalId externalId);
 }

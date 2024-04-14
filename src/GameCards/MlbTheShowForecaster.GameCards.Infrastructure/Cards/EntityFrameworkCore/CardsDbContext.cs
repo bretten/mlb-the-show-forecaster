@@ -28,6 +28,16 @@ public sealed class CardsDbContext : DbContext
     public DbSet<PlayerCardHistoricalRating> PlayerCardHistoricalRatings { get; private init; } = null!;
 
     /// <summary>
+    /// Returns the <see cref="PlayerCard"/> DB set with <see cref="PlayerCardHistoricalRatings"/>s included
+    /// </summary>
+    /// <returns><see cref="IQueryable"/> for <see cref="PlayerCard"/></returns>
+    public IQueryable<PlayerCard> PlayerCardsWithHistoricalRatings()
+    {
+        return PlayerCards
+            .Include("_historicalRatings");
+    }
+
+    /// <summary>
     /// Model configuration for <see cref="PlayerCard"/>
     /// </summary>
     /// <param name="modelBuilder"></param>

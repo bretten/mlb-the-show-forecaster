@@ -27,6 +27,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
 
         builder.Property(e => e.Id)
             .IsRequired()
+            .HasColumnType("uuid")
             .HasColumnName(Constants.Cards.Id)
             .HasColumnOrder(columnOrder++);
 
@@ -40,6 +41,7 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
 
         builder.Property(e => e.ExternalId)
             .IsRequired()
+            .HasColumnType("uuid")
             .HasColumnName(Constants.Cards.ExternalId)
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
