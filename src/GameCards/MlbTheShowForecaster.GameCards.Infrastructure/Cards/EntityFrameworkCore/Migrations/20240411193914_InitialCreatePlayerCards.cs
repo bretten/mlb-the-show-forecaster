@@ -22,8 +22,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
-                    year = table.Column<int>(type: "integer", nullable: false),
-                    external_id = table.Column<string>(type: "text", nullable: false),
+                    year = table.Column<short>(type: "smallint", nullable: false),
+                    external_id = table.Column<Guid>(type: "uuid", nullable: false),
                     type = table.Column<string>(type: "varchar(12)", nullable: false),
                     image_location = table.Column<string>(type: "text", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),

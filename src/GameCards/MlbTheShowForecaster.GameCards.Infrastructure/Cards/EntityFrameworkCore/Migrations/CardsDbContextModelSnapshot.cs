@@ -34,9 +34,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
-                    b.Property<string>("ExternalId")
-                        .IsRequired()
-                        .HasColumnType("text")
+                    b.Property<Guid>("ExternalId")
+                        .HasColumnType("uuid")
                         .HasColumnName("external_id")
                         .HasColumnOrder(2);
 
@@ -88,7 +87,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                         .HasColumnOrder(3);
 
                     b.Property<ushort>("Year")
-                        .HasColumnType("integer")
+                        .HasColumnType("smallint")
                         .HasColumnName("year")
                         .HasColumnOrder(1);
 
