@@ -3,6 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
@@ -235,7 +236,12 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
         catch (MlbPlayerCardNotFoundInCatalogException)
         {
             throw new NoExternalPlayerCardFoundForRosterUpdateException(
-                $"Roster Update had a new player {playerAddition.CardExternalId}, but no external data could be found");
+                $"Roster Update had a new player named {playerAddition.PlayerName} with ID {playerAddition.CardExternalId}, but no external data could be found");
+        }
+        catch (EmptyPlayerAdditionCardExternalIdException)
+        {
+            // We can safely skip these as an external service doesn't have any further info on the player in this case
+            // This will be logged in issue #140
         }
     }
 }

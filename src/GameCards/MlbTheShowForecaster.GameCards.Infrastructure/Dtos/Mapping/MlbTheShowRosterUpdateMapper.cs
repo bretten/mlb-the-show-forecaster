@@ -89,9 +89,10 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     public PlayerPositionChange Map(PlayerPositionChangeDto positionChange)
     {
         return new PlayerPositionChange(
-            CardExternalId.Create(positionChange.Uuid.Value ?? throw new InvalidTheShowUuidException(
+            CardExternalId: CardExternalId.Create(positionChange.Uuid.Value ?? throw new InvalidTheShowUuidException(
                 $"Could not map the {nameof(PlayerPositionChangeDto)}'s UUID since it is not valid: ${positionChange.Uuid.RawValue}")),
-            _itemMapper.MapPosition(positionChange.Position));
+            NewPosition: _itemMapper.MapPosition(positionChange.Position)
+        );
     }
 
     /// <summary>
@@ -101,9 +102,10 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     /// <returns><see cref="PlayerAddition"/></returns>
     public PlayerAddition Map(NewlyAddedPlayerDto newPlayer)
     {
-        return new PlayerAddition(CardExternalId.Create(newPlayer.Uuid.Value ??
-                                                        throw new InvalidTheShowUuidException(
-                                                            $"Could not map the {nameof(NewlyAddedPlayerDto)}'s UUID since it is not valid: ${newPlayer.Uuid.RawValue}")));
+        return new PlayerAddition(
+            cardExternalId: CardExternalId.Create(newPlayer.Uuid.Value ?? Guid.Empty),
+            playerName: newPlayer.Name
+        );
     }
 
     /// <summary>
