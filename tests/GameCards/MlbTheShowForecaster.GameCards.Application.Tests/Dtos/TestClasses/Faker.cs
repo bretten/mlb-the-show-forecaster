@@ -151,9 +151,12 @@ public static class Faker
         );
     }
 
-    public static PlayerAddition FakePlayerAddition(Guid? cardExternalId = null)
+    public static PlayerAddition FakePlayerAddition(Guid? cardExternalId = null, string name = "playerName1")
     {
-        return new PlayerAddition(CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId));
+        return new PlayerAddition(
+            cardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
+            playerName: name
+        );
     }
 
     public static RosterUpdate FakeRosterUpdate(DateOnly? date = null,

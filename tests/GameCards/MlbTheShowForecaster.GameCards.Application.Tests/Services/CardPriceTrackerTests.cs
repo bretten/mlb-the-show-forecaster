@@ -79,7 +79,8 @@ public class CardPriceTrackerTests
         // Listing 3 for PlayerCard 3 exists, but the external listing has no new data, so no action will be taken
         var cardExternalId3 = Faker.FakeCardExternalId(Faker.FakeGuid3);
         var externalListing3 =
-            Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId3.Value, bestBuyPrice: 3, bestSellPrice: 30);
+            Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId3.Value, bestBuyPrice: 3,
+                bestSellPrice: 30);
         var domainListing3 = Faker.FakeListing(cardExternalId: cardExternalId3.Value, 3, 30);
         var domainPlayerCard3 =
             Faker.FakePlayerCard(year: year.Value, cardExternalId: cardExternalId3.Value);

@@ -8,6 +8,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services;
@@ -22,8 +23,8 @@ public class RosterUpdateOrchestratorTests
          */
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
-        // RosterUpdate 1 with RatingChange1
-        PlayerCard? playerCard1 = null; // RatingChange 1 has no corresponding PlayerCard
+        // RosterUpdate1 with RatingChange1
+        PlayerCard? playerCard1 = null; // RatingChange1 has no corresponding PlayerCard
         var cardExternalId1 = Faker.FakeGuid1;
         var ratingChange1 = Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId1);
         var getPlayerCardQuery1 = new GetPlayerCardByExternalIdQuery(ratingChange1.CardExternalId);
@@ -31,7 +32,7 @@ public class RosterUpdateOrchestratorTests
         var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
             new List<PlayerRatingChange>() { ratingChange1 });
 
-        // RosterUpdate 2 with RatingChange2
+        // RosterUpdate2 with RatingChange2
         var cardExternalId2 = Faker.FakeCardExternalId(Faker.FakeGuid2);
         var ratingChange2 = Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId2.Value);
         var getPlayerCardQuery2 = new GetPlayerCardByExternalIdQuery(ratingChange2.CardExternalId);
@@ -74,10 +75,10 @@ public class RosterUpdateOrchestratorTests
         Assert.NotNull(actual);
         Assert.IsType<RosterUpdateOrchestratorInterruptedException>(actual);
         var actualException = actual as RosterUpdateOrchestratorInterruptedException;
-        // Was an exception thrown because PlayerCard 1 could not be found?
+        // Was an exception thrown because PlayerCard1 could not be found?
         Assert.Single(actualException!.InnerExceptions);
         Assert.IsType<NoPlayerCardFoundForRosterUpdateException>(actualException.InnerExceptions[0]);
-        // There should have been nothing done for RosterUpdate 2
+        // There should have been nothing done for RosterUpdate2
         stubQuerySender.Verify(x => x.Send(getPlayerCardQuery2, cToken), Times.Never);
     }
 
@@ -89,8 +90,8 @@ public class RosterUpdateOrchestratorTests
          */
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
-        // RosterUpdate 1 with PositionChange1
-        PlayerCard? playerCard1 = null; // RatingChange 1 has no corresponding PlayerCard
+        // RosterUpdate1 with PositionChange1
+        PlayerCard? playerCard1 = null; // RatingChange1 has no corresponding PlayerCard
         var cardExternalId1 = Faker.FakeGuid1;
         var positionChange1 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId1);
         var getPlayerCardQuery1 = new GetPlayerCardByExternalIdQuery(positionChange1.CardExternalId);
@@ -98,7 +99,7 @@ public class RosterUpdateOrchestratorTests
         var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
             positionChanges: new List<PlayerPositionChange>() { positionChange1 });
 
-        // RosterUpdate 2 with PositionChange2
+        // RosterUpdate2 with PositionChange2
         var cardExternalId2 = Faker.FakeGuid2;
         var positionChange2 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId2);
         var getPlayerCardQuery2 = new GetPlayerCardByExternalIdQuery(positionChange2.CardExternalId);
@@ -141,10 +142,10 @@ public class RosterUpdateOrchestratorTests
         Assert.NotNull(actual);
         Assert.IsType<RosterUpdateOrchestratorInterruptedException>(actual);
         var actualException = actual as RosterUpdateOrchestratorInterruptedException;
-        // Was an exception thrown because PlayerCard 1 could not be found?
+        // Was an exception thrown because PlayerCard1 could not be found?
         Assert.Single(actualException!.InnerExceptions);
         Assert.IsType<NoPlayerCardFoundForRosterUpdateException>(actualException.InnerExceptions[0]);
-        // There should have been nothing done for RosterUpdate 2
+        // There should have been nothing done for RosterUpdate2
         stubQuerySender.Verify(x => x.Send(getPlayerCardQuery2, cToken), Times.Never);
     }
 
@@ -156,27 +157,22 @@ public class RosterUpdateOrchestratorTests
          */
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
-        // RosterUpdate 1 with PlayerAddition1
-        PlayerCard? playerCard1 = null; // RatingChange 1 has no corresponding PlayerCard
+        // RosterUpdate1 with PlayerAddition1 (will have no corresponding MlbPlayerCard)
         var cardExternalId1 = Faker.FakeGuid1;
         var playerAddition1 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId: cardExternalId1);
-        var getPlayerCardQuery1 = new GetPlayerCardByExternalIdQuery(playerAddition1.CardExternalId);
 
         var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
             newPlayers: new List<PlayerAddition>() { playerAddition1 });
 
-        // RosterUpdate 2 with PlayerAddition2
+        // RosterUpdate2 with PlayerAddition2
         var cardExternalId2 = Faker.FakeGuid2;
         var playerAddition2 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId: cardExternalId2);
-        var getPlayerCardQuery2 = new GetPlayerCardByExternalIdQuery(playerAddition2.CardExternalId);
 
         var rosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 2),
             newPlayers: new List<PlayerAddition>() { playerAddition2 });
 
         // Query sender
-        var stubQuerySender = new Mock<IQuerySender>();
-        stubQuerySender.Setup(x => x.Send(getPlayerCardQuery1, cToken))
-            .ReturnsAsync(playerCard1);
+        var mockQuerySender = Mock.Of<IQuerySender>();
 
         // Command sender
         var mockCommandSender = Mock.Of<ICommandSender>();
@@ -193,7 +189,7 @@ public class RosterUpdateOrchestratorTests
 
         // Orchestrator
         var orchestrator = new RosterUpdateOrchestrator(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
-            stubQuerySender.Object, mockCommandSender);
+            mockQuerySender, mockCommandSender);
 
         // Action
         var action = () => orchestrator.SyncRosterUpdates(seasonYear, cToken);
@@ -210,11 +206,76 @@ public class RosterUpdateOrchestratorTests
         Assert.NotNull(actual);
         Assert.IsType<RosterUpdateOrchestratorInterruptedException>(actual);
         var actualException = actual as RosterUpdateOrchestratorInterruptedException;
-        // Was an exception thrown because an external PlayerCard 1 could not be found?
+        // Was an exception thrown because an external PlayerCard1 could not be found?
         Assert.Single(actualException!.InnerExceptions);
         Assert.IsType<NoExternalPlayerCardFoundForRosterUpdateException>(actualException.InnerExceptions[0]);
-        // There should have been nothing done for RosterUpdate 2
-        stubQuerySender.Verify(x => x.Send(getPlayerCardQuery2, cToken), Times.Never);
+        // There should have been nothing done for RosterUpdate2
+        stubCardCatalog.Verify(x => x.GetMlbPlayerCard(seasonYear, playerAddition2.CardExternalId, cToken),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task SyncRosterUpdates_PlayerAdditionExternalCardIdInvalid_SkipsProcessing()
+    {
+        /*
+         * Arrange
+         */
+        var cToken = CancellationToken.None;
+        var seasonYear = SeasonYear.Create(2024);
+        // RosterUpdate1 with PlayerAddition1
+        var cardExternalId1 = Guid.Empty; // Invalid GUID, so it will skip processing for PlayerAddition1
+        var playerAddition1 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId: cardExternalId1);
+
+        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
+            newPlayers: new List<PlayerAddition>() { playerAddition1 });
+
+        // RosterUpdate2 with PlayerAddition2
+        var cardExternalId2 = Faker.FakeGuid2;
+        var playerAddition2 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId: cardExternalId2);
+        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId2);
+
+        var rosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 2),
+            newPlayers: new List<PlayerAddition>() { playerAddition2 });
+
+        // Query sender
+        var mockQuerySender = new Mock<IQuerySender>();
+
+        // Command sender
+        var mockCommandSender = Mock.Of<ICommandSender>();
+
+        // Roster update feed
+        var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
+        stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(seasonYear, cToken))
+            .ReturnsAsync(new List<RosterUpdate>() { rosterUpdate1, rosterUpdate2 });
+
+        // Card catalog
+        var stubCardCatalog = new Mock<ICardCatalog>();
+        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(seasonYear, playerAddition2.CardExternalId, cToken))
+            .ReturnsAsync(externalCard2);
+
+        // Orchestrator
+        var orchestrator = new RosterUpdateOrchestrator(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
+            mockQuerySender.Object, mockCommandSender);
+
+        /*
+         * Act
+         */
+        await orchestrator.SyncRosterUpdates(seasonYear, cToken);
+
+        /*
+         * Assert
+         */
+        // No command should have been sent for PlayerAddition1 in RosterUpdate1
+        var createPlayer1Command =
+            new CreatePlayerCardCommand(Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId1));
+        Mock.Get(mockCommandSender).Verify(x => x.Send(createPlayer1Command, cToken), Times.Never);
+        // ICardCatalog should not have been queried for PlayerAddition1 in RosterUpdate1, due to the invalid card external ID
+        var externalId1 = CardExternalId.Create(Guid.Empty); // Empty = invalid
+        stubCardCatalog.Verify(x => x.GetMlbPlayerCard(seasonYear, externalId1, cToken), Times.Never);
+        // ICardCatalog should have been queried for PlayerAddition2 in RosterUpdate2
+        stubCardCatalog.Verify(x => x.GetMlbPlayerCard(seasonYear, playerAddition2.CardExternalId, cToken), Times.Once);
+        // A CreatePlayerCommand should have been sent for PlayerAddition2
+        Mock.Get(mockCommandSender).Verify(x => x.Send(new CreatePlayerCardCommand(externalCard2), cToken), Times.Once);
     }
 
     [Fact]
@@ -226,19 +287,18 @@ public class RosterUpdateOrchestratorTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        // RosterUpdate 1 - PlayerCard 1 is already up-to-date, so no command will be sent
+        // RosterUpdate1 - PlayerCard1 is already up-to-date, so no command will be sent
         var rosterUpdate1Date = new DateOnly(2024, 4, 1);
         var cardExternalId1 = Faker.FakeGuid1;
         var playerCard1 = Faker.FakePlayerCard(cardExternalId: cardExternalId1);
-        playerCard1.ChangePlayerRating(rosterUpdate1Date, Faker.FakeOverallRating(),
-            Faker.FakePlayerCardAttributes());
+        playerCard1.ChangePlayerRating(rosterUpdate1Date, Faker.FakeOverallRating(), Faker.FakePlayerCardAttributes());
         var ratingChange1 =
             Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId1, date: rosterUpdate1Date);
 
         var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(date: rosterUpdate1Date,
             ratingChanges: new List<PlayerRatingChange>() { ratingChange1 });
 
-        // RosterUpdate 2 - PlayerCard 2 has both a rating change and a position change
+        // RosterUpdate2 - PlayerCard2 has both a rating change and a position change
         var rosterUpdate2Date = new DateOnly(2024, 4, 2);
         var cardExternalId2 = Faker.FakeGuid2;
         var playerCard2 = Faker.FakePlayerCard(cardExternalId: cardExternalId2);
@@ -246,7 +306,7 @@ public class RosterUpdateOrchestratorTests
             Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId2, date: rosterUpdate2Date);
         var positionChange2 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId2);
 
-        // RosterUpdate 2 - PlayerCard 3 only has a position change
+        // RosterUpdate2 - PlayerCard3 only has a position change
         var cardExternalId3 = Faker.FakeGuid3;
         var playerCard3 = Faker.FakePlayerCard(cardExternalId: cardExternalId3);
         var positionChange3 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId3);
@@ -255,7 +315,7 @@ public class RosterUpdateOrchestratorTests
             ratingChanges: new List<PlayerRatingChange>() { ratingChange2 },
             positionChanges: new List<PlayerPositionChange>() { positionChange2, positionChange3 });
 
-        // RosterUpdate 3 - PlayerCard 4 is a new addition to the domain
+        // RosterUpdate3 - PlayerCard4 is a new addition to the domain
         var rosterUpdate3Date = new DateOnly(2024, 4, 3);
         var cardExternalId4 = Faker.FakeGuid4;
         var playerAddition4 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId4);
@@ -301,19 +361,19 @@ public class RosterUpdateOrchestratorTests
         /*
          * Assert
          */
-        // PlayerCard 1 - No command should have been sent
+        // PlayerCard1 - No command should have been sent
         Mock.Get(mockCommandSender)
             .Verify(x => x.Send(It.Is<UpdatePlayerCardCommand>(c => c.PlayerCard == playerCard1), cToken), Times.Never);
-        // PlayerCard 2 - A rating change and position change command should have been sent for PlayerCard 2
+        // PlayerCard2 - A rating change and position change command should have been sent for PlayerCard2
         var playerCard2Command = new UpdatePlayerCardCommand(playerCard2, ratingChange2, positionChange2);
         Mock.Get(mockCommandSender).Verify(x => x.Send(playerCard2Command, cToken), Times.Once);
-        // PlayerCard 2 - The position change was updated with the rating change, so there should be no command with just the position change
+        // PlayerCard2 - The position change was updated with the rating change, so there should be no command with just the position change
         var playerCard2CommandNotSent = new UpdatePlayerCardCommand(playerCard2, null, positionChange2);
         Mock.Get(mockCommandSender).Verify(x => x.Send(playerCard2CommandNotSent, cToken), Times.Never);
-        // PlayerCard 3 - A position change command should have been sent
+        // PlayerCard3 - A position change command should have been sent
         var playerCard3Command = new UpdatePlayerCardCommand(playerCard3, null, positionChange3);
         Mock.Get(mockCommandSender).Verify(x => x.Send(playerCard3Command, cToken), Times.Once);
-        // PlayerCard 4 - A PlayerCard creation command should have been sent
+        // PlayerCard4 - A PlayerCard creation command should have been sent
         var playerCard4Command = new CreatePlayerCardCommand(externalCard4);
         Mock.Get(mockCommandSender).Verify(x => x.Send(playerCard4Command, cToken), Times.Once);
         // Was each roster update completed?
