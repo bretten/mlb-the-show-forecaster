@@ -47,17 +47,24 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// <param name="listing">The <see cref="Listing"/> to add</param>
     public async Task Add(Listing listing)
     {
-        await BulkInsert(listing, (listingToAdd, importer) =>
-        {
-            foreach (var historicalPrice in listing.HistoricalPricesChronologically)
-            {
-                importer.StartRow();
-                importer.Write(listingToAdd.Id, NpgsqlDbType.Uuid);
-                importer.Write(historicalPrice.Date, NpgsqlDbType.Date);
-                importer.Write(historicalPrice.BuyPrice.Value, NpgsqlDbType.Integer);
-                importer.Write(historicalPrice.SellPrice.Value, NpgsqlDbType.Integer);
-            }
-        }, CancellationToken.None);
+        // Open a connection and transaction
+        await using var connection = await _dbDataSource.OpenConnectionAsync(CancellationToken.None);
+        await using var transaction = await connection.BeginTransactionAsync(CancellationToken.None);
+
+        // INSERT the Listing
+        await using var command = new NpgsqlCommand(ListingsInsertCommand, connection, transaction);
+        command.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
+        command.Parameters.Add(new NpgsqlParameter { Value = listing.CardExternalId.Value, DbType = DbType.Guid });
+        command.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
+        command.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
+        await command.ExecuteScalarAsync(CancellationToken.None);
+
+        // Bulk upsert the Listing's historical prices
+        await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
+            CancellationToken.None);
+
+        // Commit
+        await transaction.CommitAsync(CancellationToken.None);
     }
 
     /// <summary>
@@ -66,17 +73,23 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// <param name="listing">The <see cref="Listing"/> to update</param>
     public async Task Update(Listing listing)
     {
-        await BulkUpsert(listing, (listingToUpdate, importer) =>
-        {
-            foreach (var historicalPrice in listing.HistoricalPricesChronologically)
-            {
-                importer.StartRow();
-                importer.Write(listingToUpdate.Id, NpgsqlDbType.Uuid);
-                importer.Write(historicalPrice.Date, NpgsqlDbType.Date);
-                importer.Write(historicalPrice.BuyPrice.Value, NpgsqlDbType.Integer);
-                importer.Write(historicalPrice.SellPrice.Value, NpgsqlDbType.Integer);
-            }
-        }, CancellationToken.None);
+        // Open a connection and transaction
+        await using var connection = await _dbDataSource.OpenConnectionAsync(CancellationToken.None);
+        await using var transaction = await connection.BeginTransactionAsync(CancellationToken.None);
+
+        // UPDATE the Listing
+        await using var command = new NpgsqlCommand(ListingsUpdateCommand, connection, transaction);
+        command.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
+        command.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
+        command.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
+        await command.ExecuteScalarAsync(CancellationToken.None);
+
+        // Bulk upsert the Listing's historical prices
+        await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
+            CancellationToken.None);
+
+        // Commit
+        await transaction.CommitAsync(CancellationToken.None);
     }
 
     /// <summary>
@@ -90,21 +103,18 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
             .FirstOrDefaultAsync(x => x.CardExternalId == externalId);
     }
 
-    private async Task BulkInsert(Listing listing, Action<Listing, NpgsqlBinaryImporter> historicalPriceWriterDelegate,
+    /// <summary>
+    /// Uses an existing connection and transaction to bulk upsert a <see cref="Listing"/>'s <see cref="ListingHistoricalPrice"/>s
+    /// </summary>
+    /// <param name="connection">The existing connection</param>
+    /// <param name="transaction">The existing transaction</param>
+    /// <param name="listing">The <see cref="Listing"/> to upsert <see cref="ListingHistoricalPrice"/>s for</param>
+    /// <param name="historicalPriceWriterDelegate">Delegate for writing a <see cref="Listing"/>'s <see cref="ListingHistoricalPrice"/>s to the Npgsql binary importer</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    private async Task BulkUpsertHistoricalPrices(NpgsqlConnection connection, NpgsqlTransaction transaction,
+        Listing listing, Action<Listing, NpgsqlBinaryImporter> historicalPriceWriterDelegate,
         CancellationToken cancellationToken)
     {
-        // Open a connection and transaction
-        await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
-
-        // Insert the Listing
-        await using var insertCmd = new NpgsqlCommand(ListingsInsertCommand, connection, transaction);
-        insertCmd.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
-        insertCmd.Parameters.Add(new NpgsqlParameter { Value = listing.CardExternalId.Value, DbType = DbType.Guid });
-        insertCmd.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
-        insertCmd.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
-        await insertCmd.ExecuteScalarAsync(cancellationToken);
-
         // Create a temporary table to insert the Listing's historical prices into
         await using var tempTableCmd =
             new NpgsqlCommand(ListingHistoricalPricesCreateTempTableCommand, connection, transaction);
@@ -126,48 +136,23 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         await using var dropTempTableCmd =
             new NpgsqlCommand(ListingHistoricalPricesDropTempTableCommand, connection, transaction);
         await dropTempTableCmd.ExecuteNonQueryAsync(cancellationToken);
-
-        await transaction.CommitAsync(cancellationToken);
     }
 
-    private async Task BulkUpsert(Listing listing, Action<Listing, NpgsqlBinaryImporter> historicalPriceWriterDelegate,
-        CancellationToken cancellationToken)
+    /// <summary>
+    /// Delegate for writing a <see cref="Listing"/>'s <see cref="ListingHistoricalPrice"/>s to the Npgsql binary
+    /// importer
+    /// </summary>
+    private readonly Action<Listing, NpgsqlBinaryImporter> _historicalPriceWriterDelegate = (listing, importer) =>
     {
-        // Open a connection and transaction
-        await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
-
-        // Insert the Listing
-        await using var updateCmd = new NpgsqlCommand(ListingsUpdateCommand, connection, transaction);
-        updateCmd.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
-        updateCmd.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
-        updateCmd.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
-        await updateCmd.ExecuteScalarAsync(cancellationToken);
-
-        // Create a temporary table to insert the Listing's historical prices into
-        await using var tempTableCmd =
-            new NpgsqlCommand(ListingHistoricalPricesCreateTempTableCommand, connection, transaction);
-        await tempTableCmd.ExecuteNonQueryAsync(cancellationToken);
-
-        // COPY the Listing's historical prices into the temporary table using a binary import
-        await using var importer =
-            await connection.BeginBinaryImportAsync(ListingHistoricalPricesBinaryCopyCommand, cancellationToken);
-        historicalPriceWriterDelegate(listing, importer);
-        await importer.CompleteAsync(cancellationToken);
-        await importer.CloseAsync(cancellationToken);
-
-        // Bulk update the actual historical prices table with data from the temporary table
-        await using var bulkUpdateCmd =
-            new NpgsqlCommand(ListingHistoricalPricesBulkUpdateCommand, connection, transaction);
-        await bulkUpdateCmd.ExecuteNonQueryAsync(cancellationToken);
-
-        // Remove the temporary table
-        await using var dropTempTableCmd =
-            new NpgsqlCommand(ListingHistoricalPricesDropTempTableCommand, connection, transaction);
-        await dropTempTableCmd.ExecuteNonQueryAsync(cancellationToken);
-
-        await transaction.CommitAsync(cancellationToken);
-    }
+        foreach (var historicalPrice in listing.HistoricalPricesChronologically)
+        {
+            importer.StartRow();
+            importer.Write(listing.Id, NpgsqlDbType.Uuid);
+            importer.Write(historicalPrice.Date, NpgsqlDbType.Date);
+            importer.Write(historicalPrice.BuyPrice.Value, NpgsqlDbType.Integer);
+            importer.Write(historicalPrice.SellPrice.Value, NpgsqlDbType.Integer);
+        }
+    };
 
     /// <summary>
     /// Inserts a new <see cref="Listing"/>
