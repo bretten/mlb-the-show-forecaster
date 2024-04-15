@@ -57,6 +57,17 @@ public sealed class Listing : AggregateRoot
     }
 
     /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
+    /// <param name="buyPrice">The current, best buy price</param>
+    /// <param name="sellPrice">The current, best sell price</param>
+    private Listing(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice)
+        : this(cardExternalId, buyPrice, sellPrice, new List<ListingHistoricalPrice>())
+    {
+    }
+
+    /// <summary>
     /// Logs the specified prices by adding them to the historical price collection under the specified date
     /// </summary>
     /// <param name="date">The date to archive the prices under</param>

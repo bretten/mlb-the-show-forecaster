@@ -57,5 +57,14 @@ public sealed class ListingEntityTypeConfiguration : IEntityTypeConfiguration<Li
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
+
+        // Ignore these properties. They are not relationships/navigation properties, but just convenience methods for other members of the class
+        builder.Ignore(x => x.HistoricalPricesChronologically);
+
+        // Relation is defined on ListingHistoricalPrice end
+        // builder.HasMany<ListingHistoricalPrice>("_historicalPrices")
+        //     .WithOne()
+        //     .HasForeignKey(Constants.ListingHistoricalPrices.ListingId)
+        //     .IsRequired();
     }
 }
