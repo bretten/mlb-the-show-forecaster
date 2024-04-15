@@ -27,5 +27,5 @@ public interface IListingRepository
     /// </summary>
     /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="Listing"/></param>
     /// <returns>The corresponding <see cref="Listing"/></returns>
-    Task<Listing> GetByExternalId(CardExternalId externalId);
+    Task<Listing?> GetByExternalId(CardExternalId externalId);
 }

@@ -28,6 +28,16 @@ public sealed class MarketplaceDbContext : DbContext
     public DbSet<ListingHistoricalPrice> ListingHistoricalPrices { get; private init; } = null!;
 
     /// <summary>
+    /// Returns the <see cref="Listing"/> DB set with <see cref="ListingHistoricalPrice"/>s included
+    /// </summary>
+    /// <returns><see cref="IQueryable"/> for <see cref="Listing"/></returns>
+    public IQueryable<Listing> ListingsWithHistoricalPrices()
+    {
+        return Listings
+            .Include("_historicalPrices");
+    }
+
+    /// <summary>
     /// Model configuration for <see cref="Listing"/>
     /// </summary>
     /// <param name="modelBuilder">Model builder</param>
