@@ -12,7 +12,7 @@ using NpgsqlTypes;
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 
 /// <summary>
-/// Hybrid implementation of <see cref="IListingRepository"/> that uses EF Core directly but also uses Npgsql for
+/// Hybrid implementation of <see cref="IListingRepository"/> that uses EF Core but also uses Npgsql directly for
 /// transactions and binary imports
 /// </summary>
 public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingRepository
@@ -48,7 +48,7 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task Add(Listing listing, CancellationToken cancellationToken = default)
     {
-        // Open a connection and transaction
+        // Open a connection and begin a transaction
         await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
@@ -75,7 +75,7 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task Update(Listing listing, CancellationToken cancellationToken = default)
     {
-        // Open a connection and transaction
+        // Open a connection and begin a transaction
         await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
