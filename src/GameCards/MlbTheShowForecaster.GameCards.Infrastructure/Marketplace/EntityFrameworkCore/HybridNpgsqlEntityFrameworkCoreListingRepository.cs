@@ -15,7 +15,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
 /// Hybrid implementation of <see cref="IListingRepository"/> that uses EF Core directly but also uses Npgsql for
 /// transactions and binary imports
 /// </summary>
-public sealed class EntityFrameworkCoreListingRepository : IListingRepository
+public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingRepository
 {
     /// <summary>
     /// The DB context for <see cref="Listing"/>
@@ -33,12 +33,12 @@ public sealed class EntityFrameworkCoreListingRepository : IListingRepository
     /// <param name="dbContext">The DB context for <see cref="Listing"/></param>
     /// <param name="dbDataSource">Data source for getting Npgsql connections</param>
     /// <exception cref="InvalidNpgsqlDataSourceForListingRepositoryException">Thrown when the <see cref="NpgsqlDataSource"/> is invalid</exception>
-    public EntityFrameworkCoreListingRepository(MarketplaceDbContext dbContext, DbDataSource dbDataSource)
+    public HybridNpgsqlEntityFrameworkCoreListingRepository(MarketplaceDbContext dbContext, DbDataSource dbDataSource)
     {
         _dbContext = dbContext;
         _dbDataSource = dbDataSource as NpgsqlDataSource ??
                         throw new InvalidNpgsqlDataSourceForListingRepositoryException(
-                            $"No valid Npgsql datasource provided for {nameof(EntityFrameworkCoreListingRepository)}");
+                            $"No valid Npgsql datasource provided for {nameof(HybridNpgsqlEntityFrameworkCoreListingRepository)}");
     }
 
     /// <summary>

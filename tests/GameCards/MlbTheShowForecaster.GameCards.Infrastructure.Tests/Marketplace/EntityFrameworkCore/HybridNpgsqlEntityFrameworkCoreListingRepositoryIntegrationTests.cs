@@ -11,7 +11,7 @@ using Testcontainers.PostgreSql;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Marketplace.EntityFrameworkCore;
 
-public class EntityFrameworkCoreListingRepositoryIntegrationTests : IAsyncLifetime
+public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container;
 
@@ -19,7 +19,7 @@ public class EntityFrameworkCoreListingRepositoryIntegrationTests : IAsyncLifeti
     /// Configures the container options that will be used for each test
     /// </summary>
     /// <exception cref="DockerNotRunningException">Thrown if Docker is not running</exception>
-    public EntityFrameworkCoreListingRepositoryIntegrationTests()
+    public HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests()
     {
         try
         {
@@ -47,7 +47,7 @@ public class EntityFrameworkCoreListingRepositoryIntegrationTests : IAsyncLifeti
         // Arrange
         NpgsqlDataSource? dataSource = null;
         var mockDbContext = new MarketplaceDbContext(new DbContextOptions<MarketplaceDbContext>());
-        var action = () => new EntityFrameworkCoreListingRepository(mockDbContext, dataSource);
+        var action = () => new HybridNpgsqlEntityFrameworkCoreListingRepository(mockDbContext, dataSource!);
 
         // Act
         var actual = Record.Exception(action);
@@ -79,7 +79,7 @@ public class EntityFrameworkCoreListingRepositoryIntegrationTests : IAsyncLifeti
         await dbContext.Database.MigrateAsync();
         var dbDataSource = GetNpgsqlDataSource();
 
-        var repo = new EntityFrameworkCoreListingRepository(dbContext, dbDataSource);
+        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, dbDataSource);
 
         // Act
         await repo.Add(fakeListing);
@@ -131,7 +131,7 @@ public class EntityFrameworkCoreListingRepositoryIntegrationTests : IAsyncLifeti
         await dbContext.AddAsync(fakeListing2);
         await dbContext.SaveChangesAsync();
 
-        var repo = new EntityFrameworkCoreListingRepository(dbContext, dbDataSource);
+        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, dbDataSource);
         var mockThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
 
         // Act
@@ -189,7 +189,7 @@ public class EntityFrameworkCoreListingRepositoryIntegrationTests : IAsyncLifeti
         await dbContext.Database.MigrateAsync();
         var dbDataSource = GetNpgsqlDataSource();
 
-        var repo = new EntityFrameworkCoreListingRepository(dbContext, dbDataSource);
+        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, dbDataSource);
         await repo.Add(fakeListing1);
         await repo.Add(fakeListing2);
         await dbContext.SaveChangesAsync();
