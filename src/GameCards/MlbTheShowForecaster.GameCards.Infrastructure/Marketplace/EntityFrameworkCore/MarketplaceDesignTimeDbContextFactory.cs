@@ -19,7 +19,7 @@ public sealed class MarketplaceDesignTimeDbContextFactory : IDesignTimeDbContext
     public MarketplaceDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<MarketplaceDbContext>();
-        optionsBuilder.UseNpgsql("Server=localhost;Port=54320;Database=mlbcards;Uid=postgres;Pwd=pass12;Search Path=game_cards");
+        optionsBuilder.UseNpgsql();
         return new MarketplaceDbContext(optionsBuilder.Options);
     }
 }

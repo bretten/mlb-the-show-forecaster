@@ -19,8 +19,7 @@ public sealed class CardsDesignTimeDbContextFactory : IDesignTimeDbContextFactor
     public CardsDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<CardsDbContext>();
-        optionsBuilder.UseNpgsql(
-            "Server=localhost;Port=54320;Database=mlbcards;Uid=postgres;Pwd=pass12;Search Path=game_cards");
+        optionsBuilder.UseNpgsql();
         return new CardsDbContext(optionsBuilder.Options);
     }
 }
