@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.TestClasses;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -38,6 +39,22 @@ public class EntityFrameworkCoreListingRepositoryIntegrationTests : IAsyncLifeti
 
             throw new DockerNotRunningException($"Docker is required to run tests for {GetType().Name}");
         }
+    }
+
+    [Fact]
+    public void Constructor_InvalidNpgsqlDataSource_ThrowsException()
+    {
+        // Arrange
+        NpgsqlDataSource? dataSource = null;
+        var mockDbContext = new MarketplaceDbContext(new DbContextOptions<MarketplaceDbContext>());
+        var action = () => new EntityFrameworkCoreListingRepository(mockDbContext, dataSource);
+
+        // Act
+        var actual = Record.Exception(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<InvalidNpgsqlDataSourceForListingRepositoryException>(actual);
     }
 
     [Fact]

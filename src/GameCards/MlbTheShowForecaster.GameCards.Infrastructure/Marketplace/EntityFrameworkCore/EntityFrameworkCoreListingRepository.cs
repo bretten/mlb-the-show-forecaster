@@ -3,25 +3,48 @@ using System.Data.Common;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using NpgsqlTypes;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 
+/// <summary>
+/// Hybrid implementation of <see cref="IListingRepository"/> that uses EF Core directly but also uses Npgsql for
+/// transactions and binary imports
+/// </summary>
 public sealed class EntityFrameworkCoreListingRepository : IListingRepository
 {
+    /// <summary>
+    /// The DB context for <see cref="Listing"/>
+    /// </summary>
     private readonly MarketplaceDbContext _dbContext;
+
+    /// <summary>
+    /// Data source for getting Npgsql connections
+    /// </summary>
     private readonly NpgsqlDataSource _dbDataSource;
 
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="dbContext">The DB context for <see cref="Listing"/></param>
+    /// <param name="dbDataSource">Data source for getting Npgsql connections</param>
+    /// <exception cref="InvalidNpgsqlDataSourceForListingRepositoryException">Thrown when the <see cref="NpgsqlDataSource"/> is invalid</exception>
     public EntityFrameworkCoreListingRepository(MarketplaceDbContext dbContext, DbDataSource dbDataSource)
     {
         _dbContext = dbContext;
         _dbDataSource = dbDataSource as NpgsqlDataSource ??
-                        throw new ArgumentException(
-                            $"No Npgsql datasource provided for {nameof(EntityFrameworkCoreListingRepository)}");
+                        throw new InvalidNpgsqlDataSourceForListingRepositoryException(
+                            $"No valid Npgsql datasource provided for {nameof(EntityFrameworkCoreListingRepository)}");
     }
 
+    /// <summary>
+    /// Adds a <see cref="Listing"/>
+    /// </summary>
+    /// <param name="listing">The <see cref="Listing"/> to add</param>
     public async Task Add(Listing listing)
     {
         await BulkInsert(listing, (listingToAdd, importer) =>
@@ -37,6 +60,10 @@ public sealed class EntityFrameworkCoreListingRepository : IListingRepository
         }, CancellationToken.None);
     }
 
+    /// <summary>
+    /// Updates a <see cref="Listing"/>
+    /// </summary>
+    /// <param name="listing">The <see cref="Listing"/> to update</param>
     public async Task Update(Listing listing)
     {
         await BulkUpsert(listing, (listingToUpdate, importer) =>
@@ -52,6 +79,11 @@ public sealed class EntityFrameworkCoreListingRepository : IListingRepository
         }, CancellationToken.None);
     }
 
+    /// <summary>
+    /// Returns a <see cref="Listing"/> for the specified <see cref="CardExternalId"/>
+    /// </summary>
+    /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="Listing"/></param>
+    /// <returns>The corresponding <see cref="Listing"/></returns>
     public async Task<Listing?> GetByExternalId(CardExternalId externalId)
     {
         return await _dbContext.ListingsWithHistoricalPrices()
@@ -66,7 +98,7 @@ public sealed class EntityFrameworkCoreListingRepository : IListingRepository
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
         // Insert the Listing
-        await using var insertCmd = new NpgsqlCommand(LISTINGS_INSERT_COMMAND, connection, transaction);
+        await using var insertCmd = new NpgsqlCommand(ListingsInsertCommand, connection, transaction);
         insertCmd.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
         insertCmd.Parameters.Add(new NpgsqlParameter { Value = listing.CardExternalId.Value, DbType = DbType.Guid });
         insertCmd.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
@@ -75,29 +107,30 @@ public sealed class EntityFrameworkCoreListingRepository : IListingRepository
 
         // Create a temporary table to insert the Listing's historical prices into
         await using var tempTableCmd =
-            new NpgsqlCommand(LISTING_HISTORICAL_PRICES_CREATE_TEMP_TABLE_COMMAND, connection, transaction);
+            new NpgsqlCommand(ListingHistoricalPricesCreateTempTableCommand, connection, transaction);
         await tempTableCmd.ExecuteNonQueryAsync(cancellationToken);
 
         // COPY the Listing's historical prices into the temporary table using a binary import
         await using var importer =
-            await connection.BeginBinaryImportAsync(LISTING_HISTORICAL_PRICES_BINARY_COPY_COMMAND, cancellationToken);
+            await connection.BeginBinaryImportAsync(ListingHistoricalPricesBinaryCopyCommand, cancellationToken);
         historicalPriceWriterDelegate(listing, importer);
         await importer.CompleteAsync(cancellationToken);
         await importer.CloseAsync(cancellationToken);
 
-        // Merge the temporary table historical prices into the actual historical prices table
-        await using var mergeCmd = new NpgsqlCommand(LISTING_HISTORICAL_PRICES_MERGE_COMMAND, connection, transaction);
-        await mergeCmd.ExecuteNonQueryAsync(cancellationToken);
+        // Bulk update the actual historical prices table with data from the temporary table
+        await using var bulkUpdateCmd =
+            new NpgsqlCommand(ListingHistoricalPricesBulkUpdateCommand, connection, transaction);
+        await bulkUpdateCmd.ExecuteNonQueryAsync(cancellationToken);
 
         // Remove the temporary table
         await using var dropTempTableCmd =
-            new NpgsqlCommand(LISTING_HISTORICAL_PRICES_DROP_TEMP_TABLE_COMMAND, connection, transaction);
+            new NpgsqlCommand(ListingHistoricalPricesDropTempTableCommand, connection, transaction);
         await dropTempTableCmd.ExecuteNonQueryAsync(cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
     }
-    
-        private async Task BulkUpsert(Listing listing, Action<Listing, NpgsqlBinaryImporter> historicalPriceWriterDelegate,
+
+    private async Task BulkUpsert(Listing listing, Action<Listing, NpgsqlBinaryImporter> historicalPriceWriterDelegate,
         CancellationToken cancellationToken)
     {
         // Open a connection and transaction
@@ -105,7 +138,7 @@ public sealed class EntityFrameworkCoreListingRepository : IListingRepository
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
         // Insert the Listing
-        await using var updateCmd = new NpgsqlCommand(LISTINGS_UPDATE_COMMAND, connection, transaction);
+        await using var updateCmd = new NpgsqlCommand(ListingsUpdateCommand, connection, transaction);
         updateCmd.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
         updateCmd.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
         updateCmd.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
@@ -113,86 +146,107 @@ public sealed class EntityFrameworkCoreListingRepository : IListingRepository
 
         // Create a temporary table to insert the Listing's historical prices into
         await using var tempTableCmd =
-            new NpgsqlCommand(LISTING_HISTORICAL_PRICES_CREATE_TEMP_TABLE_COMMAND, connection, transaction);
+            new NpgsqlCommand(ListingHistoricalPricesCreateTempTableCommand, connection, transaction);
         await tempTableCmd.ExecuteNonQueryAsync(cancellationToken);
 
         // COPY the Listing's historical prices into the temporary table using a binary import
         await using var importer =
-            await connection.BeginBinaryImportAsync(LISTING_HISTORICAL_PRICES_BINARY_COPY_COMMAND, cancellationToken);
+            await connection.BeginBinaryImportAsync(ListingHistoricalPricesBinaryCopyCommand, cancellationToken);
         historicalPriceWriterDelegate(listing, importer);
         await importer.CompleteAsync(cancellationToken);
         await importer.CloseAsync(cancellationToken);
 
-        // Merge the temporary table historical prices into the actual historical prices table
-        await using var mergeCmd = new NpgsqlCommand(LISTING_HISTORICAL_PRICES_MERGE_COMMAND, connection, transaction);
-        await mergeCmd.ExecuteNonQueryAsync(cancellationToken);
+        // Bulk update the actual historical prices table with data from the temporary table
+        await using var bulkUpdateCmd =
+            new NpgsqlCommand(ListingHistoricalPricesBulkUpdateCommand, connection, transaction);
+        await bulkUpdateCmd.ExecuteNonQueryAsync(cancellationToken);
 
         // Remove the temporary table
         await using var dropTempTableCmd =
-            new NpgsqlCommand(LISTING_HISTORICAL_PRICES_DROP_TEMP_TABLE_COMMAND, connection, transaction);
+            new NpgsqlCommand(ListingHistoricalPricesDropTempTableCommand, connection, transaction);
         await dropTempTableCmd.ExecuteNonQueryAsync(cancellationToken);
 
         await transaction.CommitAsync(cancellationToken);
     }
 
-    private static readonly string LISTINGS_INSERT_COMMAND = $@"
+    /// <summary>
+    /// Inserts a new <see cref="Listing"/>
+    /// </summary>
+    private const string ListingsInsertCommand = $@"
         INSERT INTO {Constants.Schema}.{Constants.Listings.TableName} (
-                {Constants.Listings.Id},
-                {Constants.Listings.CardExternalId},
-                {Constants.Listings.BuyPrice},
-                {Constants.Listings.SellPrice}
+            {Constants.Listings.Id},
+            {Constants.Listings.CardExternalId},
+            {Constants.Listings.BuyPrice},
+            {Constants.Listings.SellPrice}
         )
         VALUES ($1, $2, $3, $4)
-        RETURNING {Constants.Listings.Id}";
+        RETURNING {Constants.Listings.Id};";
 
-    private static readonly string LISTINGS_UPDATE_COMMAND = $@"
+    /// <summary>
+    /// Updates an existing <see cref="Listing"/>
+    /// </summary>
+    private const string ListingsUpdateCommand = $@"
         UPDATE {Constants.Schema}.{Constants.Listings.TableName}
         SET (
-                {Constants.Listings.BuyPrice},
-                {Constants.Listings.SellPrice}
+            {Constants.Listings.BuyPrice},
+            {Constants.Listings.SellPrice}
         )
         = ($2, $3)
-        WHERE {Constants.Listings.Id} = $1";
+        WHERE {Constants.Listings.Id} = $1;";
 
-    private static readonly string LISTING_HISTORICAL_PRICES_CREATE_TEMP_TABLE_COMMAND = $@"
-        create table {Constants.Schema}.{Constants.ListingHistoricalPrices.TableName}_temp
+    /// <summary>
+    /// Name of the temporary table for <see cref="ListingHistoricalPrice"/> for bulk binary imports
+    /// </summary>
+    private const string ListingHistoricalPricesTempTableName = $"{Constants.ListingHistoricalPrices.TableName}_TEMP";
+
+    /// <summary>
+    /// Creates a temporary table for <see cref="ListingHistoricalPrice"/> for a bulk binary import
+    /// </summary>
+    private const string ListingHistoricalPricesCreateTempTableCommand = $@"
+        CREATE TABLE {Constants.Schema}.{ListingHistoricalPricesTempTableName}
         (
-            listing_id uuid    not null,
-            date       date    not null,
-            buy_price  integer not null,
-            sell_price integer not null,
-            primary key (listing_id, date)
-        );
-    ";
+            {Constants.ListingHistoricalPrices.ListingId}          uuid    not null,
+            {Constants.ListingHistoricalPrices.Date}               date    not null,
+            {Constants.ListingHistoricalPrices.BuyPrice}           integer not null,
+            {Constants.ListingHistoricalPrices.SellPrice}          integer not null,
+            primary key ({Constants.ListingHistoricalPrices.ListingId}, {Constants.ListingHistoricalPrices.Date})
+        );";
 
-    private static readonly string LISTING_HISTORICAL_PRICES_DROP_TEMP_TABLE_COMMAND = $@"
-        drop table {Constants.Schema}.{Constants.ListingHistoricalPrices.TableName}_temp
-    ";
+    /// <summary>
+    /// Drops the temporary table for <see cref="ListingHistoricalPrice"/>
+    /// </summary>
+    private const string ListingHistoricalPricesDropTempTableCommand = $@"
+        DROP TABLE {Constants.Schema}.{ListingHistoricalPricesTempTableName}";
 
-    private static readonly string LISTING_HISTORICAL_PRICES_BINARY_COPY_COMMAND = $@"
-            COPY {Constants.Schema}.{Constants.ListingHistoricalPrices.TableName}_temp (
-                {Constants.ListingHistoricalPrices.ListingId},
-                {Constants.ListingHistoricalPrices.Date},
-                {Constants.ListingHistoricalPrices.BuyPrice},
-                {Constants.ListingHistoricalPrices.SellPrice}
-            )
-            FROM STDIN (FORMAT BINARY)";
+    /// <summary>
+    /// Bulk binary import for <see cref="ListingHistoricalPrice"/>
+    /// </summary>
+    private const string ListingHistoricalPricesBinaryCopyCommand = $@"
+        COPY {Constants.Schema}.{ListingHistoricalPricesTempTableName} (
+            {Constants.ListingHistoricalPrices.ListingId},
+            {Constants.ListingHistoricalPrices.Date},
+            {Constants.ListingHistoricalPrices.BuyPrice},
+            {Constants.ListingHistoricalPrices.SellPrice}
+        )
+        FROM STDIN (FORMAT BINARY)";
 
-    private static readonly string LISTING_HISTORICAL_PRICES_MERGE_COMMAND = $@"
-            INSERT INTO {Constants.Schema}.{Constants.ListingHistoricalPrices.TableName} (
-                {Constants.ListingHistoricalPrices.ListingId},
-                {Constants.ListingHistoricalPrices.Date},
-                {Constants.ListingHistoricalPrices.BuyPrice},
-                {Constants.ListingHistoricalPrices.SellPrice}
-            )
-            SELECT
-                {Constants.ListingHistoricalPrices.ListingId},
-                {Constants.ListingHistoricalPrices.Date},
-                {Constants.ListingHistoricalPrices.BuyPrice},
-                {Constants.ListingHistoricalPrices.SellPrice}
-            FROM {Constants.Schema}.{Constants.ListingHistoricalPrices.TableName}_temp
-            ON CONFLICT ON CONSTRAINT {Constants.ListingHistoricalPrices.Keys.PrimaryKey} DO UPDATE
-            SET {Constants.ListingHistoricalPrices.BuyPrice} = EXCLUDED.{Constants.ListingHistoricalPrices.BuyPrice},
-                {Constants.ListingHistoricalPrices.SellPrice} = EXCLUDED.{Constants.ListingHistoricalPrices.SellPrice};
-        ";
+    /// <summary>
+    /// Bulk update for the <see cref="ListingHistoricalPrice"/> table using the temporary table as the source
+    /// </summary>
+    private const string ListingHistoricalPricesBulkUpdateCommand = $@"
+        INSERT INTO {Constants.Schema}.{Constants.ListingHistoricalPrices.TableName} (
+            {Constants.ListingHistoricalPrices.ListingId},
+            {Constants.ListingHistoricalPrices.Date},
+            {Constants.ListingHistoricalPrices.BuyPrice},
+            {Constants.ListingHistoricalPrices.SellPrice}
+        )
+        SELECT
+            {Constants.ListingHistoricalPrices.ListingId},
+            {Constants.ListingHistoricalPrices.Date},
+            {Constants.ListingHistoricalPrices.BuyPrice},
+            {Constants.ListingHistoricalPrices.SellPrice}
+        FROM {Constants.Schema}.{ListingHistoricalPricesTempTableName}
+        ON CONFLICT ON CONSTRAINT {Constants.ListingHistoricalPrices.Keys.PrimaryKey} DO UPDATE
+        SET {Constants.ListingHistoricalPrices.BuyPrice} = EXCLUDED.{Constants.ListingHistoricalPrices.BuyPrice},
+            {Constants.ListingHistoricalPrices.SellPrice} = EXCLUDED.{Constants.ListingHistoricalPrices.SellPrice};";
 }
