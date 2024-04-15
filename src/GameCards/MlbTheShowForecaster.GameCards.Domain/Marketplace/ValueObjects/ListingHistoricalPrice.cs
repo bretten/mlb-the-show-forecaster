@@ -11,7 +11,7 @@ public sealed class ListingHistoricalPrice : ValueObject
     /// <summary>
     /// The date of the card's listing prices
     /// </summary>
-    public DateOnly Date { get; set; }
+    public DateOnly Date { get; }
 
     /// <summary>
     /// The best buy price for the day

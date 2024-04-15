@@ -6,9 +6,16 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 
+/// <summary>
+/// Configures <see cref="PlayerCardHistoricalRating"/> for EF Core
+/// </summary>
 public sealed class
     PlayerCardHistoricalRatingEntityTypeConfiguration : IEntityTypeConfiguration<PlayerCardHistoricalRating>
 {
+    /// <summary>
+    /// Configures <see cref="PlayerCardHistoricalRating"/> for EF Core
+    /// </summary>
+    /// <param name="builder">The builder that configures the entity type</param>
     public void Configure(EntityTypeBuilder<PlayerCardHistoricalRating> builder)
     {
         builder.ToTable(Constants.PlayerCardHistoricalRatings.TableName, Constants.Schema);
@@ -16,12 +23,12 @@ public sealed class
         builder.HasOne<PlayerCard>()
             .WithMany("_historicalRatings")
             .HasForeignKey(Constants.PlayerCardHistoricalRatings.PlayerCardId)
-            .HasConstraintName(Constants.PlayerCardHistoricalRatings.ForeignKeys.PlayerCardsConstraint);
+            .HasConstraintName(Constants.PlayerCardHistoricalRatings.Keys.PlayerCardsForeignKeyConstraint);
 
         builder.HasKey([
             Constants.PlayerCardHistoricalRatings.PlayerCardId, nameof(PlayerCardHistoricalRating.StartDate),
             nameof(PlayerCardHistoricalRating.EndDate)
-        ]).HasName(Constants.PlayerCardHistoricalRatings.PrimaryKeyName);
+        ]).HasName(Constants.PlayerCardHistoricalRatings.Keys.PrimaryKey);
 
         var columnOrder = 0;
 

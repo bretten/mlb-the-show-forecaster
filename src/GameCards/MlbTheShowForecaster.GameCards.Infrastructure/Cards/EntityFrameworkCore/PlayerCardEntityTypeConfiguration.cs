@@ -10,14 +10,21 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 
+/// <summary>
+/// Configures <see cref="PlayerCard"/> for EF Core
+/// </summary>
 public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration<PlayerCard>
 {
+    /// <summary>
+    /// Configures <see cref="PlayerCard"/> for EF Core
+    /// </summary>
+    /// <param name="builder">The builder that configures the entity type</param>
     public void Configure(EntityTypeBuilder<PlayerCard> builder)
     {
         builder.ToTable(Constants.PlayerCards.TableName, Constants.Schema);
 
         builder.HasKey(e => e.Id)
-            .HasName(Constants.PlayerCards.PrimaryKeyName);
+            .HasName(Constants.PlayerCards.Keys.PrimaryKey);
 
         // Index for querying by game year and then the card's external ID
         builder.HasIndex(e => new { e.Year, e.ExternalId }, Constants.PlayerCards.Indexes.YearAndExternalId)

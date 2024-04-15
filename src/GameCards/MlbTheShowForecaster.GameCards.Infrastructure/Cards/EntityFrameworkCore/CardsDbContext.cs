@@ -40,7 +40,7 @@ public sealed class CardsDbContext : DbContext
     /// <summary>
     /// Model configuration for <see cref="PlayerCard"/>
     /// </summary>
-    /// <param name="modelBuilder"></param>
+    /// <param name="modelBuilder">Model builder</param>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
