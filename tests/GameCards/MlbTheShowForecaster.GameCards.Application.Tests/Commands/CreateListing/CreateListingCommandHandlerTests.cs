@@ -29,7 +29,7 @@ public class CreateListingCommandHandlerTests
         await handler.Handle(command, cToken);
 
         // Assert
-        Mock.Get(mockListingRepository).Verify(x => x.Add(domainListing), Times.Once);
+        Mock.Get(mockListingRepository).Verify(x => x.Add(domainListing, cToken), Times.Once);
         Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 }

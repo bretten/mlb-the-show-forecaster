@@ -51,7 +51,7 @@ internal sealed class CreateListingCommandHandler : ICommandHandler<CreateListin
     public async Task Handle(CreateListingCommand command, CancellationToken cancellationToken = default)
     {
         var listing = _listingMapper.Map(command.ExternalCardListing);
-        await _listingRepository.Add(listing);
+        await _listingRepository.Add(listing, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);
     }
 }

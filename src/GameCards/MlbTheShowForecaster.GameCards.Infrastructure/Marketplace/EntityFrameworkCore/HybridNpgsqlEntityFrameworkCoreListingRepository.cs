@@ -45,11 +45,12 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// Adds a <see cref="Listing"/>
     /// </summary>
     /// <param name="listing">The <see cref="Listing"/> to add</param>
-    public async Task Add(Listing listing)
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    public async Task Add(Listing listing, CancellationToken cancellationToken = default)
     {
         // Open a connection and transaction
-        await using var connection = await _dbDataSource.OpenConnectionAsync(CancellationToken.None);
-        await using var transaction = await connection.BeginTransactionAsync(CancellationToken.None);
+        await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
         // INSERT the Listing
         await using var command = new NpgsqlCommand(ListingsInsertCommand, connection, transaction);
@@ -57,50 +58,53 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         command.Parameters.Add(new NpgsqlParameter { Value = listing.CardExternalId.Value, DbType = DbType.Guid });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
-        await command.ExecuteScalarAsync(CancellationToken.None);
+        await command.ExecuteScalarAsync(cancellationToken);
 
         // Bulk upsert the Listing's historical prices
         await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
-            CancellationToken.None);
+            cancellationToken);
 
         // Commit
-        await transaction.CommitAsync(CancellationToken.None);
+        await transaction.CommitAsync(cancellationToken);
     }
 
     /// <summary>
     /// Updates a <see cref="Listing"/>
     /// </summary>
     /// <param name="listing">The <see cref="Listing"/> to update</param>
-    public async Task Update(Listing listing)
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    public async Task Update(Listing listing, CancellationToken cancellationToken = default)
     {
         // Open a connection and transaction
-        await using var connection = await _dbDataSource.OpenConnectionAsync(CancellationToken.None);
-        await using var transaction = await connection.BeginTransactionAsync(CancellationToken.None);
+        await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
         // UPDATE the Listing
         await using var command = new NpgsqlCommand(ListingsUpdateCommand, connection, transaction);
         command.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
-        await command.ExecuteScalarAsync(CancellationToken.None);
+        await command.ExecuteScalarAsync(cancellationToken);
 
         // Bulk upsert the Listing's historical prices
         await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
-            CancellationToken.None);
+            cancellationToken);
 
         // Commit
-        await transaction.CommitAsync(CancellationToken.None);
+        await transaction.CommitAsync(cancellationToken);
     }
 
     /// <summary>
     /// Returns a <see cref="Listing"/> for the specified <see cref="CardExternalId"/>
     /// </summary>
     /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="Listing"/></param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The corresponding <see cref="Listing"/></returns>
-    public async Task<Listing?> GetByExternalId(CardExternalId externalId)
+    public async Task<Listing?> GetByExternalId(CardExternalId externalId,
+        CancellationToken cancellationToken = default)
     {
-        return await _dbContext.ListingsWithHistoricalPrices()
-            .FirstOrDefaultAsync(x => x.CardExternalId == externalId);
+        return await _dbContext.ListingsWithHistoricalPrices().FirstOrDefaultAsync(x => x.CardExternalId == externalId,
+            cancellationToken: cancellationToken);
     }
 
     /// <summary>
