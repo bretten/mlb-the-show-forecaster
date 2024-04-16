@@ -57,7 +57,7 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
         domainListing.UpdatePrices(newBuyPrice: externalCardListing.BestBuyPrice,
             newSellPrice: externalCardListing.BestSellPrice, command.PriceChangeThreshold);
 
-        await _listingRepository.Update(domainListing);
+        await _listingRepository.Update(domainListing, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);
     }
 }

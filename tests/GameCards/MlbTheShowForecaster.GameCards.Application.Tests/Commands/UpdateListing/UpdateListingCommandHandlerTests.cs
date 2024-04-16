@@ -40,7 +40,7 @@ public class UpdateListingCommandHandlerTests
         await handler.Handle(command, cToken);
 
         // Assert
-        Mock.Get(mockListingRepository).Verify(x => x.Update(domainListing), Times.Once);
+        Mock.Get(mockListingRepository).Verify(x => x.Update(domainListing, cToken), Times.Once);
         Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
 
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), domainListing.CardExternalId.Value);

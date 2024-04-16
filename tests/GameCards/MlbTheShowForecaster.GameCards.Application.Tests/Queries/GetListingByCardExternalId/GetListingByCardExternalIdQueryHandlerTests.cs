@@ -11,14 +11,14 @@ public class GetListingByCardExternalIdQueryHandlerTests
     public async Task Handle_QueryWithExternalId_ReturnsListings()
     {
         // Arrange
+        var cToken = CancellationToken.None;
         var cardExternalId = Faker.FakeCardExternalId();
         var domainListing = Faker.FakeListing(cardExternalId: cardExternalId.Value);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(cardExternalId))
+        stubListingRepository.Setup(x => x.GetByExternalId(cardExternalId, cToken))
             .ReturnsAsync(domainListing);
 
-        var cToken = CancellationToken.None;
         var query = new GetListingByCardExternalIdQuery(cardExternalId);
         var handler = new GetListingByCardExternalIdQueryHandler(stubListingRepository.Object);
 

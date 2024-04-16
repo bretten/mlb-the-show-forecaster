@@ -4,6 +4,8 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.TestClasses;
 
@@ -107,5 +109,17 @@ public static class Faker
             baseRunningAbility: scalar * baseRunningAbility,
             baseRunningAggression: scalar * baseRunningAggression
         );
+    }
+
+    public static Listing FakeListing(Guid? cardExternalId = null, int buyPrice = 0, int sellPrice = 0,
+        List<ListingHistoricalPrice>? historicalPrices = null)
+    {
+        return Listing.Create(CardExternalId.Create(cardExternalId ?? FakeGuid1),
+            NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice), historicalPrices);
+    }
+
+    public static ListingHistoricalPrice FakeListingHistoricalPrice(DateOnly date, int buyPrice = 0, int sellPrice = 0)
+    {
+        return ListingHistoricalPrice.Create(date, NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice));
     }
 }
