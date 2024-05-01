@@ -130,19 +130,22 @@ public class DependenciesTests
         var consumer1B = actual.GetRequiredService<IDomainEventConsumer<EventType1>>();
         var consumer2 = actual.GetRequiredService<IDomainEventConsumer<EventType2>>();
         var consumer3 = actual.GetRequiredService<IDomainEventConsumer<EventType3>>();
+        // Resolve the dispatcher so it gets its own channel
+        var dispatcher = actual.GetRequiredService<IDomainEventDispatcher>();
 
         /*
          * Assert
          */
-        // The connection singleton should have CreateModel called one time for each consumer
+        // The connection singleton should have CreateModel called one time for each consumer and once for the dispatcher
         // The real IConnection will provide a new channel for each call to CreateModel
-        stubConnection.Verify(x => x.CreateModel(), Times.Exactly(4));
+        stubConnection.Verify(x => x.CreateModel(), Times.Exactly(5));
     }
 
     private sealed class DomainEventConsumer1(IModel model) : IDomainEventConsumer<EventType1>
     {
         public Task Handle(EventType1 e)
         {
+            var isOpen = model.IsOpen;
             return Task.CompletedTask;
         }
     }
@@ -151,6 +154,7 @@ public class DependenciesTests
     {
         public Task Handle(EventType2 e)
         {
+            var isOpen = model.IsOpen;
             return Task.CompletedTask;
         }
     }
@@ -159,6 +163,7 @@ public class DependenciesTests
     {
         public Task Handle(EventType3 e)
         {
+            var isOpen = model.IsOpen;
             return Task.CompletedTask;
         }
     }
