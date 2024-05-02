@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Moq;
 
-namespace MlbTheShowForecaster.Common.Execution.Host.Tests.Services;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Tests.Services;
 
 public class KeepAliveBackgroundServiceIntegrationTests
 {
