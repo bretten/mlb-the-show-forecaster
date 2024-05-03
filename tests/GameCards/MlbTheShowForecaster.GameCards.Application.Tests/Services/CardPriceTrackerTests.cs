@@ -62,12 +62,12 @@ public class CardPriceTrackerTests
         var cToken = CancellationToken.None;
         var year = SeasonYear.Create(2024);
         var stubPriceChangeThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
-        // Listing 1 for PlayerCard 1 does not exist in the domain and will be created
+        // Listing1 for PlayerCard1 does not exist in the domain and will be created
         var cardExternalId1 = Faker.FakeCardExternalId(Faker.FakeGuid1);
         var externalListing1 = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId1.Value);
         var domainPlayerCard1 =
             Faker.FakePlayerCard(year: year.Value, cardExternalId: cardExternalId1.Value);
-        // Listing 2 for PlayerCard 2 exists but the external listing has new data, so it will be updated
+        // Listing2 for PlayerCard2 exists but the external listing has new data, so it will be updated
         var cardExternalId2 = Faker.FakeCardExternalId(Faker.FakeGuid2);
         var externalListing2 = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId2.Value,
             bestBuyPrice: 2, bestSellPrice: 20,
@@ -76,7 +76,7 @@ public class CardPriceTrackerTests
         var domainListing2 = Faker.FakeListing(cardExternalId: cardExternalId2.Value, 2, 20);
         var domainPlayerCard2 =
             Faker.FakePlayerCard(year: year.Value, cardExternalId: cardExternalId2.Value);
-        // Listing 3 for PlayerCard 3 exists, but the external listing has no new data, so no action will be taken
+        // Listing3 for PlayerCard3 exists, but the external listing has no new data, so no action will be taken
         var cardExternalId3 = Faker.FakeCardExternalId(Faker.FakeGuid3);
         var externalListing3 =
             Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId3.Value, bestBuyPrice: 3,
@@ -113,13 +113,13 @@ public class CardPriceTrackerTests
         stubQuerySender.Setup(x => x.Send(getListing3Query, cToken))
             .ReturnsAsync(domainListing3);
 
-        // The command sender should expect to send a create command for Listing 1
+        // The command sender should expect to send a create command for Listing1
         var mockCommandSender = Mock.Of<ICommandSender>();
         var expectedListing1Command = new CreateListingCommand(externalListing1);
-        // The command sender should expect to send an update command for Listing 2
+        // The command sender should expect to send an update command for Listing2
         var expectedListing2Command =
             new UpdateListingCommand(domainListing2, externalListing2, stubPriceChangeThreshold);
-        // No command should be expected for Listing 3
+        // No command should be expected for Listing3
         var notExpectedListing3CreateCommand = new CreateListingCommand(externalListing3);
         var notExpectedListing3UpdateCommand =
             new UpdateListingCommand(domainListing3, externalListing3, stubPriceChangeThreshold);
@@ -131,11 +131,20 @@ public class CardPriceTrackerTests
         /*
          * Act
          */
-        await tracker.TrackCardPrices(year, cToken);
+        var actual = await tracker.TrackCardPrices(year, cToken);
 
         /*
          * Assert
          */
+        // There were 3 player cards in the domain
+        Assert.Equal(3, actual.TotalCards);
+        // PlayerCard1 had no listing, so it was created
+        Assert.Equal(1, actual.TotalNewListings);
+        // PlayerCard2 had an existing listing, so it was updated
+        Assert.Equal(1, actual.TotalUpdatedListings);
+        // PlayerCard 3 had an up-to-date listing, so nothing was changed
+        Assert.Equal(1, actual.TotalUnchangedListings);
+
         // Were all the domain PlayerCards retrieved?
         stubQuerySender.Verify(x => x.Send(getAllPlayerCardsQuery, cToken), Times.Once);
         // Was each domain Listing retrieved?

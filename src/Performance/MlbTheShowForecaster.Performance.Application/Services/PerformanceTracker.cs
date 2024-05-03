@@ -5,6 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.Updat
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Queries.GetAllPlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
@@ -49,7 +50,8 @@ public sealed class PerformanceTracker : IPerformanceTracker
     /// <param name="seasonYear">The season to track performance for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <exception cref="PerformanceTrackerFoundNoPlayerSeasonsException">Thrown when there are no player seasons in the domain</exception>
-    public async Task TrackPlayerPerformance(SeasonYear seasonYear, CancellationToken cancellationToken = default)
+    public async Task<PerformanceTrackerResult> TrackPlayerPerformance(SeasonYear seasonYear,
+        CancellationToken cancellationToken = default)
     {
         // Get all player seasons that are stored in the domain for the specified season
         var playerStatsBySeasons =
@@ -63,6 +65,7 @@ public sealed class PerformanceTracker : IPerformanceTracker
         }
 
         // Make sure each player's stats by season is up-to-date with the most recent stats
+        var playerSeasonUpdates = 0;
         foreach (var playerStatsBySeason in playerStatsBySeasons)
         {
             // Get the most recent season stats
@@ -77,7 +80,12 @@ public sealed class PerformanceTracker : IPerformanceTracker
             // The player's season stats are not up-to-date, so update it with the new live stats
             await _commandSender.Send(new UpdatePlayerStatsBySeasonCommand(playerStatsBySeason, seasonToDate),
                 cancellationToken);
+            playerSeasonUpdates++;
         }
+
+        return new PerformanceTrackerResult(TotalPlayerSeasons: playerStatsBySeasons.Count,
+            TotalPlayerSeasonUpdates: playerSeasonUpdates
+        );
     }
 
     /// <summary>

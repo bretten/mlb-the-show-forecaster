@@ -5,6 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateL
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetAllPlayerCards;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 
@@ -57,7 +58,8 @@ public sealed class CardPriceTracker : ICardPriceTracker
     /// <param name="year">The year to check card prices for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <exception cref="CardPriceTrackerFoundNoCardsException">Thrown if no PlayerCards are found in the domain</exception>
-    public async Task TrackCardPrices(SeasonYear year, CancellationToken cancellationToken = default)
+    public async Task<CardPriceTrackerResult> TrackCardPrices(SeasonYear year,
+        CancellationToken cancellationToken = default)
     {
         // Get all PlayerCards in the domain
         var domainPlayerCards = (await _querySender.Send(new GetAllPlayerCardsQuery(year), cancellationToken) ??
@@ -69,6 +71,9 @@ public sealed class CardPriceTracker : ICardPriceTracker
             throw new CardPriceTrackerFoundNoCardsException($"No PlayerCards found for {year.Value}");
         }
 
+        // Make sure each card price listings are up-to-date
+        var newListings = 0;
+        var updatedListings = 0;
         foreach (var domainPlayerCard in domainPlayerCards)
         {
             // Get the Listing for the card as it currently exists in the domain
@@ -84,6 +89,7 @@ public sealed class CardPriceTracker : ICardPriceTracker
             if (domainListing == null)
             {
                 await _commandSender.Send(new CreateListingCommand(externalPrices), cancellationToken);
+                newListings++;
                 continue;
             }
 
@@ -94,7 +100,13 @@ public sealed class CardPriceTracker : ICardPriceTracker
                     new UpdateListingCommand(domainListing, externalPrices, _listingPriceSignificantChangeThreshold),
                     cancellationToken
                 );
+                updatedListings++;
             }
         }
+
+        return new CardPriceTrackerResult(TotalCards: domainPlayerCards.Count,
+            TotalNewListings: newListings,
+            TotalUpdatedListings: updatedListings
+        );
     }
 }

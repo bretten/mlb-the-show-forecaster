@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 
@@ -13,5 +14,6 @@ public interface IRosterUpdateOrchestrator
     /// <param name="seasonYear">The season to apply roster updates for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The completed task</returns>
-    Task SyncRosterUpdates(SeasonYear seasonYear, CancellationToken cancellationToken = default);
+    Task<IEnumerable<RosterUpdateOrchestratorResult>> SyncRosterUpdates(SeasonYear seasonYear,
+        CancellationToken cancellationToken = default);
 }
