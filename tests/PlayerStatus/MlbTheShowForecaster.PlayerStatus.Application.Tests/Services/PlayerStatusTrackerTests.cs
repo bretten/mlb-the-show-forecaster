@@ -5,6 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.Upda
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Queries.GetPlayerByMlbId;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
@@ -19,7 +20,36 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Ser
 public class PlayerStatusTrackerTests
 {
     [Fact]
-    public async Task UpdatePlayerStatuses_NewAndExistingPlayers_CreatesAndUpdates()
+    public async Task TrackPlayers_NoRosterEntries_ThrowsException()
+    {
+        // Arrange
+        var cToken = CancellationToken.None;
+        var seasonYear = SeasonYear.Create(2024);
+
+        var mockPlayerRoster = new Mock<IPlayerRoster>();
+        mockPlayerRoster.Setup(x => x.GetRosterEntries(seasonYear, cToken))
+            .ReturnsAsync(Enumerable.Empty<RosterEntry>);
+
+        var mockQuerySender = Mock.Of<IQuerySender>();
+        var mockCommandSender = Mock.Of<ICommandSender>();
+        var mockPlayerChangeDetector = Mock.Of<IPlayerStatusChangeDetector>();
+        var mockTeamProvider = Mock.Of<ITeamProvider>();
+
+        var tracker = new PlayerStatusTracker(mockPlayerRoster.Object, mockQuerySender, mockCommandSender,
+            mockPlayerChangeDetector, mockTeamProvider);
+
+        var action = () => tracker.TrackPlayers(seasonYear, cToken);
+
+        // Act
+        var actual = await Record.ExceptionAsync(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<PlayerStatusTrackerFoundNoRosterEntriesException>(actual);
+    }
+
+    [Fact]
+    public async Task TrackPlayers_NewAndExistingPlayers_CreatesAndUpdates()
     {
         // Arrange
         var scenario = new TestScenario();
@@ -71,7 +101,7 @@ public class PlayerStatusTrackerTests
         public static readonly MlbId Player1MlbId = MlbId.Create(1);
         public static readonly MlbId Player2MlbId = MlbId.Create(2);
         public static readonly MlbId Player3MlbId = MlbId.Create(3);
-        public const int SeasonYear = 2023;
+        public static readonly SeasonYear SeasonYear = SeasonYear.Create(2023);
 
         /// <summary>
         /// Provides a team when invoked

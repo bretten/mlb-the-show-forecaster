@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Mapping;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Enums;
@@ -42,11 +43,11 @@ public sealed class MlbApiPlayerRoster : IPlayerRoster
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>Roster information on all players in the MLB for the specified season year</returns>
     /// <exception cref="EmptyRosterException">Thrown if the roster is empty</exception>
-    public async Task<IEnumerable<RosterEntry>> GetRosterEntries(int seasonYear,
+    public async Task<IEnumerable<RosterEntry>> GetRosterEntries(SeasonYear seasonYear,
         CancellationToken cancellationToken = default)
     {
         var response =
-            await _mlbApi.GetPlayersBySeason(new GetPlayersBySeasonRequest(seasonYear, GameType.RegularSeason));
+            await _mlbApi.GetPlayersBySeason(new GetPlayersBySeasonRequest(seasonYear.Value, GameType.RegularSeason));
 
         if (response.Players == null || !response.Players.Any())
         {

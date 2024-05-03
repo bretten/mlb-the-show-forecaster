@@ -1,9 +1,11 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+﻿using System.Collections.Immutable;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Queries.GetAllPlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using Moq;
@@ -13,7 +15,31 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Serv
 public class PerformanceTrackerTests
 {
     [Fact]
-    public async Task TrackPlayerPerformance()
+    public async Task TrackPlayerPerformance_NoPlayerSeasonsInDomain_ThrowsException()
+    {
+        // Arrange
+        var cToken = CancellationToken.None;
+        var seasonYear = SeasonYear.Create(2024);
+
+        var getAllPlayerStatsBySeasonQuery = new GetAllPlayerStatsBySeasonQuery(seasonYear);
+        var stubQuerySender = Mock.Of<IQuerySender>(x =>
+            x.Send(getAllPlayerStatsBySeasonQuery, cToken) == Task.FromResult(Enumerable.Empty<PlayerStatsBySeason>()));
+
+        var mockPlayerStats = Mock.Of<IPlayerStats>();
+        var mockCommandSender = Mock.Of<ICommandSender>();
+        var tracker = new PerformanceTracker(stubQuerySender, mockCommandSender, mockPlayerStats);
+        var action = () => tracker.TrackPlayerPerformance(seasonYear, cToken);
+
+        // Act
+        var actual = await Record.ExceptionAsync(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<PerformanceTrackerFoundNoPlayerSeasonsException>(actual);
+    }
+
+    [Fact]
+    public async Task TrackPlayerPerformance_SeasonYear_UpdatesPlayerSeasonPerformance()
     {
         /*
          * Act

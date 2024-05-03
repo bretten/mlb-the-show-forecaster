@@ -1,8 +1,10 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+﻿using System.Collections.Immutable;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Queries.GetAllPlayerStatsBySeason;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
@@ -46,12 +48,18 @@ public sealed class PerformanceTracker : IPerformanceTracker
     /// </summary>
     /// <param name="seasonYear">The season to track performance for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <exception cref="PerformanceTrackerFoundNoPlayerSeasonsException">Thrown when there are no player seasons in the domain</exception>
     public async Task TrackPlayerPerformance(SeasonYear seasonYear, CancellationToken cancellationToken = default)
     {
-        // Get all player seasons that are stored in this system for the specified season
+        // Get all player seasons that are stored in the domain for the specified season
         var playerStatsBySeasons =
-            await _querySender.Send(new GetAllPlayerStatsBySeasonQuery(seasonYear), cancellationToken) ??
-            Array.Empty<PlayerStatsBySeason>();
+            (await _querySender.Send(new GetAllPlayerStatsBySeasonQuery(seasonYear), cancellationToken) ?? Array.Empty<PlayerStatsBySeason>()).ToImmutableList();
+
+        // There should always be PlayerSeasons in the domain, or else the system has not been properly populated
+        if (playerStatsBySeasons.IsEmpty)
+        {
+            throw new PerformanceTrackerFoundNoPlayerSeasonsException($"No PlayerSeasons found for {seasonYear.Value}");
+        }
 
         // Make sure each player's stats by season is up-to-date with the most recent stats
         foreach (var playerStatsBySeason in playerStatsBySeasons)
