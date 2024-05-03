@@ -13,6 +13,6 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 public readonly record struct PlayerSeason(
     MlbId PlayerMlbId,
     SeasonYear SeasonYear,
-    List<PlayerGameBattingStats> GameBattingStats,
-    List<PlayerGamePitchingStats> GamePitchingStats,
-    List<PlayerGameFieldingStats> GameFieldingStats);
+    IReadOnlyList<PlayerGameBattingStats> GameBattingStats,
+    IReadOnlyList<PlayerGamePitchingStats> GamePitchingStats,
+    IReadOnlyList<PlayerGameFieldingStats> GameFieldingStats);

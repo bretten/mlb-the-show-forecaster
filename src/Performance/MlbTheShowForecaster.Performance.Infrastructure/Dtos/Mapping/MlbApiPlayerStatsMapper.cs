@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Immutable;
+using System.ComponentModel;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
@@ -29,7 +30,7 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
     /// </summary>
     /// <param name="dto">A player's MLB API season stats data</param>
     /// <returns>Batting stats by games</returns>
-    private List<PlayerGameBattingStats> MapBatting(PlayerSeasonStatsByGameDto dto)
+    private IReadOnlyList<PlayerGameBattingStats> MapBatting(PlayerSeasonStatsByGameDto dto)
     {
         return dto.GetHittingStats().Select(x => new PlayerGameBattingStats(
             PlayerMlbId: MlbId.Create(dto.Id),
@@ -60,7 +61,7 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
             GroundIntoTriplePlays: NaturalNumber.Create(x.Stat.GroundIntoTriplePlay),
             AirOuts: NaturalNumber.Create(x.Stat.AirOuts),
             CatcherInterferences: NaturalNumber.Create(x.Stat.CatcherInterferences)
-        )).ToList();
+        )).ToImmutableList();
     }
 
     /// <summary>
@@ -68,7 +69,7 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
     /// </summary>
     /// <param name="dto">A player's MLB API season stats data</param>
     /// <returns>Pitching stats by games</returns>
-    private List<PlayerGamePitchingStats> MapPitching(PlayerSeasonStatsByGameDto dto)
+    private IReadOnlyList<PlayerGamePitchingStats> MapPitching(PlayerSeasonStatsByGameDto dto)
     {
         return dto.GetPitchingStats().Select(x => new PlayerGamePitchingStats(
             PlayerMlbId: MlbId.Create(dto.Id),
@@ -115,7 +116,7 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
             CatcherInterferences: NaturalNumber.Create(x.Stat.CatcherInterferences),
             SacrificeBunts: NaturalNumber.Create(x.Stat.SacBunts),
             SacrificeFlies: NaturalNumber.Create(x.Stat.SacFlies)
-        )).ToList();
+        )).ToImmutableList();
     }
 
     /// <summary>
@@ -123,7 +124,7 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
     /// </summary>
     /// <param name="dto">A player's MLB API season stats data</param>
     /// <returns>Fielding stats by games</returns>
-    private List<PlayerGameFieldingStats> MapFielding(PlayerSeasonStatsByGameDto dto)
+    private IReadOnlyList<PlayerGameFieldingStats> MapFielding(PlayerSeasonStatsByGameDto dto)
     {
         return dto.GetFieldingStats().Select(x => new PlayerGameFieldingStats(
             PlayerMlbId: MlbId.Create(dto.Id),
@@ -148,6 +149,6 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
             CatcherInterferences: NaturalNumber.Create(x.Stat.CatcherInterferences),
             WildPitches: NaturalNumber.Create(x.Stat.WildPitches),
             Pickoffs: NaturalNumber.Create(x.Stat.Pickoffs)
-        )).ToList();
+        )).ToImmutableList();
     }
 }

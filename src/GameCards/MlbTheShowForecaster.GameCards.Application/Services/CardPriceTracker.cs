@@ -5,6 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateL
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetAllPlayerCards;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -59,10 +60,11 @@ public sealed class CardPriceTracker : ICardPriceTracker
     public async Task TrackCardPrices(SeasonYear year, CancellationToken cancellationToken = default)
     {
         // Get all PlayerCards in the domain
-        var domainPlayerCards = await _querySender.Send(new GetAllPlayerCardsQuery(year), cancellationToken);
+        var domainPlayerCards = (await _querySender.Send(new GetAllPlayerCardsQuery(year), cancellationToken) ??
+                                 Array.Empty<PlayerCard>()).ToList();
 
         // There should always be PlayerCards in the domain, or else the system has not been properly populated
-        if (domainPlayerCards == null || !domainPlayerCards.Any())
+        if (domainPlayerCards == null || domainPlayerCards.Count == 0)
         {
             throw new CardPriceTrackerFoundNoCardsException($"No PlayerCards found for {year.Value}");
         }

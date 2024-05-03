@@ -44,7 +44,7 @@ public sealed class MlbTheShowApiCardCatalog : ICardCatalog
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="MlbPlayerCard"/> for the specified season</returns>
     /// <exception cref="ActiveRosterMlbPlayerCardsNotFoundInCatalogException">Thrown when no active roster cards found</exception>
-    public async Task<IReadOnlyList<MlbPlayerCard>> GetActiveRosterMlbPlayerCards(SeasonYear seasonYear,
+    public async Task<IEnumerable<MlbPlayerCard>> GetActiveRosterMlbPlayerCards(SeasonYear seasonYear,
         CancellationToken cancellationToken = default)
     {
         // Get the client for the specified year
@@ -68,7 +68,7 @@ public sealed class MlbTheShowApiCardCatalog : ICardCatalog
             page++;
         } while (response.Items.Any());
 
-        if (!theShowCards.Any())
+        if (theShowCards.Count == 0)
         {
             throw new ActiveRosterMlbPlayerCardsNotFoundInCatalogException(
                 $"No active roster found for {seasonYear.Value}");

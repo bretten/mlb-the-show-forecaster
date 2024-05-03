@@ -125,10 +125,10 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
     private PlayerPitchingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameMlbId,
-        MlbId teamMlbId, NaturalNumber wins, NaturalNumber losses, NaturalNumber gamesStarted, NaturalNumber gamesFinished,
-        NaturalNumber completeGames, NaturalNumber shutouts, NaturalNumber holds, NaturalNumber saves,
-        NaturalNumber blownSaves, NaturalNumber saveOpportunities, InningsCount inningsPitched, NaturalNumber hits,
-        NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runs,
+        MlbId teamMlbId, NaturalNumber wins, NaturalNumber losses, NaturalNumber gamesStarted,
+        NaturalNumber gamesFinished, NaturalNumber completeGames, NaturalNumber shutouts, NaturalNumber holds,
+        NaturalNumber saves, NaturalNumber blownSaves, NaturalNumber saveOpportunities, InningsCount inningsPitched,
+        NaturalNumber hits, NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runs,
         NaturalNumber earnedRuns, NaturalNumber strikeouts, NaturalNumber baseOnBalls, NaturalNumber intentionalWalks,
         NaturalNumber hitBatsmen, NaturalNumber outs, NaturalNumber groundOuts, NaturalNumber airOuts,
         NaturalNumber groundIntoDoublePlays, NaturalNumber numberOfPitches, NaturalNumber strikes,

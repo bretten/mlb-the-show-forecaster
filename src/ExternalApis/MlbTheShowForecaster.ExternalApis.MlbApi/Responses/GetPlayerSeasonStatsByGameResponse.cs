@@ -10,5 +10,5 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
 /// <param name="People">The players whose stats were retrieved</param>
 public sealed record GetPlayerSeasonStatsByGameResponse(
     [property: JsonPropertyName("people")]
-    List<PlayerSeasonStatsByGameDto>? People
+    IEnumerable<PlayerSeasonStatsByGameDto>? People
 );

@@ -8,4 +8,4 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetA
 /// Query that retrieves all <see cref="PlayerCard"/>s for a specific year
 /// </summary>
 /// <param name="Year">The year to retrieve <see cref="PlayerCard"/>s for</param>
-internal readonly record struct GetAllPlayerCardsQuery(SeasonYear Year) : IQuery<IReadOnlyList<PlayerCard>>;
+internal readonly record struct GetAllPlayerCardsQuery(SeasonYear Year) : IQuery<IEnumerable<PlayerCard>>;
