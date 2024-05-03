@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 
@@ -13,5 +14,5 @@ public interface IPlayerStatusTracker
     /// <param name="seasonYear">The season that the players participated in</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The completed task</returns>
-    Task TrackPlayers(int seasonYear, CancellationToken cancellationToken = default);
+    Task TrackPlayers(SeasonYear seasonYear, CancellationToken cancellationToken = default);
 }

@@ -1,7 +1,10 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+﻿using System.Collections.Immutable;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.CreatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Queries.GetPlayerByMlbId;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
@@ -61,9 +64,17 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
     /// </summary>
     /// <param name="seasonYear">The season that the players participated in</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    public async Task TrackPlayers(int seasonYear, CancellationToken cancellationToken = default)
+    /// <exception cref="PlayerStatusTrackerFoundNoRosterEntriesException">Thrown when no roster entries were found from the external source <see cref="IPlayerRoster"/></exception>
+    public async Task TrackPlayers(SeasonYear seasonYear, CancellationToken cancellationToken = default)
     {
-        var rosterEntries = await _playerRoster.GetRosterEntries(seasonYear, cancellationToken);
+        var rosterEntries = (await _playerRoster.GetRosterEntries(seasonYear, cancellationToken)).ToImmutableList();
+
+        // It is not a real world scenario for the external source to have no roster entries
+        if (rosterEntries.IsEmpty)
+        {
+            throw new PlayerStatusTrackerFoundNoRosterEntriesException(
+                $"No roster entries were found for {seasonYear}");
+        }
 
         foreach (var rosterEntry in rosterEntries)
         {

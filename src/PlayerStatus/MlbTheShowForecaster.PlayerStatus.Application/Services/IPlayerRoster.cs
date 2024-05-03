@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 
@@ -13,5 +14,5 @@ public interface IPlayerRoster
     /// <param name="seasonYear">The season to get roster entries for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>Roster information on all players in the MLB for the specified season year</returns>
-    Task<IEnumerable<RosterEntry>> GetRosterEntries(int seasonYear, CancellationToken cancellationToken = default);
+    Task<IEnumerable<RosterEntry>> GetRosterEntries(SeasonYear seasonYear, CancellationToken cancellationToken = default);
 }

@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Mapping;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Enums;
@@ -19,8 +20,8 @@ public class MlbApiPlayerRosterTests
     {
         // Arrange
         var cToken = CancellationToken.None;
-        int seasonYear = 2023;
-        var fakeMlbApiRequest = new GetPlayersBySeasonRequest(seasonYear, GameType.RegularSeason);
+        var seasonYear = SeasonYear.Create(2023);
+        var fakeMlbApiRequest = new GetPlayersBySeasonRequest(seasonYear.Value, GameType.RegularSeason);
         var fakeMlbApiResponse = new GetPlayersBySeasonResponse(new List<PlayerDto>());
         var mockMlbApi = Mock.Of<IMlbApi>(x =>
             x.GetPlayersBySeason(fakeMlbApiRequest) == Task.FromResult(fakeMlbApiResponse));
@@ -44,7 +45,7 @@ public class MlbApiPlayerRosterTests
          * Arrange
          */
         var cToken = CancellationToken.None;
-        int seasonYear = 2023;
+        var seasonYear = SeasonYear.Create(2023);
 
         // Fake roster entries to be returned from the service under test
         var fakeRosterEntry1 = Faker.FakeRosterEntry(1);
@@ -59,7 +60,7 @@ public class MlbApiPlayerRosterTests
         var players = new List<PlayerDto>() { fakePlayer1, fakePlayer2, fakePlayer3 };
 
         // Mock MLB API behavior to return the players
-        var fakeMlbApiRequest = new GetPlayersBySeasonRequest(seasonYear, GameType.RegularSeason);
+        var fakeMlbApiRequest = new GetPlayersBySeasonRequest(seasonYear.Value, GameType.RegularSeason);
         var fakeMlbApiResponse = new GetPlayersBySeasonResponse(players);
         var mockMlbApi = Mock.Of<IMlbApi>(x =>
             x.GetPlayersBySeason(fakeMlbApiRequest) == Task.FromResult(fakeMlbApiResponse));
