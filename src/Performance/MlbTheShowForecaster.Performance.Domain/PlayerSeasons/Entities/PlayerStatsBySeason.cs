@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+﻿using System.Collections.Immutable;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
@@ -47,20 +48,20 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <summary>
     /// The player's batting stats by game in chronological order
     /// </summary>
-    public List<PlayerBattingStatsByGame> BattingStatsByGamesChronologically =>
-        _battingStatsByGames.OrderBy(x => x.GameDate).ToList();
+    public IReadOnlyList<PlayerBattingStatsByGame> BattingStatsByGamesChronologically =>
+        _battingStatsByGames.OrderBy(x => x.GameDate).ToImmutableList();
 
     /// <summary>
     /// The player's pitching stats by game in chronological order
     /// </summary>
-    public List<PlayerPitchingStatsByGame> PitchingStatsByGamesChronologically =>
-        _pitchingStatsByGames.OrderBy(x => x.GameDate).ToList();
+    public IReadOnlyList<PlayerPitchingStatsByGame> PitchingStatsByGamesChronologically =>
+        _pitchingStatsByGames.OrderBy(x => x.GameDate).ToImmutableList();
 
     /// <summary>
     /// The player's fielding stats by game in chronological order
     /// </summary>
-    public List<PlayerFieldingStatsByGame> FieldingStatsByGamesChronologically =>
-        _fieldingStatsByGames.OrderBy(x => x.GameDate).ToList();
+    public IReadOnlyList<PlayerFieldingStatsByGame> FieldingStatsByGamesChronologically =>
+        _fieldingStatsByGames.OrderBy(x => x.GameDate).ToImmutableList();
 
     /// <summary>
     /// Batting stats for the whole season to date

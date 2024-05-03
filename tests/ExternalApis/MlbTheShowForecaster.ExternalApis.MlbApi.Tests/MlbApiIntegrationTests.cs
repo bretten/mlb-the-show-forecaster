@@ -68,12 +68,13 @@ public class MlbApiIntegrationTests
         Assert.NotNull(actual);
         Assert.NotNull(actual.People);
         Assert.Single(actual.People);
-        Assert.Equal(660271, actual.People[0].Id);
-        Assert.Equal("Shohei", actual.People[0].FirstName);
-        Assert.Equal("Ohtani", actual.People[0].LastName);
-        Assert.Equal(3, actual.People[0].Stats.Count);
-        Assert.Equal(135, actual.People[0].Stats.First(x => x.Group.DisplayName == "hitting").Splits.Count());
-        Assert.Equal(23, actual.People[0].Stats.First(x => x.Group.DisplayName == "pitching").Splits.Count());
-        Assert.Equal(157, actual.People[0].Stats.First(x => x.Group.DisplayName == "fielding").Splits.Count());
+        var actualFirst = actual.People.First();
+        Assert.Equal(660271, actualFirst.Id);
+        Assert.Equal("Shohei", actualFirst.FirstName);
+        Assert.Equal("Ohtani", actualFirst.LastName);
+        Assert.Equal(3, actualFirst.Stats.Count);
+        Assert.Equal(135, actualFirst.Stats.First(x => x.Group.DisplayName == "hitting").Splits.Count());
+        Assert.Equal(23, actualFirst.Stats.First(x => x.Group.DisplayName == "pitching").Splits.Count());
+        Assert.Equal(157, actualFirst.Stats.First(x => x.Group.DisplayName == "fielding").Splits.Count());
     }
 }

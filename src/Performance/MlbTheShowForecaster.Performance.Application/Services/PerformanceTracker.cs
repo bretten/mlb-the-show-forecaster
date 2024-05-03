@@ -53,7 +53,8 @@ public sealed class PerformanceTracker : IPerformanceTracker
     {
         // Get all player seasons that are stored in the domain for the specified season
         var playerStatsBySeasons =
-            (await _querySender.Send(new GetAllPlayerStatsBySeasonQuery(seasonYear), cancellationToken) ?? Array.Empty<PlayerStatsBySeason>()).ToImmutableList();
+            (await _querySender.Send(new GetAllPlayerStatsBySeasonQuery(seasonYear), cancellationToken) ??
+             Array.Empty<PlayerStatsBySeason>()).ToImmutableList();
 
         // There should always be PlayerSeasons in the domain, or else the system has not been properly populated
         if (playerStatsBySeasons.IsEmpty)

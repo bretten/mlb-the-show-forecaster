@@ -51,10 +51,10 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
     public async Task TrackPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken = default)
     {
         // Get all player cards from the external source
-        var externalCards = await _cardCatalog.GetActiveRosterMlbPlayerCards(seasonYear, cancellationToken);
+        var externalCards = (await _cardCatalog.GetActiveRosterMlbPlayerCards(seasonYear, cancellationToken)).ToList();
 
         // It is not a real world scenario for there to be no player cards, so stop execution if none are found
-        if (externalCards == null || !externalCards.Any())
+        if (externalCards == null || externalCards.Count == 0)
         {
             throw new PlayerCardTrackerFoundNoCardsException($"No player cards were found for {seasonYear.Value}");
         }

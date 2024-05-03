@@ -17,7 +17,7 @@ public interface ICardCatalog
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="MlbPlayerCard"/> for the specified season</returns>
     /// <exception cref="ActiveRosterMlbPlayerCardsNotFoundInCatalogException">Thrown when no active roster cards found</exception>
-    Task<IReadOnlyList<MlbPlayerCard>> GetActiveRosterMlbPlayerCards(SeasonYear seasonYear,
+    Task<IEnumerable<MlbPlayerCard>> GetActiveRosterMlbPlayerCards(SeasonYear seasonYear,
         CancellationToken cancellationToken = default);
 
     /// <summary>

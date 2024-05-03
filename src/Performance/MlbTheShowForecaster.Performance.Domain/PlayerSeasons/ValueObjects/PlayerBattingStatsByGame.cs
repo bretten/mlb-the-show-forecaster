@@ -85,8 +85,8 @@ public sealed class PlayerBattingStatsByGame : BattingStats
         NaturalNumber groundOuts, NaturalNumber groundIntoDoublePlays, NaturalNumber groundIntoTriplePlays,
         NaturalNumber airOuts, NaturalNumber catcherInterferences) : base(plateAppearances, atBats, runs, hits, doubles,
         triples, homeRuns, runsBattedIn, baseOnBalls, intentionalWalks, strikeouts, stolenBases, caughtStealing,
-        hitByPitches, sacrificeBunts, sacrificeFlies, numberOfPitchesSeen, leftOnBase, groundOuts, groundIntoDoublePlays,
-        groundIntoTriplePlays, airOuts, catcherInterferences)
+        hitByPitches, sacrificeBunts, sacrificeFlies, numberOfPitchesSeen, leftOnBase, groundOuts,
+        groundIntoDoublePlays, groundIntoTriplePlays, airOuts, catcherInterferences)
     {
         PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;

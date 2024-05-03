@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 
@@ -10,7 +9,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetA
 ///
 /// <para>Gets all <see cref="PlayerCard"/>s for the specified year</para>
 /// </summary>
-internal sealed class GetAllPlayerCardsQueryHandler : IQueryHandler<GetAllPlayerCardsQuery, IReadOnlyList<PlayerCard>>
+internal sealed class GetAllPlayerCardsQueryHandler : IQueryHandler<GetAllPlayerCardsQuery, IEnumerable<PlayerCard>>
 {
     /// <summary>
     /// The <see cref="PlayerCard"/> repository
@@ -32,9 +31,9 @@ internal sealed class GetAllPlayerCardsQueryHandler : IQueryHandler<GetAllPlayer
     /// <param name="query">The query</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The <see cref="PlayerCard"/>s for the specified year</returns>
-    public async Task<IReadOnlyList<PlayerCard>?> Handle(GetAllPlayerCardsQuery query,
+    public async Task<IEnumerable<PlayerCard>?> Handle(GetAllPlayerCardsQuery query,
         CancellationToken cancellationToken)
     {
-        return (await _playerCardRepository.GetAll(query.Year)).ToImmutableList();
+        return await _playerCardRepository.GetAll(query.Year);
     }
 }
