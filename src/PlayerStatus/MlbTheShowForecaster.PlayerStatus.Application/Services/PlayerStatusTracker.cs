@@ -5,6 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.Crea
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Queries.GetPlayerByMlbId;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
@@ -65,8 +66,10 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
     /// <param name="seasonYear">The season that the players participated in</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <exception cref="PlayerStatusTrackerFoundNoRosterEntriesException">Thrown when no roster entries were found from the external source <see cref="IPlayerRoster"/></exception>
-    public async Task TrackPlayers(SeasonYear seasonYear, CancellationToken cancellationToken = default)
+    public async Task<PlayerStatusTrackerResult> TrackPlayers(SeasonYear seasonYear,
+        CancellationToken cancellationToken = default)
     {
+        // Get roster entries from the external player roster source
         var rosterEntries = (await _playerRoster.GetRosterEntries(seasonYear, cancellationToken)).ToImmutableList();
 
         // It is not a real world scenario for the external source to have no roster entries
@@ -76,6 +79,9 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
                 $"No roster entries were found for {seasonYear}");
         }
 
+        // Make sure each player exists in the domain and is up-to-date
+        var newPlayers = 0;
+        var updatedPlayers = 0;
         foreach (var rosterEntry in rosterEntries)
         {
             // Check if the player exists for the roster entry
@@ -86,6 +92,7 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
             if (existingPlayer == null)
             {
                 await _commandSender.Send(new CreatePlayerCommand(rosterEntry), cancellationToken);
+                newPlayers++;
                 continue;
             }
 
@@ -95,7 +102,13 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
             if (detectedChanges.Any())
             {
                 await _commandSender.Send(new UpdatePlayerCommand(existingPlayer, detectedChanges), cancellationToken);
+                updatedPlayers++;
             }
         }
+
+        return new PlayerStatusTrackerResult(TotalRosterEntries: rosterEntries.Count,
+            TotalNewPlayers: newPlayers,
+            TotalUpdatedPlayers: updatedPlayers
+        );
     }
 }

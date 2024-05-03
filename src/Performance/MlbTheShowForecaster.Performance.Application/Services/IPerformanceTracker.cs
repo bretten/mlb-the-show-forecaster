@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services.Results;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 
@@ -16,5 +17,6 @@ public interface IPerformanceTracker
     /// <param name="seasonYear">The season to track performance for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The completed task</returns>
-    Task TrackPlayerPerformance(SeasonYear seasonYear, CancellationToken cancellationToken = default);
+    Task<PerformanceTrackerResult> TrackPlayerPerformance(SeasonYear seasonYear,
+        CancellationToken cancellationToken = default);
 }

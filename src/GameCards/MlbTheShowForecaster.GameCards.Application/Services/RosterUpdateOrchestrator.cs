@@ -6,6 +6,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
@@ -57,16 +58,21 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
     /// </summary>
     /// <param name="seasonYear">The season to apply roster updates for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    public async Task SyncRosterUpdates(SeasonYear seasonYear, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<RosterUpdateOrchestratorResult>> SyncRosterUpdates(SeasonYear seasonYear,
+        CancellationToken cancellationToken = default)
     {
         // Get a list of all available roster updates from the external source
         var rosterUpdates = await _rosterUpdateFeed.GetNewRosterUpdates(seasonYear, cancellationToken);
 
         // Apply each roster update sequentially (synchronously) so that historical changes are preserved in order
+        var results = new List<RosterUpdateOrchestratorResult>();
         foreach (var rosterUpdate in rosterUpdates)
         {
             await ApplyRosterUpdate(seasonYear, rosterUpdate, cancellationToken);
+            results.Add(RosterUpdateOrchestratorResult.Create(rosterUpdate));
         }
+
+        return results;
     }
 
     /// <summary>

@@ -62,11 +62,20 @@ public class PlayerStatusTrackerTests
             mockCommandSender.Object, stubPlayerStatusDetector.Object, scenario.StubTeamProvider);
 
         // Act
-        await tracker.TrackPlayers(TestScenario.SeasonYear, scenario.CancellationToken);
+        var actual = await tracker.TrackPlayers(TestScenario.SeasonYear, scenario.CancellationToken);
 
         /*
          * Assert
          */
+        // There were 3 roster entries
+        Assert.Equal(3, actual.TotalRosterEntries);
+        // Player2 was created
+        Assert.Equal(1, actual.TotalNewPlayers);
+        // Player3 was updated
+        Assert.Equal(1, actual.TotalUpdatedPlayers);
+        // Player1 was unchanged
+        Assert.Equal(1, actual.TotalUnchangedPlayers);
+
         // Check existing Players
         mockQuerySender.Verify(x => x.Send(scenario.Query1, scenario.CancellationToken), Times.Once);
         mockQuerySender.Verify(x => x.Send(scenario.Query2, scenario.CancellationToken), Times.Once);

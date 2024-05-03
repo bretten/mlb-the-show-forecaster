@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 
@@ -13,5 +14,5 @@ public interface ICardPriceTracker
     /// <param name="year">The year to track prices for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The completed task</returns>
-    Task TrackCardPrices(SeasonYear year, CancellationToken cancellationToken = default);
+    Task<CardPriceTrackerResult> TrackCardPrices(SeasonYear year, CancellationToken cancellationToken = default);
 }

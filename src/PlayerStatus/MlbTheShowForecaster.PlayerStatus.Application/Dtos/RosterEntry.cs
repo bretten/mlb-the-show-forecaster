@@ -18,5 +18,14 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 /// <param name="ThrowArm">The arm the player throws with</param>
 /// <param name="CurrentTeamMlbId">The MLB issued ID of the player's current team</param>
 /// <param name="Active">True if the player is active, otherwise false</param>
-public readonly record struct RosterEntry(MlbId MlbId, PersonName FirstName, PersonName LastName, DateTime Birthdate,
-    Position Position, DateTime MlbDebutDate, BatSide BatSide, ThrowArm ThrowArm, MlbId CurrentTeamMlbId, bool Active);
+public readonly record struct RosterEntry(
+    MlbId MlbId,
+    PersonName FirstName,
+    PersonName LastName,
+    DateTime Birthdate,
+    Position Position,
+    DateTime MlbDebutDate,
+    BatSide BatSide,
+    ThrowArm ThrowArm,
+    MlbId CurrentTeamMlbId,
+    bool Active);

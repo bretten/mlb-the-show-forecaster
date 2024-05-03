@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -16,5 +17,6 @@ public interface IPlayerCardTracker
     /// <param name="seasonYear">The year to retrieve cards for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The completed task</returns>
-    Task TrackPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken = default);
+    Task<PlayerCardTrackerResult>
+        TrackPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken = default);
 }

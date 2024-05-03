@@ -260,11 +260,26 @@ public class RosterUpdateOrchestratorTests
         /*
          * Act
          */
-        await orchestrator.SyncRosterUpdates(seasonYear, cToken);
+        var actual = await orchestrator.SyncRosterUpdates(seasonYear, cToken);
 
         /*
          * Assert
          */
+        // There were two roster updates, so there were two results
+        Assert.NotNull(actual);
+        var actualList = actual.ToList();
+        Assert.Equal(2, actualList.Count);
+        // RosterUpdate1 had a new player
+        var rosterUpdate1Result = actualList.First(x => x.Date == rosterUpdate1.Date);
+        Assert.Equal(0, rosterUpdate1Result.TotalRatingChanges);
+        Assert.Equal(0, rosterUpdate1Result.TotalPositionChanges);
+        Assert.Equal(1, rosterUpdate1Result.TotalNewPlayers);
+        // RosterUpdate2 had a new player
+        var rosterUpdate2Result = actualList.First(x => x.Date == rosterUpdate2.Date);
+        Assert.Equal(0, rosterUpdate2Result.TotalRatingChanges);
+        Assert.Equal(0, rosterUpdate2Result.TotalPositionChanges);
+        Assert.Equal(1, rosterUpdate2Result.TotalNewPlayers);
+
         // No command should have been sent for PlayerAddition1 in RosterUpdate1
         var createPlayer1Command =
             new CreatePlayerCardCommand(Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId1));
@@ -356,11 +371,31 @@ public class RosterUpdateOrchestratorTests
         /*
          * Act
          */
-        await orchestrator.SyncRosterUpdates(seasonYear, cToken);
+        var actual = await orchestrator.SyncRosterUpdates(seasonYear, cToken);
 
         /*
          * Assert
          */
+        // There were three roster updates, so there were three results
+        Assert.NotNull(actual);
+        var actualList = actual.ToList();
+        Assert.Equal(3, actualList.Count);
+        // RosterUpdate1 had a rating change
+        var rosterUpdate1Result = actualList.First(x => x.Date == rosterUpdate1.Date);
+        Assert.Equal(1, rosterUpdate1Result.TotalRatingChanges);
+        Assert.Equal(0, rosterUpdate1Result.TotalPositionChanges);
+        Assert.Equal(0, rosterUpdate1Result.TotalNewPlayers);
+        // RosterUpdate2 had both a rating change and two position changes
+        var rosterUpdate2Result = actualList.First(x => x.Date == rosterUpdate2.Date);
+        Assert.Equal(1, rosterUpdate2Result.TotalRatingChanges);
+        Assert.Equal(2, rosterUpdate2Result.TotalPositionChanges);
+        Assert.Equal(0, rosterUpdate2Result.TotalNewPlayers);
+        // RosterUpdate3 had a new player
+        var rosterUpdate3Result = actualList.First(x => x.Date == rosterUpdate3.Date);
+        Assert.Equal(0, rosterUpdate3Result.TotalRatingChanges);
+        Assert.Equal(0, rosterUpdate3Result.TotalPositionChanges);
+        Assert.Equal(1, rosterUpdate3Result.TotalNewPlayers);
+
         // PlayerCard1 - No command should have been sent
         Mock.Get(mockCommandSender)
             .Verify(x => x.Send(It.Is<UpdatePlayerCardCommand>(c => c.PlayerCard == playerCard1), cToken), Times.Never);

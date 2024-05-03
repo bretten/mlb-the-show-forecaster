@@ -3,6 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -48,7 +49,8 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
     /// <param name="seasonYear">The year to retrieve cards for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <exception cref="PlayerCardTrackerFoundNoCardsException">Thrown if the <see cref="ICardCatalog"/> provided no player cards</exception>
-    public async Task TrackPlayerCards(SeasonYear seasonYear, CancellationToken cancellationToken = default)
+    public async Task<PlayerCardTrackerResult> TrackPlayerCards(SeasonYear seasonYear,
+        CancellationToken cancellationToken = default)
     {
         // Get all player cards from the external source
         var externalCards = (await _cardCatalog.GetActiveRosterMlbPlayerCards(seasonYear, cancellationToken)).ToList();
@@ -59,6 +61,7 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
             throw new PlayerCardTrackerFoundNoCardsException($"No player cards were found for {seasonYear.Value}");
         }
 
+        var newPlayerCards = 0;
         foreach (var externalCard in externalCards.Where(x => x.IsSupported).OrderByDescending(x => x.Priority))
         {
             var existingPlayerCard =
@@ -72,6 +75,11 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
 
             // The card does not exist in this domain, so create it
             await _commandSender.Send(new CreatePlayerCardCommand(externalCard), cancellationToken);
+            newPlayerCards++;
         }
+
+        return new PlayerCardTrackerResult(TotalCatalogCards: externalCards.Count,
+            TotalNewCatalogCards: newPlayerCards
+        );
     }
 }

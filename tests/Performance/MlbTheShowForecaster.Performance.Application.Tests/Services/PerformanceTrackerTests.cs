@@ -46,8 +46,8 @@ public class PerformanceTrackerTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
         // There will be a player with and without changes
-        var player1Id = MlbId.Create(1); // Player 1 has changes
-        var player2Id = MlbId.Create(2); // Player 2 has NO changes
+        var player1Id = MlbId.Create(1); // Player1 has changes
+        var player2Id = MlbId.Create(2); // Player2 has NO changes
 
         // Stats by season that exist in the system currently
         var player1StatsBySeason = Faker.FakePlayerStatsBySeason(playerMlbId: player1Id.Value);
@@ -64,11 +64,11 @@ public class PerformanceTrackerTests
 
         // Live MLB stats
         var stubPlayerStats = new Mock<IPlayerStats>();
-        // Player 1 has new stats from the live data source, so it has changed
+        // Player1 has new stats from the live data source, so it has changed
         var player1Season = Dtos.TestClasses.Faker.FakePlayerSeason(playerMlbId: player1Id.Value,
             playerGameBattingStats: new List<PlayerGameBattingStats>()
                 { Dtos.TestClasses.Faker.FakePlayerGameBattingStats() });
-        // Player 2 has no changes
+        // Player2 has no changes
         var player2Season = Dtos.TestClasses.Faker.FakePlayerSeason(playerMlbId: player2Id.Value);
         // Live MLB stats returns the corresponding live stats per each player
         stubPlayerStats.Setup(x => x.GetPlayerSeason(player1Id, seasonYear))
@@ -78,9 +78,9 @@ public class PerformanceTrackerTests
 
         // Mock command sender
         var mockCommandSender = Mock.Of<ICommandSender>();
-        // Player 1 expects an update
+        // Player1 expects an update
         var expectedPlayer1UpdateCommand = new UpdatePlayerStatsBySeasonCommand(player1StatsBySeason, player1Season);
-        // Player 2 does NOT expect an update
+        // Player2 does NOT expect an update
         var notExpectedPlayer2UpdateCommand = new UpdatePlayerStatsBySeasonCommand(player2StatsBySeason, player2Season);
 
         // The service under test
@@ -89,11 +89,18 @@ public class PerformanceTrackerTests
         /*
          * Act
          */
-        await tracker.TrackPlayerPerformance(seasonYear, cToken);
+        var actual = await tracker.TrackPlayerPerformance(seasonYear, cToken);
 
         /*
          * Assert
          */
+        // There were 2 player seasons in the domain
+        Assert.Equal(2, actual.TotalPlayerSeasons);
+        // Player1 had a season performance update
+        Assert.Equal(1, actual.TotalPlayerSeasonUpdates);
+        // Player2 had no changes
+        Assert.Equal(1, actual.TotalUpToDatePlayerSeasons);
+
         // Was the system queried for player season stats?
         Mock.Get(stubQuerySender).Verify(x => x.Send(getAllPlayerStatsBySeasonQuery, cToken), Times.Once);
         // Was the live MLB data queried for each player?
