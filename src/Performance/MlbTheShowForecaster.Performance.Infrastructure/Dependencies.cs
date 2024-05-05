@@ -40,7 +40,7 @@ public static class Dependencies
         /// <summary>
         /// MLB API base address config key
         /// </summary>
-        public const string MlbApiBaseAddress = "Api:Mlb";
+        public const string MlbApiBaseAddress = "Api:Mlb:BaseAddress";
 
         /// <summary>
         /// <see cref="IPerformanceAssessmentRequirements.StatPercentChangeThreshold"/> config key
