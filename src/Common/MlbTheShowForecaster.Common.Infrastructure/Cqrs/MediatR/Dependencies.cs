@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
 
@@ -18,8 +19,14 @@ public static class Dependencies
     /// and their corresponding handlers</param>
     public static void AddMediatRCqrs(this IServiceCollection services, IList<Assembly> assembliesToScan)
     {
+        // Register MediatR
+        services.AddMediatR(mediatrConfig =>
+        {
+            mediatrConfig.RegisterServicesFromAssemblies(assembliesToScan.ToArray());
+        });
+
         // Register the ICommandSender
-        services.AddTransient<ICommandSender, MediatRCommandSender>();
+        services.TryAddTransient<ICommandSender, MediatRCommandSender>();
 
         // Get any implementations of ICommandHandler
         assembliesToScan.SelectMany(a => a.GetTypes())
@@ -37,17 +44,17 @@ public static class Dependencies
                 var commandType = handlerInterfaceType.GetGenericArguments().First();
 
                 // Register the command handler
-                services.AddTransient(handlerInterfaceType, handlerType);
+                services.TryAddTransient(handlerInterfaceType, handlerType);
 
                 // Register the command handler wrapper
                 var commandWrapperType = typeof(MediatRCommand<>).MakeGenericType(commandType);
                 var handlerWrapperType = typeof(MediatRCommandHandler<>).MakeGenericType(commandType);
                 var mediatRHandlerType = typeof(IRequestHandler<>).MakeGenericType(commandWrapperType);
-                services.AddTransient(mediatRHandlerType, handlerWrapperType);
+                services.TryAddTransient(mediatRHandlerType, handlerWrapperType);
             });
 
         // Register the IQuerySender
-        services.AddTransient<IQuerySender, MediatRQuerySender>();
+        services.TryAddTransient<IQuerySender, MediatRQuerySender>();
 
         // Get any implementations of IQueryHandler
         assembliesToScan.SelectMany(a => a.GetTypes())
@@ -66,13 +73,13 @@ public static class Dependencies
                 var responseType = queryType.GetInterfaces().First().GetGenericArguments().First();
 
                 // Register the query handler
-                services.AddTransient(handlerInterfaceType, handlerType);
+                services.TryAddTransient(handlerInterfaceType, handlerType);
 
                 // Register the query handler wrapper
                 var queryWrapperType = typeof(MediatRQuery<,>).MakeGenericType(queryType, responseType);
                 var handlerWrapperType = typeof(MediatRQueryHandler<,>).MakeGenericType(queryType, responseType);
                 var mediatRHandlerType = typeof(IRequestHandler<,>).MakeGenericType(queryWrapperType, responseType);
-                services.AddTransient(mediatRHandlerType, handlerWrapperType);
+                services.TryAddTransient(mediatRHandlerType, handlerWrapperType);
             });
     }
 }
