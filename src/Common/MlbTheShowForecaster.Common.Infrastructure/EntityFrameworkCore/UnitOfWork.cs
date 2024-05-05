@@ -2,7 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using Microsoft.EntityFrameworkCore;
 
-namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFramework;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 
 /// <summary>
 /// An EF implementation of unit of work that forces any changes to the DB context (since the last call to commit)
