@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using Moq;
@@ -30,7 +31,7 @@ public class UpdateListingCommandHandlerTests
             .Returns(50m);
 
         var mockListingRepository = Mock.Of<IListingRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork>();
+        var mockUnitOfWork = Mock.Of<IUnitOfWork<Listing>>();
 
         var cToken = CancellationToken.None;
         var command = new UpdateListingCommand(domainListing, externalCardListing, stubPriceChangeThreshold.Object);

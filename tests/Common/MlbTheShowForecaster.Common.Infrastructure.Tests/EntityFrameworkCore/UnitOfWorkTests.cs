@@ -1,10 +1,10 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
-using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFramework;
-using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFramework.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFrameworkCore.TestClasses;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFramework;
+namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFrameworkCore;
 
 public class UnitOfWorkTests
 {

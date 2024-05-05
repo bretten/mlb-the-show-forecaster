@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreateListing;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using Moq;
 
@@ -19,7 +20,7 @@ public class CreateListingCommandHandlerTests
         var stubListingMapper = Mock.Of<IListingMapper>(x => x.Map(externalCardListing) == domainListing);
 
         var mockListingRepository = Mock.Of<IListingRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork>();
+        var mockUnitOfWork = Mock.Of<IUnitOfWork<Listing>>();
 
         var cToken = CancellationToken.None;
         var command = new CreateListingCommand(externalCardListing);

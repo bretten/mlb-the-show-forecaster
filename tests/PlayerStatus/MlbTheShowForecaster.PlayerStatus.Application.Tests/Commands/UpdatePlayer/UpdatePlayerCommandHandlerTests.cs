@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
@@ -24,7 +25,7 @@ public class UpdatePlayerCommandHandlerTests
         }, Faker.NoTeam);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork>();
+        var mockUnitOfWork = Mock.Of<IUnitOfWork<Player>>();
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerCommand(fakePlayer, fakePlayerStatusChange);
@@ -54,7 +55,7 @@ public class UpdatePlayerCommandHandlerTests
         }, fakeTeam);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork>();
+        var mockUnitOfWork = Mock.Of<IUnitOfWork<Player>>();
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerCommand(fakePlayer, fakePlayerStatusChange);
@@ -84,7 +85,7 @@ public class UpdatePlayerCommandHandlerTests
         }, Faker.NoTeam); // <-- Cause of exception = No team specified in the status change
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork>();
+        var mockUnitOfWork = Mock.Of<IUnitOfWork<Player>>();
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerCommand(fakePlayer, fakePlayerStatusChange);
