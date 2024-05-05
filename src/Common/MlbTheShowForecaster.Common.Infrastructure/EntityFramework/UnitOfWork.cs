@@ -8,8 +8,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFramew
 /// An EF implementation of unit of work that forces any changes to the DB context (since the last call to commit)
 /// to be encapsulated as a single, logical unit of work by only saving changes when commit is invoked
 /// </summary>
-/// <typeparam name="TDbContext"></typeparam>
-public sealed class UnitOfWork<TDbContext> : IUnitOfWork, IDisposable, IAsyncDisposable where TDbContext : DbContext
+/// <typeparam name="TDbContext">The type of work that is being committed. In this case, the work is for a <see cref="DbContext"/></typeparam>
+public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposable, IAsyncDisposable
+    where TDbContext : DbContext
 {
     /// <summary>
     /// The DB context

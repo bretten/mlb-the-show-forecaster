@@ -20,14 +20,15 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
     /// <summary>
     /// The unit of work that encapsulates all actions for updating a <see cref="PlayerCard"/>
     /// </summary>
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork<PlayerCard> _unitOfWork;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="playerCardRepository">The <see cref="PlayerCard"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="PlayerCard"/></param>
-    public UpdatePlayerCardCommandHandler(IPlayerCardRepository playerCardRepository, IUnitOfWork unitOfWork)
+    public UpdatePlayerCardCommandHandler(IPlayerCardRepository playerCardRepository,
+        IUnitOfWork<PlayerCard> unitOfWork)
     {
         _playerCardRepository = playerCardRepository;
         _unitOfWork = unitOfWork;

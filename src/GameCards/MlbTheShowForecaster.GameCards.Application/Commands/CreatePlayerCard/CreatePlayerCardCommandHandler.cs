@@ -27,7 +27,7 @@ internal sealed class CreatePlayerCardCommandHandler : ICommandHandler<CreatePla
     /// <summary>
     /// The unit of work that encapsulates all actions for creating a <see cref="PlayerCard"/>
     /// </summary>
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork<PlayerCard> _unitOfWork;
 
     /// <summary>
     /// Constructor
@@ -36,7 +36,7 @@ internal sealed class CreatePlayerCardCommandHandler : ICommandHandler<CreatePla
     /// <param name="playerCardRepository">The <see cref="PlayerCard"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="PlayerCard"/></param>
     public CreatePlayerCardCommandHandler(IPlayerCardMapper playerCardMapper,
-        IPlayerCardRepository playerCardRepository, IUnitOfWork unitOfWork)
+        IPlayerCardRepository playerCardRepository, IUnitOfWork<PlayerCard> unitOfWork)
     {
         _playerCardMapper = playerCardMapper;
         _playerCardRepository = playerCardRepository;
