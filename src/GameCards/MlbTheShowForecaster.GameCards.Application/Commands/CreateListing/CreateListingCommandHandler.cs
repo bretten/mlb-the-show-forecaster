@@ -27,7 +27,7 @@ internal sealed class CreateListingCommandHandler : ICommandHandler<CreateListin
     /// <summary>
     /// The unit of work that encapsulates all actions for creating a <see cref="Listing"/>
     /// </summary>
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork<Listing> _unitOfWork;
 
     /// <summary>
     /// Constructor
@@ -36,7 +36,7 @@ internal sealed class CreateListingCommandHandler : ICommandHandler<CreateListin
     /// <param name="listingRepository">The <see cref="Listing"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="Listing"/></param>
     public CreateListingCommandHandler(IListingMapper listingMapper, IListingRepository listingRepository,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork<Listing> unitOfWork)
     {
         _listingMapper = listingMapper;
         _listingRepository = listingRepository;

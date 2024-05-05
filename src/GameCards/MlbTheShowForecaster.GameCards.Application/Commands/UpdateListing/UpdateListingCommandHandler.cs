@@ -21,14 +21,14 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
     /// <summary>
     /// The unit of work that encapsulates all actions for updating a <see cref="Listing"/>
     /// </summary>
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork<Listing> _unitOfWork;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="listingRepository">The <see cref="Listing"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="Listing"/></param>
-    public UpdateListingCommandHandler(IListingRepository listingRepository, IUnitOfWork unitOfWork)
+    public UpdateListingCommandHandler(IListingRepository listingRepository, IUnitOfWork<Listing> unitOfWork)
     {
         _listingRepository = listingRepository;
         _unitOfWork = unitOfWork;

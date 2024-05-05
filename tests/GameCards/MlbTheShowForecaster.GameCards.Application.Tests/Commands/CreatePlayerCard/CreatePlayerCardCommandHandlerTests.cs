@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using Moq;
 using Faker = com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses.Faker;
@@ -20,7 +21,7 @@ public class CreatePlayerCardCommandHandlerTests
             Mock.Of<IPlayerCardMapper>(x => x.Map(fakeExternalPlayerCard) == fakeDomainPlayerCard);
 
         var mockPlayerCardRepository = Mock.Of<IPlayerCardRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork>();
+        var mockUnitOfWork = Mock.Of<IUnitOfWork<PlayerCard>>();
 
         var cToken = CancellationToken.None;
         var command = new CreatePlayerCardCommand(fakeExternalPlayerCard);

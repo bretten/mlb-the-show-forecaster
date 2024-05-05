@@ -24,14 +24,14 @@ internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerC
     /// <summary>
     /// The unit of work that bundles all status updates for a <see cref="Player"/>
     /// </summary>
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork<Player> _unitOfWork;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="playerRepository">The <see cref="Player"/> repository</param>
     /// <param name="unitOfWork">The unit of work that bundles all status updates for a <see cref="Player"/></param>
-    public UpdatePlayerCommandHandler(IPlayerRepository playerRepository, IUnitOfWork unitOfWork)
+    public UpdatePlayerCommandHandler(IPlayerRepository playerRepository, IUnitOfWork<Player> unitOfWork)
     {
         _playerRepository = playerRepository;
         _unitOfWork = unitOfWork;

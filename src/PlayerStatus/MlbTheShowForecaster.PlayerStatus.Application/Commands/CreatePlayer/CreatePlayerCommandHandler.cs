@@ -1,7 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.Common.Application.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
@@ -24,12 +23,12 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     /// <summary>
     /// The unit of work that defines all actions for creating a <see cref="Player"/>
     /// </summary>
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork<Player> _unitOfWork;
 
     /// <summary>
     /// Mapper that maps the player's status to a <see cref="Player"/>
     /// </summary>
-    private readonly IObjectMapper _objectMapper;
+    private readonly IPlayerMapper _playerMapper;
 
     /// <summary>
     /// Provides information on teams
@@ -41,14 +40,14 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     /// </summary>
     /// <param name="playerRepository">The <see cref="Player"/> repository</param>
     /// <param name="unitOfWork">The unit of work that defines all actions for creating a <see cref="Player"/></param>
-    /// <param name="objectMapper">Mapper that maps the player's status to a <see cref="Player"/></param>
+    /// <param name="playerMapper">Mapper that maps the player's status to a <see cref="Player"/></param>
     /// <param name="teamProvider">Provides information on teams</param>
-    public CreatePlayerCommandHandler(IPlayerRepository playerRepository, IUnitOfWork unitOfWork,
-        IObjectMapper objectMapper, ITeamProvider teamProvider)
+    public CreatePlayerCommandHandler(IPlayerRepository playerRepository, IUnitOfWork<Player> unitOfWork,
+        IPlayerMapper playerMapper, ITeamProvider teamProvider)
     {
         _playerRepository = playerRepository;
         _unitOfWork = unitOfWork;
-        _objectMapper = objectMapper;
+        _playerMapper = playerMapper;
         _teamProvider = teamProvider;
     }
 
@@ -60,7 +59,7 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     /// <returns>The completed task</returns>
     public async Task Handle(CreatePlayerCommand command, CancellationToken cancellationToken = default)
     {
-        var player = _objectMapper.Map<RosterEntry, Player>(command.RosterEntry);
+        var player = _playerMapper.Map(command.RosterEntry);
 
         // The player is new, so they are being activated and signing with a team
         player.Activate();
