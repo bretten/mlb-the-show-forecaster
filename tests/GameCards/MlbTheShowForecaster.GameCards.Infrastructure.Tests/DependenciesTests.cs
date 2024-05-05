@@ -1,0 +1,170 @@
+﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests;
+
+public class DependenciesTests
+{
+    [Fact]
+    public void AddGameCardsMapping_ServiceCollection_RegistersDependencies()
+    {
+        // Arrange
+        var s = new ServiceCollection();
+
+        // Act
+        s.AddGameCardsMapping();
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IPlayerCardMapper)).Lifetime);
+        Assert.IsType<PlayerCardMapper>(actual.GetRequiredService<IPlayerCardMapper>());
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IListingMapper)).Lifetime);
+        Assert.IsType<ListingMapper>(actual.GetRequiredService<IListingMapper>());
+    }
+
+    [Fact]
+    public void AddGameCardsPlayerCardTracker_ServiceCollection_RegistersDependencies()
+    {
+        // Arrange
+        var s = new ServiceCollection();
+
+        // Act
+        s.AddGameCardsPlayerCardTracker();
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMlbTheShowApiFactory)).Lifetime);
+        Assert.IsType<MlbTheShowApiFactory>(actual.GetRequiredService<IMlbTheShowApiFactory>());
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMlbTheShowItemMapper)).Lifetime);
+        Assert.IsType<MlbTheShowItemMapper>(actual.GetRequiredService<IMlbTheShowItemMapper>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardCatalog)).Lifetime);
+        Assert.IsType<MlbTheShowApiCardCatalog>(actual.GetRequiredService<ICardCatalog>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPlayerCardTracker)).Lifetime);
+        Assert.IsType<PlayerCardTracker>(actual.GetRequiredService<IPlayerCardTracker>());
+    }
+
+    [Fact]
+    public void AddGameCardsPriceTracker_ServiceCollection_RegistersDependencies()
+    {
+        // Arrange
+        var settings = new Dictionary<string, string?>
+        {
+            { Dependencies.ConfigKeys.BuyPricePercentageChangeThreshold, "1" },
+            { Dependencies.ConfigKeys.SellPricePercentageChangeThreshold, "2" },
+        };
+        var config = GetConfig(settings);
+
+        var s = new ServiceCollection();
+
+        // Act
+        s.AddGameCardsPriceTracker(config);
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        var threshold = actual.GetRequiredService<IListingPriceSignificantChangeThreshold>();
+        Assert.Equal(ServiceLifetime.Singleton,
+            s.First(x => x.ServiceType == typeof(IListingPriceSignificantChangeThreshold)).Lifetime);
+        Assert.IsType<ListingPriceSignificantChangeThreshold>(threshold);
+        Assert.Equal(1, threshold.BuyPricePercentageChangeThreshold);
+        Assert.Equal(2, threshold.SellPricePercentageChangeThreshold);
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMlbTheShowApiFactory)).Lifetime);
+        Assert.IsType<MlbTheShowApiFactory>(actual.GetRequiredService<IMlbTheShowApiFactory>());
+
+        Assert.Equal(ServiceLifetime.Singleton,
+            s.First(x => x.ServiceType == typeof(IMlbTheShowListingMapper)).Lifetime);
+        Assert.IsType<MlbTheShowListingMapper>(actual.GetRequiredService<IMlbTheShowListingMapper>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardMarketplace)).Lifetime);
+        Assert.IsType<MlbTheShowApiCardMarketplace>(actual.GetRequiredService<ICardMarketplace>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardPriceTracker)).Lifetime);
+        Assert.IsType<CardPriceTracker>(actual.GetRequiredService<ICardPriceTracker>());
+    }
+
+    [Fact]
+    public void AddGameCardsRosterUpdates_ServiceCollection_RegistersDependencies()
+    {
+        // Arrange
+        var s = new ServiceCollection();
+
+        // Act
+        s.AddGameCardsRosterUpdates();
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMlbTheShowApiFactory)).Lifetime);
+        Assert.IsType<MlbTheShowApiFactory>(actual.GetRequiredService<IMlbTheShowApiFactory>());
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMlbTheShowItemMapper)).Lifetime);
+        Assert.IsType<MlbTheShowItemMapper>(actual.GetRequiredService<IMlbTheShowItemMapper>());
+
+        Assert.Equal(ServiceLifetime.Singleton,
+            s.First(x => x.ServiceType == typeof(IMlbTheShowRosterUpdateMapper)).Lifetime);
+        Assert.IsType<MlbTheShowRosterUpdateMapper>(actual.GetRequiredService<IMlbTheShowRosterUpdateMapper>());
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMemoryCache)).Lifetime);
+        Assert.IsType<MemoryCache>(actual.GetRequiredService<IMemoryCache>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardCatalog)).Lifetime);
+        Assert.IsType<MlbTheShowApiCardCatalog>(actual.GetRequiredService<ICardCatalog>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IRosterUpdateFeed)).Lifetime);
+        Assert.IsType<MlbTheShowApiRosterUpdateFeed>(actual.GetRequiredService<IRosterUpdateFeed>());
+
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IRosterUpdateOrchestrator)).Lifetime);
+        Assert.IsType<RosterUpdateOrchestrator>(actual.GetRequiredService<IRosterUpdateOrchestrator>());
+    }
+
+    [Fact]
+    public void AddGameCardsEntityFrameworkCoreRepositories_ServiceCollection_RegistersDependencies()
+    {
+        // Arrange
+        const string cs = "Server=localhost;Port=5432;Database=test;Uid=postgres;Pwd=postgres;";
+        var settings = new Dictionary<string, string?>
+        {
+            { $"ConnectionStrings:{Dependencies.ConfigKeys.CardsConnection}", cs },
+            { $"ConnectionStrings:{Dependencies.ConfigKeys.MarketplaceConnection}", cs },
+        };
+        var config = GetConfig(settings);
+
+        var s = new ServiceCollection();
+
+        // Act
+        s.AddGameCardsEntityFrameworkCoreRepositories(config);
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IPlayerCardRepository)).Lifetime);
+        Assert.IsType<EntityFrameworkCorePlayerCardRepository>(actual.GetRequiredService<IPlayerCardRepository>());
+
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IListingRepository)).Lifetime);
+        Assert.IsType<HybridNpgsqlEntityFrameworkCoreListingRepository>(
+            actual.GetRequiredService<IListingRepository>());
+    }
+
+    private static IConfiguration GetConfig(Dictionary<string, string?> settings)
+    {
+        return new ConfigurationBuilder()
+            .AddInMemoryCollection(settings)
+            .Build();
+    }
+}
