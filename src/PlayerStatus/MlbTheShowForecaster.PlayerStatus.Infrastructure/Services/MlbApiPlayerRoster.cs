@@ -1,12 +1,11 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Mapping;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
-using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Enums;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Requests;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Services;
 
@@ -21,19 +20,19 @@ public sealed class MlbApiPlayerRoster : IPlayerRoster
     private readonly IMlbApi _mlbApi;
 
     /// <summary>
-    /// <see cref="IObjectMapper"/> that maps the MLB API data to the application-relevant <see cref="RosterEntry"/>
+    /// Maps the MLB API data to the application-level <see cref="RosterEntry"/>
     /// </summary>
-    private readonly IObjectMapper _objectMapper;
+    private readonly IMlbApiPlayerMapper _playerMapper;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="mlbApi">The <see cref="IMlbApi"/></param>
-    /// <param name="objectMapper"><see cref="IObjectMapper"/> that maps the MLB API data to the application-relevant <see cref="RosterEntry"/></param>
-    public MlbApiPlayerRoster(IMlbApi mlbApi, IObjectMapper objectMapper)
+    /// <param name="playerMapper">Maps the MLB API data to the application-level <see cref="RosterEntry"/></param>
+    public MlbApiPlayerRoster(IMlbApi mlbApi, IMlbApiPlayerMapper playerMapper)
     {
         _mlbApi = mlbApi;
-        _objectMapper = objectMapper;
+        _playerMapper = playerMapper;
     }
 
     /// <summary>
@@ -54,6 +53,6 @@ public sealed class MlbApiPlayerRoster : IPlayerRoster
             throw new EmptyRosterException($"{GetType().Name} - MLB API roster had no players for season {seasonYear}");
         }
 
-        return response.Players.Select(x => _objectMapper.Map<PlayerDto, RosterEntry>(x)).ToList();
+        return response.Players.Select(x => _playerMapper.Map(x)).ToList();
     }
 }
