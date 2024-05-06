@@ -1,10 +1,10 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Mapping;
-using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Mapping.AutoMapper;
-using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
+﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
@@ -26,8 +26,8 @@ public class DependenciesTests
         var actual = s.BuildServiceProvider();
 
         // Assert
-        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IObjectMapper)).Lifetime);
-        Assert.IsType<AutoMapperObjectMapper>(actual.GetRequiredService<IObjectMapper>());
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IPlayerMapper)).Lifetime);
+        Assert.IsType<PlayerMapper>(actual.GetRequiredService<IPlayerMapper>());
     }
 
     [Fact]
@@ -64,6 +64,9 @@ public class DependenciesTests
         // Assert
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IMlbApi)).Lifetime);
         Assert.IsAssignableFrom<IMlbApi>(actual.GetRequiredService<IMlbApi>());
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMlbApiPlayerMapper)).Lifetime);
+        Assert.IsType<MlbApiPlayerMapper>(actual.GetRequiredService<IMlbApiPlayerMapper>());
 
         Assert.Equal(ServiceLifetime.Singleton,
             s.First(x => x.ServiceType == typeof(IPlayerStatusChangeDetector)).Lifetime);

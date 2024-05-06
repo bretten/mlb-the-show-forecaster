@@ -1,17 +1,15 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AutoMapper;
-using com.brettnamba.MlbTheShowForecaster.Common.Application.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
-using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Mapping.AutoMapper;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping.AutoMapper;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -49,9 +47,7 @@ public static class Dependencies
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
     public static void AddPlayerStatusMapping(this IServiceCollection services)
     {
-        var mapperConfig = new MapperConfiguration(x => { x.AddProfile<MlbApiProfile>(); });
-        var autoMapper = mapperConfig.CreateMapper();
-        services.TryAddSingleton<IObjectMapper>(new AutoMapperObjectMapper(autoMapper));
+        services.TryAddSingleton<IPlayerMapper, PlayerMapper>();
     }
 
     /// <summary>
@@ -74,7 +70,7 @@ public static class Dependencies
 
         services.AddMlbAPi(config);
         services.AddPlayerTeamProvider();
-        services.AddPlayerStatusMapping();
+        services.TryAddSingleton<IMlbApiPlayerMapper, MlbApiPlayerMapper>();
         services.TryAddSingleton<IPlayerStatusChangeDetector, PlayerStatusChangeDetector>();
         services.TryAddTransient<IPlayerRoster, MlbApiPlayerRoster>();
         services.TryAddTransient<IPlayerStatusTracker, PlayerStatusTracker>();
