@@ -3,7 +3,8 @@
 /// <summary>
 /// Represents a set of mutations on the system that depend on each other and must be committed together.
 /// </summary>
-public interface IUnitOfWork
+/// <typeparam name="T">The type of work, such as domain or bounded context, that is being committed</typeparam>
+public interface IUnitOfWork<T>
 {
     /// <summary>
     /// Commits all of the mutations that depend on each other

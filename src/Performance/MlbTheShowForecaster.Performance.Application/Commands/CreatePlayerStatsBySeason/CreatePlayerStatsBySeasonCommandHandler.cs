@@ -28,7 +28,7 @@ internal sealed class CreatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     /// <summary>
     /// The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/>
     /// </summary>
-    private readonly IUnitOfWork _unitOfWork;
+    private readonly IUnitOfWork<PlayerStatsBySeason> _unitOfWork;
 
     /// <summary>
     /// Constructor
@@ -37,7 +37,7 @@ internal sealed class CreatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     /// <param name="playerStatsBySeasonRepository">The <see cref="PlayerStatsBySeason"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/></param>
     public CreatePlayerStatsBySeasonCommandHandler(IPlayerSeasonMapper playerSeasonMapper,
-        IPlayerStatsBySeasonRepository playerStatsBySeasonRepository, IUnitOfWork unitOfWork)
+        IPlayerStatsBySeasonRepository playerStatsBySeasonRepository, IUnitOfWork<PlayerStatsBySeason> unitOfWork)
     {
         _playerSeasonMapper = playerSeasonMapper;
         _playerStatsBySeasonRepository = playerStatsBySeasonRepository;
