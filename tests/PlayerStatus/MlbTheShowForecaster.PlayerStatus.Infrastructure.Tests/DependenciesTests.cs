@@ -1,6 +1,10 @@
-﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
@@ -9,6 +13,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.En
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Constants = com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Constants;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests;
@@ -91,15 +96,22 @@ public class DependenciesTests
         var config = GetConfig(settings);
 
         var s = new ServiceCollection();
+        s.AddSingleton(Mock.Of<IDomainEventDispatcher>());
 
         // Act
         s.AddPlayerStatusEntityFrameworkCoreRepositories(config);
         var actual = s.BuildServiceProvider();
 
         // Assert
-        Assert.Equal(ServiceLifetime.Transient,
-            s.First(x => x.ServiceType == typeof(IPlayerRepository)).Lifetime);
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(PlayersDbContext)).Lifetime);
+        Assert.IsType<PlayersDbContext>(actual.GetRequiredService<PlayersDbContext>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPlayerRepository)).Lifetime);
         Assert.IsType<EntityFrameworkPlayerRepository>(actual.GetRequiredService<IPlayerRepository>());
+
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IUnitOfWork<IPlayerWork>)).Lifetime);
+        Assert.IsType<UnitOfWork<PlayersDbContext>>(actual.GetRequiredService<IUnitOfWork<IPlayerWork>>());
     }
 
     private static IConfiguration GetConfig(Dictionary<string, string?> settings)

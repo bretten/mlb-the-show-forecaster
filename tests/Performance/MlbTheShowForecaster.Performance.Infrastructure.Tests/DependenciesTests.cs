@@ -1,6 +1,10 @@
-﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Services;
@@ -9,6 +13,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeaso
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using Constants = com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Constants;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Tests;
@@ -109,16 +114,24 @@ public class DependenciesTests
         var config = GetConfig(settings);
 
         var s = new ServiceCollection();
+        s.AddSingleton(Mock.Of<IDomainEventDispatcher>());
 
         // Act
         s.AddPerformanceEntityFrameworkCoreRepositories(config);
         var actual = s.BuildServiceProvider();
 
         // Assert
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(PlayerSeasonsDbContext)).Lifetime);
+        Assert.IsType<PlayerSeasonsDbContext>(actual.GetRequiredService<PlayerSeasonsDbContext>());
+
         Assert.Equal(ServiceLifetime.Transient,
             s.First(x => x.ServiceType == typeof(IPlayerStatsBySeasonRepository)).Lifetime);
         Assert.IsType<EntityFrameworkCorePlayerStatsBySeasonRepository>(
             actual.GetRequiredService<IPlayerStatsBySeasonRepository>());
+
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IUnitOfWork<IPlayerSeasonWork>)).Lifetime);
+        Assert.IsType<UnitOfWork<PlayerSeasonsDbContext>>(actual.GetRequiredService<IUnitOfWork<IPlayerSeasonWork>>());
     }
 
     private static IConfiguration GetConfig(Dictionary<string, string?> settings)

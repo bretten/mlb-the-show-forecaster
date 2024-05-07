@@ -1,6 +1,10 @@
-﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
@@ -11,6 +15,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests;
 
@@ -145,20 +150,29 @@ public class DependenciesTests
         var config = GetConfig(settings);
 
         var s = new ServiceCollection();
+        s.AddSingleton(Mock.Of<IDomainEventDispatcher>());
 
         // Act
         s.AddGameCardsEntityFrameworkCoreRepositories(config);
         var actual = s.BuildServiceProvider();
 
         // Assert
-        Assert.Equal(ServiceLifetime.Transient,
-            s.First(x => x.ServiceType == typeof(IPlayerCardRepository)).Lifetime);
-        Assert.IsType<EntityFrameworkCorePlayerCardRepository>(actual.GetRequiredService<IPlayerCardRepository>());
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(CardsDbContext)).Lifetime);
+        Assert.IsType<CardsDbContext>(actual.GetRequiredService<CardsDbContext>());
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(MarketplaceDbContext)).Lifetime);
+        Assert.IsType<MarketplaceDbContext>(actual.GetRequiredService<MarketplaceDbContext>());
 
-        Assert.Equal(ServiceLifetime.Transient,
-            s.First(x => x.ServiceType == typeof(IListingRepository)).Lifetime);
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPlayerCardRepository)).Lifetime);
+        Assert.IsType<EntityFrameworkCorePlayerCardRepository>(actual.GetRequiredService<IPlayerCardRepository>());
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IListingRepository)).Lifetime);
         Assert.IsType<HybridNpgsqlEntityFrameworkCoreListingRepository>(
             actual.GetRequiredService<IListingRepository>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IUnitOfWork<ICardWork>)).Lifetime);
+        Assert.IsType<UnitOfWork<CardsDbContext>>(actual.GetRequiredService<IUnitOfWork<ICardWork>>());
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IUnitOfWork<IMarketplaceWork>)).Lifetime);
+        Assert.IsType<UnitOfWork<MarketplaceDbContext>>(actual.GetRequiredService<IUnitOfWork<IMarketplaceWork>>());
     }
 
     private static IConfiguration GetConfig(Dictionary<string, string?> settings)

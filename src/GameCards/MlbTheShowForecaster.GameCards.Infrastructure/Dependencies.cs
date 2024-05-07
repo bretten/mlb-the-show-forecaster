@@ -1,9 +1,12 @@
 ﻿using System.Reflection;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
@@ -140,5 +143,8 @@ public static class Dependencies
             return new HybridNpgsqlEntityFrameworkCoreListingRepository(sp.GetRequiredService<MarketplaceDbContext>(),
                 dataSource);
         });
+        // UnitOfWork
+        services.AddTransient<IUnitOfWork<ICardWork>, UnitOfWork<CardsDbContext>>();
+        services.AddTransient<IUnitOfWork<IMarketplaceWork>, UnitOfWork<MarketplaceDbContext>>();
     }
 }
