@@ -25,7 +25,7 @@ public class ScheduledBackgroundServiceIntegrationTests
         // Add the BackgroundService that will handle the scheduling and execution
         services.AddHostedService<ScheduledBackgroundService<IIntervalService>>(sp =>
         {
-            return new ScheduledBackgroundService<IIntervalService>(sp.GetRequiredService<IIntervalService>(),
+            return new ScheduledBackgroundService<IIntervalService>(sp.GetRequiredService<IServiceScopeFactory>(),
                 async service => { await service.Execute(); }, TimeSpan.FromMilliseconds(nestedServiceIntervalInMs));
         });
         // Service provider
@@ -55,7 +55,7 @@ public class ScheduledBackgroundServiceIntegrationTests
     }
 
     [Fact]
-    public void Dispose_BeforeStarting_DisposesOfServiceBeforeCancellationToken()
+    public async Task Dispose_BeforeStarting_DisposesOfServiceBeforeCancellationToken()
     {
         /*
          * Arrange
@@ -70,7 +70,7 @@ public class ScheduledBackgroundServiceIntegrationTests
         // Add the BackgroundService that will handle the scheduling and execution
         services.AddHostedService<ScheduledBackgroundService<IIntervalService>>(sp =>
         {
-            return new ScheduledBackgroundService<IIntervalService>(sp.GetRequiredService<IIntervalService>(),
+            return new ScheduledBackgroundService<IIntervalService>(sp.GetRequiredService<IServiceScopeFactory>(),
                 async service => { await service.Execute(); }, TimeSpan.FromMilliseconds(nestedServiceIntervalInMs));
         });
         // Service provider
@@ -80,6 +80,8 @@ public class ScheduledBackgroundServiceIntegrationTests
         /*
          * Act
          */
+        // Start the IHostedService
+        await s!.StartAsync(CancellationToken.None);
         s!.Dispose();
 
         /*

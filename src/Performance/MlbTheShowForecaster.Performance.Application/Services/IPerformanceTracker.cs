@@ -8,7 +8,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 ///
 /// <para>By tracking performance, it will keep the stats in this system up-to-date with live MLB stats</para>
 /// </summary>
-public interface IPerformanceTracker
+public interface IPerformanceTracker : IDisposable
 {
     /// <summary>
     /// Should keep track of player performance for the specified season by making sure this system has stats that match

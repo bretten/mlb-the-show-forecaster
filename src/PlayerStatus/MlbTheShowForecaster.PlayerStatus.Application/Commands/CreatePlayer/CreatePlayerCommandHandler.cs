@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
@@ -23,7 +24,7 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     /// <summary>
     /// The unit of work that defines all actions for creating a <see cref="Player"/>
     /// </summary>
-    private readonly IUnitOfWork<Player> _unitOfWork;
+    private readonly IUnitOfWork<IPlayerWork> _unitOfWork;
 
     /// <summary>
     /// Mapper that maps the player's status to a <see cref="Player"/>
@@ -42,7 +43,7 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     /// <param name="unitOfWork">The unit of work that defines all actions for creating a <see cref="Player"/></param>
     /// <param name="playerMapper">Mapper that maps the player's status to a <see cref="Player"/></param>
     /// <param name="teamProvider">Provides information on teams</param>
-    public CreatePlayerCommandHandler(IPlayerRepository playerRepository, IUnitOfWork<Player> unitOfWork,
+    public CreatePlayerCommandHandler(IPlayerRepository playerRepository, IUnitOfWork<IPlayerWork> unitOfWork,
         IPlayerMapper playerMapper, ITeamProvider teamProvider)
     {
         _playerRepository = playerRepository;

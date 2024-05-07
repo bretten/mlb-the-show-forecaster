@@ -109,4 +109,12 @@ public sealed class MlbTheShowApiRosterUpdateFeed : IRosterUpdateFeed
         var keyExists = _memoryCache.TryGetValue(dateOfRosterUpdate, out var completed);
         return keyExists && completed is true;
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        // MLB The Show API HTTP client is handled by Refit
+    }
 }

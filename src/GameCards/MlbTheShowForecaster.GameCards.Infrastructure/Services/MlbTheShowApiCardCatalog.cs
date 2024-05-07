@@ -103,4 +103,12 @@ public sealed class MlbTheShowApiCardCatalog : ICardCatalog
 
         return _itemMapper.Map(seasonYear, item);
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        // MLB The Show API HTTP client is handled by Refit
+    }
 }

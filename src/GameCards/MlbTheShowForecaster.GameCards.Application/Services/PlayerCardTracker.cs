@@ -82,4 +82,12 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
             TotalNewCatalogCards: newPlayerCards
         );
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        _cardCatalog.Dispose();
+    }
 }

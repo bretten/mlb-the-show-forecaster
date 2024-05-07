@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
@@ -24,14 +25,14 @@ internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerC
     /// <summary>
     /// The unit of work that bundles all status updates for a <see cref="Player"/>
     /// </summary>
-    private readonly IUnitOfWork<Player> _unitOfWork;
+    private readonly IUnitOfWork<IPlayerWork> _unitOfWork;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="playerRepository">The <see cref="Player"/> repository</param>
     /// <param name="unitOfWork">The unit of work that bundles all status updates for a <see cref="Player"/></param>
-    public UpdatePlayerCommandHandler(IPlayerRepository playerRepository, IUnitOfWork<Player> unitOfWork)
+    public UpdatePlayerCommandHandler(IPlayerRepository playerRepository, IUnitOfWork<IPlayerWork> unitOfWork)
     {
         _playerRepository = playerRepository;
         _unitOfWork = unitOfWork;

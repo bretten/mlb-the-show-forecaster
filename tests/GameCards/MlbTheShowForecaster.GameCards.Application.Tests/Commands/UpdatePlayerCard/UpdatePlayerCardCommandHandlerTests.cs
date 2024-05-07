@@ -2,7 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using Moq;
 
@@ -19,7 +19,7 @@ public class UpdatePlayerCardCommandHandlerTests
         var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange(newPosition: Position.FirstBase);
 
         var mockPlayerCardRepository = Mock.Of<IPlayerCardRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<PlayerCard>>();
+        var mockUnitOfWork = Mock.Of<IUnitOfWork<ICardWork>>();
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerCardCommand(playerCard, ratingChange, positionChange);

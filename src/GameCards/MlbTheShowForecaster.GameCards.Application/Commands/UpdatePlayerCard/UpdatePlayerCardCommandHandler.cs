@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 
@@ -20,7 +21,7 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
     /// <summary>
     /// The unit of work that encapsulates all actions for updating a <see cref="PlayerCard"/>
     /// </summary>
-    private readonly IUnitOfWork<PlayerCard> _unitOfWork;
+    private readonly IUnitOfWork<ICardWork> _unitOfWork;
 
     /// <summary>
     /// Constructor
@@ -28,7 +29,7 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
     /// <param name="playerCardRepository">The <see cref="PlayerCard"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="PlayerCard"/></param>
     public UpdatePlayerCardCommandHandler(IPlayerCardRepository playerCardRepository,
-        IUnitOfWork<PlayerCard> unitOfWork)
+        IUnitOfWork<ICardWork> unitOfWork)
     {
         _playerCardRepository = playerCardRepository;
         _unitOfWork = unitOfWork;

@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 
@@ -27,7 +28,7 @@ internal sealed class CreateListingCommandHandler : ICommandHandler<CreateListin
     /// <summary>
     /// The unit of work that encapsulates all actions for creating a <see cref="Listing"/>
     /// </summary>
-    private readonly IUnitOfWork<Listing> _unitOfWork;
+    private readonly IUnitOfWork<IMarketplaceWork> _unitOfWork;
 
     /// <summary>
     /// Constructor
@@ -36,7 +37,7 @@ internal sealed class CreateListingCommandHandler : ICommandHandler<CreateListin
     /// <param name="listingRepository">The <see cref="Listing"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="Listing"/></param>
     public CreateListingCommandHandler(IListingMapper listingMapper, IListingRepository listingRepository,
-        IUnitOfWork<Listing> unitOfWork)
+        IUnitOfWork<IMarketplaceWork> unitOfWork)
     {
         _listingMapper = listingMapper;
         _listingRepository = listingRepository;
