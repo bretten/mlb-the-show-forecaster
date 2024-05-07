@@ -2,7 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.CreatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using Moq;
@@ -20,7 +20,7 @@ public class CreatePlayerCommandHandlerTests
         var fakePlayer = Faker.FakePlayer(active: false, team: null);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<Player>>();
+        var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerWork>>();
 
         var stubPlayerMapper = Mock.Of<IPlayerMapper>(x => x.Map(fakeRosterEntry) == fakePlayer);
 

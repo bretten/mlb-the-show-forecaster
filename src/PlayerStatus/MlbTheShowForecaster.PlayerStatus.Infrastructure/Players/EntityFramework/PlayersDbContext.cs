@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
+﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
 /// <summary>
 /// DB context for <see cref="Player"/>
 /// </summary>
-public sealed class PlayersDbContext : DbContext
+public sealed class PlayersDbContext : DbContext, IPlayerWork
 {
     /// <summary>
     /// Team provider, used to convert a team MLB ID to the corresponding Team value object
