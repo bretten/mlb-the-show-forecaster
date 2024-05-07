@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 
@@ -27,7 +28,7 @@ internal sealed class CreatePlayerCardCommandHandler : ICommandHandler<CreatePla
     /// <summary>
     /// The unit of work that encapsulates all actions for creating a <see cref="PlayerCard"/>
     /// </summary>
-    private readonly IUnitOfWork<PlayerCard> _unitOfWork;
+    private readonly IUnitOfWork<ICardWork> _unitOfWork;
 
     /// <summary>
     /// Constructor
@@ -36,7 +37,7 @@ internal sealed class CreatePlayerCardCommandHandler : ICommandHandler<CreatePla
     /// <param name="playerCardRepository">The <see cref="PlayerCard"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="PlayerCard"/></param>
     public CreatePlayerCardCommandHandler(IPlayerCardMapper playerCardMapper,
-        IPlayerCardRepository playerCardRepository, IUnitOfWork<PlayerCard> unitOfWork)
+        IPlayerCardRepository playerCardRepository, IUnitOfWork<ICardWork> unitOfWork)
     {
         _playerCardMapper = playerCardMapper;
         _playerCardRepository = playerCardRepository;

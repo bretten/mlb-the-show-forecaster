@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 
@@ -21,14 +22,14 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
     /// <summary>
     /// The unit of work that encapsulates all actions for updating a <see cref="Listing"/>
     /// </summary>
-    private readonly IUnitOfWork<Listing> _unitOfWork;
+    private readonly IUnitOfWork<IMarketplaceWork> _unitOfWork;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="listingRepository">The <see cref="Listing"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="Listing"/></param>
-    public UpdateListingCommandHandler(IListingRepository listingRepository, IUnitOfWork<Listing> unitOfWork)
+    public UpdateListingCommandHandler(IListingRepository listingRepository, IUnitOfWork<IMarketplaceWork> unitOfWork)
     {
         _listingRepository = listingRepository;
         _unitOfWork = unitOfWork;

@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
@@ -6,7 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
 /// <summary>
 /// DB context for a player's MLB season stats
 /// </summary>
-public sealed class PlayerSeasonsDbContext : DbContext
+public sealed class PlayerSeasonsDbContext : DbContext, IPlayerSeasonWork
 {
     /// <summary>
     /// Constructor

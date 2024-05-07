@@ -10,7 +10,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFramew
 /// </summary>
 /// <typeparam name="TDbContext">The type of work that is being committed. In this case, the work is for a <see cref="DbContext"/></typeparam>
 public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposable, IAsyncDisposable
-    where TDbContext : DbContext
+    where TDbContext : DbContext, IUnitOfWorkType
 {
     /// <summary>
     /// The DB context

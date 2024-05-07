@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
+﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
 /// <summary>
 /// DB context for <see cref="Listing"/>
 /// </summary>
-public sealed class MarketplaceDbContext : DbContext
+public sealed class MarketplaceDbContext : DbContext, IMarketplaceWork
 {
     /// <summary>
     /// Constructor
