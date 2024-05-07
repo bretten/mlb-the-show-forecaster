@@ -8,6 +8,6 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 public interface ICardWork : IUnitOfWorkType;
 
 /// <summary>
-/// Defines work for the Cards sub-domain
+/// Defines work for the Marketplace sub-domain
 /// </summary>
 public interface IMarketplaceWork : IUnitOfWorkType;
