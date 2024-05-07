@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Enums;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Items;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
@@ -62,7 +63,12 @@ public sealed class MlbTheShowApiCardCatalog : ICardCatalog
             // Map the items in the response to player cards
             if (response.Items.Any())
             {
-                theShowCards.AddRange(response.Items.Select(x => _itemMapper.Map(seasonYear, x)));
+                var activeLiveCards = response.Items
+                    .Where(x => x.Type == Constants.ItemTypes.MlbCard)
+                    .Cast<MlbCardDto>()
+                    .Where(x => x.Series == Constants.Series.Live)
+                    .Select(x => _itemMapper.Map(seasonYear, x));
+                theShowCards.AddRange(activeLiveCards);
             }
 
             page++;
