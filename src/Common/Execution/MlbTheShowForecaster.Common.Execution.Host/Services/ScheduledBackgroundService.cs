@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
@@ -24,10 +25,11 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="service"><inheritdoc /></param>
+    /// <param name="serviceScopeFactory"><inheritdoc /></param>
     /// <param name="action">The work that the service will do on an interval</param>
     /// <param name="interval">The interval to run the nested service's work on</param>
-    public ScheduledBackgroundService(T service, Func<T, Task> action, TimeSpan interval) : base(service)
+    public ScheduledBackgroundService(IServiceScopeFactory serviceScopeFactory, Func<T, Task> action, TimeSpan interval)
+        : base(serviceScopeFactory)
     {
         _action = action;
         _interval = interval;
@@ -50,6 +52,10 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
         while (!stoppingToken.IsCancellationRequested)
         {
             if (stopwatch.ElapsedMilliseconds <= _interval.TotalMilliseconds) continue;
+
+            // Each run will be its own service scope
+            using var scope = ServiceScopeFactory.CreateScope();
+            Service = scope.ServiceProvider.GetRequiredService<T>();
 
             // Get the task that the nested service will perform
             var task = _action.Invoke(Service);
