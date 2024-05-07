@@ -6,7 +6,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 /// <summary>
 /// Defines a service that returns the status of all players in the MLB
 /// </summary>
-public interface IPlayerRoster
+public interface IPlayerRoster : IDisposable
 {
     /// <summary>
     /// Returns roster information on all players in the MLB for the specified season year

@@ -8,7 +8,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 /// Defines a service that retrieves player cards from an external source and creates a corresponding
 /// <see cref="PlayerCard"/> in this domain if it does not yet exist
 /// </summary>
-public interface IPlayerCardTracker
+public interface IPlayerCardTracker : IDisposable
 {
     /// <summary>
     /// Should retrieve player cards from an external source and create a corresponding <see cref="PlayerCard"/> in

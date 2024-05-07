@@ -7,7 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 /// Should define a service that tracks which roster updates are available and which have yet to be applied
 /// to the domain
 /// </summary>
-public interface IRosterUpdateFeed
+public interface IRosterUpdateFeed : IDisposable
 {
     /// <summary>
     /// Should provide a collection of roster updates that have not been applied to the domain yet

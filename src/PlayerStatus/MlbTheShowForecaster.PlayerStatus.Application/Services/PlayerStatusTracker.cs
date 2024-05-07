@@ -111,4 +111,12 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
             TotalUpdatedPlayers: updatedPlayers
         );
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        _playerRoster.Dispose();
+    }
 }

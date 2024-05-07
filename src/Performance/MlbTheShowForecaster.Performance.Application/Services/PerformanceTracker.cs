@@ -100,4 +100,12 @@ public sealed class PerformanceTracker : IPerformanceTracker
                && playerStatsBySeason.PitchingStatsByGamesChronologically.Count == seasonToDate.GamePitchingStats.Count
                && playerStatsBySeason.FieldingStatsByGamesChronologically.Count == seasonToDate.GameFieldingStats.Count;
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        _playerStats.Dispose();
+    }
 }
