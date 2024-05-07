@@ -8,7 +8,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 /// <summary>
 /// Defines a service that can retrieve marketplace information on cards such as pricing
 /// </summary>
-public interface ICardMarketplace
+public interface ICardMarketplace : IDisposable
 {
     /// <summary>
     /// Should return the prices for a card by its <see cref="CardExternalId"/>

@@ -6,7 +6,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 /// <summary>
 /// Defines an interface that will track the price changes of cards
 /// </summary>
-public interface ICardPriceTracker
+public interface ICardPriceTracker : IDisposable
 {
     /// <summary>
     /// Should track the prices of card listings and add new listings to the domain if they don't exist

@@ -250,4 +250,13 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
             // This will be logged in issue #140
         }
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        _rosterUpdateFeed.Dispose();
+        _cardCatalog.Dispose();
+    }
 }

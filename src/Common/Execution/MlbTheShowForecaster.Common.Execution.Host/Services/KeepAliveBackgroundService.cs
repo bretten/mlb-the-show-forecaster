@@ -20,7 +20,7 @@ public sealed class KeepAliveBackgroundService<T>(IServiceScopeFactory serviceSc
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // Resolve the service in this scope
-        using var scope = serviceScopeFactory.CreateScope();
+        using var scope = ServiceScopeFactory.CreateScope();
         Service = scope.ServiceProvider.GetRequiredService<T>();
 
         // The base ExecuteAsync will ensure cleanup is done for the nested service
