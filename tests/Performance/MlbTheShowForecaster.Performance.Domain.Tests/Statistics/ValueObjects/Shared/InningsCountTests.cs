@@ -287,6 +287,7 @@ public class InningsCountTests
 
     [Theory]
     // Only full innings
+    [InlineData(0, 0, 0, 0)]
     [InlineData(1, 2, 3, 6)]
     // Decimal format
     [InlineData(1.333, 2.333, 3.333, 7)]
