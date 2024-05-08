@@ -3,6 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.BaseRunning;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared.Extensions;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
 
@@ -215,7 +216,7 @@ public class FieldingStats : ValueObject
         return Create(
             position: fieldingStatsArray.First().Position,
             gamesStarted: fieldingStatsArray.Sum(x => x.GamesStarted.Value),
-            inningsPlayed: fieldingStatsArray.Sum(x => x.InningsPlayed.Value),
+            inningsPlayed: fieldingStatsArray.Select(x => x.InningsPlayed).SumInnings().Value,
             assists: fieldingStatsArray.Sum(x => x.Assists.Value),
             putouts: fieldingStatsArray.Sum(x => x.Putouts.Value),
             errors: fieldingStatsArray.Sum(x => x.Errors.Value),
