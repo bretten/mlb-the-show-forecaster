@@ -14,7 +14,7 @@ public static class InningsCountExtensions
     /// <returns>An aggregated <see cref="InningsCount"/></returns>
     public static InningsCount SumInnings(this IEnumerable<InningsCount> inningsCounts)
     {
-        return inningsCounts.Aggregate((total, next) =>
+        return inningsCounts.Aggregate(InningsCount.Create(0), (total, next) =>
         {
             var fullInnings = total.FullInnings.Value + next.FullInnings.Value;
             var additionalOuts = total.AdditionalOuts.Value + next.AdditionalOuts.Value;
