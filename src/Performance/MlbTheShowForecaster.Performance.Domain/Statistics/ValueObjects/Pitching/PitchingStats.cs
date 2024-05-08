@@ -3,6 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.BaseRunning;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared.Extensions;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
 
@@ -543,7 +544,7 @@ public class PitchingStats : ValueObject
             saves: pitchingStatsArray.Sum(x => x.Saves.Value),
             blownSaves: pitchingStatsArray.Sum(x => x.BlownSaves.Value),
             saveOpportunities: pitchingStatsArray.Sum(x => x.SaveOpportunities.Value),
-            inningsPitched: pitchingStatsArray.Sum(x => x.InningsPitched.Value),
+            inningsPitched: pitchingStatsArray.Select(x => x.InningsPitched).SumInnings().Value,
             hits: pitchingStatsArray.Sum(x => x.Hits.Value),
             doubles: pitchingStatsArray.Sum(x => x.Doubles.Value),
             triples: pitchingStatsArray.Sum(x => x.Triples.Value),
