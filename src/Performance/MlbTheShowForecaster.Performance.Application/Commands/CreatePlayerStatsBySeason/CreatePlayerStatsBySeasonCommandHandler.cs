@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
 
@@ -28,7 +29,7 @@ internal sealed class CreatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     /// <summary>
     /// The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/>
     /// </summary>
-    private readonly IUnitOfWork<PlayerStatsBySeason> _unitOfWork;
+    private readonly IUnitOfWork<IPlayerSeasonWork> _unitOfWork;
 
     /// <summary>
     /// Constructor
@@ -37,7 +38,7 @@ internal sealed class CreatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     /// <param name="playerStatsBySeasonRepository">The <see cref="PlayerStatsBySeason"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/></param>
     public CreatePlayerStatsBySeasonCommandHandler(IPlayerSeasonMapper playerSeasonMapper,
-        IPlayerStatsBySeasonRepository playerStatsBySeasonRepository, IUnitOfWork<PlayerStatsBySeason> unitOfWork)
+        IPlayerStatsBySeasonRepository playerStatsBySeasonRepository, IUnitOfWork<IPlayerSeasonWork> unitOfWork)
     {
         _playerSeasonMapper = playerSeasonMapper;
         _playerStatsBySeasonRepository = playerStatsBySeasonRepository;

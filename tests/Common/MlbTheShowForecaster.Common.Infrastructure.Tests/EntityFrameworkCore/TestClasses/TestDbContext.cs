@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFrameworkCore.TestClasses;
 
-public class TestDbContext : DbContext
+public class TestDbContext : DbContext, IUnitOfWorkType
 {
     public DbSet<TestEntity> TestEntities { get; private init; } = null!;
 

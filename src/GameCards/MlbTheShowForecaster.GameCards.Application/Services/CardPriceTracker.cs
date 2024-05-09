@@ -109,4 +109,12 @@ public sealed class CardPriceTracker : ICardPriceTracker
             TotalUpdatedListings: updatedListings
         );
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        _cardMarketplace.Dispose();
+    }
 }

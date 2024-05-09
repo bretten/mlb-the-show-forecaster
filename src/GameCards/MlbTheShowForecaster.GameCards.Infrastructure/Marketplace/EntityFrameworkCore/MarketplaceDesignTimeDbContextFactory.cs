@@ -18,8 +18,13 @@ public sealed class MarketplaceDesignTimeDbContextFactory : IDesignTimeDbContext
     /// <returns>The DB context</returns>
     public MarketplaceDbContext CreateDbContext(string[] args)
     {
+        if (args.Length < 1)
+        {
+            throw new ArgumentException("Please specify the connection string as the first argument");
+        }
+
         var optionsBuilder = new DbContextOptionsBuilder<MarketplaceDbContext>();
-        optionsBuilder.UseNpgsql();
+        optionsBuilder.UseNpgsql(args[0]);
         return new MarketplaceDbContext(optionsBuilder.Options);
     }
 }

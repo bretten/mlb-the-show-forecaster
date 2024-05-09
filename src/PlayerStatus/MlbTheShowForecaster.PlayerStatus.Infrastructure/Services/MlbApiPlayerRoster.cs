@@ -55,4 +55,12 @@ public sealed class MlbApiPlayerRoster : IPlayerRoster
 
         return response.Players.Select(x => _playerMapper.Map(x)).ToList();
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        // MLB API HTTP client is handled by Refit
+    }
 }

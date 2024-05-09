@@ -6,7 +6,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 /// <summary>
 /// Defines a service that applies roster updates to the domain
 /// </summary>
-public interface IRosterUpdateOrchestrator
+public interface IRosterUpdateOrchestrator : IDisposable
 {
     /// <summary>
     /// Should apply roster updates to the domain

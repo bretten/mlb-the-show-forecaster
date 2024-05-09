@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 
@@ -12,7 +13,12 @@ public abstract class NestedBackgroundService<T> : BackgroundService where T : I
     /// <summary>
     /// The nested, underlying service that will run for the lifetime of the application
     /// </summary>
-    protected readonly T Service;
+    protected T? Service;
+
+    /// <summary>
+    /// <see cref="IServiceScopeFactory"/> that will resolve the service <see cref="T"/>
+    /// </summary>
+    protected readonly IServiceScopeFactory ServiceScopeFactory;
 
     /// <summary>
     /// True if the nested service has already been disposed
@@ -22,10 +28,10 @@ public abstract class NestedBackgroundService<T> : BackgroundService where T : I
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="service">The nested, underlying service that will run for the lifetime of the application</param>
-    protected NestedBackgroundService(T service)
+    /// <param name="serviceScopeFactory"><see cref="IServiceScopeFactory"/> that will resolve the service <see cref="T"/></param>
+    protected NestedBackgroundService(IServiceScopeFactory serviceScopeFactory)
     {
-        Service = service;
+        ServiceScopeFactory = serviceScopeFactory;
     }
 
     /// <summary>
@@ -60,6 +66,6 @@ public abstract class NestedBackgroundService<T> : BackgroundService where T : I
     private void CleanUpNestedService()
     {
         IsNestedServiceDisposed = true;
-        Service.Dispose();
+        Service?.Dispose();
     }
 }

@@ -19,8 +19,13 @@ public sealed class PlayersDesignTimeDbContextFactory : IDesignTimeDbContextFact
     /// <returns>The DB context</returns>
     public PlayersDbContext CreateDbContext(string[] args)
     {
+        if (args.Length < 1)
+        {
+            throw new ArgumentException("Please specify the connection string as the first argument");
+        }
+
         var optionsBuilder = new DbContextOptionsBuilder<PlayersDbContext>();
-        optionsBuilder.UseNpgsql();
+        optionsBuilder.UseNpgsql(args[0]);
         return new PlayersDbContext(optionsBuilder.Options, new TeamProvider());
     }
 }

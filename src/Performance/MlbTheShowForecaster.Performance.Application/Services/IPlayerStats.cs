@@ -6,7 +6,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 /// <summary>
 /// Defines a service that will provide a player's season stats
 /// </summary>
-public interface IPlayerStats
+public interface IPlayerStats : IDisposable
 {
     /// <summary>
     /// Gets a player's season stats

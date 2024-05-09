@@ -2,7 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Dtos.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
@@ -42,7 +42,7 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
             .Returns(updatedPlayerStatsBySeason);
 
         var mockPlayerStatsBySeasonRepository = Mock.Of<IPlayerStatsBySeasonRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<PlayerStatsBySeason>>();
+        var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerSeasonWork>>();
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerStatsBySeasonCommand(fakePlayerStatsBySeason, fakePlayerSeason);

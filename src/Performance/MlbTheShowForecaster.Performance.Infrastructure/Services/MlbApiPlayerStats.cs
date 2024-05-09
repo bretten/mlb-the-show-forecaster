@@ -56,4 +56,12 @@ public sealed class MlbApiPlayerStats : IPlayerStats
 
         return _mlbApiPlayerStatsMapper.Map(player.Value);
     }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        // MLB API HTTP client is handled by Refit
+    }
 }

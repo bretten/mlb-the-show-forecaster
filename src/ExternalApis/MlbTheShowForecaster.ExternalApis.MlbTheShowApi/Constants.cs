@@ -55,4 +55,15 @@ public static class Constants
         /// </summary>
         public const string Unlockable = "unlockable";
     }
+
+    /// <summary>
+    /// Card series
+    /// </summary>
+    public static class Series
+    {
+        /// <summary>
+        /// Live series
+        /// </summary>
+        public const string Live = "Live";
+    }
 }

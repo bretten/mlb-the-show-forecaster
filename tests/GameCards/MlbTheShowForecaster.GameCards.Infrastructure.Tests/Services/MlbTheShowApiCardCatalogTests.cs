@@ -51,9 +51,9 @@ public class MlbTheShowApiCardCatalogTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        var cardDto1 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1);
-        var cardDto2 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid2);
-        var cardDto3 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid3);
+        var cardDto1 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1, series: "Live");
+        var cardDto2 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid2, series: "Rookie"); // != Live, so excluded
+        var cardDto3 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid3, series: "Live");
 
         var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto1.Uuid.Value);
         var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto2.Uuid.Value);
@@ -96,7 +96,7 @@ public class MlbTheShowApiCardCatalogTests
         var actual = await catalog.GetActiveRosterMlbPlayerCards(seasonYear, cToken);
 
         // Assert
-        Assert.Equal(new List<MlbPlayerCard>() { externalCard1, externalCard2, externalCard3 }, actual);
+        Assert.Equal(new List<MlbPlayerCard>() { externalCard1, externalCard3 }, actual);
     }
 
     [Fact]

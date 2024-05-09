@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +8,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
 /// <summary>
 /// DB context for <see cref="PlayerCard"/>
 /// </summary>
-public sealed class CardsDbContext : DbContext
+public sealed class CardsDbContext : DbContext, ICardWork
 {
     /// <summary>
     /// Constructor

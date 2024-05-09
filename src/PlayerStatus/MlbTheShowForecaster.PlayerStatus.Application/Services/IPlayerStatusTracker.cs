@@ -7,7 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 /// <summary>
 /// Defines a service that updates the status of all <see cref="Player"/>s
 /// </summary>
-public interface IPlayerStatusTracker
+public interface IPlayerStatusTracker : IDisposable
 {
     /// <summary>
     /// Updates the status of all players
