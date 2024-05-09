@@ -125,6 +125,38 @@ public class PercentageChangeTests
     }
 
     [Fact]
+    public void CalculatePercentageChange_UseZeroReferenceValueAsDenominator_ThrowsException()
+    {
+        // Arrange
+        var referenceValue = NaturalNumber.Create(0);
+        var newValue = NaturalNumber.Create(10);
+        var percentageChange = PercentageChange.Create(referenceValue, newValue);
+        Action action = () => percentageChange.HasIncreasedBy(1);
+
+        // Act
+        var actual = Record.Exception(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<DivideByZeroException>(actual);
+    }
+
+    [Fact]
+    public void CalculatePercentageChange_ZeroReferenceValueButUseOneAsDenominator_ReturnsPercentageChange()
+    {
+        // Arrange
+        var referenceValue = NaturalNumber.Create(0);
+        var newValue = NaturalNumber.Create(10);
+        var percentageChange = PercentageChange.Create(referenceValue, newValue, true);
+
+        // Act
+        var actual = percentageChange.PercentageChangeValue;
+
+        // Assert
+        Assert.Equal(1000, actual);
+    }
+
+    [Fact]
     public void Create_TwoNaturalNumbers_ReturnsPercentageChange()
     {
         // Arrange
