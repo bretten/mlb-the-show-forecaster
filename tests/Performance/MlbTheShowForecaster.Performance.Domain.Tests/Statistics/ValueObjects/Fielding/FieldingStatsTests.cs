@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+﻿using System.Collections.Immutable;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.Statistics.TestClasses;
 
@@ -182,5 +183,32 @@ public class FieldingStatsTests
         Assert.Equal(12012, actual.CatcherInterferences.Value);
         Assert.Equal(13013, actual.WildPitches.Value);
         Assert.Equal(14014, actual.Pickoffs.Value);
+    }
+
+    [Fact]
+    public void Create_EmptyFieldingStatsCollection_ReturnsEmptyStatsWithNoPosition()
+    {
+        // Arrange
+        var statsCollection = ImmutableList<FieldingStats>.Empty;
+
+        // Act
+        var actual = FieldingStats.Create(statsCollection);
+
+        // Assert
+        Assert.Equal(Position.None, actual.Position);
+        Assert.Equal(0, actual.GamesStarted.Value);
+        Assert.Equal(0, actual.InningsPlayed.Value);
+        Assert.Equal(0, actual.Assists.Value);
+        Assert.Equal(0, actual.Putouts.Value);
+        Assert.Equal(0, actual.Errors.Value);
+        Assert.Equal(0, actual.ThrowingErrors.Value);
+        Assert.Equal(0, actual.DoublePlays.Value);
+        Assert.Equal(0, actual.TriplePlays.Value);
+        Assert.Equal(0, actual.CaughtStealing.Value);
+        Assert.Equal(0, actual.StolenBases.Value);
+        Assert.Equal(0, actual.PassedBalls.Value);
+        Assert.Equal(0, actual.CatcherInterferences.Value);
+        Assert.Equal(0, actual.WildPitches.Value);
+        Assert.Equal(0, actual.Pickoffs.Value);
     }
 }

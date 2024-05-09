@@ -213,8 +213,11 @@ public class FieldingStats : ValueObject
     public static FieldingStats Create(IEnumerable<FieldingStats> fieldingStatsCollection)
     {
         var fieldingStatsArray = fieldingStatsCollection as FieldingStats[] ?? fieldingStatsCollection.ToArray();
+        var position = fieldingStatsArray.FirstOrDefault() != null
+            ? fieldingStatsArray.First().Position
+            : Position.None;
         return Create(
-            position: fieldingStatsArray.First().Position,
+            position: position,
             gamesStarted: fieldingStatsArray.Sum(x => x.GamesStarted.Value),
             inningsPlayed: fieldingStatsArray.Select(x => x.InningsPlayed).SumInnings().Value,
             assists: fieldingStatsArray.Sum(x => x.Assists.Value),
