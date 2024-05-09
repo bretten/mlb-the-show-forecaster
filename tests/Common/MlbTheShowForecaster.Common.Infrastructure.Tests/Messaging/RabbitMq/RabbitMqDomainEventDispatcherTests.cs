@@ -2,6 +2,7 @@
 using System.Text.Json;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.Messaging.RabbitMq.TestClasses;
 using Moq;
 using RabbitMQ.Client;
 
@@ -43,10 +44,4 @@ public class RabbitMqDomainEventDispatcherTests
     {
         return It.Is<ReadOnlyMemory<byte>>(x => x.ToArray().SequenceEqual(byteArray.ToArray()));
     }
-
-    private sealed record EventType1 : IDomainEvent;
-
-    private sealed record EventType2 : IDomainEvent;
-
-    private sealed record EventType3 : IDomainEvent;
 }

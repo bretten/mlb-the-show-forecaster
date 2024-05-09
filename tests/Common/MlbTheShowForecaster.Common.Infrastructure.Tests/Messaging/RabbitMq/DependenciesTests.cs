@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.Messaging.RabbitMq.TestClasses;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using RabbitMQ.Client;
@@ -250,34 +251,4 @@ public class DependenciesTests
         Assert.NotNull(actual);
         Assert.IsType<RabbitMqExchangeNotDefinedException>(actual);
     }
-
-    private sealed class DomainEventConsumer1 : IDomainEventConsumer<EventType1>
-    {
-        public Task Handle(EventType1 e)
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    private sealed class DomainEventConsumer2 : IDomainEventConsumer<EventType2>
-    {
-        public Task Handle(EventType2 e)
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    private sealed class DomainEventConsumer3 : IDomainEventConsumer<EventType3>
-    {
-        public Task Handle(EventType3 e)
-        {
-            return Task.CompletedTask;
-        }
-    }
-
-    private sealed record EventType1 : IDomainEvent;
-
-    private sealed record EventType2 : IDomainEvent;
-
-    private sealed record EventType3 : IDomainEvent;
 }
