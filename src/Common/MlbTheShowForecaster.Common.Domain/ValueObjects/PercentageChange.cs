@@ -31,6 +31,11 @@ public class PercentageChange : ValueObject
     protected virtual int FractionalDigitCount => 2;
 
     /// <summary>
+    /// True if a <see cref="ReferenceValue"/> of zero should be treated as one to prevent <see cref="DivideByZeroException"/>
+    /// </summary>
+    protected virtual bool TreatZeroReferenceValueAsOne { get; }
+
+    /// <summary>
     /// The percentage change from the <see cref="ReferenceValue"/> to the <see cref="NewValue"/> on the 100% scale
     ///
     /// <para>In other words, a value of 0.1 is a 0.1% change and a value of 10 is a 10% change</para>
@@ -76,18 +81,23 @@ public class PercentageChange : ValueObject
     /// </summary>
     /// <param name="referenceValue">The reference value that the percentage change will be calculated with respect to</param>
     /// <param name="newValue">The new value that determines the percentage change with respect to the <see cref="ReferenceValue"/></param>
-    protected PercentageChange(decimal referenceValue, decimal newValue)
+    /// <param name="treatZeroReferenceValueAsOne">True if a <see cref="ReferenceValue"/> of zero should be treated as one to prevent <see cref="DivideByZeroException"/></param>
+    protected PercentageChange(decimal referenceValue, decimal newValue, bool treatZeroReferenceValueAsOne = false)
     {
         ReferenceValue = referenceValue;
         NewValue = newValue;
+        TreatZeroReferenceValueAsOne = treatZeroReferenceValueAsOne;
     }
 
     /// <summary>
-    /// Calculates the percentage change from the <see cref="ReferenceValue"/> to the <see cref="NewValue"/>
+    /// Calculates the percentage change from the <see cref="ReferenceValue"/> to the <see cref="NewValue"/> with
+    /// the formula:
+    /// <para>PercentageChange = 100 * (NewValue - ReferenceValue) / ReferenceValue</para>
     /// </summary>
     private decimal CalculatePercentageChange()
     {
-        return 100 * ((NewValue - ReferenceValue) / ReferenceValue);
+        var denominator = TreatZeroReferenceValueAsOne && ReferenceValue == 0 ? 1 : ReferenceValue;
+        return 100 * ((NewValue - ReferenceValue) / denominator);
     }
 
     /// <summary>
@@ -95,10 +105,12 @@ public class PercentageChange : ValueObject
     /// </summary>
     /// <param name="referenceValue">The reference value that the percentage change will be calculated with respect to</param>
     /// <param name="newValue">The new value that determines the percentage change with respect to the <see cref="ReferenceValue"/></param>
+    /// <param name="treatZeroReferenceValueAsOne">True if a <see cref="ReferenceValue"/> of zero should be treated as one to prevent <see cref="DivideByZeroException"/></param>
     /// <returns><see cref="PercentageChange"/></returns>
-    public static PercentageChange Create(decimal referenceValue, decimal newValue)
+    public static PercentageChange Create(decimal referenceValue, decimal newValue,
+        bool treatZeroReferenceValueAsOne = false)
     {
-        return new PercentageChange(referenceValue, newValue);
+        return new PercentageChange(referenceValue, newValue, treatZeroReferenceValueAsOne);
     }
 
     /// <summary>
@@ -106,9 +118,11 @@ public class PercentageChange : ValueObject
     /// </summary>
     /// <param name="referenceValue">The reference value that the percentage change will be calculated with respect to</param>
     /// <param name="newValue">The new value that determines the percentage change with respect to the <see cref="ReferenceValue"/></param>
+    /// <param name="treatZeroReferenceValueAsOne">True if a <see cref="ReferenceValue"/> of zero should be treated as one to prevent <see cref="DivideByZeroException"/></param>
     /// <returns><see cref="PercentageChange"/></returns>
-    public static PercentageChange Create(NaturalNumber referenceValue, NaturalNumber newValue)
+    public static PercentageChange Create(NaturalNumber referenceValue, NaturalNumber newValue,
+        bool treatZeroReferenceValueAsOne = false)
     {
-        return new PercentageChange(referenceValue.Value, newValue.Value);
+        return new PercentageChange(referenceValue.Value, newValue.Value, treatZeroReferenceValueAsOne);
     }
 }
