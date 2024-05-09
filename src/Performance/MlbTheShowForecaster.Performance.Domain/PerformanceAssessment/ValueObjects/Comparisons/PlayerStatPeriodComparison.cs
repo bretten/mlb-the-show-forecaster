@@ -9,6 +9,13 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAsse
 public abstract class PlayerStatPeriodComparison : PercentageChange
 {
     /// <summary>
+    /// If there is a reference value of 0, we want to treat that as a non-infinite increase. For example, stats
+    /// changing from 0 to 1 hits is vastly different than stats changing from 0 to 10 hits. This difference needs
+    /// to be measured
+    /// </summary>
+    protected override bool TreatZeroReferenceValueAsOne => true;
+
+    /// <summary>
     /// The player's stat before the comparison date
     /// </summary>
     protected readonly IStat StatBeforeComparisonDate;
