@@ -110,7 +110,7 @@ public sealed class Listing : AggregateRoot
         IListingPriceSignificantChangeThreshold t)
     {
         // Calculate the percentage difference between the previous buy price and the new buy price
-        var priceDiffPercentage = PercentageChange.Create(referenceValue: BuyPrice, newValue: newBuyPrice);
+        var priceDiffPercentage = PercentageChange.Create(referenceValue: BuyPrice, newValue: newBuyPrice, true);
 
         // Check if the price increased or decreased significantly
         if (priceDiffPercentage.HasIncreasedBy(t.BuyPricePercentageChangeThreshold))
@@ -136,7 +136,7 @@ public sealed class Listing : AggregateRoot
         IListingPriceSignificantChangeThreshold t)
     {
         // Calculate the percentage difference between the previous sell price and the new sell price
-        var priceDiffPercentage = PercentageChange.Create(referenceValue: SellPrice, newValue: newSellPrice);
+        var priceDiffPercentage = PercentageChange.Create(referenceValue: SellPrice, newValue: newSellPrice, true);
 
         // Check if the price increased or decreased significantly
         if (priceDiffPercentage.HasIncreasedBy(t.SellPricePercentageChangeThreshold))
