@@ -33,7 +33,7 @@ public sealed class RabbitMqDomainEventConsumer<T> : IDisposable
     /// <summary>
     /// The RabbitMQ consumer
     /// </summary>
-    public AsyncEventingBasicConsumer Consumer { get; }
+    private readonly AsyncEventingBasicConsumer _consumer;
 
     /// <summary>
     /// Constructor
@@ -46,15 +46,15 @@ public sealed class RabbitMqDomainEventConsumer<T> : IDisposable
         _domainEventConsumer = domainEventConsumer;
         _channel = channel;
         Queue = queue;
-        Consumer = new AsyncEventingBasicConsumer(channel);
-        Consumer.Received += ReceivedEventHandler;
+        _consumer = new AsyncEventingBasicConsumer(channel);
+        _consumer.Received += ReceivedEventHandler;
         _channel.BasicConsume(queue: Queue,
             autoAck: true,
-            consumer: Consumer);
+            consumer: _consumer);
     }
 
     /// <summary>
-    /// Event handler for <see cref="Consumer"/>'s Received event handler
+    /// Event handler for <see cref="_consumer"/>'s Received event handler
     /// </summary>
     /// <param name="sender">The invoker of the delegate event, not to be confused with the Rabbit MQ domain event</param>
     /// <param name="args">The arguments of the Rabbit MQ domain event</param>

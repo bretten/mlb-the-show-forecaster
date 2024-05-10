@@ -37,7 +37,7 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async Task Dispatch_PublishesDomainEvents_ConsumerReceivesEvents()
+    public void Dispatch_PublishesDomainEvents_ConsumerReceivesEvents()
     {
         /*
          * Arrange
@@ -64,18 +64,67 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
         // Rabbit MQ connection
         var connectionFactory = new ConnectionFactory
         {
-            Uri = new Uri(_container.GetConnectionString())
+            Uri = new Uri(_container.GetConnectionString()),
+            DispatchConsumersAsync = true
         };
 
         // Add RabbitMQ dependencies
         serviceCollection.AddRabbitMq(connectionFactory, publisherDomainEventsToExchanges,
             consumerDomainEventsToExchanges, assembliesToScan);
 
+        // Register the underlying consumers with callbacks to verify the message was called
+        var consumer1Invoked = false;
+        var consumer2Invoked = false;
+        var consumer3Invoked = false;
+        EventWaitHandle waitHandle = new ManualResetEvent(false);
+        var invokedCount = 0; // When == consumer count, set the wait handle
+        serviceCollection.AddTransient<IDomainEventConsumer<EventType1>>(sp =>
+        {
+            return new DomainEventConsumer1()
+            {
+                Callback = () =>
+                {
+                    invokedCount++;
+                    consumer1Invoked = true;
+                    if (invokedCount >= 3) waitHandle.Set();
+                }
+            };
+        });
+        serviceCollection.AddTransient<IDomainEventConsumer<EventType2>>(sp =>
+        {
+            return new DomainEventConsumer2()
+            {
+                Callback = () =>
+                {
+                    invokedCount++;
+                    consumer2Invoked = true;
+                    if (invokedCount >= 3) waitHandle.Set();
+                }
+            };
+        });
+        serviceCollection.AddTransient<IDomainEventConsumer<EventType3>>(sp =>
+        {
+            return new DomainEventConsumer3()
+            {
+                Callback = () =>
+                {
+                    invokedCount++;
+                    consumer3Invoked = true;
+                    if (invokedCount >= 3) waitHandle.Set();
+                }
+            };
+        });
+
         // Build the services
         var serviceProvider = serviceCollection.BuildServiceProvider();
 
         // Resolve the dispatcher
         var dispatcher = serviceProvider.GetRequiredService<IDomainEventDispatcher>();
+
+        // Resolve the consumer wrappers
+        var consumer1 = serviceProvider.GetRequiredService<RabbitMqDomainEventConsumer<EventType1>>();
+        var consumer2 = serviceProvider.GetRequiredService<RabbitMqDomainEventConsumer<EventType2>>();
+        var consumer3 = serviceProvider.GetRequiredService<RabbitMqDomainEventConsumer<EventType3>>();
 
         /*
          * Act
@@ -87,10 +136,17 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
             new EventType2(),
             new EventType3()
         });
+        // Block the thread until the consumers have signaled they have received their messages
+        waitHandle.WaitOne(TimeSpan.FromSeconds(30));
 
         /*
          * Assert
          */
+        // Each consumer should have received a message
+        Assert.Equal(3, invokedCount);
+        Assert.True(consumer1Invoked);
+        Assert.True(consumer2Invoked);
+        Assert.True(consumer3Invoked);
     }
 
     public async Task InitializeAsync() => await _container.StartAsync();
