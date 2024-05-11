@@ -9,7 +9,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
+namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 
 /// <summary>
 /// Configures <see cref="Player"/> for EF Core

@@ -13,7 +13,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositori
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -93,7 +93,7 @@ public static class Dependencies
         {
             optionsBuilder.UseNpgsql(config.GetRequiredConnectionString(ConfigKeys.PlayersConnection));
         });
-        services.AddTransient<IPlayerRepository, EntityFrameworkPlayerRepository>();
+        services.AddTransient<IPlayerRepository, EntityFrameworkCorePlayerRepository>();
         services.AddTransient<IUnitOfWork<IPlayerWork>, UnitOfWork<PlayersDbContext>>();
     }
 

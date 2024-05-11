@@ -3,12 +3,12 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
+namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 
 /// <summary>
 /// EntityFramework implementation of <see cref="IPlayerRepository"/>
 /// </summary>
-public sealed class EntityFrameworkPlayerRepository : IPlayerRepository
+public sealed class EntityFrameworkCorePlayerRepository : IPlayerRepository
 {
     /// <summary>
     /// The DB context for <see cref="Player"/>
@@ -19,7 +19,7 @@ public sealed class EntityFrameworkPlayerRepository : IPlayerRepository
     /// Constructor
     /// </summary>
     /// <param name="dbContext">The DB context for <see cref="Player"/></param>
-    public EntityFrameworkPlayerRepository(PlayersDbContext dbContext)
+    public EntityFrameworkCorePlayerRepository(PlayersDbContext dbContext)
     {
         _dbContext = dbContext;
     }

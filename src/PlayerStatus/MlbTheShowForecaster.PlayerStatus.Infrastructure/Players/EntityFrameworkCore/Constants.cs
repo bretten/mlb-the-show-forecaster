@@ -1,6 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
+namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 
 /// <summary>
 /// Constants for EF in the PlayerStatus subdomain
