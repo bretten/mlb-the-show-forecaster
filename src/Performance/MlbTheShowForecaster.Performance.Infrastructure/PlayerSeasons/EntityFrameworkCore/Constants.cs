@@ -37,6 +37,28 @@ public static class Constants
         /// The season
         /// </summary>
         public const string Season = "season";
+
+        /// <summary>
+        /// Key names for <see cref="PlayerStatsBySeason"/>
+        /// </summary>
+        public static class Keys
+        {
+            /// <summary>
+            /// Primary key
+            /// </summary>
+            public const string PrimaryKey = $"{TableName}_pkey";
+        }
+
+        /// <summary>
+        /// Index names for <see cref="PlayerStatsBySeason"/>
+        /// </summary>
+        public static class Indexes
+        {
+            /// <summary>
+            /// For querying by season year
+            /// </summary>
+            public const string Year = $"{TableName}_{Season}_idx";
+        }
     }
 
     /// <summary>
@@ -48,6 +70,11 @@ public static class Constants
         /// Table name
         /// </summary>
         public const string TableName = "player_batting_stats_by_games";
+
+        /// <summary>
+        /// Foreign key column name that references <see cref="PlayerStatsBySeason"/>
+        /// </summary>
+        public const string PlayerStatsBySeasonId = "player_stats_by_season_id";
 
         /// <summary>
         /// Player MLB ID column name
@@ -188,6 +215,23 @@ public static class Constants
         /// The number of times a catcher interfered with the batter's plate appearance
         /// </summary>
         public const string CatcherInterferences = "catcher_interferences";
+
+        /// <summary>
+        /// Key names for <see cref="PlayerBattingStatsByGame"/>
+        /// </summary>
+        public static class Keys
+        {
+            /// <summary>
+            /// Primary key
+            /// </summary>
+            public const string PrimaryKey = $"{TableName}_pkey";
+
+            /// <summary>
+            /// <see cref="PlayerBattingStatsByGame"/> references <see cref="PlayerStatsBySeason"/>
+            /// </summary>
+            public const string PlayerStatsBySeasonsForeignKeyConstraint =
+                $"{TableName}_{PlayerStatsBySeasons.TableName}_{PlayerStatsBySeasons.Id}_fkey";
+        }
     }
 
     /// <summary>
@@ -199,6 +243,11 @@ public static class Constants
         /// Table name
         /// </summary>
         public const string TableName = "player_pitching_stats_by_games";
+
+        /// <summary>
+        /// Foreign key column name that references <see cref="PlayerStatsBySeason"/>
+        /// </summary>
+        public const string PlayerStatsBySeasonId = "player_stats_by_season_id";
 
         /// <summary>
         /// Player MLB ID column name
@@ -419,6 +468,23 @@ public static class Constants
         /// The number of sacrifice flies made against the pitcher
         /// </summary>
         public const string SacrificeFlies = "sacrifice_flies";
+
+        /// <summary>
+        /// Key names for <see cref="PlayerPitchingStatsByGame"/>
+        /// </summary>
+        public static class Keys
+        {
+            /// <summary>
+            /// Primary key
+            /// </summary>
+            public const string PrimaryKey = $"{TableName}_pkey";
+
+            /// <summary>
+            /// <see cref="PlayerPitchingStatsByGame"/> references <see cref="PlayerStatsBySeason"/>
+            /// </summary>
+            public const string PlayerStatsBySeasonsForeignKeyConstraint =
+                $"{TableName}_{PlayerStatsBySeasons.TableName}_{PlayerStatsBySeasons.Id}_fkey";
+        }
     }
 
     /// <summary>
@@ -430,6 +496,11 @@ public static class Constants
         /// Table name
         /// </summary>
         public const string TableName = "player_fielding_stats_by_games";
+
+        /// <summary>
+        /// Foreign key column name that references <see cref="PlayerStatsBySeason"/>
+        /// </summary>
+        public const string PlayerStatsBySeasonId = "player_stats_by_season_id";
 
         /// <summary>
         /// Player MLB ID column name
@@ -530,5 +601,22 @@ public static class Constants
         /// Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate
         /// </summary>
         public const string Pickoffs = "pickoffs";
+
+        /// <summary>
+        /// Key names for <see cref="PlayerFieldingStatsByGame"/>
+        /// </summary>
+        public static class Keys
+        {
+            /// <summary>
+            /// Primary key
+            /// </summary>
+            public const string PrimaryKey = $"{TableName}_pkey";
+
+            /// <summary>
+            /// <see cref="PlayerFieldingStatsByGame"/> references <see cref="PlayerStatsBySeason"/>
+            /// </summary>
+            public const string PlayerStatsBySeasonsForeignKeyConstraint =
+                $"{TableName}_{PlayerStatsBySeasons.TableName}_{PlayerStatsBySeasons.Id}_fkey";
+        }
     }
 }
