@@ -23,11 +23,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     player_mlb_id = table.Column<int>(type: "integer", nullable: false),
-                    season = table.Column<int>(type: "integer", nullable: false)
+                    season = table.Column<short>(type: "smallint", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_player_stats_by_seasons", x => x.id);
+                    table.PrimaryKey("player_stats_by_seasons_pkey", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -35,12 +35,12 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 schema: "performance",
                 columns: table => new
                 {
+                    player_stats_by_season_id = table.Column<Guid>(type: "uuid", nullable: false),
                     player_mlb_id = table.Column<int>(type: "integer", nullable: false),
-                    season = table.Column<int>(type: "integer", nullable: false),
+                    season = table.Column<short>(type: "smallint", nullable: false),
                     date = table.Column<DateTime>(type: "date", nullable: false),
                     game_mlb_id = table.Column<int>(type: "integer", nullable: false),
                     team_mlb_id = table.Column<int>(type: "integer", nullable: false),
-                    player_stats_by_season_id = table.Column<Guid>(type: "uuid", nullable: false),
                     plate_appearances = table.Column<int>(type: "integer", nullable: false),
                     at_bats = table.Column<int>(type: "integer", nullable: false),
                     runs = table.Column<int>(type: "integer", nullable: false),
@@ -67,9 +67,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_player_batting_stats_by_games", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
+                    table.PrimaryKey("player_batting_stats_by_games_pkey", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
                     table.ForeignKey(
-                        name: "FK_player_batting_stats_by_games_player_stats_by_seasons_playe~",
+                        name: "player_batting_stats_by_games_player_stats_by_seasons_id_fkey",
                         column: x => x.player_stats_by_season_id,
                         principalSchema: "performance",
                         principalTable: "player_stats_by_seasons",
@@ -82,12 +82,12 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 schema: "performance",
                 columns: table => new
                 {
+                    player_stats_by_season_id = table.Column<Guid>(type: "uuid", nullable: false),
                     player_mlb_id = table.Column<int>(type: "integer", nullable: false),
-                    season = table.Column<int>(type: "integer", nullable: false),
+                    season = table.Column<short>(type: "smallint", nullable: false),
                     date = table.Column<DateTime>(type: "date", nullable: false),
                     game_mlb_id = table.Column<int>(type: "integer", nullable: false),
                     team_mlb_id = table.Column<int>(type: "integer", nullable: false),
-                    player_stats_by_season_id = table.Column<Guid>(type: "uuid", nullable: false),
                     position = table.Column<string>(type: "varchar(4)", nullable: false),
                     games_started = table.Column<int>(type: "integer", nullable: false),
                     innings_played = table.Column<decimal>(type: "numeric(8,3)", nullable: false),
@@ -106,9 +106,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_player_fielding_stats_by_games", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
+                    table.PrimaryKey("player_fielding_stats_by_games_pkey", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
                     table.ForeignKey(
-                        name: "FK_player_fielding_stats_by_games_player_stats_by_seasons_play~",
+                        name: "player_fielding_stats_by_games_player_stats_by_seasons_id_fkey",
                         column: x => x.player_stats_by_season_id,
                         principalSchema: "performance",
                         principalTable: "player_stats_by_seasons",
@@ -121,12 +121,12 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 schema: "performance",
                 columns: table => new
                 {
+                    player_stats_by_season_id = table.Column<Guid>(type: "uuid", nullable: false),
                     player_mlb_id = table.Column<int>(type: "integer", nullable: false),
-                    season = table.Column<int>(type: "integer", nullable: false),
+                    season = table.Column<short>(type: "smallint", nullable: false),
                     date = table.Column<DateTime>(type: "date", nullable: false),
                     game_mlb_id = table.Column<int>(type: "integer", nullable: false),
                     team_mlb_id = table.Column<int>(type: "integer", nullable: false),
-                    player_stats_by_season_id = table.Column<Guid>(type: "uuid", nullable: false),
                     wins = table.Column<int>(type: "integer", nullable: false),
                     losses = table.Column<int>(type: "integer", nullable: false),
                     games_started = table.Column<int>(type: "integer", nullable: false),
@@ -169,9 +169,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_player_pitching_stats_by_games", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
+                    table.PrimaryKey("player_pitching_stats_by_games_pkey", x => new { x.player_mlb_id, x.season, x.date, x.game_mlb_id });
                     table.ForeignKey(
-                        name: "FK_player_pitching_stats_by_games_player_stats_by_seasons_play~",
+                        name: "player_pitching_stats_by_games_player_stats_by_seasons_id_fkey",
                         column: x => x.player_stats_by_season_id,
                         principalSchema: "performance",
                         principalTable: "player_stats_by_seasons",
@@ -196,6 +196,13 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 schema: "performance",
                 table: "player_pitching_stats_by_games",
                 column: "player_stats_by_season_id");
+
+            migrationBuilder.CreateIndex(
+                name: "player_stats_by_seasons_season_idx",
+                schema: "performance",
+                table: "player_stats_by_seasons",
+                column: "season")
+                .Annotation("Npgsql:IndexMethod", "btree");
         }
 
         /// <inheritdoc />

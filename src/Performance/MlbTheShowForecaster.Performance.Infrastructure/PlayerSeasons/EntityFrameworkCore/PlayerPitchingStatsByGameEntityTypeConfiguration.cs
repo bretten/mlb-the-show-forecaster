@@ -20,34 +20,46 @@ public sealed class
     {
         builder.ToTable(Constants.PlayerPitchingStatsByGames.TableName, Constants.Schema);
 
-        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameMlbId });
+        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameMlbId })
+            .HasName(Constants.PlayerPitchingStatsByGames.Keys.PrimaryKey);
+
+        var columnOrder = 0;
+
+        builder.Property(Constants.PlayerPitchingStatsByGames.PlayerStatsBySeasonId)
+            .HasColumnOrder(columnOrder++);
 
         builder.Property(e => e.PlayerMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerPitchingStatsByGames.PlayerMlbId)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => MlbId.Create(v));
 
         builder.Property(e => e.SeasonYear)
             .IsRequired()
+            .HasColumnType("smallint")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Season)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => SeasonYear.Create(v));
 
         builder.Property(e => e.GameDate)
             .IsRequired()
             .HasColumnType("date")
-            .HasColumnName(Constants.PlayerPitchingStatsByGames.GameDate);
+            .HasColumnName(Constants.PlayerPitchingStatsByGames.GameDate)
+            .HasColumnOrder(columnOrder++);
 
         builder.Property(e => e.GameMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerPitchingStatsByGames.GameMlbId)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => MlbId.Create(v));
 
         builder.Property(e => e.TeamMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerPitchingStatsByGames.TeamMlbId)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => MlbId.Create(v));
 
@@ -55,6 +67,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Wins)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -62,6 +75,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Losses)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -69,6 +83,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.GamesStarted)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -76,6 +91,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.GamesFinished)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -83,6 +99,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.CompleteGames)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -90,6 +107,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Shutouts)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -97,6 +115,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Holds)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -104,6 +123,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Saves)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -111,6 +131,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.BlownSaves)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -118,6 +139,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.SaveOpportunities)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -125,6 +147,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("decimal(8,3)")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.InningsPitched)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => InningsCount.Create(v));
 
@@ -132,6 +155,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Hits)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -139,6 +163,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Doubles)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -146,6 +171,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Triples)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -153,6 +179,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.HomeRuns)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -160,6 +187,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Runs)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -167,6 +195,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.EarnedRuns)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -174,6 +203,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Strikeouts)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -181,6 +211,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.BaseOnBalls)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -188,6 +219,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.IntentionalWalks)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -195,6 +227,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.HitBatsmen)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -202,6 +235,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Outs)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -209,6 +243,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.GroundOuts)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -216,6 +251,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.AirOuts)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -223,6 +259,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.GroundIntoDoublePlays)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -230,6 +267,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.NumberOfPitches)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -237,6 +275,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Strikes)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -244,6 +283,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.WildPitches)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -251,6 +291,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Balks)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -258,6 +299,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.BattersFaced)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -265,6 +307,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.AtBats)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -272,6 +315,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.StolenBases)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -279,6 +323,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.CaughtStealing)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -286,6 +331,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.Pickoffs)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -293,6 +339,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.InheritedRunners)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -300,6 +347,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.InheritedRunnersScored)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -307,6 +355,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.CatcherInterferences)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -314,6 +363,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.SacrificeBunts)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
 
@@ -321,6 +371,7 @@ public sealed class
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerPitchingStatsByGames.SacrificeFlies)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));
     }
