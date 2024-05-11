@@ -1,4 +1,6 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
+﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
+
+namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
 
 /// <summary>
 /// Constants for EF in the PlayerStatus subdomain
@@ -74,5 +76,21 @@ public static class Constants
         /// Active status column name
         /// </summary>
         public const string Active = "active";
+
+        /// <summary>
+        /// Key names for <see cref="Player"/>
+        /// </summary>
+        public static class Keys
+        {
+            /// <summary>
+            /// Primary key
+            /// </summary>
+            public const string PrimaryKey = $"{TableName}_pkey";
+
+            /// <summary>
+            /// MLB ID key. Enforces the uniqueness of the MLB ID and adds an index
+            /// </summary>
+            public const string MlbIdKey = $"{TableName}_{MlbId}_key";
+        }
     }
 }

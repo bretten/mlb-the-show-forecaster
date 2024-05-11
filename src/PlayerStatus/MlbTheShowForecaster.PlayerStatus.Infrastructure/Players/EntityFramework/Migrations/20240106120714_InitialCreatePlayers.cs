@@ -35,7 +35,8 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_players", x => x.id);
+                    table.PrimaryKey("players_pkey", x => x.id);
+                    table.UniqueConstraint("players_mlb_id_key", x => x.mlb_id);
                 });
         }
 

@@ -20,7 +20,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("players")
-                .HasAnnotation("ProductVersion", "7.0.14")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -78,7 +78,11 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
                         .HasColumnType("varchar(4)")
                         .HasColumnName("throw_arm");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("players_pkey");
+
+                    b.HasAlternateKey("MlbId")
+                        .HasName("players_mlb_id_key");
 
                     b.ToTable("players", "players");
                 });
