@@ -45,6 +45,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
         yield return SeasonYear.Value;
         yield return GameDate;
         yield return GameMlbId.Value;
+        yield return Position;
     }
 
     /// <summary>

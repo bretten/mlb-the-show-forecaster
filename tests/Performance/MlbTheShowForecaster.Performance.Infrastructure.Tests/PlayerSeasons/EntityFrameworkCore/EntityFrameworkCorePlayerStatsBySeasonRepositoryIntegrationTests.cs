@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
@@ -65,6 +66,38 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
         {
             Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 4), gameId: 1),
             Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 5), gameId: 2)
+        };
+        var fakePlayerStatsBySeason =
+            PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
+
+        await using var connection = await GetDbConnection();
+        await using var dbContext = GetDbContext(connection);
+        await dbContext.Database.MigrateAsync();
+
+        var repo = new EntityFrameworkCorePlayerStatsBySeasonRepository(dbContext);
+
+        // Act
+        await repo.Add(fakePlayerStatsBySeason);
+        await dbContext.SaveChangesAsync();
+
+        // Assert
+        Assert.NotNull(dbContext.PlayerStatsBySeasons);
+        Assert.Equal(1, dbContext.PlayerStatsBySeasons.Count());
+        Assert.Equal(fakePlayerStatsBySeason, dbContext.PlayerStatsBySeasons.First());
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task Add_MultipleFieldingPositionsInSingleGame_AddsPlayerStatsBySeasonToDbContextSet()
+    {
+        // Arrange
+        var seasonYear = SeasonYear.Create(2024);
+        var batting = new List<PlayerBattingStatsByGame>();
+        var pitching = new List<PlayerPitchingStatsByGame>();
+        var fielding = new List<PlayerFieldingStatsByGame>
+        {
+            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 4), gameId: 1, position: Position.FirstBase),
+            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 4), gameId: 1, position: Position.SecondBase)
         };
         var fakePlayerStatsBySeason =
             PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
