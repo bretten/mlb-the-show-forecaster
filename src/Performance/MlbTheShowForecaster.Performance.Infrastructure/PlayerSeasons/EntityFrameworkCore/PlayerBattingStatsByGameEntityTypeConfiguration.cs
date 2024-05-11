@@ -18,13 +18,22 @@ public sealed class PlayerBattingStatsByGameEntityTypeConfiguration : IEntityTyp
     {
         builder.ToTable(Constants.PlayerBattingStatsByGames.TableName, Constants.Schema);
 
-        builder.HasKey(e => new { e.PlayerMlbId, e.SeasonYear, e.GameDate, e.GameMlbId })
+        builder.HasKey([
+                Constants.PlayerBattingStatsByGames.PlayerStatsBySeasonId, nameof(PlayerBattingStatsByGame.GameMlbId)
+            ])
             .HasName(Constants.PlayerBattingStatsByGames.Keys.PrimaryKey);
 
         var columnOrder = 0;
 
         builder.Property(Constants.PlayerBattingStatsByGames.PlayerStatsBySeasonId)
             .HasColumnOrder(columnOrder++);
+
+        builder.Property(e => e.GameMlbId)
+            .IsRequired()
+            .HasColumnName(Constants.PlayerBattingStatsByGames.GameMlbId)
+            .HasColumnOrder(columnOrder++)
+            .HasConversion(v => v.Value,
+                v => MlbId.Create(v));
 
         builder.Property(e => e.PlayerMlbId)
             .IsRequired()
@@ -46,13 +55,6 @@ public sealed class PlayerBattingStatsByGameEntityTypeConfiguration : IEntityTyp
             .HasColumnType("date")
             .HasColumnName(Constants.PlayerBattingStatsByGames.GameDate)
             .HasColumnOrder(columnOrder++);
-
-        builder.Property(e => e.GameMlbId)
-            .IsRequired()
-            .HasColumnName(Constants.PlayerBattingStatsByGames.GameMlbId)
-            .HasColumnOrder(columnOrder++)
-            .HasConversion(v => v.Value,
-                v => MlbId.Create(v));
 
         builder.Property(e => e.TeamMlbId)
             .IsRequired()

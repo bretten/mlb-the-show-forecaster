@@ -56,25 +56,14 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerBattingStatsByGame", b =>
                 {
-                    b.Property<int>("PlayerMlbId")
-                        .HasColumnType("integer")
-                        .HasColumnName("player_mlb_id")
-                        .HasColumnOrder(1);
-
-                    b.Property<ushort>("SeasonYear")
-                        .HasColumnType("smallint")
-                        .HasColumnName("season")
-                        .HasColumnOrder(2);
-
-                    b.Property<DateTime>("GameDate")
-                        .HasColumnType("date")
-                        .HasColumnName("date")
-                        .HasColumnOrder(3);
+                    b.Property<Guid>("player_stats_by_season_id")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("GameMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("game_mlb_id")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(1);
 
                     b.Property<int>("AirOuts")
                         .HasColumnType("integer")
@@ -105,6 +94,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("doubles")
                         .HasColumnOrder(10);
+
+                    b.Property<DateTime>("GameDate")
+                        .HasColumnType("date")
+                        .HasColumnName("date")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("GroundIntoDoublePlays")
                         .HasColumnType("integer")
@@ -156,6 +150,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("plate_appearances")
                         .HasColumnOrder(6);
 
+                    b.Property<int>("PlayerMlbId")
+                        .HasColumnType("integer")
+                        .HasColumnName("player_mlb_id")
+                        .HasColumnOrder(2);
+
                     b.Property<int>("Runs")
                         .HasColumnType("integer")
                         .HasColumnName("runs")
@@ -175,6 +174,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("sacrifice_flies")
                         .HasColumnOrder(21);
+
+                    b.Property<ushort>("SeasonYear")
+                        .HasColumnType("smallint")
+                        .HasColumnName("season")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("StolenBases")
                         .HasColumnType("integer")
@@ -196,39 +200,22 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("triples")
                         .HasColumnOrder(11);
 
-                    b.Property<Guid>("player_stats_by_season_id")
-                        .HasColumnType("uuid")
-                        .HasColumnOrder(0);
-
-                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameMlbId")
+                    b.HasKey("player_stats_by_season_id", "GameMlbId")
                         .HasName("player_batting_stats_by_games_pkey");
-
-                    b.HasIndex("player_stats_by_season_id");
 
                     b.ToTable("player_batting_stats_by_games", "performance");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerFieldingStatsByGame", b =>
                 {
-                    b.Property<int>("PlayerMlbId")
-                        .HasColumnType("integer")
-                        .HasColumnName("player_mlb_id")
-                        .HasColumnOrder(1);
-
-                    b.Property<ushort>("SeasonYear")
-                        .HasColumnType("smallint")
-                        .HasColumnName("season")
-                        .HasColumnOrder(2);
-
-                    b.Property<DateTime>("GameDate")
-                        .HasColumnType("date")
-                        .HasColumnName("date")
-                        .HasColumnOrder(3);
+                    b.Property<Guid>("player_stats_by_season_id")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("GameMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("game_mlb_id")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(1);
 
                     b.Property<int>("Assists")
                         .HasColumnType("integer")
@@ -255,6 +242,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("errors")
                         .HasColumnOrder(11);
 
+                    b.Property<DateTime>("GameDate")
+                        .HasColumnType("date")
+                        .HasColumnName("date")
+                        .HasColumnOrder(4);
+
                     b.Property<int>("GamesStarted")
                         .HasColumnType("integer")
                         .HasColumnName("games_started")
@@ -275,6 +267,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("pickoffs")
                         .HasColumnOrder(20);
 
+                    b.Property<int>("PlayerMlbId")
+                        .HasColumnType("integer")
+                        .HasColumnName("player_mlb_id")
+                        .HasColumnOrder(2);
+
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("varchar(4)")
@@ -285,6 +282,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("putouts")
                         .HasColumnOrder(10);
+
+                    b.Property<ushort>("SeasonYear")
+                        .HasColumnType("smallint")
+                        .HasColumnName("season")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("StolenBases")
                         .HasColumnType("integer")
@@ -311,39 +313,22 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("wild_pitches")
                         .HasColumnOrder(19);
 
-                    b.Property<Guid>("player_stats_by_season_id")
-                        .HasColumnType("uuid")
-                        .HasColumnOrder(0);
-
-                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameMlbId")
+                    b.HasKey("player_stats_by_season_id", "GameMlbId")
                         .HasName("player_fielding_stats_by_games_pkey");
-
-                    b.HasIndex("player_stats_by_season_id");
 
                     b.ToTable("player_fielding_stats_by_games", "performance");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerPitchingStatsByGame", b =>
                 {
-                    b.Property<int>("PlayerMlbId")
-                        .HasColumnType("integer")
-                        .HasColumnName("player_mlb_id")
-                        .HasColumnOrder(1);
-
-                    b.Property<ushort>("SeasonYear")
-                        .HasColumnType("smallint")
-                        .HasColumnName("season")
-                        .HasColumnOrder(2);
-
-                    b.Property<DateTime>("GameDate")
-                        .HasColumnType("date")
-                        .HasColumnName("date")
-                        .HasColumnOrder(3);
+                    b.Property<Guid>("player_stats_by_season_id")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("GameMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("game_mlb_id")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(1);
 
                     b.Property<int>("AirOuts")
                         .HasColumnType("integer")
@@ -399,6 +384,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("earned_runs")
                         .HasColumnOrder(22);
+
+                    b.Property<DateTime>("GameDate")
+                        .HasColumnType("date")
+                        .HasColumnName("date")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("GamesFinished")
                         .HasColumnType("integer")
@@ -480,6 +470,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("pickoffs")
                         .HasColumnOrder(39);
 
+                    b.Property<int>("PlayerMlbId")
+                        .HasColumnType("integer")
+                        .HasColumnName("player_mlb_id")
+                        .HasColumnOrder(2);
+
                     b.Property<int>("Runs")
                         .HasColumnType("integer")
                         .HasColumnName("runs")
@@ -504,6 +499,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnType("integer")
                         .HasColumnName("saves")
                         .HasColumnOrder(13);
+
+                    b.Property<ushort>("SeasonYear")
+                        .HasColumnType("smallint")
+                        .HasColumnName("season")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("Shutouts")
                         .HasColumnType("integer")
@@ -545,14 +545,8 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("wins")
                         .HasColumnOrder(6);
 
-                    b.Property<Guid>("player_stats_by_season_id")
-                        .HasColumnType("uuid")
-                        .HasColumnOrder(0);
-
-                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameMlbId")
+                    b.HasKey("player_stats_by_season_id", "GameMlbId")
                         .HasName("player_pitching_stats_by_games_pkey");
-
-                    b.HasIndex("player_stats_by_season_id");
 
                     b.ToTable("player_pitching_stats_by_games", "performance");
                 });
