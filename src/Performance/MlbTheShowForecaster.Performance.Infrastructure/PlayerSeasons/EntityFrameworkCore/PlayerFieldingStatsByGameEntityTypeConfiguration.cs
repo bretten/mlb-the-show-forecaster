@@ -24,7 +24,8 @@ public sealed class
         builder.ToTable(Constants.PlayerFieldingStatsByGames.TableName, Constants.Schema);
 
         builder.HasKey([
-                Constants.PlayerFieldingStatsByGames.PlayerStatsBySeasonId, nameof(PlayerFieldingStatsByGame.GameMlbId)
+                Constants.PlayerFieldingStatsByGames.PlayerStatsBySeasonId, nameof(PlayerFieldingStatsByGame.GameMlbId),
+                nameof(PlayerFieldingStatsByGame.Position)
             ])
             .HasName(Constants.PlayerFieldingStatsByGames.Keys.PrimaryKey);
 
@@ -39,6 +40,14 @@ public sealed class
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => MlbId.Create(v));
+
+        builder.Property(e => e.Position)
+            .IsRequired()
+            .HasColumnType("varchar(4)")
+            .HasColumnName(Constants.PlayerFieldingStatsByGames.Position)
+            .HasColumnOrder(columnOrder++)
+            .HasConversion(v => v.GetDisplayName(),
+                v => (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(v)!);
 
         builder.Property(e => e.PlayerMlbId)
             .IsRequired()
@@ -67,14 +76,6 @@ public sealed class
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => MlbId.Create(v));
-
-        builder.Property(e => e.Position)
-            .IsRequired()
-            .HasColumnType("varchar(4)")
-            .HasColumnName(Constants.PlayerFieldingStatsByGames.Position)
-            .HasColumnOrder(columnOrder++)
-            .HasConversion(v => v.GetDisplayName(),
-                v => (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(v)!);
 
         builder.Property(e => e.GamesStarted)
             .IsRequired()
