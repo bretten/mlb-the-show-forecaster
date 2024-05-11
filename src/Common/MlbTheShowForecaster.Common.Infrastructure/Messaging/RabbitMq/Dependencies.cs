@@ -65,10 +65,10 @@ public static class Dependencies
                 // Register a RabbitMqDomainEventConsumer as a wrapper for the current domain event type's consumer
                 var rabbitMqConsumerWrapperType =
                     typeof(RabbitMqDomainEventConsumer<>).MakeGenericType(domainEventType);
-                services.AddTransient(rabbitMqConsumerWrapperType, _ =>
+                services.AddTransient(rabbitMqConsumerWrapperType, sp =>
                 {
                     object[] parameters =
-                        [_.GetRequiredService(handlerInterfaceType), _.GetRequiredService<IModel>(), queue];
+                        [sp.GetRequiredService(handlerInterfaceType), sp.GetRequiredService<IModel>(), queue];
                     return Activator.CreateInstance(rabbitMqConsumerWrapperType, parameters)!;
                 });
                 // Register the underlying domain event consumer for the current domain event type

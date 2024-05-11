@@ -139,6 +139,10 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
         // Block the thread until the consumers have signaled they have received their messages
         waitHandle.WaitOne(TimeSpan.FromSeconds(30));
 
+        // Coverage for Dispose
+        (dispatcher as RabbitMqDomainEventDispatcher)!.Dispose();
+        consumer1.Dispose();
+
         /*
          * Assert
          */

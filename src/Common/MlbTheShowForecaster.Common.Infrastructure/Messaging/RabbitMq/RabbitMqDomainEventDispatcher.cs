@@ -45,7 +45,7 @@ public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher, IDis
 
             _model.BasicPublish(exchange: exchange,
                 routingKey: routingKey,
-                body: Encoding.UTF8.GetBytes(JsonSerializer.Serialize(e))
+                body: Encoding.UTF8.GetBytes(JsonSerializer.Serialize(e, e.GetType()))
             );
         }
     }
