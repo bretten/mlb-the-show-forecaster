@@ -30,8 +30,8 @@ public readonly record struct PlayerSeasonStatsByGameDto(
     /// </summary>
     /// <returns>Hitting stats by game for this player's season</returns>
     public IEnumerable<GameHittingStatsDto> GetHittingStats() =>
-        (IEnumerable<GameHittingStatsDto>)Stats
-            .FirstOrDefault(x => x.Group.DisplayName == Constants.Parameters.Hitting).Splits ??
+        (IEnumerable<GameHittingStatsDto>?)Stats
+            ?.FirstOrDefault(x => x.Group.DisplayName == Constants.Parameters.Hitting).Splits ??
         new List<GameHittingStatsDto>();
 
     /// <summary>
@@ -39,8 +39,8 @@ public readonly record struct PlayerSeasonStatsByGameDto(
     /// </summary>
     /// <returns>Pitching stats by game for this player's season</returns>
     public IEnumerable<GamePitchingStatsDto> GetPitchingStats() =>
-        (IEnumerable<GamePitchingStatsDto>)Stats
-            .FirstOrDefault(x => x.Group.DisplayName == Constants.Parameters.Pitching).Splits ??
+        (IEnumerable<GamePitchingStatsDto>?)Stats
+            ?.FirstOrDefault(x => x.Group.DisplayName == Constants.Parameters.Pitching).Splits ??
         new List<GamePitchingStatsDto>();
 
     /// <summary>
@@ -48,7 +48,7 @@ public readonly record struct PlayerSeasonStatsByGameDto(
     /// </summary>
     /// <returns>Fielding stats by game for this player's season</returns>
     public IEnumerable<GameFieldingStatsDto> GetFieldingStats() =>
-        (IEnumerable<GameFieldingStatsDto>)Stats
-            .FirstOrDefault(x => x.Group.DisplayName == Constants.Parameters.Fielding).Splits ??
+        (IEnumerable<GameFieldingStatsDto>?)Stats
+            ?.FirstOrDefault(x => x.Group.DisplayName == Constants.Parameters.Fielding).Splits ??
         new List<GameFieldingStatsDto>();
 };
