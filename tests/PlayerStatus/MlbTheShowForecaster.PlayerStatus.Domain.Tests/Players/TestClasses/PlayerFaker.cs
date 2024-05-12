@@ -16,16 +16,16 @@ public static class PlayerFaker
     public const string DefaultLastName = "Last";
 
     public static Player Fake(int? mlbId = null, string? firstName = null, string? lastName = null,
-        DateTime birthdate = default, Position position = Position.Catcher, DateTime mlbDebutDate = default,
+        DateOnly birthdate = default, Position position = Position.Catcher, DateOnly mlbDebutDate = default,
         BatSide batSide = BatSide.Left, ThrowArm throwArm = ThrowArm.Left, Team? team = null, bool active = false)
     {
         return Player.Create(
             mlbId == null ? MlbId.Create(DefaultMlbId) : MlbId.Create(mlbId.Value),
             firstName == null ? PersonName.Create(DefaultFirstName) : PersonName.Create(firstName),
             lastName == null ? PersonName.Create(DefaultLastName) : PersonName.Create(lastName),
-            birthdate == default ? new DateTime(1990, 1, 1) : birthdate,
+            birthdate == default ? new DateOnly(1990, 1, 1) : birthdate,
             position,
-            mlbDebutDate == default ? new DateTime(2010, 1, 1) : mlbDebutDate,
+            mlbDebutDate == default ? new DateOnly(2010, 1, 1) : mlbDebutDate,
             batSide,
             throwArm,
             team,

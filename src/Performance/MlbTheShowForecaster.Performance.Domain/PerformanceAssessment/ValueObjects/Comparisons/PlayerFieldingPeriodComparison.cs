@@ -38,7 +38,7 @@ public sealed class PlayerFieldingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="fieldingPercentageBeforeComparisonDate">The player's fielding percentage before the comparison date</param>
     /// <param name="totalChancesSinceComparisonDate">The number of fielding chances since the comparison date</param>
     /// <param name="fieldingPercentageSinceComparisonDate">The player's fielding percentage since the comparison date</param>
-    private PlayerFieldingPeriodComparison(MlbId playerMlbId, DateTime comparisonDate,
+    private PlayerFieldingPeriodComparison(MlbId playerMlbId, DateOnly comparisonDate,
         NaturalNumber totalChancesBeforeComparisonDate, IStat fieldingPercentageBeforeComparisonDate,
         NaturalNumber totalChancesSinceComparisonDate, IStat fieldingPercentageSinceComparisonDate) : base(
         playerMlbId, comparisonDate, fieldingPercentageBeforeComparisonDate, fieldingPercentageSinceComparisonDate)
@@ -57,7 +57,7 @@ public sealed class PlayerFieldingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="totalChancesSinceComparisonDate">The number of fielding chances since the comparison date</param>
     /// <param name="fieldingPercentageSinceComparisonDate">The player's fielding percentage since the comparison date</param>
     /// <returns><see cref="PlayerFieldingPeriodComparison"/></returns>
-    public static PlayerFieldingPeriodComparison Create(MlbId playerMlbId, DateTime comparisonDate,
+    public static PlayerFieldingPeriodComparison Create(MlbId playerMlbId, DateOnly comparisonDate,
         int totalChancesBeforeComparisonDate, decimal fieldingPercentageBeforeComparisonDate,
         int totalChancesSinceComparisonDate, decimal fieldingPercentageSinceComparisonDate)
     {
@@ -77,7 +77,7 @@ public sealed class PlayerFieldingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="statsBeforeComparisonDate">Stats from before the comparison date</param>
     /// <param name="statsSinceComparisonDate">Stats since the comparison date</param>
     /// <returns><see cref="PlayerFieldingPeriodComparison"/></returns>
-    public static PlayerFieldingPeriodComparison Create(MlbId playerMlbId, DateTime comparisonDate,
+    public static PlayerFieldingPeriodComparison Create(MlbId playerMlbId, DateOnly comparisonDate,
         FieldingStats statsBeforeComparisonDate, FieldingStats statsSinceComparisonDate)
     {
         return new PlayerFieldingPeriodComparison(playerMlbId, comparisonDate,

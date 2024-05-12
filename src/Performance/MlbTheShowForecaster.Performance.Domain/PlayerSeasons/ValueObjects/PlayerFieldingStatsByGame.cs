@@ -23,7 +23,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <summary>
     /// The date of the game
     /// </summary>
-    public DateTime GameDate { get; }
+    public DateOnly GameDate { get; }
 
     /// <summary>
     /// The MLB ID of the game
@@ -71,7 +71,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="catcherInterferences">Catcher stat: The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickoffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
-    private PlayerFieldingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameMlbId,
+    private PlayerFieldingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateOnly gameDate, MlbId gameMlbId,
         MlbId teamMlbId, Position position, NaturalNumber gamesStarted, InningsCount inningsPlayed,
         NaturalNumber assists, NaturalNumber putouts, NaturalNumber errors, NaturalNumber throwingErrors,
         NaturalNumber doublePlays, NaturalNumber triplePlays, NaturalNumber caughtStealing, NaturalNumber stolenBases,
@@ -110,7 +110,7 @@ public sealed class PlayerFieldingStatsByGame : FieldingStats
     /// <param name="wildPitches">Catcher stat: The number of wild pitches the catcher saw from the pitcher</param>
     /// <param name="pickoffs">Catcher stat: The number of pick offs made by the pitcher while this catcher was behind the plate</param>
     /// <returns><see cref="PlayerFieldingStatsByGame"/></returns>
-    public static PlayerFieldingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate,
+    public static PlayerFieldingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateOnly gameDate,
         MlbId gameMlbId, MlbId teamMlbId, Position position, bool gameStarted, decimal inningsPlayed, int assists,
         int putouts, int errors, int throwingErrors, int doublePlays, int triplePlays, int caughtStealing,
         int stolenBases, int passedBalls, int catcherInterferences, int wildPitches, int pickoffs)

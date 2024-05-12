@@ -5,12 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 
 #nullable disable
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework.Migrations
+namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore.Migrations
 {
     [DbContext(typeof(PlayersDbContext))]
     [ExcludeFromCodeCoverage]
@@ -31,53 +30,64 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
 
                     b.Property<bool>("Active")
                         .HasColumnType("boolean")
-                        .HasColumnName("active");
+                        .HasColumnName("active")
+                        .HasColumnOrder(10);
 
                     b.Property<string>("BatSide")
                         .IsRequired()
                         .HasColumnType("varchar(4)")
-                        .HasColumnName("bat_side");
+                        .HasColumnName("bat_side")
+                        .HasColumnOrder(7);
 
-                    b.Property<DateTime>("Birthdate")
+                    b.Property<DateOnly>("Birthdate")
                         .HasColumnType("date")
-                        .HasColumnName("birthdate");
+                        .HasColumnName("birthdate")
+                        .HasColumnOrder(4);
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("first_name");
+                        .HasColumnName("first_name")
+                        .HasColumnOrder(2);
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("last_name");
+                        .HasColumnName("last_name")
+                        .HasColumnOrder(3);
 
-                    b.Property<DateTime>("MlbDebutDate")
+                    b.Property<DateOnly>("MlbDebutDate")
                         .HasColumnType("date")
-                        .HasColumnName("mlb_debut_date");
+                        .HasColumnName("mlb_debut_date")
+                        .HasColumnOrder(6);
 
                     b.Property<int>("MlbId")
                         .HasColumnType("integer")
-                        .HasColumnName("mlb_id");
+                        .HasColumnName("mlb_id")
+                        .HasColumnOrder(1);
 
                     b.Property<string>("Position")
                         .IsRequired()
                         .HasColumnType("varchar(4)")
-                        .HasColumnName("position");
+                        .HasColumnName("position")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("Team")
                         .IsRequired()
                         .HasColumnType("varchar(4)")
-                        .HasColumnName("team");
+                        .HasColumnName("team")
+                        .HasColumnOrder(9);
 
                     b.Property<string>("ThrowArm")
                         .IsRequired()
                         .HasColumnType("varchar(4)")
-                        .HasColumnName("throw_arm");
+                        .HasColumnName("throw_arm")
+                        .HasColumnOrder(8);
 
                     b.HasKey("Id")
                         .HasName("players_pkey");

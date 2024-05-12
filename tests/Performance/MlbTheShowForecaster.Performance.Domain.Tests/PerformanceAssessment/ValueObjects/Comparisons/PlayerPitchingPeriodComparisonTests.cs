@@ -10,7 +10,7 @@ public class PlayerPitchingPeriodComparisonTests
     {
         // Arrange
         var playerMlbId = MlbId.Create(1);
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal inningsPitchedBeforeComparisonDate = 132.0m;
         const int battersFacedBeforeComparisonDate = 531;
         const decimal earnedRunAverageBeforeComparisonDate = 3.14m;
@@ -30,7 +30,7 @@ public class PlayerPitchingPeriodComparisonTests
 
         // Assert
         Assert.Equal(1, actual.PlayerMlbId.Value);
-        Assert.Equal(new DateTime(2024, 4, 1), actual.ComparisonDate);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual.ComparisonDate);
         Assert.Equal(132.0m, actual.InningsPitchedBeforeComparisonDate.Value);
         Assert.Equal(531, actual.BattersFacedBeforeComparisonDate.Value);
         Assert.Equal(3.14m, actual.EarnedRunAverageBeforeComparisonDate.Value);

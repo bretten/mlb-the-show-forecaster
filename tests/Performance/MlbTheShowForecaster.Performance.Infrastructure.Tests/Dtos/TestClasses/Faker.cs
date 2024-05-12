@@ -17,7 +17,7 @@ public static class Faker
     }
 
     public static GameHittingStatsDto FakeGameHittingStatsDto(string season = "2024",
-        DateTime date = default,
+        DateOnly date = default,
         string gameType = "R",
         bool isHome = true,
         bool isWin = true,
@@ -26,7 +26,7 @@ public static class Faker
         BattingStatsDto stat = default)
     {
         return new GameHittingStatsDto(Season: season,
-            Date: date == default ? new DateTime(2024, 4, 1) : date,
+            Date: date == default ? new DateOnly(2024, 4, 1) : date,
             GameType: gameType,
             IsHome: isHome,
             IsWin: isWin,
@@ -37,7 +37,7 @@ public static class Faker
     }
 
     public static GamePitchingStatsDto FakeGamePitchingStatsDto(string season = "2024",
-        DateTime date = default,
+        DateOnly date = default,
         string gameType = "R",
         bool isHome = true,
         bool isWin = true,
@@ -46,7 +46,7 @@ public static class Faker
         PitchingStatsDto stat = default)
     {
         return new GamePitchingStatsDto(Season: season,
-            Date: date == default ? new DateTime(2024, 4, 1) : date,
+            Date: date == default ? new DateOnly(2024, 4, 1) : date,
             GameType: gameType,
             IsHome: isHome,
             IsWin: isWin,
@@ -57,7 +57,7 @@ public static class Faker
     }
 
     public static GameFieldingStatsDto FakeGameFieldingStatsDto(string season = "2024",
-        DateTime date = default,
+        DateOnly date = default,
         string gameType = "R",
         bool isHome = true,
         bool isWin = true,
@@ -66,7 +66,7 @@ public static class Faker
         FieldingStatsDto stat = default)
     {
         return new GameFieldingStatsDto(Season: season,
-            Date: date == default ? new DateTime(2024, 4, 1) : date,
+            Date: date == default ? new DateOnly(2024, 4, 1) : date,
             GameType: gameType,
             IsHome: isHome,
             IsWin: isWin,

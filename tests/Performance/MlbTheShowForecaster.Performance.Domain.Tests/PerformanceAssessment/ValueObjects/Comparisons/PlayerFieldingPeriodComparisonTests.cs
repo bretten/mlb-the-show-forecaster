@@ -10,7 +10,7 @@ public class PlayerFieldingPeriodComparisonTests
     {
         // Arrange
         var playerMlbId = MlbId.Create(1);
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const int totalChancesBeforeComparisonDate = 423;
         const decimal fieldingPercentageBeforeComparisonDate = 0.931m;
         const int totalChancesSinceComparisonDate = 53;
@@ -25,7 +25,7 @@ public class PlayerFieldingPeriodComparisonTests
         );
 
         Assert.Equal(1, actual.PlayerMlbId.Value);
-        Assert.Equal(new DateTime(2024, 4, 1), actual.ComparisonDate);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual.ComparisonDate);
         Assert.Equal(423, actual.TotalChancesBeforeComparisonDate.Value);
         Assert.Equal(0.931m, actual.FieldingPercentageBeforeComparisonDate.Value);
         Assert.Equal(53, actual.TotalChancesSinceComparisonDate.Value);

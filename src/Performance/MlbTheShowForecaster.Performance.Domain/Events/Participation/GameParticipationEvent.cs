@@ -8,4 +8,4 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Particip
 /// </summary>
 /// <param name="PlayerMlbId">The MLB ID of the player</param>
 /// <param name="Date">The date of the game</param>
-public abstract record GameParticipationEvent(MlbId PlayerMlbId, DateTime Date) : IDomainEvent;
+public abstract record GameParticipationEvent(MlbId PlayerMlbId, DateOnly Date) : IDomainEvent;

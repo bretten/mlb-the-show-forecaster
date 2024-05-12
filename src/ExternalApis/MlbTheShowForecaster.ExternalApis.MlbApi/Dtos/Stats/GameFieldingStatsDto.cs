@@ -15,7 +15,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
 /// <param name="Stat">The game's fielding stats</param>
 public sealed record GameFieldingStatsDto(
     string Season,
-    DateTime Date,
+    DateOnly Date,
     string GameType,
     bool IsHome,
     bool IsWin,

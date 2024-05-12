@@ -33,7 +33,7 @@ public class MlbApiPlayerStatsMapperTests
         Assert.Single(actual.GameBattingStats);
         Assert.Equal(1, actual.GameBattingStats[0].PlayerMlbId.Value);
         Assert.Equal(2024, actual.GameBattingStats[0].SeasonYear.Value);
-        Assert.Equal(new DateTime(2024, 4, 1), actual.GameBattingStats[0].GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual.GameBattingStats[0].GameDate);
         Assert.Equal(100, actual.GameBattingStats[0].GameMlbId.Value);
         Assert.Equal(10, actual.GameBattingStats[0].TeamMlbId.Value);
         Assert.Equal(2, actual.GameBattingStats[0].GroundOuts.Value);
@@ -63,7 +63,7 @@ public class MlbApiPlayerStatsMapperTests
         Assert.Single(actual.GamePitchingStats);
         Assert.Equal(1, actual.GamePitchingStats[0].PlayerMlbId.Value);
         Assert.Equal(2024, actual.GamePitchingStats[0].SeasonYear.Value);
-        Assert.Equal(new DateTime(2024, 4, 1), actual.GamePitchingStats[0].GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual.GamePitchingStats[0].GameDate);
         Assert.Equal(100, actual.GamePitchingStats[0].GameMlbId.Value);
         Assert.Equal(10, actual.GamePitchingStats[0].TeamMlbId.Value);
         Assert.True(actual.GamePitchingStats[0].GameStarted);
@@ -108,7 +108,7 @@ public class MlbApiPlayerStatsMapperTests
         Assert.Single(actual.GameFieldingStats);
         Assert.Equal(1, actual.GameFieldingStats[0].PlayerMlbId.Value);
         Assert.Equal(2024, actual.GameFieldingStats[0].SeasonYear.Value);
-        Assert.Equal(new DateTime(2024, 4, 1), actual.GameFieldingStats[0].GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual.GameFieldingStats[0].GameDate);
         Assert.Equal(100, actual.GameFieldingStats[0].GameMlbId.Value);
         Assert.Equal(10, actual.GameFieldingStats[0].TeamMlbId.Value);
         Assert.True(actual.GameFieldingStats[0].GameStarted);
