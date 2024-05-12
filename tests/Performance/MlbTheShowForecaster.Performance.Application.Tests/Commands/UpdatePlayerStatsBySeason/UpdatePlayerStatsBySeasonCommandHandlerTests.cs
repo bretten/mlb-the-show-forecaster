@@ -37,7 +37,7 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
             .Returns(fakeMappedFieldingStatsByGame);
 
         var stubPlayerSeasonScorekeeper = new Mock<IPlayerSeasonScorekeeper>();
-        stubPlayerSeasonScorekeeper.Setup(x => x.ScoreSeason(fakePlayerStatsBySeason, It.IsAny<DateTime>(),
+        stubPlayerSeasonScorekeeper.Setup(x => x.ScoreSeason(fakePlayerStatsBySeason, It.IsAny<DateOnly>(),
                 fakeMappedBattingStatsByGame, fakeMappedPitchingStatsByGame, fakeMappedFieldingStatsByGame))
             .Returns(updatedPlayerStatsBySeason);
 

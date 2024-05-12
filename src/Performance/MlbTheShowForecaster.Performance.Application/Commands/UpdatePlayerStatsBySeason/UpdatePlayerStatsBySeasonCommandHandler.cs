@@ -72,7 +72,8 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
         var playerFieldingStatsByGamesToDate = _playerSeasonMapper.MapFieldingGames(playerSeason.GameFieldingStats);
 
         // Score the player's season to date
-        var updatedPlayerStatsBySeason = _playerSeasonScorekeeper.ScoreSeason(playerStatsBySeason, DateTime.Now,
+        var updatedPlayerStatsBySeason = _playerSeasonScorekeeper.ScoreSeason(playerStatsBySeason,
+            DateOnly.FromDateTime(DateTime.Today), // Issue #213, replace with calendar abstraction
             playerBattingStatsByGamesToDate, playerPitchingStatsByGamesToDate, playerFieldingStatsByGamesToDate);
 
         // Update

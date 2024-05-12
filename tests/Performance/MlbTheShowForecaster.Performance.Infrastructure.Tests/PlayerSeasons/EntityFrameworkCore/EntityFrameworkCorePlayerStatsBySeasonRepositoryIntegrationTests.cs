@@ -54,18 +54,18 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
         var seasonYear = SeasonYear.Create(2024);
         var batting = new List<PlayerBattingStatsByGame>
         {
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 3, 31), gameId: 1),
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 1), gameId: 2)
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31), gameId: 1),
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 1), gameId: 2)
         };
         var pitching = new List<PlayerPitchingStatsByGame>
         {
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 2), gameId: 1),
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 3), gameId: 2)
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 2), gameId: 1),
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 3), gameId: 2)
         };
         var fielding = new List<PlayerFieldingStatsByGame>
         {
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 4), gameId: 1),
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 5), gameId: 2)
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1),
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5), gameId: 2)
         };
         var fakePlayerStatsBySeason =
             PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
@@ -96,8 +96,8 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
         var pitching = new List<PlayerPitchingStatsByGame>();
         var fielding = new List<PlayerFieldingStatsByGame>
         {
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 4), gameId: 1, position: Position.FirstBase),
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 4), gameId: 1, position: Position.SecondBase)
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1, position: Position.FirstBase),
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1, position: Position.SecondBase)
         };
         var fakePlayerStatsBySeason =
             PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
@@ -126,18 +126,18 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
         var seasonYear = SeasonYear.Create(2024);
         var batting = new List<PlayerBattingStatsByGame>
         {
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 3, 31), gameId: 1),
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 1), gameId: 2)
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31), gameId: 1),
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 1), gameId: 2)
         };
         var pitching = new List<PlayerPitchingStatsByGame>
         {
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 2), gameId: 1),
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 3), gameId: 2)
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 2), gameId: 1),
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 3), gameId: 2)
         };
         var fielding = new List<PlayerFieldingStatsByGame>
         {
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 4), gameId: 1),
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 5), gameId: 2)
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1),
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5), gameId: 2)
         };
         var fakePlayerStatsBySeason =
             PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
@@ -153,27 +153,27 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
 
         // Act
         fakePlayerStatsBySeason.LogBattingGame(
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 6), gameId: 3));
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 6), gameId: 3));
         await repo.Update(fakePlayerStatsBySeason);
         await dbContext.SaveChangesAsync();
 
         // Assert
         var expectedBatting = new List<PlayerBattingStatsByGame>
         {
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 3, 31), gameId: 1),
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 1), gameId: 2),
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31), gameId: 1),
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 1), gameId: 2),
             // The game below was part of the update
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 6), gameId: 3)
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 6), gameId: 3)
         };
         var expectedPitching = new List<PlayerPitchingStatsByGame>
         {
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 2), gameId: 1),
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 3), gameId: 2)
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 2), gameId: 1),
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 3), gameId: 2)
         };
         var expectedFielding = new List<PlayerFieldingStatsByGame>
         {
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 4), gameId: 1),
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 5), gameId: 2)
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1),
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5), gameId: 2)
         };
         await using var assertConnection =
             await GetDbConnection(); // Re-create the context so that the record is freshly retrieved from the database
@@ -197,18 +197,18 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
         var seasonYear = SeasonYear.Create(2024);
         var batting = new List<PlayerBattingStatsByGame>
         {
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 3, 31), gameId: 1),
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 1), gameId: 2)
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31), gameId: 1),
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 1), gameId: 2)
         };
         var pitching = new List<PlayerPitchingStatsByGame>
         {
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 2), gameId: 1),
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 3), gameId: 2)
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 2), gameId: 1),
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 3), gameId: 2)
         };
         var fielding = new List<PlayerFieldingStatsByGame>
         {
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 4), gameId: 1),
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 5), gameId: 2)
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1),
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5), gameId: 2)
         };
         var fakePlayerStatsBySeason =
             PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);

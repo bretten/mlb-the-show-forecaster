@@ -22,7 +22,7 @@ public class StatJsonConverterTests
         var actualGame1 = actual.Splits.ElementAt(0) as GameHittingStatsDto;
         Assert.NotNull(actualGame1);
         Assert.Equal("2023", actualGame1.Season);
-        Assert.Equal(new DateTime(2023, 3, 30), actualGame1.Date);
+        Assert.Equal(new DateOnly(2023, 3, 30), actualGame1.Date);
         Assert.Equal("R", actualGame1.GameType);
         Assert.False(actualGame1.IsHome);
         Assert.False(actualGame1.IsWin);
@@ -68,7 +68,7 @@ public class StatJsonConverterTests
         var actualGame2 = actual.Splits.ElementAt(1) as GameHittingStatsDto;
         Assert.NotNull(actualGame2);
         Assert.Equal("2023", actualGame2.Season);
-        Assert.Equal(new DateTime(2023, 4, 1), actualGame2.Date);
+        Assert.Equal(new DateOnly(2023, 4, 1), actualGame2.Date);
         Assert.Equal("R", actualGame2.GameType);
         Assert.True(actualGame2.IsHome);
         Assert.True(actualGame2.IsWin);
@@ -127,7 +127,7 @@ public class StatJsonConverterTests
         var actualGame1 = actual.Splits.ElementAt(0) as GamePitchingStatsDto;
         Assert.NotNull(actualGame1);
         Assert.Equal("2023", actualGame1.Season);
-        Assert.Equal(new DateTime(2023, 3, 30), actualGame1.Date);
+        Assert.Equal(new DateOnly(2023, 3, 30), actualGame1.Date);
         Assert.Equal("R", actualGame1.GameType);
         Assert.False(actualGame1.IsHome);
         Assert.False(actualGame1.IsWin);
@@ -200,7 +200,7 @@ public class StatJsonConverterTests
         var actualGame2 = actual.Splits.ElementAt(1) as GamePitchingStatsDto;
         Assert.NotNull(actualGame2);
         Assert.Equal("2023", actualGame2.Season);
-        Assert.Equal(new DateTime(2023, 4, 1), actualGame2.Date);
+        Assert.Equal(new DateOnly(2023, 4, 1), actualGame2.Date);
         Assert.Equal("R", actualGame2.GameType);
         Assert.True(actualGame2.IsHome);
         Assert.True(actualGame2.IsWin);
@@ -286,7 +286,7 @@ public class StatJsonConverterTests
         var actualGame1 = actual.Splits.ElementAt(0) as GameFieldingStatsDto;
         Assert.NotNull(actualGame1);
         Assert.Equal("2023", actualGame1.Season);
-        Assert.Equal(new DateTime(2023, 3, 30), actualGame1.Date);
+        Assert.Equal(new DateOnly(2023, 3, 30), actualGame1.Date);
         Assert.Equal("R", actualGame1.GameType);
         Assert.False(actualGame1.IsHome);
         Assert.False(actualGame1.IsWin);
@@ -322,7 +322,7 @@ public class StatJsonConverterTests
         var actualGame2 = actual.Splits.ElementAt(1) as GameFieldingStatsDto;
         Assert.NotNull(actualGame2);
         Assert.Equal("2023", actualGame2.Season);
-        Assert.Equal(new DateTime(2023, 4, 1), actualGame2.Date);
+        Assert.Equal(new DateOnly(2023, 4, 1), actualGame2.Date);
         Assert.Equal("R", actualGame2.GameType);
         Assert.True(actualGame2.IsHome);
         Assert.True(actualGame2.IsWin);

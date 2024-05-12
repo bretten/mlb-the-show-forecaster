@@ -21,33 +21,33 @@ public class PlayerSeasonScorekeeperTests
         // The entity in the system only has games scored on 3/31
         var fakePlayerStatsBySeason = Faker.FakePlayerSeasonStats(
             battingStatsByGames: new List<PlayerBattingStatsByGame>()
-                { Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 3, 31)) },
+                { Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31)) },
             pitchingStatsByGames: new List<PlayerPitchingStatsByGame>()
-                { Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 3, 31)) },
+                { Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 3, 31)) },
             fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
-                { Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 3, 31)) }
+                { Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 3, 31)) }
         );
 
         // The stats by games to date, some of which have not yet been scored yet
         var fakeBattingStatsByGameToDate = new List<PlayerBattingStatsByGame>()
         {
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 3, 31)),
-            Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 1))
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31)),
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 1))
         };
         var fakePitchingStatsByGameToDate = new List<PlayerPitchingStatsByGame>()
         {
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 3, 31)),
-            Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 1))
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 3, 31)),
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 1))
         };
         var fakeFieldingStatsByGameToDate = new List<PlayerFieldingStatsByGame>()
         {
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 3, 31)),
-            Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 1))
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 3, 31)),
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 1))
         };
 
         // Performance assessment
         var mockPerformanceAssessmentRequirements = Mock.Of<IPerformanceAssessmentRequirements>();
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
 
         // Scorekeeper
         var scorekeeper = new PlayerSeasonScorekeeper(mockPerformanceAssessmentRequirements);
@@ -73,13 +73,13 @@ public class PlayerSeasonScorekeeperTests
         Assert.Equal(3, actual.DomainEvents.Count);
         Assert.Equal(1,
             actual.DomainEvents.Count(x =>
-                x is PlayerBattedInGameEvent gameEvent && gameEvent.Date == new DateTime(2024, 4, 1)));
+                x is PlayerBattedInGameEvent gameEvent && gameEvent.Date == new DateOnly(2024, 4, 1)));
         Assert.Equal(1,
             actual.DomainEvents.Count(x =>
-                x is PlayerPitchedInGameEvent gameEvent && gameEvent.Date == new DateTime(2024, 4, 1)));
+                x is PlayerPitchedInGameEvent gameEvent && gameEvent.Date == new DateOnly(2024, 4, 1)));
         Assert.Equal(1,
             actual.DomainEvents.Count(x =>
-                x is PlayerFieldedInGameEvent gameEvent && gameEvent.Date == new DateTime(2024, 4, 1)));
+                x is PlayerFieldedInGameEvent gameEvent && gameEvent.Date == new DateOnly(2024, 4, 1)));
 
         // Was the player's performance assessed?
         Mock.Get(mockPerformanceAssessmentRequirements)

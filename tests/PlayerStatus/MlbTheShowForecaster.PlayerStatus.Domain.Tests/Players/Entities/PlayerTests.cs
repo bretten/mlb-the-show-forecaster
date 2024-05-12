@@ -18,9 +18,9 @@ public class PlayerTests
         var mlbId = MlbId.Create(1);
         var firstName = PersonName.Create("First");
         var lastName = PersonName.Create("Last");
-        var birthdate = new DateTime(1990, 1, 1);
+        var birthdate = new DateOnly(1990, 1, 1);
         var position = Position.CenterField;
-        var mlbDebutDate = new DateTime(2010, 1, 1);
+        var mlbDebutDate = new DateOnly(2010, 1, 1);
         var batSide = BatSide.Left;
         var throwArm = ThrowArm.Right;
         var team = TeamFaker.Fake();
@@ -34,9 +34,9 @@ public class PlayerTests
         Assert.Equal(1, actual.MlbId.Value);
         Assert.Equal("First", actual.FirstName.Value);
         Assert.Equal("Last", actual.LastName.Value);
-        Assert.Equal(new DateTime(1990, 1, 1), actual.Birthdate);
+        Assert.Equal(new DateOnly(1990, 1, 1), actual.Birthdate);
         Assert.Equal(Position.CenterField, actual.Position);
-        Assert.Equal(new DateTime(2010, 1, 1), actual.MlbDebutDate);
+        Assert.Equal(new DateOnly(2010, 1, 1), actual.MlbDebutDate);
         Assert.Equal(BatSide.Left, actual.BatSide);
         Assert.Equal(ThrowArm.Right, actual.ThrowArm);
         Assert.Equal(TeamFaker.DefaultMlbId, actual.Team?.MlbId.Value);

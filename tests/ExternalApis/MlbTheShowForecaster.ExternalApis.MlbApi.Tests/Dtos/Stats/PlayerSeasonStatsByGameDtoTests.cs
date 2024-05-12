@@ -10,7 +10,7 @@ public class PlayerSeasonStatsByGameDtoTests
     public void GetHittingStats_SeasonStatsWithHitting_ReturnsHittingStats()
     {
         // Arrange
-        var gameStats = new GameHittingStatsDto("2024", new DateTime(2024, 4, 1), "R", true, true, new TeamDto(10, "A"),
+        var gameStats = new GameHittingStatsDto("2024", new DateOnly(2024, 4, 1), "R", true, true, new TeamDto(10, "A"),
             new GameDto(100), new BattingStatsDto());
         var stats = StatsDto.HittingStats(gameStats);
         var playerSeasonStats = new PlayerSeasonStatsByGameDto(1, "First", "Last", new List<StatsDto>() { stats });
@@ -21,7 +21,7 @@ public class PlayerSeasonStatsByGameDtoTests
         // Assert
         Assert.Single(actual);
         Assert.Equal("2024", actual[0].Season);
-        Assert.Equal(new DateTime(2024, 4, 1), actual[0].Date);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual[0].Date);
         Assert.Equal("R", actual[0].GameType);
         Assert.True(actual[0].IsHome);
         Assert.True(actual[0].IsWin);
@@ -34,7 +34,7 @@ public class PlayerSeasonStatsByGameDtoTests
     public void GetPitchingStats_SeasonStatsWithPitching_ReturnsPitchingStats()
     {
         // Arrange
-        var gameStats = new GamePitchingStatsDto("2024", new DateTime(2024, 4, 1), "R", true, true,
+        var gameStats = new GamePitchingStatsDto("2024", new DateOnly(2024, 4, 1), "R", true, true,
             new TeamDto(10, "A"), new GameDto(100), new PitchingStatsDto());
         var stats = StatsDto.PitchingStats(gameStats);
         var playerSeasonStats = new PlayerSeasonStatsByGameDto(1, "First", "Last", new List<StatsDto>() { stats });
@@ -45,7 +45,7 @@ public class PlayerSeasonStatsByGameDtoTests
         // Assert
         Assert.Single(actual);
         Assert.Equal("2024", actual[0].Season);
-        Assert.Equal(new DateTime(2024, 4, 1), actual[0].Date);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual[0].Date);
         Assert.Equal("R", actual[0].GameType);
         Assert.True(actual[0].IsHome);
         Assert.True(actual[0].IsWin);
@@ -58,7 +58,7 @@ public class PlayerSeasonStatsByGameDtoTests
     public void GetFieldingStats_SeasonStatsWithFielding_ReturnsFieldingStats()
     {
         // Arrange
-        var gameStats = new GameFieldingStatsDto("2024", new DateTime(2024, 4, 1), "R", true, true,
+        var gameStats = new GameFieldingStatsDto("2024", new DateOnly(2024, 4, 1), "R", true, true,
             new TeamDto(10, "A"), new GameDto(100), new FieldingStatsDto());
         var stats = StatsDto.FieldingStats(gameStats);
         var playerSeasonStats = new PlayerSeasonStatsByGameDto(1, "First", "Last", new List<StatsDto>() { stats });
@@ -69,7 +69,7 @@ public class PlayerSeasonStatsByGameDtoTests
         // Assert
         Assert.Single(actual);
         Assert.Equal("2024", actual[0].Season);
-        Assert.Equal(new DateTime(2024, 4, 1), actual[0].Date);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual[0].Date);
         Assert.Equal("R", actual[0].GameType);
         Assert.True(actual[0].IsHome);
         Assert.True(actual[0].IsWin);

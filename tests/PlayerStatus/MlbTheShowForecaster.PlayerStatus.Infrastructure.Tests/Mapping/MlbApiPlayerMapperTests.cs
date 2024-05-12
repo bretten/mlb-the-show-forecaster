@@ -15,9 +15,9 @@ public class MlbApiPlayerMapperTests
         var playerDto = Faker.FakePlayerDto(mlbId: 10,
             firstName: "firstN",
             lastName: "lastN",
-            birthdate: new DateTime(2024, 4, 1),
+            birthdate: new DateOnly(2024, 4, 1),
             position: new PositionDto("First Base", "1B"),
-            mlbDebutDate: new DateTime(2022, 2, 1),
+            mlbDebutDate: new DateOnly(2022, 2, 1),
             batSide: new ArmSideDto("S", "Switch"),
             throwArm: new ArmSideDto("R", "Right"),
             team: new CurrentTeamDto(140),
@@ -32,9 +32,9 @@ public class MlbApiPlayerMapperTests
         Assert.Equal(10, actual.MlbId.Value);
         Assert.Equal("firstN", actual.FirstName.Value);
         Assert.Equal("lastN", actual.LastName.Value);
-        Assert.Equal(new DateTime(2024, 4, 1), actual.Birthdate);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual.Birthdate);
         Assert.Equal(Position.FirstBase, actual.Position);
-        Assert.Equal(new DateTime(2022, 2, 1), actual.MlbDebutDate);
+        Assert.Equal(new DateOnly(2022, 2, 1), actual.MlbDebutDate);
         Assert.Equal(BatSide.Switch, actual.BatSide);
         Assert.Equal(ThrowArm.Right, actual.ThrowArm);
         Assert.Equal(140, actual.CurrentTeamMlbId.Value);

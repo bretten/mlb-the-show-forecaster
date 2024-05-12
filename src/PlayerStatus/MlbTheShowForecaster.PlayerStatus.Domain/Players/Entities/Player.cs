@@ -30,7 +30,7 @@ public sealed class Player : AggregateRoot
     /// <summary>
     /// Player's birthdate
     /// </summary>
-    public DateTime Birthdate { get; private set; }
+    public DateOnly Birthdate { get; private set; }
 
     /// <summary>
     /// Player's primary position
@@ -40,7 +40,7 @@ public sealed class Player : AggregateRoot
     /// <summary>
     /// The date the Player debuted in the MLB
     /// </summary>
-    public DateTime MlbDebutDate { get; private set; }
+    public DateOnly MlbDebutDate { get; private set; }
 
     /// <summary>
     /// The side the Player bats on
@@ -81,8 +81,8 @@ public sealed class Player : AggregateRoot
     /// <param name="throwArm">The arm the Player throws with</param>
     /// <param name="team">The Player's Team</param>
     /// <param name="active">True if the Player is active in the MLB, otherwise false</param>
-    private Player(MlbId mlbId, PersonName firstName, PersonName lastName, DateTime birthdate,
-        Position position, DateTime mlbDebutDate, BatSide batSide, ThrowArm throwArm, Team? team,
+    private Player(MlbId mlbId, PersonName firstName, PersonName lastName, DateOnly birthdate,
+        Position position, DateOnly mlbDebutDate, BatSide batSide, ThrowArm throwArm, Team? team,
         bool active) : base(Guid.NewGuid())
     {
         MlbId = mlbId;
@@ -164,8 +164,8 @@ public sealed class Player : AggregateRoot
     /// <param name="team">The Player's Team</param>
     /// <param name="active">True if the Player is active in the MLB, otherwise false</param>
     /// <returns>The created <see cref="Player"/></returns>
-    public static Player Create(MlbId mlbId, PersonName firstName, PersonName lastName, DateTime birthdate,
-        Position position, DateTime mlbDebutDate, BatSide batSide, ThrowArm throwArm, Team? team,
+    public static Player Create(MlbId mlbId, PersonName firstName, PersonName lastName, DateOnly birthdate,
+        Position position, DateOnly mlbDebutDate, BatSide batSide, ThrowArm throwArm, Team? team,
         bool active)
     {
         return new Player(mlbId, firstName, lastName, birthdate, position, mlbDebutDate, batSide, throwArm, team,

@@ -29,7 +29,7 @@ public readonly record struct PlayerDto
     /// The player's birthdate
     /// </summary>
     [JsonPropertyName("birthDate")]
-    public DateTime Birthdate { get; init; }
+    public DateOnly Birthdate { get; init; }
 
     /// <summary>
     /// The player's primary position
@@ -41,7 +41,7 @@ public readonly record struct PlayerDto
     /// The player's MLB debut date
     /// </summary>
     [JsonPropertyName("mlbDebutDate")]
-    public DateTime MlbDebutDate { get; init; }
+    public DateOnly MlbDebutDate { get; init; }
 
     /// <summary>
     /// The side the player bats on

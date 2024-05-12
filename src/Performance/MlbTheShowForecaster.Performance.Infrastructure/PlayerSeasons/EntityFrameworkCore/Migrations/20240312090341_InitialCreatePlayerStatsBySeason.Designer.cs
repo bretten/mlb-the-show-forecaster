@@ -95,7 +95,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("doubles")
                         .HasColumnOrder(10);
 
-                    b.Property<DateTime>("GameDate")
+                    b.Property<DateOnly>("GameDate")
                         .HasColumnType("date")
                         .HasColumnName("date")
                         .HasColumnOrder(4);
@@ -247,7 +247,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("errors")
                         .HasColumnOrder(11);
 
-                    b.Property<DateTime>("GameDate")
+                    b.Property<DateOnly>("GameDate")
                         .HasColumnType("date")
                         .HasColumnName("date")
                         .HasColumnOrder(5);
@@ -384,7 +384,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("earned_runs")
                         .HasColumnOrder(22);
 
-                    b.Property<DateTime>("GameDate")
+                    b.Property<DateOnly>("GameDate")
                         .HasColumnType("date")
                         .HasColumnName("date")
                         .HasColumnOrder(4);

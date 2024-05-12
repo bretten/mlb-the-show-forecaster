@@ -10,7 +10,7 @@ public class PlayerBattingPeriodComparisonTests
     {
         // Arrange
         var playerMlbId = MlbId.Create(1);
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const int plateAppearancesBeforeComparisonDate = 536;
         const decimal onBasePlusSluggingBeforeComparisonDate = 1.013m;
         const int plateAppearancesSinceComparisonDate = 125;
@@ -26,7 +26,7 @@ public class PlayerBattingPeriodComparisonTests
 
         // Assert
         Assert.Equal(1, actual.PlayerMlbId.Value);
-        Assert.Equal(new DateTime(2024, 4, 1), actual.ComparisonDate);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual.ComparisonDate);
         Assert.Equal(536, actual.PlateAppearancesBeforeComparisonDate.Value);
         Assert.Equal(1.013m, actual.OnBasePlusSluggingBeforeComparisonDate.Value);
         Assert.Equal(125, actual.PlateAppearancesSinceComparisonDate.Value);

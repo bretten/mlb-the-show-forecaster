@@ -23,7 +23,7 @@ public static class Faker
     }
 
     public static PlayerGameBattingStats FakePlayerGameBattingStats(int playerMlbId = 1, ushort seasonYear = 2024,
-        DateTime? gameDate = null, int gameMlbId = 10000, int teamMlbId = 100, int plateAppearances = 1, int atBats = 2,
+        DateOnly? gameDate = null, int gameMlbId = 10000, int teamMlbId = 100, int plateAppearances = 1, int atBats = 2,
         int runs = 3, int hits = 4, int doubles = 5, int triples = 6, int homeRuns = 7, int runsBattedIn = 8,
         int baseOnBalls = 9, int intentionalWalks = 10, int strikeouts = 11, int stolenBases = 12,
         int caughtStealing = 13, int hitByPitch = 14, int sacrificeBunts = 15, int sacrificeFlies = 16,
@@ -31,7 +31,7 @@ public static class Faker
         int groundIntoTriplePlays = 21, int airOuts = 22, int catcherInterferences = 23, int scalar = 1)
     {
         return new PlayerGameBattingStats(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
-            gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameMlbId), MlbId.Create(teamMlbId),
+            gameDate ?? new DateOnly(2024, 4, 1), MlbId.Create(gameMlbId), MlbId.Create(teamMlbId),
             PlateAppearances: NaturalNumber.Create(scalar * plateAppearances),
             AtBats: NaturalNumber.Create(scalar * atBats),
             Runs: NaturalNumber.Create(scalar * runs),
@@ -59,7 +59,7 @@ public static class Faker
     }
 
     public static PlayerGamePitchingStats FakePlayerGamePitchingStats(int playerMlbId = 1, ushort seasonYear = 2024,
-        DateTime? gameDate = null, int gameMlbId = 10000, int teamMlbId = 100, bool win = false, bool loss = false,
+        DateOnly? gameDate = null, int gameMlbId = 10000, int teamMlbId = 100, bool win = false, bool loss = false,
         bool gameStarted = false, bool gameFinished = false, bool completeGame = false, bool shutout = false,
         bool hold = false, bool save = false, bool blownSave = false, bool saveOpportunity = false,
         decimal inningsPitched = 1, int hits = 2, int doubles = 3, int triples = 4, int homeRuns = 5, int runs = 6,
@@ -71,7 +71,7 @@ public static class Faker
         int sacrificeFlies = 29, int scalar = 1)
     {
         return new PlayerGamePitchingStats(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
-            gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameMlbId), MlbId.Create(teamMlbId),
+            gameDate ?? new DateOnly(2024, 4, 1), MlbId.Create(gameMlbId), MlbId.Create(teamMlbId),
             Win: win,
             Loss: loss,
             GameStarted: gameStarted,
@@ -115,13 +115,13 @@ public static class Faker
     }
 
     public static PlayerGameFieldingStats FakePlayerGameFieldingStats(int playerMlbId = 1, ushort seasonYear = 2024,
-        DateTime? gameDate = null, int gameMlbId = 10000, int teamMlbId = 100, Position position = Position.Catcher,
+        DateOnly? gameDate = null, int gameMlbId = 10000, int teamMlbId = 100, Position position = Position.Catcher,
         bool gameStarted = false, decimal inningsPlayed = 1, int assists = 2, int putouts = 3, int errors = 4,
         int throwingErrors = 5, int doublePlays = 6, int triplePlays = 7, int caughtStealing = 8, int stolenBases = 9,
         int passedBalls = 10, int catcherInterferences = 11, int wildPitches = 12, int pickoffs = 13, int scalar = 1)
     {
         return new PlayerGameFieldingStats(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
-            gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameMlbId), MlbId.Create(teamMlbId),
+            gameDate ?? new DateOnly(2024, 4, 1), MlbId.Create(gameMlbId), MlbId.Create(teamMlbId),
             Position: position,
             GameStarted: gameStarted,
             InningsPlayed: InningsCount.Create(scalar * inningsPlayed),
