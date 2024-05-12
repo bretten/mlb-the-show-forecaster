@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 
@@ -82,6 +83,7 @@ public class PercentageChange : ValueObject
     /// <param name="referenceValue">The reference value that the percentage change will be calculated with respect to</param>
     /// <param name="newValue">The new value that determines the percentage change with respect to the <see cref="ReferenceValue"/></param>
     /// <param name="treatZeroReferenceValueAsOne">True if a <see cref="ReferenceValue"/> of zero should be treated as one to prevent <see cref="DivideByZeroException"/></param>
+    [JsonConstructor]
     protected PercentageChange(decimal referenceValue, decimal newValue, bool treatZeroReferenceValueAsOne = false)
     {
         ReferenceValue = referenceValue;

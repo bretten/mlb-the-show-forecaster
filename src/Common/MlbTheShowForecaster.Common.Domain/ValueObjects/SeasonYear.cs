@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
@@ -22,6 +23,7 @@ public sealed class SeasonYear : ValueObject
     /// Constructor
     /// </summary>
     /// <param name="value">The season year</param>
+    [JsonConstructor]
     private SeasonYear(ushort value)
     {
         Value = value;

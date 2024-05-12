@@ -31,6 +31,19 @@ public class PlayerSeasonStatsByGameDtoTests
     }
 
     [Fact]
+    public void GetHittingStats_NoStats_ReturnsEmptyStats()
+    {
+        // Arrange
+        var playerSeasonStats = new PlayerSeasonStatsByGameDto(1, "First", "Last", null!);
+
+        // Act
+        var actual = playerSeasonStats.GetHittingStats();
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    [Fact]
     public void GetPitchingStats_SeasonStatsWithPitching_ReturnsPitchingStats()
     {
         // Arrange
@@ -55,6 +68,19 @@ public class PlayerSeasonStatsByGameDtoTests
     }
 
     [Fact]
+    public void GetPitchingStats_NoStats_ReturnsEmptyStats()
+    {
+        // Arrange
+        var playerSeasonStats = new PlayerSeasonStatsByGameDto(1, "First", "Last", null!);
+
+        // Act
+        var actual = playerSeasonStats.GetPitchingStats();
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    [Fact]
     public void GetFieldingStats_SeasonStatsWithFielding_ReturnsFieldingStats()
     {
         // Arrange
@@ -76,5 +102,18 @@ public class PlayerSeasonStatsByGameDtoTests
         Assert.Equal(new TeamDto(10, "A"), actual[0].Team);
         Assert.Equal(new GameDto(100), actual[0].Game);
         Assert.Equal(new FieldingStatsDto(), actual[0].Stat);
+    }
+
+    [Fact]
+    public void GetFieldingStats_NoStats_ReturnsEmptyStats()
+    {
+        // Arrange
+        var playerSeasonStats = new PlayerSeasonStatsByGameDto(1, "First", "Last", null!);
+
+        // Act
+        var actual = playerSeasonStats.GetFieldingStats();
+
+        // Assert
+        Assert.Empty(actual);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using System.Text.Json.Serialization;
+
+namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 
 /// <summary>
 /// A raw stat with no calculation
@@ -14,6 +16,7 @@ public sealed class RawStat : CalculatedStat
     /// Constructor
     /// </summary>
     /// <param name="rawValue">The underlying raw value</param>
+    [JsonConstructor]
     private RawStat(decimal rawValue)
     {
         _rawValue = rawValue;
