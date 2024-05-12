@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
@@ -17,6 +18,7 @@ public sealed class NaturalNumber : ValueObject
     /// Constructor
     /// </summary>
     /// <param name="value">The natural number</param>
+    [JsonConstructor]
     private NaturalNumber(int value)
     {
         if (value < 0)
