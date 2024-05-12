@@ -7,5 +7,5 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Particip
 /// </summary>
 /// <param name="PlayerMlbId">The MLB ID of the player</param>
 /// <param name="Date">The date of the game</param>
-public sealed record PlayerBattedInGameEvent(MlbId PlayerMlbId, DateTime Date)
+public sealed record PlayerBattedInGameEvent(MlbId PlayerMlbId, DateOnly Date)
     : GameParticipationEvent(PlayerMlbId, Date);

@@ -11,8 +11,8 @@ public class PlayerFieldingStatsByGameTests
     public void Equals_SamePlayerSeasonDateGame_ReturnsTrue()
     {
         // Arrange
-        var stats1 = Faker.FakePlayerFieldingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerFieldingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);
+        var stats1 = Faker.FakePlayerFieldingStats(playerMlbId: 1, 2024, new DateOnly(2024, 4, 1), 10000);
+        var stats2 = Faker.FakePlayerFieldingStats(playerMlbId: 1, 2024, new DateOnly(2024, 4, 1), 10000);
 
         // Act
         var actual = stats1.Equals(stats2);
@@ -25,8 +25,8 @@ public class PlayerFieldingStatsByGameTests
     public void Equals_DifferentPlayer_ReturnsFalse()
     {
         // Arrange
-        var stats1 = Faker.FakePlayerFieldingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerFieldingStats(playerMlbId: 2, 2024, new DateTime(2024, 4, 1), 10000);
+        var stats1 = Faker.FakePlayerFieldingStats(playerMlbId: 1, 2024, new DateOnly(2024, 4, 1), 10000);
+        var stats2 = Faker.FakePlayerFieldingStats(playerMlbId: 2, 2024, new DateOnly(2024, 4, 1), 10000);
 
         // Act
         var actual = stats1.Equals(stats2);
@@ -41,7 +41,7 @@ public class PlayerFieldingStatsByGameTests
         // Arrange
         var mlbId = MlbId.Create(1);
         var seasonYear = SeasonYear.Create(2024);
-        var gameDate = new DateTime(2024, 4, 1);
+        var gameDate = new DateOnly(2024, 4, 1);
         var gameId = MlbId.Create(10000);
         var teamId = MlbId.Create(100);
         var position = Position.FirstBase;
@@ -82,7 +82,7 @@ public class PlayerFieldingStatsByGameTests
         // Assert
         Assert.Equal(1, actual.PlayerMlbId.Value);
         Assert.Equal(2024, actual.SeasonYear.Value);
-        Assert.Equal(new DateTime(2024, 4, 1), actual.GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 1), actual.GameDate);
         Assert.Equal(10000, actual.GameMlbId.Value);
         Assert.Equal(100, actual.TeamMlbId.Value);
         Assert.Equal(Position.FirstBase, actual.Position);

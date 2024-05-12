@@ -19,9 +19,9 @@ public class PlayerStatsBySeasonTests
     public void BattingStatsByGamesChronologically_BattingStats_ReturnsStatsOrderedByGameDate()
     {
         // Arrange
-        var game1 = Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 3, 31));
-        var game2 = Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 2));
-        var game3 = Faker.FakePlayerBattingStats(gameDate: new DateTime(2024, 4, 5));
+        var game1 = Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31));
+        var game2 = Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 2));
+        var game3 = Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 5));
         var battingStatsByGames = new List<PlayerBattingStatsByGame>()
             { game3, game2, game1 }; // Most recent to oldest
         var seasonStats = Faker.FakePlayerSeasonStats(battingStatsByGames: battingStatsByGames);
@@ -31,18 +31,18 @@ public class PlayerStatsBySeasonTests
 
         // Assert
         Assert.Equal(3, actual.Count);
-        Assert.Equal(new DateTime(2024, 3, 31), actual[0].GameDate);
-        Assert.Equal(new DateTime(2024, 4, 2), actual[1].GameDate);
-        Assert.Equal(new DateTime(2024, 4, 5), actual[2].GameDate);
+        Assert.Equal(new DateOnly(2024, 3, 31), actual[0].GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 2), actual[1].GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 5), actual[2].GameDate);
     }
 
     [Fact]
     public void FieldingStatsByGamesChronologically_FieldingStats_ReturnsStatsOrderedByGameDate()
     {
         // Arrange
-        var game1 = Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 3, 31));
-        var game2 = Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 2));
-        var game3 = Faker.FakePlayerFieldingStats(gameDate: new DateTime(2024, 4, 5));
+        var game1 = Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 3, 31));
+        var game2 = Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 2));
+        var game3 = Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5));
         var fieldingStatsByGames = new List<PlayerFieldingStatsByGame>()
             { game3, game2, game1 }; // Most recent to oldest
         var seasonStats = Faker.FakePlayerSeasonStats(fieldingStatsByGames: fieldingStatsByGames);
@@ -52,18 +52,18 @@ public class PlayerStatsBySeasonTests
 
         // Assert
         Assert.Equal(3, actual.Count);
-        Assert.Equal(new DateTime(2024, 3, 31), actual[0].GameDate);
-        Assert.Equal(new DateTime(2024, 4, 2), actual[1].GameDate);
-        Assert.Equal(new DateTime(2024, 4, 5), actual[2].GameDate);
+        Assert.Equal(new DateOnly(2024, 3, 31), actual[0].GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 2), actual[1].GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 5), actual[2].GameDate);
     }
 
     [Fact]
     public void PitchingStatsByGamesChronologically_PitchingStats_ReturnsStatsOrderedByGameDate()
     {
         // Arrange
-        var game1 = Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 3, 31));
-        var game2 = Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 2));
-        var game3 = Faker.FakePlayerPitchingStats(gameDate: new DateTime(2024, 4, 5));
+        var game1 = Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 3, 31));
+        var game2 = Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 2));
+        var game3 = Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 5));
         var pitchingStatsByGames = new List<PlayerPitchingStatsByGame>()
             { game3, game2, game1 }; // Most recent to oldest
         var seasonStats = Faker.FakePlayerSeasonStats(pitchingStatsByGames: pitchingStatsByGames);
@@ -73,9 +73,9 @@ public class PlayerStatsBySeasonTests
 
         // Assert
         Assert.Equal(3, actual.Count);
-        Assert.Equal(new DateTime(2024, 3, 31), actual[0].GameDate);
-        Assert.Equal(new DateTime(2024, 4, 2), actual[1].GameDate);
-        Assert.Equal(new DateTime(2024, 4, 5), actual[2].GameDate);
+        Assert.Equal(new DateOnly(2024, 3, 31), actual[0].GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 2), actual[1].GameDate);
+        Assert.Equal(new DateOnly(2024, 4, 5), actual[2].GameDate);
     }
 
     [Fact]
@@ -502,7 +502,7 @@ public class PlayerStatsBySeasonTests
     public void AssessBattingPerformance_NegligibleBattingStats_NoEventsRaised()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 20m;
         var gameBeforeComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(-1),
             plateAppearances: 4, atBats: 4, hits: 1, triples: 1); // OBP = 0.250, SLG = 0.750, OPS = 1.000
@@ -528,7 +528,7 @@ public class PlayerStatsBySeasonTests
     public void AssessBattingPerformance_ImprovedBattingStats_RaisesBattingImprovementDomainEvent()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 20m;
         var gameBeforeComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(-1),
             plateAppearances: 4, atBats: 4, hits: 1, triples: 1); // OBP = 0.250, SLG = 0.750, OPS = 1.000
@@ -555,7 +555,7 @@ public class PlayerStatsBySeasonTests
     public void AssessBattingPerformance_DecliningBattingStats_RaisesBattingDeclineDomainEvent()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 20m;
         var gameBeforeComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(-1),
             plateAppearances: 4, atBats: 4, hits: 1, homeRuns: 1); // OBP = 0.250, SLG = 1.000, OPS = 1.250
@@ -582,7 +582,7 @@ public class PlayerStatsBySeasonTests
     public void AssessBattingPerformance_RequiredStatPercentChangeThresholdNotCrossed_NoEventsRaised()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 30m;
         var gameBeforeComparisonDate = Faker.FakePlayerBattingStats(gameDate: comparisonDate.AddDays(-1),
             plateAppearances: 4, atBats: 4, hits: 1, triples: 1); // OBP = 0.250, SLG = 0.750, OPS = 1.000
@@ -608,7 +608,7 @@ public class PlayerStatsBySeasonTests
     public void AssessPitchingPerformance_NegligiblePitchingStats_NoEventsRaised()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 20m;
         var gameBeforeComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(-1),
             inningsPitched: 9, battersFaced: 27, earnedRuns: 3); // ERA = 3
@@ -634,7 +634,7 @@ public class PlayerStatsBySeasonTests
     public void AssessPitchingPerformance_ImprovedPitchingStats_RaisesPitchingImprovementDomainEvent()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 20m;
         var gameBeforeComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(-1),
             inningsPitched: 9, battersFaced: 27, earnedRuns: 3); // ERA = 3
@@ -661,7 +661,7 @@ public class PlayerStatsBySeasonTests
     public void AssessPitchingPerformance_DecliningPitchingStats_RaisesPitchingDeclineDomainEvent()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 20m;
         var gameBeforeComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(-1),
             inningsPitched: 9, battersFaced: 27, earnedRuns: 1); // ERA = 1
@@ -688,7 +688,7 @@ public class PlayerStatsBySeasonTests
     public void AssessPitchingPerformance_RequiredStatPercentChangeThresholdNotCrossed_NoEventsRaised()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 70m;
         var gameBeforeComparisonDate = Faker.FakePlayerPitchingStats(gameDate: comparisonDate.AddDays(-1),
             inningsPitched: 9, battersFaced: 27, earnedRuns: 3); // ERA = 3
@@ -714,7 +714,7 @@ public class PlayerStatsBySeasonTests
     public void AssessFieldingPerformance_NegligibleFieldingStats_NoEventsRaised()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 20m;
         var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
             assists: 1, putouts: 1, errors: 1); // TC = 3, F% = 2/3
@@ -740,7 +740,7 @@ public class PlayerStatsBySeasonTests
     public void AssessFieldingPerformance_ImprovedFieldingStats_RaisesFieldingImprovementDomainEvent()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 10m;
         var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
             assists: 1, putouts: 1, errors: 1); // TC = 3, F% = 2/3
@@ -767,7 +767,7 @@ public class PlayerStatsBySeasonTests
     public void AssessFieldingPerformance_DecliningFieldingStats_RaisesFieldingDeclineDomainEvent()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 10m;
         var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
             assists: 1, putouts: 2, errors: 1); // TC = 4, F% = 3/4
@@ -794,7 +794,7 @@ public class PlayerStatsBySeasonTests
     public void AssessFieldingPerformance_StatPercentChangeThresholdNotCrossed_NoEventsRaised()
     {
         // Arrange
-        var comparisonDate = new DateTime(2024, 4, 1);
+        var comparisonDate = new DateOnly(2024, 4, 1);
         const decimal percentChangeThreshold = 30m;
         var gameBeforeComparisonDate = Faker.FakePlayerFieldingStats(gameDate: comparisonDate.AddDays(-1),
             assists: 1, putouts: 1, errors: 1); // TC = 3, F% = 2/3

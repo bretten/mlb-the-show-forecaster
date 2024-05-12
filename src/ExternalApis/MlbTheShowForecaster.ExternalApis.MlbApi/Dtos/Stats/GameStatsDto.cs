@@ -16,7 +16,7 @@ public abstract record GameStatsDto(
     [property: JsonPropertyName("season")]
     string Season,
     [property: JsonPropertyName("date")]
-    DateTime Date,
+    DateOnly Date,
     [property: JsonPropertyName("gameType")]
     string GameType,
     [property: JsonPropertyName("isHome")]

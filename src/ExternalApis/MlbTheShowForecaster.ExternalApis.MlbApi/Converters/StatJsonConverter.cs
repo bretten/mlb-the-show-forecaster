@@ -78,7 +78,7 @@ public class StatJsonConverter : JsonConverter<StatsDto>
 
             // Write the stats by game object properties
             writer.WriteString(PreEncodedText.General.Season, split.Season);
-            writer.WriteString(PreEncodedText.General.Date, split.Date);
+            writer.WriteString(PreEncodedText.General.Date, split.Date.ToDateTime(TimeOnly.MinValue));
             writer.WriteString(PreEncodedText.General.GameType, split.GameType);
             writer.WriteBoolean(PreEncodedText.General.IsHome, split.IsHome);
             writer.WriteBoolean(PreEncodedText.General.IsWin, split.IsWin);

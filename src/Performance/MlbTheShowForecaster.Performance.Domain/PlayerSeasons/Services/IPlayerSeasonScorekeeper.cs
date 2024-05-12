@@ -18,7 +18,7 @@ public interface IPlayerSeasonScorekeeper
     /// <param name="playerPitchingStatsByGamesToDate">The player's pitching stats by games to date</param>
     /// <param name="playerFieldingStatsByGamesToDate">The player's fielding stats by games to date</param>
     /// <returns>The updated <see cref="PlayerStatsBySeason"/></returns>
-    PlayerStatsBySeason ScoreSeason(PlayerStatsBySeason playerStatsBySeason, DateTime performanceComparisonDate,
+    PlayerStatsBySeason ScoreSeason(PlayerStatsBySeason playerStatsBySeason, DateOnly performanceComparisonDate,
         IEnumerable<PlayerBattingStatsByGame> playerBattingStatsByGamesToDate,
         IEnumerable<PlayerPitchingStatsByGame> playerPitchingStatsByGamesToDate,
         IEnumerable<PlayerFieldingStatsByGame> playerFieldingStatsByGamesToDate);

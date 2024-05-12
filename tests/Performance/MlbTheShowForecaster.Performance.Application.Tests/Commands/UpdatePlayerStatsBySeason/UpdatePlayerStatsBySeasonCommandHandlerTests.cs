@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Dtos.TestClasses;
@@ -15,7 +16,8 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
     [Fact]
     public async Task Handle_UpdatePlayerStatsBySeasonCommand_UpdatesPlayerStatsBySeason()
     {
-        // Act
+        // Arrange
+        var today = new DateOnly(2024, 4, 1);
         var fakePlayerSeason = Faker.FakePlayerSeason();
 
         var fakePlayerStatsBySeason = TestClasses.Faker.FakePlayerStatsBySeason();
@@ -37,16 +39,20 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
             .Returns(fakeMappedFieldingStatsByGame);
 
         var stubPlayerSeasonScorekeeper = new Mock<IPlayerSeasonScorekeeper>();
-        stubPlayerSeasonScorekeeper.Setup(x => x.ScoreSeason(fakePlayerStatsBySeason, It.IsAny<DateTime>(),
+        stubPlayerSeasonScorekeeper.Setup(x => x.ScoreSeason(fakePlayerStatsBySeason, today,
                 fakeMappedBattingStatsByGame, fakeMappedPitchingStatsByGame, fakeMappedFieldingStatsByGame))
             .Returns(updatedPlayerStatsBySeason);
+
+        var stubCalendar = new Mock<ICalendar>();
+        stubCalendar.Setup(x => x.Today())
+            .Returns(today);
 
         var mockPlayerStatsBySeasonRepository = Mock.Of<IPlayerStatsBySeasonRepository>();
         var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerSeasonWork>>();
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerStatsBySeasonCommand(fakePlayerStatsBySeason, fakePlayerSeason);
-        var handler = new UpdatePlayerStatsBySeasonCommandHandler(stubPlayerSeasonMapper.Object,
+        var handler = new UpdatePlayerStatsBySeasonCommandHandler(stubPlayerSeasonMapper.Object, stubCalendar.Object,
             stubPlayerSeasonScorekeeper.Object, mockPlayerStatsBySeasonRepository, mockUnitOfWork);
 
         // Act

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework.Migrations
+namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore.Migrations
 {
     /// <inheritdoc />
     [ExcludeFromCodeCoverage]
@@ -25,9 +25,9 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
                     mlb_id = table.Column<int>(type: "integer", nullable: false),
                     first_name = table.Column<string>(type: "text", nullable: false),
                     last_name = table.Column<string>(type: "text", nullable: false),
-                    birthdate = table.Column<DateTime>(type: "date", nullable: false),
+                    birthdate = table.Column<DateOnly>(type: "date", nullable: false),
                     position = table.Column<string>(type: "varchar(4)", nullable: false),
-                    mlb_debut_date = table.Column<DateTime>(type: "date", nullable: false),
+                    mlb_debut_date = table.Column<DateOnly>(type: "date", nullable: false),
                     bat_side = table.Column<string>(type: "varchar(4)", nullable: false),
                     throw_arm = table.Column<string>(type: "varchar(4)", nullable: false),
                     team = table.Column<string>(type: "varchar(4)", nullable: false),
@@ -35,7 +35,8 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_players", x => x.id);
+                    table.PrimaryKey("players_pkey", x => x.id);
+                    table.UniqueConstraint("players_mlb_id_key", x => x.mlb_id);
                 });
         }
 

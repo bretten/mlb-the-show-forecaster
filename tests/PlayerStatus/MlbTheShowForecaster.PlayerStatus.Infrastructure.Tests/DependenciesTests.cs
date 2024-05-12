@@ -9,7 +9,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositori
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -107,7 +107,7 @@ public class DependenciesTests
         Assert.IsType<PlayersDbContext>(actual.GetRequiredService<PlayersDbContext>());
 
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPlayerRepository)).Lifetime);
-        Assert.IsType<EntityFrameworkPlayerRepository>(actual.GetRequiredService<IPlayerRepository>());
+        Assert.IsType<EntityFrameworkCorePlayerRepository>(actual.GetRequiredService<IPlayerRepository>());
 
         Assert.Equal(ServiceLifetime.Transient,
             s.First(x => x.ServiceType == typeof(IUnitOfWork<IPlayerWork>)).Lifetime);

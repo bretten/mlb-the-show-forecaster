@@ -11,7 +11,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Test
 public static class Faker
 {
     public static PlayerBattingStatsByGame FakePlayerBattingStats(int playerMlbId = 1, ushort seasonYear = 2024,
-        DateTime? gameDate = null, int gameId = 10000, int teamId = 100, int plateAppearances = 0, int atBats = 0,
+        DateOnly? gameDate = null, int gameId = 10000, int teamId = 100, int plateAppearances = 0, int atBats = 0,
         int runs = 0, int hits = 0, int doubles = 0, int triples = 0, int homeRuns = 0, int runsBattedIn = 0,
         int baseOnBalls = 0, int intentionalWalks = 0, int strikeouts = 0, int stolenBases = 0, int caughtStealing = 0,
         int hitByPitch = 0, int sacrificeBunts = 0, int sacrificeFlies = 0, int numberOfPitchesSeen = 0,
@@ -19,7 +19,7 @@ public static class Faker
         int airOuts = 0, int catcherInterferences = 0)
     {
         return PlayerBattingStatsByGame.Create(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
-            gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
+            gameDate ?? new DateOnly(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
             plateAppearances: plateAppearances,
             atBats: atBats,
             runs: runs,
@@ -47,7 +47,7 @@ public static class Faker
     }
 
     public static PlayerPitchingStatsByGame FakePlayerPitchingStats(int playerMlbId = 1, ushort seasonYear = 2024,
-        DateTime? gameDate = null, int gameId = 10000, int teamId = 100, bool win = false, bool loss = false,
+        DateOnly? gameDate = null, int gameId = 10000, int teamId = 100, bool win = false, bool loss = false,
         bool gameStarted = false, bool gameFinished = false, bool completeGame = false, bool shutout = false,
         bool hold = false, bool save = false, bool blownSave = false, bool saveOpportunity = false,
         decimal inningsPitched = 0, int hits = 0, int doubles = 0, int triples = 0, int homeRuns = 0, int runs = 0,
@@ -58,7 +58,7 @@ public static class Faker
         int catcherInterferences = 0, int sacrificeBunts = 0, int sacrificeFlies = 0)
     {
         return PlayerPitchingStatsByGame.Create(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
-            gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
+            gameDate ?? new DateOnly(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
             win: win,
             loss: loss,
             gameStarted: gameStarted,
@@ -102,13 +102,13 @@ public static class Faker
     }
 
     public static PlayerFieldingStatsByGame FakePlayerFieldingStats(int playerMlbId = 1, ushort seasonYear = 2024,
-        DateTime? gameDate = null, int gameId = 10000, int teamId = 100, Position position = Position.Catcher,
+        DateOnly? gameDate = null, int gameId = 10000, int teamId = 100, Position position = Position.Catcher,
         bool gameStarted = false, decimal inningsPlayed = 0, int assists = 0, int putouts = 0, int errors = 0,
         int throwingErrors = 0, int doublePlays = 0, int triplePlays = 0, int caughtStealing = 0, int stolenBases = 0,
         int passedBalls = 0, int catcherInterferences = 0, int wildPitches = 0, int pickoffs = 0)
     {
         return PlayerFieldingStatsByGame.Create(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
-            gameDate ?? new DateTime(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
+            gameDate ?? new DateOnly(2024, 4, 1), MlbId.Create(gameId), MlbId.Create(teamId),
             position: position,
             gameStarted: gameStarted,
             inningsPlayed: inningsPlayed,

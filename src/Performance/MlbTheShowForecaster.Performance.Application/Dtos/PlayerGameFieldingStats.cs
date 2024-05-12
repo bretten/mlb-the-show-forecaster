@@ -30,7 +30,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 public readonly record struct PlayerGameFieldingStats(
     MlbId PlayerMlbId,
     SeasonYear SeasonYear,
-    DateTime GameDate,
+    DateOnly GameDate,
     MlbId GameMlbId,
     MlbId TeamMlbId,
     Position Position,

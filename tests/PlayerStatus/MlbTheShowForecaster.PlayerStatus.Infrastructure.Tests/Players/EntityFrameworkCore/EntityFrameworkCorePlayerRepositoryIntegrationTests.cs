@@ -1,19 +1,19 @@
 ﻿using System.Data.Common;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.Players;
+namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.Players.EntityFrameworkCore;
 
 /// <summary>
 /// Integration tests that use TestContainers to spin up database containers for the tests. Requires Docker to be
 /// running for these tests
 /// </summary>
-public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
+public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container;
 
@@ -21,7 +21,7 @@ public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
     /// Configures the container options that will be used for each test
     /// </summary>
     /// <exception cref="DockerNotRunningException">Thrown if Docker is not running</exception>
-    public EntityFrameworkPlayerRepositoryIntegrationTests()
+    public EntityFrameworkCorePlayerRepositoryIntegrationTests()
     {
         try
         {
@@ -55,7 +55,7 @@ public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection, stubTeamProvider);
         await dbContext.Database.MigrateAsync();
-        var repo = new EntityFrameworkPlayerRepository(dbContext);
+        var repo = new EntityFrameworkCorePlayerRepository(dbContext);
 
         // Act
         await repo.Add(fakePlayer);
@@ -83,7 +83,7 @@ public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
         await dbContext.AddAsync(fakePlayer);
         await dbContext.SaveChangesAsync();
 
-        var repo = new EntityFrameworkPlayerRepository(dbContext);
+        var repo = new EntityFrameworkCorePlayerRepository(dbContext);
 
         // Act
         fakePlayer.Activate();
@@ -111,7 +111,7 @@ public class EntityFrameworkPlayerRepositoryIntegrationTests : IAsyncLifetime
         await dbContext.AddAsync(fakePlayer);
         await dbContext.SaveChangesAsync();
 
-        var repo = new EntityFrameworkPlayerRepository(dbContext);
+        var repo = new EntityFrameworkCorePlayerRepository(dbContext);
 
         // Act
         var actual = await repo.GetByMlbId(fakePlayer.MlbId);

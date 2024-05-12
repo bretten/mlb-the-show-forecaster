@@ -33,7 +33,7 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
     /// <param name="playerPitchingStatsByGamesToDate">The player's pitching stats by games to date</param>
     /// <param name="playerFieldingStatsByGamesToDate">The player's fielding stats by games to date</param>
     /// <returns>The updated <see cref="PlayerStatsBySeason"/></returns>
-    public PlayerStatsBySeason ScoreSeason(PlayerStatsBySeason playerStatsBySeason, DateTime performanceComparisonDate,
+    public PlayerStatsBySeason ScoreSeason(PlayerStatsBySeason playerStatsBySeason, DateOnly performanceComparisonDate,
         IEnumerable<PlayerBattingStatsByGame> playerBattingStatsByGamesToDate,
         IEnumerable<PlayerPitchingStatsByGame> playerPitchingStatsByGamesToDate,
         IEnumerable<PlayerFieldingStatsByGame> playerFieldingStatsByGamesToDate)
@@ -50,7 +50,7 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
     /// <param name="playerStatsBySeason">The player season stats as it exists in the system currently</param>
     /// <param name="performanceComparisonDate">The date used in the player's performance assessment</param>
     /// <param name="statsByGamesToDate">The most up-to-date player season stats from the external MLB source</param>
-    private void ScoreBatting(ref PlayerStatsBySeason playerStatsBySeason, DateTime performanceComparisonDate,
+    private void ScoreBatting(ref PlayerStatsBySeason playerStatsBySeason, DateOnly performanceComparisonDate,
         IEnumerable<PlayerBattingStatsByGame> statsByGamesToDate)
     {
         // The stats by games before the most recent update
@@ -79,7 +79,7 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
     /// <param name="playerStatsBySeason">The player season stats as it exists in the system currently</param>
     /// <param name="performanceComparisonDate">The date used in the player's performance assessment</param>
     /// <param name="statsByGamesToDate">The most up-to-date player season stats from the external MLB source</param>
-    private void ScorePitching(ref PlayerStatsBySeason playerStatsBySeason, DateTime performanceComparisonDate,
+    private void ScorePitching(ref PlayerStatsBySeason playerStatsBySeason, DateOnly performanceComparisonDate,
         IEnumerable<PlayerPitchingStatsByGame> statsByGamesToDate)
     {
         // The stats by games before the most recent update
@@ -108,7 +108,7 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
     /// <param name="playerStatsBySeason">The player season stats as it exists in the system currently</param>
     /// <param name="performanceComparisonDate">The date used in the player's performance assessment</param>
     /// <param name="statsByGamesToDate">The most up-to-date player season stats from the external MLB source</param>
-    private void ScoreFielding(ref PlayerStatsBySeason playerStatsBySeason, DateTime performanceComparisonDate,
+    private void ScoreFielding(ref PlayerStatsBySeason playerStatsBySeason, DateOnly performanceComparisonDate,
         IEnumerable<PlayerFieldingStatsByGame> statsByGamesToDate)
     {
         // The stats by games before the most recent update

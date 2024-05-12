@@ -21,7 +21,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <summary>
     /// The date of the game
     /// </summary>
-    public DateTime GameDate { get; }
+    public DateOnly GameDate { get; }
 
     /// <summary>
     /// The MLB ID of the game
@@ -76,7 +76,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <param name="groundIntoTriplePlays">The number of times the batter grounded into a triple play</param>
     /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
     /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
-    private PlayerBattingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameMlbId,
+    private PlayerBattingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateOnly gameDate, MlbId gameMlbId,
         MlbId teamMlbId, NaturalNumber plateAppearances, NaturalNumber atBats, NaturalNumber runs, NaturalNumber hits,
         NaturalNumber doubles, NaturalNumber triples, NaturalNumber homeRuns, NaturalNumber runsBattedIn,
         NaturalNumber baseOnBalls, NaturalNumber intentionalWalks, NaturalNumber strikeouts, NaturalNumber stolenBases,
@@ -127,7 +127,7 @@ public sealed class PlayerBattingStatsByGame : BattingStats
     /// <param name="airOuts">The number of times the batter hit a fly ball that led to an out</param>
     /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
     /// <returns><see cref="PlayerBattingStatsByGame"/></returns>
-    public static PlayerBattingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate,
+    public static PlayerBattingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateOnly gameDate,
         MlbId gameMlbId, MlbId teamMlbId, int plateAppearances, int atBats, int runs, int hits, int doubles,
         int triples, int homeRuns, int runsBattedIn, int baseOnBalls, int intentionalWalks, int strikeouts,
         int stolenBases, int caughtStealing, int hitByPitch, int sacrificeBunts, int sacrificeFlies,

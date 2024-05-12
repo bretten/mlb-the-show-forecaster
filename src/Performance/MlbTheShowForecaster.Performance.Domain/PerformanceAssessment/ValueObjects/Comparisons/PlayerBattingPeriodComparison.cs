@@ -38,7 +38,7 @@ public sealed class PlayerBattingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="onBasePlusSluggingBeforeComparisonDate">The player's OPS before the comparison date</param>
     /// <param name="plateAppearancesSinceComparisonDate">The number of plate appearances since the comparison date</param>
     /// <param name="onBasePlusSluggingSinceComparisonDate">The player's OPS since the comparison date</param>
-    private PlayerBattingPeriodComparison(MlbId playerMlbId, DateTime comparisonDate,
+    private PlayerBattingPeriodComparison(MlbId playerMlbId, DateOnly comparisonDate,
         NaturalNumber plateAppearancesBeforeComparisonDate, IStat onBasePlusSluggingBeforeComparisonDate,
         NaturalNumber plateAppearancesSinceComparisonDate, IStat onBasePlusSluggingSinceComparisonDate) : base(
         playerMlbId, comparisonDate, onBasePlusSluggingBeforeComparisonDate, onBasePlusSluggingSinceComparisonDate)
@@ -57,7 +57,7 @@ public sealed class PlayerBattingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="plateAppearancesSinceComparisonDate">The number of plate appearances since the comparison date</param>
     /// <param name="onBasePlusSluggingSinceComparisonDate">The player's OPS since the comparison date</param>
     /// <returns><see cref="PlayerBattingPeriodComparison"/></returns>
-    public static PlayerBattingPeriodComparison Create(MlbId playerMlbId, DateTime comparisonDate,
+    public static PlayerBattingPeriodComparison Create(MlbId playerMlbId, DateOnly comparisonDate,
         int plateAppearancesBeforeComparisonDate, decimal onBasePlusSluggingBeforeComparisonDate,
         int plateAppearancesSinceComparisonDate, decimal onBasePlusSluggingSinceComparisonDate)
     {
@@ -77,7 +77,7 @@ public sealed class PlayerBattingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="statsBeforeComparisonDate">Stats from before the comparison date</param>
     /// <param name="statsSinceComparisonDate">Stats since the comparison date</param>
     /// <returns><see cref="PlayerBattingPeriodComparison"/></returns>
-    public static PlayerBattingPeriodComparison Create(MlbId playerMlbId, DateTime comparisonDate,
+    public static PlayerBattingPeriodComparison Create(MlbId playerMlbId, DateOnly comparisonDate,
         BattingStats statsBeforeComparisonDate, BattingStats statsSinceComparisonDate)
     {
         return new PlayerBattingPeriodComparison(playerMlbId, comparisonDate,

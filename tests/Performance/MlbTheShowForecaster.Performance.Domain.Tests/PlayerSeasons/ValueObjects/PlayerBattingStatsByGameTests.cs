@@ -10,8 +10,8 @@ public class PlayerBattingStatsByGameTests
     public void Equals_SamePlayerSeasonDateGame_ReturnsTrue()
     {
         // Arrange
-        var stats1 = Faker.FakePlayerBattingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerBattingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);
+        var stats1 = Faker.FakePlayerBattingStats(playerMlbId: 1, 2024, new DateOnly(2024, 4, 1), 10000);
+        var stats2 = Faker.FakePlayerBattingStats(playerMlbId: 1, 2024, new DateOnly(2024, 4, 1), 10000);
 
         // Act
         var actual = stats1.Equals(stats2);
@@ -24,8 +24,8 @@ public class PlayerBattingStatsByGameTests
     public void Equals_DifferentPlayer_ReturnsFalse()
     {
         // Arrange
-        var stats1 = Faker.FakePlayerBattingStats(playerMlbId: 1, 2024, new DateTime(2024, 4, 1), 10000);
-        var stats2 = Faker.FakePlayerBattingStats(playerMlbId: 2, 2024, new DateTime(2024, 4, 1), 10000);
+        var stats1 = Faker.FakePlayerBattingStats(playerMlbId: 1, 2024, new DateOnly(2024, 4, 1), 10000);
+        var stats2 = Faker.FakePlayerBattingStats(playerMlbId: 2, 2024, new DateOnly(2024, 4, 1), 10000);
 
         // Act
         var actual = stats1.Equals(stats2);
@@ -40,7 +40,7 @@ public class PlayerBattingStatsByGameTests
         // Arrange
         var mlbId = MlbId.Create(1);
         var seasonYear = SeasonYear.Create(2024);
-        var gameDate = new DateTime(2024, 4, 1);
+        var gameDate = new DateOnly(2024, 4, 1);
         var gameId = MlbId.Create(10000);
         var teamId = MlbId.Create(100);
         const int plateAppearances = 1; // Note: Numbers are nonsensical

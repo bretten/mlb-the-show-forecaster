@@ -22,7 +22,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <summary>
     /// The date of the game
     /// </summary>
-    public DateTime GameDate { get; }
+    public DateOnly GameDate { get; }
 
     /// <summary>
     /// The MLB ID of the game
@@ -124,7 +124,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <param name="catcherInterferences">The number of times a catcher interfered with the batter's plate appearance</param>
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
-    private PlayerPitchingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate, MlbId gameMlbId,
+    private PlayerPitchingStatsByGame(MlbId playerMlbId, SeasonYear seasonYear, DateOnly gameDate, MlbId gameMlbId,
         MlbId teamMlbId, NaturalNumber wins, NaturalNumber losses, NaturalNumber gamesStarted,
         NaturalNumber gamesFinished, NaturalNumber completeGames, NaturalNumber shutouts, NaturalNumber holds,
         NaturalNumber saves, NaturalNumber blownSaves, NaturalNumber saveOpportunities, InningsCount inningsPitched,
@@ -196,7 +196,7 @@ public sealed class PlayerPitchingStatsByGame : PitchingStats
     /// <param name="sacrificeBunts">The number of sacrifice bunts made against the pitcher</param>
     /// <param name="sacrificeFlies">The number of sacrifice flies made against the pitcher</param>
     /// <returns><see cref="PlayerPitchingStatsByGame"/></returns>
-    public static PlayerPitchingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateTime gameDate,
+    public static PlayerPitchingStatsByGame Create(MlbId playerMlbId, SeasonYear seasonYear, DateOnly gameDate,
         MlbId gameMlbId, MlbId teamMlbId, bool win, bool loss, bool gameStarted, bool gameFinished, bool completeGame,
         bool shutout, bool hold, bool save, bool blownSave, bool saveOpportunity, decimal inningsPitched, int hits,
         int doubles, int triples, int homeRuns, int runs, int earnedRuns, int strikeouts, int baseOnBalls,

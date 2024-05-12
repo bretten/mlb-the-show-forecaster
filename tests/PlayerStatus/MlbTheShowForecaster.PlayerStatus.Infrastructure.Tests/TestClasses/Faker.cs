@@ -21,7 +21,7 @@ public static class Faker
     public const string DefaultLastName = "Last";
 
     public static PlayerDto FakePlayerDto(int? mlbId = null, string? firstName = null, string? lastName = null,
-        DateTime birthdate = default, PositionDto? position = null, DateTime mlbDebutDate = default,
+        DateOnly birthdate = default, PositionDto? position = null, DateOnly mlbDebutDate = default,
         ArmSideDto? batSide = null, ArmSideDto? throwArm = null, CurrentTeamDto? team = null, bool active = false)
     {
         return new PlayerDto()
@@ -29,9 +29,9 @@ public static class Faker
             Id = mlbId ?? DefaultMlbId,
             FirstName = firstName ?? DefaultFirstName,
             LastName = lastName ?? DefaultLastName,
-            Birthdate = birthdate == default ? new DateTime(1990, 1, 1) : birthdate,
+            Birthdate = birthdate == default ? new DateOnly(1990, 1, 1) : birthdate,
             Position = position ?? new PositionDto("Catcher", "C"),
-            MlbDebutDate = mlbDebutDate == default ? new DateTime(2010, 1, 1) : mlbDebutDate,
+            MlbDebutDate = mlbDebutDate == default ? new DateOnly(2010, 1, 1) : mlbDebutDate,
             BatSide = batSide ?? new ArmSideDto("L", "Left"),
             ThrowArm = throwArm ?? new ArmSideDto("L", "Left"),
             CurrentTeam = team ?? new CurrentTeamDto(DefaultTeamMlbId),
@@ -40,16 +40,16 @@ public static class Faker
     }
 
     public static RosterEntry FakeRosterEntry(int? mlbId = null, string? firstName = null, string? lastName = null,
-        DateTime birthdate = default, Position position = Position.Catcher, DateTime mlbDebutDate = default,
+        DateOnly birthdate = default, Position position = Position.Catcher, DateOnly mlbDebutDate = default,
         BatSide batSide = BatSide.Left, ThrowArm throwArm = ThrowArm.Left, int? teamMlbId = null, bool active = false)
     {
         return new RosterEntry(
             mlbId == null ? MlbId.Create(DefaultMlbId) : MlbId.Create(mlbId.Value),
             firstName == null ? PersonName.Create(DefaultFirstName) : PersonName.Create(firstName),
             lastName == null ? PersonName.Create(DefaultLastName) : PersonName.Create(lastName),
-            birthdate == default ? new DateTime(1990, 1, 1) : birthdate,
+            birthdate == default ? new DateOnly(1990, 1, 1) : birthdate,
             position,
-            mlbDebutDate == default ? new DateTime(2010, 1, 1) : mlbDebutDate,
+            mlbDebutDate == default ? new DateOnly(2010, 1, 1) : mlbDebutDate,
             batSide,
             throwArm,
             teamMlbId == null ? MlbId.Create(DefaultTeamMlbId) : MlbId.Create(teamMlbId.Value),
@@ -63,9 +63,9 @@ public static class Faker
             mlbId == null ? MlbId.Create(DefaultMlbId) : MlbId.Create(mlbId.Value),
             PersonName.Create(DefaultFirstName),
             PersonName.Create(DefaultLastName),
-            new DateTime(1990, 1, 1),
+            new DateOnly(1990, 1, 1),
             Position.Catcher,
-            new DateTime(2010, 1, 1),
+            new DateOnly(2010, 1, 1),
             BatSide.Left,
             ThrowArm.Left,
             team,

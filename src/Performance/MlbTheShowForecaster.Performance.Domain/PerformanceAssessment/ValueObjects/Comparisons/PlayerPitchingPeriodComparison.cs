@@ -51,7 +51,7 @@ public sealed class PlayerPitchingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="inningsPitchedSinceComparisonDate">The number of innings pitched since the comparison date</param>
     /// <param name="battersFacedSinceComparisonDate">The number of batters faced since the comparison date</param>
     /// <param name="earnedRunAverageSinceComparisonDate">The player's ERA since the comparison date</param>
-    private PlayerPitchingPeriodComparison(MlbId playerMlbId, DateTime comparisonDate,
+    private PlayerPitchingPeriodComparison(MlbId playerMlbId, DateOnly comparisonDate,
         InningsCount inningsPitchedBeforeComparisonDate, NaturalNumber battersFacedBeforeComparisonDate,
         IStat earnedRunAverageBeforeComparisonDate, InningsCount inningsPitchedSinceComparisonDate,
         NaturalNumber battersFacedSinceComparisonDate, IStat earnedRunAverageSinceComparisonDate) : base(playerMlbId,
@@ -75,7 +75,7 @@ public sealed class PlayerPitchingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="battersFacedSinceComparisonDate">The number of batters faced since the comparison date</param>
     /// <param name="earnedRunAverageSinceComparisonDate">The player's ERA since the comparison date</param>
     /// <returns><see cref="PlayerPitchingPeriodComparison"/></returns>
-    public static PlayerPitchingPeriodComparison Create(MlbId playerMlbId, DateTime comparisonDate,
+    public static PlayerPitchingPeriodComparison Create(MlbId playerMlbId, DateOnly comparisonDate,
         decimal inningsPitchedBeforeComparisonDate, int battersFacedBeforeComparisonDate,
         decimal earnedRunAverageBeforeComparisonDate, decimal inningsPitchedSinceComparisonDate,
         int battersFacedSinceComparisonDate, decimal earnedRunAverageSinceComparisonDate)
@@ -98,7 +98,7 @@ public sealed class PlayerPitchingPeriodComparison : PlayerStatPeriodComparison
     /// <param name="statsBeforeComparisonDate">Stats from before the comparison date</param>
     /// <param name="statsSinceComparisonDate">Stats since the comparison date</param>
     /// <returns><see cref="PlayerPitchingPeriodComparison"/></returns>
-    public static PlayerPitchingPeriodComparison Create(MlbId playerMlbId, DateTime comparisonDate,
+    public static PlayerPitchingPeriodComparison Create(MlbId playerMlbId, DateOnly comparisonDate,
         PitchingStats statsBeforeComparisonDate, PitchingStats statsSinceComparisonDate)
     {
         return new PlayerPitchingPeriodComparison(playerMlbId, comparisonDate,

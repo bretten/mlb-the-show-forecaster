@@ -21,7 +21,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("performance")
-                .HasAnnotation("ProductVersion", "7.0.14")
+                .HasAnnotation("ProductVersion", "8.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -31,422 +31,521 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("id")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("PlayerMlbId")
                         .HasColumnType("integer")
-                        .HasColumnName("player_mlb_id");
+                        .HasColumnName("player_mlb_id")
+                        .HasColumnOrder(1);
 
                     b.Property<ushort>("SeasonYear")
-                        .HasColumnType("integer")
-                        .HasColumnName("season");
+                        .HasColumnType("smallint")
+                        .HasColumnName("season")
+                        .HasColumnOrder(2);
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("player_stats_by_seasons_pkey");
+
+                    b.HasIndex(new[] { "SeasonYear" }, "player_stats_by_seasons_season_idx");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "SeasonYear" }, "player_stats_by_seasons_season_idx"), "btree");
 
                     b.ToTable("player_stats_by_seasons", "performance");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerBattingStatsByGame", b =>
                 {
-                    b.Property<int>("PlayerMlbId")
-                        .HasColumnType("integer")
-                        .HasColumnName("player_mlb_id");
-
-                    b.Property<ushort>("SeasonYear")
-                        .HasColumnType("integer")
-                        .HasColumnName("season");
-
-                    b.Property<DateTime>("GameDate")
-                        .HasColumnType("date")
-                        .HasColumnName("date");
+                    b.Property<Guid>("player_stats_by_season_id")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("GameMlbId")
                         .HasColumnType("integer")
-                        .HasColumnName("game_mlb_id");
+                        .HasColumnName("game_mlb_id")
+                        .HasColumnOrder(1);
 
                     b.Property<int>("AirOuts")
                         .HasColumnType("integer")
-                        .HasColumnName("air_outs");
+                        .HasColumnName("air_outs")
+                        .HasColumnOrder(27);
 
                     b.Property<int>("AtBats")
                         .HasColumnType("integer")
-                        .HasColumnName("at_bats");
+                        .HasColumnName("at_bats")
+                        .HasColumnOrder(7);
 
                     b.Property<int>("BaseOnBalls")
                         .HasColumnType("integer")
-                        .HasColumnName("base_on_balls");
+                        .HasColumnName("base_on_balls")
+                        .HasColumnOrder(14);
 
                     b.Property<int>("CatcherInterferences")
                         .HasColumnType("integer")
-                        .HasColumnName("catcher_interferences");
+                        .HasColumnName("catcher_interferences")
+                        .HasColumnOrder(28);
 
                     b.Property<int>("CaughtStealing")
                         .HasColumnType("integer")
-                        .HasColumnName("caught_stealing");
+                        .HasColumnName("caught_stealing")
+                        .HasColumnOrder(18);
 
                     b.Property<int>("Doubles")
                         .HasColumnType("integer")
-                        .HasColumnName("doubles");
+                        .HasColumnName("doubles")
+                        .HasColumnOrder(10);
+
+                    b.Property<DateOnly>("GameDate")
+                        .HasColumnType("date")
+                        .HasColumnName("date")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("GroundIntoDoublePlays")
                         .HasColumnType("integer")
-                        .HasColumnName("ground_into_double_plays");
+                        .HasColumnName("ground_into_double_plays")
+                        .HasColumnOrder(25);
 
                     b.Property<int>("GroundIntoTriplePlays")
                         .HasColumnType("integer")
-                        .HasColumnName("ground_into_triple_plays");
+                        .HasColumnName("ground_into_triple_plays")
+                        .HasColumnOrder(26);
 
                     b.Property<int>("GroundOuts")
                         .HasColumnType("integer")
-                        .HasColumnName("ground_outs");
+                        .HasColumnName("ground_outs")
+                        .HasColumnOrder(24);
 
                     b.Property<int>("HitByPitches")
                         .HasColumnType("integer")
-                        .HasColumnName("hit_by_pitches");
+                        .HasColumnName("hit_by_pitches")
+                        .HasColumnOrder(19);
 
                     b.Property<int>("Hits")
                         .HasColumnType("integer")
-                        .HasColumnName("hits");
+                        .HasColumnName("hits")
+                        .HasColumnOrder(9);
 
                     b.Property<int>("HomeRuns")
                         .HasColumnType("integer")
-                        .HasColumnName("home_runs");
+                        .HasColumnName("home_runs")
+                        .HasColumnOrder(12);
 
                     b.Property<int>("IntentionalWalks")
                         .HasColumnType("integer")
-                        .HasColumnName("intentional_walks");
+                        .HasColumnName("intentional_walks")
+                        .HasColumnOrder(15);
 
                     b.Property<int>("LeftOnBase")
                         .HasColumnType("integer")
-                        .HasColumnName("left_on_base");
+                        .HasColumnName("left_on_base")
+                        .HasColumnOrder(23);
 
                     b.Property<int>("NumberOfPitchesSeen")
                         .HasColumnType("integer")
-                        .HasColumnName("number_of_pitches_seen");
+                        .HasColumnName("number_of_pitches_seen")
+                        .HasColumnOrder(22);
 
                     b.Property<int>("PlateAppearances")
                         .HasColumnType("integer")
-                        .HasColumnName("plate_appearances");
+                        .HasColumnName("plate_appearances")
+                        .HasColumnOrder(6);
+
+                    b.Property<int>("PlayerMlbId")
+                        .HasColumnType("integer")
+                        .HasColumnName("player_mlb_id")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("Runs")
                         .HasColumnType("integer")
-                        .HasColumnName("runs");
+                        .HasColumnName("runs")
+                        .HasColumnOrder(8);
 
                     b.Property<int>("RunsBattedIn")
                         .HasColumnType("integer")
-                        .HasColumnName("runs_batted_in");
+                        .HasColumnName("runs_batted_in")
+                        .HasColumnOrder(13);
 
                     b.Property<int>("SacrificeBunts")
                         .HasColumnType("integer")
-                        .HasColumnName("sacrifice_bunts");
+                        .HasColumnName("sacrifice_bunts")
+                        .HasColumnOrder(20);
 
                     b.Property<int>("SacrificeFlies")
                         .HasColumnType("integer")
-                        .HasColumnName("sacrifice_flies");
+                        .HasColumnName("sacrifice_flies")
+                        .HasColumnOrder(21);
+
+                    b.Property<ushort>("SeasonYear")
+                        .HasColumnType("smallint")
+                        .HasColumnName("season")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("StolenBases")
                         .HasColumnType("integer")
-                        .HasColumnName("stolen_bases");
+                        .HasColumnName("stolen_bases")
+                        .HasColumnOrder(17);
 
                     b.Property<int>("Strikeouts")
                         .HasColumnType("integer")
-                        .HasColumnName("strikeouts");
+                        .HasColumnName("strikeouts")
+                        .HasColumnOrder(16);
 
                     b.Property<int>("TeamMlbId")
                         .HasColumnType("integer")
-                        .HasColumnName("team_mlb_id");
+                        .HasColumnName("team_mlb_id")
+                        .HasColumnOrder(5);
 
                     b.Property<int>("Triples")
                         .HasColumnType("integer")
-                        .HasColumnName("triples");
+                        .HasColumnName("triples")
+                        .HasColumnOrder(11);
 
-                    b.Property<Guid>("player_stats_by_season_id")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameMlbId");
-
-                    b.HasIndex("player_stats_by_season_id");
+                    b.HasKey("player_stats_by_season_id", "GameMlbId")
+                        .HasName("player_batting_stats_by_games_pkey");
 
                     b.ToTable("player_batting_stats_by_games", "performance");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerFieldingStatsByGame", b =>
                 {
-                    b.Property<int>("PlayerMlbId")
-                        .HasColumnType("integer")
-                        .HasColumnName("player_mlb_id");
-
-                    b.Property<ushort>("SeasonYear")
-                        .HasColumnType("integer")
-                        .HasColumnName("season");
-
-                    b.Property<DateTime>("GameDate")
-                        .HasColumnType("date")
-                        .HasColumnName("date");
+                    b.Property<Guid>("player_stats_by_season_id")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("GameMlbId")
                         .HasColumnType("integer")
-                        .HasColumnName("game_mlb_id");
+                        .HasColumnName("game_mlb_id")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("Position")
+                        .HasColumnType("varchar(4)")
+                        .HasColumnName("position")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("Assists")
                         .HasColumnType("integer")
-                        .HasColumnName("assists");
+                        .HasColumnName("assists")
+                        .HasColumnOrder(9);
 
                     b.Property<int>("CatcherInterferences")
                         .HasColumnType("integer")
-                        .HasColumnName("catcher_interferences");
+                        .HasColumnName("catcher_interferences")
+                        .HasColumnOrder(18);
 
                     b.Property<int>("CaughtStealing")
                         .HasColumnType("integer")
-                        .HasColumnName("caught_stealing");
+                        .HasColumnName("caught_stealing")
+                        .HasColumnOrder(15);
 
                     b.Property<int>("DoublePlays")
                         .HasColumnType("integer")
-                        .HasColumnName("double_plays");
+                        .HasColumnName("double_plays")
+                        .HasColumnOrder(13);
 
                     b.Property<int>("Errors")
                         .HasColumnType("integer")
-                        .HasColumnName("errors");
+                        .HasColumnName("errors")
+                        .HasColumnOrder(11);
+
+                    b.Property<DateOnly>("GameDate")
+                        .HasColumnType("date")
+                        .HasColumnName("date")
+                        .HasColumnOrder(5);
 
                     b.Property<int>("GamesStarted")
                         .HasColumnType("integer")
-                        .HasColumnName("games_started");
+                        .HasColumnName("games_started")
+                        .HasColumnOrder(7);
 
                     b.Property<decimal>("InningsPlayed")
                         .HasColumnType("decimal(8,3)")
-                        .HasColumnName("innings_played");
+                        .HasColumnName("innings_played")
+                        .HasColumnOrder(8);
 
                     b.Property<int>("PassedBalls")
                         .HasColumnType("integer")
-                        .HasColumnName("passed_balls");
+                        .HasColumnName("passed_balls")
+                        .HasColumnOrder(17);
 
                     b.Property<int>("Pickoffs")
                         .HasColumnType("integer")
-                        .HasColumnName("pickoffs");
+                        .HasColumnName("pickoffs")
+                        .HasColumnOrder(20);
 
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasColumnType("varchar(4)")
-                        .HasColumnName("position");
+                    b.Property<int>("PlayerMlbId")
+                        .HasColumnType("integer")
+                        .HasColumnName("player_mlb_id")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("Putouts")
                         .HasColumnType("integer")
-                        .HasColumnName("putouts");
+                        .HasColumnName("putouts")
+                        .HasColumnOrder(10);
+
+                    b.Property<ushort>("SeasonYear")
+                        .HasColumnType("smallint")
+                        .HasColumnName("season")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("StolenBases")
                         .HasColumnType("integer")
-                        .HasColumnName("stolen_bases");
+                        .HasColumnName("stolen_bases")
+                        .HasColumnOrder(16);
 
                     b.Property<int>("TeamMlbId")
                         .HasColumnType("integer")
-                        .HasColumnName("team_mlb_id");
+                        .HasColumnName("team_mlb_id")
+                        .HasColumnOrder(6);
 
                     b.Property<int>("ThrowingErrors")
                         .HasColumnType("integer")
-                        .HasColumnName("throwing_errors");
+                        .HasColumnName("throwing_errors")
+                        .HasColumnOrder(12);
 
                     b.Property<int>("TriplePlays")
                         .HasColumnType("integer")
-                        .HasColumnName("triple_plays");
+                        .HasColumnName("triple_plays")
+                        .HasColumnOrder(14);
 
                     b.Property<int>("WildPitches")
                         .HasColumnType("integer")
-                        .HasColumnName("wild_pitches");
+                        .HasColumnName("wild_pitches")
+                        .HasColumnOrder(19);
 
-                    b.Property<Guid>("player_stats_by_season_id")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameMlbId");
-
-                    b.HasIndex("player_stats_by_season_id");
+                    b.HasKey("player_stats_by_season_id", "GameMlbId", "Position")
+                        .HasName("player_fielding_stats_by_games_pkey");
 
                     b.ToTable("player_fielding_stats_by_games", "performance");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerPitchingStatsByGame", b =>
                 {
-                    b.Property<int>("PlayerMlbId")
-                        .HasColumnType("integer")
-                        .HasColumnName("player_mlb_id");
-
-                    b.Property<ushort>("SeasonYear")
-                        .HasColumnType("integer")
-                        .HasColumnName("season");
-
-                    b.Property<DateTime>("GameDate")
-                        .HasColumnType("date")
-                        .HasColumnName("date");
+                    b.Property<Guid>("player_stats_by_season_id")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(0);
 
                     b.Property<int>("GameMlbId")
                         .HasColumnType("integer")
-                        .HasColumnName("game_mlb_id");
+                        .HasColumnName("game_mlb_id")
+                        .HasColumnOrder(1);
 
                     b.Property<int>("AirOuts")
                         .HasColumnType("integer")
-                        .HasColumnName("air_outs");
+                        .HasColumnName("air_outs")
+                        .HasColumnOrder(29);
 
                     b.Property<int>("AtBats")
                         .HasColumnType("integer")
-                        .HasColumnName("at_bats");
+                        .HasColumnName("at_bats")
+                        .HasColumnOrder(36);
 
                     b.Property<int>("Balks")
                         .HasColumnType("integer")
-                        .HasColumnName("balks");
+                        .HasColumnName("balks")
+                        .HasColumnOrder(34);
 
                     b.Property<int>("BaseOnBalls")
                         .HasColumnType("integer")
-                        .HasColumnName("base_on_balls");
+                        .HasColumnName("base_on_balls")
+                        .HasColumnOrder(24);
 
                     b.Property<int>("BattersFaced")
                         .HasColumnType("integer")
-                        .HasColumnName("batters_faced");
+                        .HasColumnName("batters_faced")
+                        .HasColumnOrder(35);
 
                     b.Property<int>("BlownSaves")
                         .HasColumnType("integer")
-                        .HasColumnName("blown_saves");
+                        .HasColumnName("blown_saves")
+                        .HasColumnOrder(14);
 
                     b.Property<int>("CatcherInterferences")
                         .HasColumnType("integer")
-                        .HasColumnName("catcher_interferences");
+                        .HasColumnName("catcher_interferences")
+                        .HasColumnOrder(42);
 
                     b.Property<int>("CaughtStealing")
                         .HasColumnType("integer")
-                        .HasColumnName("caught_stealing");
+                        .HasColumnName("caught_stealing")
+                        .HasColumnOrder(38);
 
                     b.Property<int>("CompleteGames")
                         .HasColumnType("integer")
-                        .HasColumnName("complete_games");
+                        .HasColumnName("complete_games")
+                        .HasColumnOrder(10);
 
                     b.Property<int>("Doubles")
                         .HasColumnType("integer")
-                        .HasColumnName("doubles");
+                        .HasColumnName("doubles")
+                        .HasColumnOrder(18);
 
                     b.Property<int>("EarnedRuns")
                         .HasColumnType("integer")
-                        .HasColumnName("earned_runs");
+                        .HasColumnName("earned_runs")
+                        .HasColumnOrder(22);
+
+                    b.Property<DateOnly>("GameDate")
+                        .HasColumnType("date")
+                        .HasColumnName("date")
+                        .HasColumnOrder(4);
 
                     b.Property<int>("GamesFinished")
                         .HasColumnType("integer")
-                        .HasColumnName("games_finished");
+                        .HasColumnName("games_finished")
+                        .HasColumnOrder(9);
 
                     b.Property<int>("GamesStarted")
                         .HasColumnType("integer")
-                        .HasColumnName("games_started");
+                        .HasColumnName("games_started")
+                        .HasColumnOrder(8);
 
                     b.Property<int>("GroundIntoDoublePlays")
                         .HasColumnType("integer")
-                        .HasColumnName("ground_into_double_plays");
+                        .HasColumnName("ground_into_double_plays")
+                        .HasColumnOrder(30);
 
                     b.Property<int>("GroundOuts")
                         .HasColumnType("integer")
-                        .HasColumnName("ground_outs");
+                        .HasColumnName("ground_outs")
+                        .HasColumnOrder(28);
 
                     b.Property<int>("HitBatsmen")
                         .HasColumnType("integer")
-                        .HasColumnName("hit_batsmen");
+                        .HasColumnName("hit_batsmen")
+                        .HasColumnOrder(26);
 
                     b.Property<int>("Hits")
                         .HasColumnType("integer")
-                        .HasColumnName("hits");
+                        .HasColumnName("hits")
+                        .HasColumnOrder(17);
 
                     b.Property<int>("Holds")
                         .HasColumnType("integer")
-                        .HasColumnName("holds");
+                        .HasColumnName("holds")
+                        .HasColumnOrder(12);
 
                     b.Property<int>("HomeRuns")
                         .HasColumnType("integer")
-                        .HasColumnName("home_runs");
+                        .HasColumnName("home_runs")
+                        .HasColumnOrder(20);
 
                     b.Property<int>("InheritedRunners")
                         .HasColumnType("integer")
-                        .HasColumnName("inherited_runners");
+                        .HasColumnName("inherited_runners")
+                        .HasColumnOrder(40);
 
                     b.Property<int>("InheritedRunnersScored")
                         .HasColumnType("integer")
-                        .HasColumnName("inherited_runners_scored");
+                        .HasColumnName("inherited_runners_scored")
+                        .HasColumnOrder(41);
 
                     b.Property<decimal>("InningsPitched")
                         .HasColumnType("decimal(8,3)")
-                        .HasColumnName("innings_pitched");
+                        .HasColumnName("innings_pitched")
+                        .HasColumnOrder(16);
 
                     b.Property<int>("IntentionalWalks")
                         .HasColumnType("integer")
-                        .HasColumnName("intentional_walks");
+                        .HasColumnName("intentional_walks")
+                        .HasColumnOrder(25);
 
                     b.Property<int>("Losses")
                         .HasColumnType("integer")
-                        .HasColumnName("losses");
+                        .HasColumnName("losses")
+                        .HasColumnOrder(7);
 
                     b.Property<int>("NumberOfPitches")
                         .HasColumnType("integer")
-                        .HasColumnName("number_of_pitches");
+                        .HasColumnName("number_of_pitches")
+                        .HasColumnOrder(31);
 
                     b.Property<int>("Outs")
                         .HasColumnType("integer")
-                        .HasColumnName("outs");
+                        .HasColumnName("outs")
+                        .HasColumnOrder(27);
 
                     b.Property<int>("Pickoffs")
                         .HasColumnType("integer")
-                        .HasColumnName("pickoffs");
+                        .HasColumnName("pickoffs")
+                        .HasColumnOrder(39);
+
+                    b.Property<int>("PlayerMlbId")
+                        .HasColumnType("integer")
+                        .HasColumnName("player_mlb_id")
+                        .HasColumnOrder(2);
 
                     b.Property<int>("Runs")
                         .HasColumnType("integer")
-                        .HasColumnName("runs");
+                        .HasColumnName("runs")
+                        .HasColumnOrder(21);
 
                     b.Property<int>("SacrificeBunts")
                         .HasColumnType("integer")
-                        .HasColumnName("sacrifice_bunts");
+                        .HasColumnName("sacrifice_bunts")
+                        .HasColumnOrder(43);
 
                     b.Property<int>("SacrificeFlies")
                         .HasColumnType("integer")
-                        .HasColumnName("sacrifice_flies");
+                        .HasColumnName("sacrifice_flies")
+                        .HasColumnOrder(44);
 
                     b.Property<int>("SaveOpportunities")
                         .HasColumnType("integer")
-                        .HasColumnName("save_opportunities");
+                        .HasColumnName("save_opportunities")
+                        .HasColumnOrder(15);
 
                     b.Property<int>("Saves")
                         .HasColumnType("integer")
-                        .HasColumnName("saves");
+                        .HasColumnName("saves")
+                        .HasColumnOrder(13);
+
+                    b.Property<ushort>("SeasonYear")
+                        .HasColumnType("smallint")
+                        .HasColumnName("season")
+                        .HasColumnOrder(3);
 
                     b.Property<int>("Shutouts")
                         .HasColumnType("integer")
-                        .HasColumnName("shutouts");
+                        .HasColumnName("shutouts")
+                        .HasColumnOrder(11);
 
                     b.Property<int>("StolenBases")
                         .HasColumnType("integer")
-                        .HasColumnName("stolen_bases");
+                        .HasColumnName("stolen_bases")
+                        .HasColumnOrder(37);
 
                     b.Property<int>("Strikeouts")
                         .HasColumnType("integer")
-                        .HasColumnName("strikeouts");
+                        .HasColumnName("strikeouts")
+                        .HasColumnOrder(23);
 
                     b.Property<int>("Strikes")
                         .HasColumnType("integer")
-                        .HasColumnName("strikes");
+                        .HasColumnName("strikes")
+                        .HasColumnOrder(32);
 
                     b.Property<int>("TeamMlbId")
                         .HasColumnType("integer")
-                        .HasColumnName("team_mlb_id");
+                        .HasColumnName("team_mlb_id")
+                        .HasColumnOrder(5);
 
                     b.Property<int>("Triples")
                         .HasColumnType("integer")
-                        .HasColumnName("triples");
+                        .HasColumnName("triples")
+                        .HasColumnOrder(19);
 
                     b.Property<int>("WildPitches")
                         .HasColumnType("integer")
-                        .HasColumnName("wild_pitches");
+                        .HasColumnName("wild_pitches")
+                        .HasColumnOrder(33);
 
                     b.Property<int>("Wins")
                         .HasColumnType("integer")
-                        .HasColumnName("wins");
+                        .HasColumnName("wins")
+                        .HasColumnOrder(6);
 
-                    b.Property<Guid>("player_stats_by_season_id")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("PlayerMlbId", "SeasonYear", "GameDate", "GameMlbId");
-
-                    b.HasIndex("player_stats_by_season_id");
+                    b.HasKey("player_stats_by_season_id", "GameMlbId")
+                        .HasName("player_pitching_stats_by_games_pkey");
 
                     b.ToTable("player_pitching_stats_by_games", "performance");
                 });
@@ -457,7 +556,8 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .WithMany("_battingStatsByGames")
                         .HasForeignKey("player_stats_by_season_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("player_batting_stats_by_games_player_stats_by_seasons_id_fkey");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerFieldingStatsByGame", b =>
@@ -466,7 +566,8 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .WithMany("_fieldingStatsByGames")
                         .HasForeignKey("player_stats_by_season_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("player_fielding_stats_by_games_player_stats_by_seasons_id_fkey");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects.PlayerPitchingStatsByGame", b =>
@@ -475,7 +576,8 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .WithMany("_pitchingStatsByGames")
                         .HasForeignKey("player_stats_by_season_id")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("player_pitching_stats_by_games_player_stats_by_seasons_id_fkey");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities.PlayerStatsBySeason", b =>

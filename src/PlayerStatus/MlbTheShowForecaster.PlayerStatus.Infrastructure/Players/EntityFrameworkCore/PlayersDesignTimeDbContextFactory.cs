@@ -3,7 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFramework;
+namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 
 /// <summary>
 /// Design-time configuration for the DB context. Only used when using tools like dotnet ef migrations

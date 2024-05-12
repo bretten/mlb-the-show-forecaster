@@ -15,13 +15,13 @@ public class PlayerSeasonMapperTests
         const int playerMlbId = 1;
         const int seasonYear = 2024;
         var battingGame1 = Faker.FakePlayerGameBattingStats(scalar: 1);
-        var battingGame2 = Faker.FakePlayerGameBattingStats(scalar: 1000, gameDate: new DateTime(2024, 5, 1));
+        var battingGame2 = Faker.FakePlayerGameBattingStats(scalar: 1000, gameDate: new DateOnly(2024, 5, 1));
         var pitchingGame1 = Faker.FakePlayerGamePitchingStats(scalar: 1, win: true, gameStarted: true, shutout: true,
             completeGame: true);
-        var pitchingGame2 = Faker.FakePlayerGamePitchingStats(scalar: 1000, gameDate: new DateTime(2024, 5, 1),
+        var pitchingGame2 = Faker.FakePlayerGamePitchingStats(scalar: 1000, gameDate: new DateOnly(2024, 5, 1),
             loss: true, gameFinished: true, blownSave: true, saveOpportunity: true);
         var fieldingGame1 = Faker.FakePlayerGameFieldingStats(scalar: 1, gameStarted: true);
-        var fieldingGame2 = Faker.FakePlayerGameFieldingStats(scalar: 1000, gameDate: new DateTime(2024, 5, 1));
+        var fieldingGame2 = Faker.FakePlayerGameFieldingStats(scalar: 1000, gameDate: new DateOnly(2024, 5, 1));
         var playerSeason = new PlayerSeason(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
             new List<PlayerGameBattingStats>() { battingGame1, battingGame2 },
             new List<PlayerGamePitchingStats>() { pitchingGame1, pitchingGame2 },

@@ -19,19 +19,32 @@ public sealed class PlayerStatsBySeasonEntityTypeConfiguration : IEntityTypeConf
     {
         builder.ToTable(Constants.PlayerStatsBySeasons.TableName, Constants.Schema);
 
+        builder.HasKey(e => e.Id)
+            .HasName(Constants.PlayerStatsBySeasons.Keys.PrimaryKey);
+
+        // Index for querying by season year
+        builder.HasIndex(e => new { e.SeasonYear }, Constants.PlayerStatsBySeasons.Indexes.Year)
+            .HasMethod("btree");
+
+        var columnOrder = 0;
+
         builder.Property(e => e.Id)
             .IsRequired()
-            .HasColumnName(Constants.PlayerStatsBySeasons.Id);
+            .HasColumnName(Constants.PlayerStatsBySeasons.Id)
+            .HasColumnOrder(columnOrder++);
 
         builder.Property(e => e.PlayerMlbId)
             .IsRequired()
             .HasColumnName(Constants.PlayerStatsBySeasons.PlayerMlbId)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => MlbId.Create(v));
 
         builder.Property(e => e.SeasonYear)
             .IsRequired()
+            .HasColumnType("smallint")
             .HasColumnName(Constants.PlayerStatsBySeasons.Season)
+            .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => SeasonYear.Create(v));
 
@@ -42,15 +55,18 @@ public sealed class PlayerStatsBySeasonEntityTypeConfiguration : IEntityTypeConf
 
         builder.HasMany<PlayerBattingStatsByGame>("_battingStatsByGames")
             .WithOne()
-            .HasForeignKey("player_stats_by_season_id")
+            .HasForeignKey(Constants.PlayerBattingStatsByGames.PlayerStatsBySeasonId)
+            .HasConstraintName(Constants.PlayerBattingStatsByGames.Keys.PlayerStatsBySeasonsForeignKeyConstraint)
             .IsRequired();
         builder.HasMany<PlayerPitchingStatsByGame>("_pitchingStatsByGames")
             .WithOne()
-            .HasForeignKey("player_stats_by_season_id")
+            .HasForeignKey(Constants.PlayerPitchingStatsByGames.PlayerStatsBySeasonId)
+            .HasConstraintName(Constants.PlayerPitchingStatsByGames.Keys.PlayerStatsBySeasonsForeignKeyConstraint)
             .IsRequired();
         builder.HasMany<PlayerFieldingStatsByGame>("_fieldingStatsByGames")
             .WithOne()
-            .HasForeignKey("player_stats_by_season_id")
+            .HasForeignKey(Constants.PlayerFieldingStatsByGames.PlayerStatsBySeasonId)
+            .HasConstraintName(Constants.PlayerFieldingStatsByGames.Keys.PlayerStatsBySeasonsForeignKeyConstraint)
             .IsRequired();
     }
 }
