@@ -1,12 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker;
 
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
-    {
-        services.AddLogging();
-    })
-    .Build();
+var host = HostCreator.Build(args);
 
 await host.StartAsync();
 
