@@ -9,7 +9,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.Ra
 /// Rabbit MQ implementation of <see cref="IDomainEventDispatcher"/>
 /// <para>Dispatches domain events using Rabbit MQ</para>
 /// </summary>
-public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher
+public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher, IDisposable
 {
     /// <summary>
     /// The RabbitMQ channel
@@ -45,8 +45,16 @@ public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher
 
             _model.BasicPublish(exchange: exchange,
                 routingKey: routingKey,
-                body: Encoding.UTF8.GetBytes(JsonSerializer.Serialize(e))
+                body: Encoding.UTF8.GetBytes(JsonSerializer.Serialize(e, e.GetType()))
             );
         }
+    }
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+        _model.Dispose();
     }
 }
