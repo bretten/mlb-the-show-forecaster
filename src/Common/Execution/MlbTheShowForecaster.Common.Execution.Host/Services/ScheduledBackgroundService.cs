@@ -49,9 +49,10 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
         stopwatch.Start();
 
         // Check the timer and run the nested service on an interval
+        var initialRunDone = false; // Run immediately on startup
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (stopwatch.ElapsedMilliseconds <= _interval.TotalMilliseconds) continue;
+            if (initialRunDone && stopwatch.ElapsedMilliseconds <= _interval.TotalMilliseconds) continue;
 
             // Each run will be its own service scope
             using var scope = ServiceScopeFactory.CreateScope();
@@ -70,6 +71,9 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
 
             // Restart the timer now that the nested service has executed
             stopwatch.Restart();
+
+            // No longer need to run immediately after startup
+            if (!initialRunDone) initialRunDone = true;
         }
     }
 }
