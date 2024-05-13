@@ -99,8 +99,7 @@ public static class HostCreator
                         sp.GetRequiredService<IServiceScopeFactory>(),
                         PerformanceBackgroundWork,
                         TimeSpan.FromSeconds(5)
-                    )
-                );
+                    ));
             });
 
         return builder.Build();

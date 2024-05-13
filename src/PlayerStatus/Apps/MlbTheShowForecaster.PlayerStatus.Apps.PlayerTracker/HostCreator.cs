@@ -89,8 +89,7 @@ public static class HostCreator
                         sp.GetRequiredService<IServiceScopeFactory>(),
                         PlayerTrackerBackgroundWork,
                         TimeSpan.FromSeconds(5)
-                    )
-                );
+                    ));
             });
 
         return builder.Build();
