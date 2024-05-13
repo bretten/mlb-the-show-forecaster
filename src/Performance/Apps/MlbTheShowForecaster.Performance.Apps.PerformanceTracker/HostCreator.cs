@@ -1,29 +1,33 @@
 ﻿using System.Reflection;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Batting;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Fielding;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Pitching;
+using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker;
 
 /// <summary>
-/// Creates the host for tracking player statuses
+/// Creates the host for tracking player performance
 /// </summary>
 public static class HostCreator
 {
     /// <summary>
-    /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPlayerStatusTracker"/>
+    /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPerformanceTracker"/>
     /// </summary>
-    private static readonly Func<IPlayerStatusTracker, Task> PlayerTrackerBackgroundWork = async tracker =>
+    private static readonly Func<IPerformanceTracker, Task> PerformanceBackgroundWork = async tracker =>
     {
-        await tracker.TrackPlayers(SeasonYear.Create(2024));
+        await tracker.TrackPlayerPerformance(SeasonYear.Create(2024));
     };
 
     /// <summary>
@@ -32,10 +36,15 @@ public static class HostCreator
     /// </summary>
     private static readonly Dictionary<Type, string> DomainEventPublisherTypes = new()
     {
-        { typeof(PlayerActivatedEvent), "PlayerActivated" },
-        { typeof(PlayerEnteredFreeAgencyEvent), "PlayerEnteredFreeAgency" },
-        { typeof(PlayerInactivatedEvent), "PlayerInactivated" },
-        { typeof(PlayerSignedContractWithTeamEvent), "PlayerSignedContractWithTeam" }
+        { typeof(PlayerBattedInGameEvent), "PlayerBattedInGame" },
+        { typeof(PlayerFieldedInGameEvent), "PlayerFieldedInGame" },
+        { typeof(PlayerPitchedInGameEvent), "PlayerPitchedInGame" },
+        { typeof(BattingImprovementEvent), "BattingImprovement" },
+        { typeof(BattingDeclineEvent), "BattingDecline" },
+        { typeof(PitchingImprovementEvent), "PitchingImprovement" },
+        { typeof(PitchingDeclineEvent), "PitchingDecline" },
+        { typeof(FieldingImprovementEvent), "FieldingImprovement" },
+        { typeof(FieldingDeclineEvent), "FieldingDecline" }
     };
 
     /// <summary>
@@ -74,20 +83,21 @@ public static class HostCreator
                 };
                 services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
                 {
-                    typeof(PlayerActivatedEvent).Assembly
+                    typeof(PlayerBattedInGameEvent).Assembly
                 });
 
-                // Player status tracking dependencies
-                services.AddPlayerTeamProvider();
-                services.AddPlayerStatusMapping();
-                services.AddPlayerStatusTracker(context.Configuration);
-                services.AddPlayerStatusEntityFrameworkCoreRepositories(context.Configuration);
+                // Player performance tracking dependencies
+                services.AddSingleton<ICalendar, Calendar>();
+                services.AddPerformanceMapping();
+                services.AddPerformancePlayerSeasonScorekeeper(context.Configuration);
+                services.AddPerformanceTracker(context.Configuration);
+                services.AddPerformanceEntityFrameworkCoreRepositories(context.Configuration);
 
-                // Background service for tracking player statuses
-                services.AddHostedService<ScheduledBackgroundService<IPlayerStatusTracker>>(sp =>
-                    new ScheduledBackgroundService<IPlayerStatusTracker>(
+                // Background service for tracking player performance
+                services.AddHostedService<ScheduledBackgroundService<IPerformanceTracker>>(sp =>
+                    new ScheduledBackgroundService<IPerformanceTracker>(
                         sp.GetRequiredService<IServiceScopeFactory>(),
-                        PlayerTrackerBackgroundWork,
+                        PerformanceBackgroundWork,
                         TimeSpan.FromSeconds(5)
                     )
                 );
