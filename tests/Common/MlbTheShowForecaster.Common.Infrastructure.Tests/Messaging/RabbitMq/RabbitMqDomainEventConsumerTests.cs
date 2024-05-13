@@ -1,5 +1,7 @@
 ﻿using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq.Exceptions;
 using Moq;
@@ -11,19 +13,20 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.Messag
 public class RabbitMqDomainEventConsumerTests
 {
     [Fact]
-    public void ReceivedEventHandler_EmptyEventBody_ThrowsException()
+    public async Task ReceivedEventHandler_EmptyEventBody_ThrowsException()
     {
         // Arrange
-        var domainEvent = new TestDomainEvent(string.Empty);
-
+        var mockUnderlyingConsumer = Mock.Of<IDomainEventConsumer<TestDomainEvent>>();
         var mockModel = Mock.Of<IModel>();
-        var mockCallVerifier = Mock.Of<ICallVerifier>();
 
-        var consumer = new TestRabbitMqDomainEventConsumer(mockModel, mockCallVerifier);
+        var consumerWrapper =
+            new RabbitMqDomainEventConsumer<TestDomainEvent>(mockUnderlyingConsumer, mockModel, "queue1");
+
+        var body = Encoding.UTF8.GetBytes("");
+        var action = async () => await consumerWrapper.ReceivedEventHandler(consumerWrapper, CreateDelivery(body));
 
         // Act
-        consumer.InvokeReceived(domainEvent.Message);
-        var actual = consumer.ReceivedEventHandlerException;
+        var actual = await Record.ExceptionAsync(action);
 
         // Assert
         Assert.NotNull(actual);
@@ -31,19 +34,22 @@ public class RabbitMqDomainEventConsumerTests
     }
 
     [Fact]
-    public void ReceivedEventHandler_BodyIsOfDifferentType_ThrowsException()
+    public async Task ReceivedEventHandler_BodyIsOfDifferentType_ThrowsException()
     {
         // Arrange
-        var domainEvent = new TestDomainEvent("{\"Property1\": 1, \"Property2\": \"content\"}");
+        var domainEvent = new AnotherDomainEvent(1, "Content");
 
+        var mockUnderlyingConsumer = Mock.Of<IDomainEventConsumer<TestDomainEvent>>();
         var mockModel = Mock.Of<IModel>();
-        var mockCallVerifier = Mock.Of<ICallVerifier>();
 
-        var consumer = new TestRabbitMqDomainEventConsumer(mockModel, mockCallVerifier);
+        var consumerWrapper =
+            new RabbitMqDomainEventConsumer<TestDomainEvent>(mockUnderlyingConsumer, mockModel, "queue1");
+
+        var body = JsonSerializer.SerializeToUtf8Bytes(domainEvent);
+        var action = async () => await consumerWrapper.ReceivedEventHandler(consumerWrapper, CreateDelivery(body));
 
         // Act
-        consumer.InvokeReceived(domainEvent.Message);
-        var actual = consumer.ReceivedEventHandlerException;
+        var actual = await Record.ExceptionAsync(action);
 
         // Assert
         Assert.NotNull(actual);
@@ -51,76 +57,39 @@ public class RabbitMqDomainEventConsumerTests
     }
 
     [Fact]
-    public void Handle_DomainEvent_EnsuresHandleIsInvoked()
+    public async Task ReceivedEventHandler_ValidDomainEvent_UnderlyingConsumerIsInvoked()
     {
         // Arrange
         var domainEvent = new TestDomainEvent("{\"Message\": \"DomainEventContent\"}");
 
+        var mockUnderlyingConsumer = Mock.Of<IDomainEventConsumer<TestDomainEvent>>();
         var mockModel = Mock.Of<IModel>();
-        var mockCallVerifier = Mock.Of<ICallVerifier>();
 
-        var consumer = new TestRabbitMqDomainEventConsumer(mockModel, mockCallVerifier);
+        var consumerWrapper =
+            new RabbitMqDomainEventConsumer<TestDomainEvent>(mockUnderlyingConsumer, mockModel, "queue1");
+
+        var body = JsonSerializer.SerializeToUtf8Bytes(domainEvent);
 
         // Act
-        consumer.InvokeReceived(domainEvent.Message);
+        await consumerWrapper.ReceivedEventHandler(consumerWrapper, CreateDelivery(body));
 
         // Assert
-        Mock.Get(mockCallVerifier).Verify(x => x.WasInvoked("DomainEventContent"));
+        Mock.Get(mockUnderlyingConsumer).Verify(x => x.Handle(domainEvent));
     }
 
-    private sealed record TestDomainEvent(
+    public sealed record TestDomainEvent(
         [property: JsonRequired]
         string Message
-    );
+    ) : IDomainEvent;
 
-    private sealed class TestRabbitMqDomainEventConsumer : RabbitMqDomainEventConsumer<TestDomainEvent>
+    public sealed record AnotherDomainEvent(
+        [property: JsonRequired]
+        int Property1,
+        string Property2
+    ) : IDomainEvent;
+
+    private static BasicDeliverEventArgs CreateDelivery(byte[] body)
     {
-        /// <summary>
-        /// Placed within the body of the abstract method <see cref="Handle"/> to verify that it was invoked
-        /// </summary>
-        private readonly ICallVerifier _callVerifier;
-
-        /// <summary>
-        /// Used to capture an exception that was thrown by the event consumer's received event handler in
-        /// <see cref="RabbitMqDomainEventConsumer{T}"/>
-        /// </summary>
-        public Exception ReceivedEventHandlerException { get; private set; } = null!;
-
-        public TestRabbitMqDomainEventConsumer(IModel model, ICallVerifier callVerifier) : base(model)
-        {
-            _callVerifier = callVerifier;
-        }
-
-        public override Task Handle(TestDomainEvent e)
-        {
-            _callVerifier.WasInvoked(e.Message);
-            return Task.CompletedTask;
-        }
-
-        protected override async Task ReceivedEventHandler(object? sender, BasicDeliverEventArgs args)
-        {
-            try
-            {
-                await base.ReceivedEventHandler(sender, args);
-            }
-            catch (Exception e)
-            {
-                ReceivedEventHandlerException = e;
-            }
-        }
-
-        public void InvokeReceived(string body)
-        {
-            Consumer.HandleBasicDeliver("consumerTag", 1, false, "exchange", "routingKey", null,
-                Encoding.UTF8.GetBytes(body));
-        }
-    }
-
-    /// <summary>
-    /// Placed within the body of the abstract method <see cref="TestRabbitMqDomainEventConsumer.Handle"/> to verify that it was invoked
-    /// </summary>
-    public interface ICallVerifier
-    {
-        void WasInvoked(string message);
+        return new BasicDeliverEventArgs("consumerTag", 1, false, "exchange", "routingKey", null, body);
     }
 }
