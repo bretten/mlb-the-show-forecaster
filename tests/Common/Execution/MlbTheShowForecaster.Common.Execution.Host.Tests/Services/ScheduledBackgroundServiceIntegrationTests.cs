@@ -26,10 +26,10 @@ public class ScheduledBackgroundServiceIntegrationTests
         services.AddHostedService<ScheduledBackgroundService<IIntervalService>>(sp =>
         {
             return new ScheduledBackgroundService<IIntervalService>(sp.GetRequiredService<IServiceScopeFactory>(),
-                async (service, innerServiceProvider) =>
+                async (service, innerServiceProvider, ct) =>
                 {
                     var anotherServiceInstance = innerServiceProvider.GetRequiredService<IIntervalService>();
-                    await service.Execute();
+                    await service.Execute(ct);
                 }, TimeSpan.FromMilliseconds(nestedServiceIntervalInMs));
         });
         // Service provider
@@ -53,7 +53,7 @@ public class ScheduledBackgroundServiceIntegrationTests
          * Assert
          */
         // The nested service should have executed at least once
-        mockIntervalService.Verify(x => x.Execute(), Times.AtLeastOnce);
+        mockIntervalService.Verify(x => x.Execute(It.IsAny<CancellationToken>()), Times.AtLeastOnce);
         // The nested service should have been disposed of, even when stopped via a CancellationToken
         mockIntervalService.Verify(x => x.Dispose(), Times.Once);
     }
@@ -75,7 +75,7 @@ public class ScheduledBackgroundServiceIntegrationTests
         services.AddHostedService<ScheduledBackgroundService<IIntervalService>>(sp =>
         {
             return new ScheduledBackgroundService<IIntervalService>(sp.GetRequiredService<IServiceScopeFactory>(),
-                async (service, innerServiceProvider) => { await service.Execute(); },
+                async (service, innerServiceProvider, ct) => { await service.Execute(ct); },
                 TimeSpan.FromMilliseconds(nestedServiceIntervalInMs));
         });
         // Service provider
@@ -111,6 +111,6 @@ public class ScheduledBackgroundServiceIntegrationTests
 
     public interface IIntervalService : IDisposable
     {
-        Task Execute();
+        Task Execute(CancellationToken cancellationToken = default);
     }
 }
