@@ -14,7 +14,7 @@ public sealed class Clock : IClock
     /// <inheritdoc />
     public DateTimeOffset PstNow()
     {
-        var tzInfo = TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");
+        var tzInfo = TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
         return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tzInfo);
     }
 }
