@@ -31,7 +31,7 @@ public class ClockTests
         var pstNow = DateTime.UtcNow.AddHours(-7);
         var pstNowOffset = new DateTimeOffset(DateOnly.FromDateTime(pstNow), TimeOnly.FromDateTime(pstNow),
             TimeSpan.FromHours(-7));
-        var timeDifference = pstNowOffset - actual;
-        Assert.InRange(timeDifference.TotalMilliseconds, 0, 50);
+        var timeDifference = pstNowOffset.ToUnixTimeSeconds() - actual.ToUnixTimeSeconds();
+        Assert.InRange(timeDifference, 0, 50);
     }
 }
