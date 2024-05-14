@@ -25,8 +25,8 @@ public static class MarketplaceWatcherHostExtensions
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPlayerCardTracker"/>
     /// </summary>
-    private static readonly Func<IPlayerCardTracker, IServiceProvider, Task> PlayerCardBackgroundWork =
-        async (tracker, sp) =>
+    private static readonly Func<IPlayerCardTracker, IServiceProvider, CancellationToken, Task>
+        PlayerCardBackgroundWork = async (tracker, sp, ct) =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPlayerCardTracker>>>();
@@ -39,7 +39,7 @@ public static class MarketplaceWatcherHostExtensions
             foreach (var season in seasons)
             {
                 logger.LogInformation($"{s} - {season}");
-                var result = await tracker.TrackPlayerCards(SeasonYear.Create(season));
+                var result = await tracker.TrackPlayerCards(SeasonYear.Create(season), ct);
                 logger.LogInformation($"{s} - Total catalog cards = {result.TotalCatalogCards}");
                 logger.LogInformation($"{s} - Total new catalog cards = {result.TotalNewCatalogCards}");
                 logger.LogInformation($"{s} - Total existing player cards = {result.TotalExistingPlayerCards}");
@@ -49,8 +49,8 @@ public static class MarketplaceWatcherHostExtensions
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="ICardPriceTracker"/>
     /// </summary>
-    private static readonly Func<ICardPriceTracker, IServiceProvider, Task> CardPriceBackgroundWork =
-        async (tracker, sp) =>
+    private static readonly Func<ICardPriceTracker, IServiceProvider, CancellationToken, Task> CardPriceBackgroundWork =
+        async (tracker, sp, ct) =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<ICardPriceTracker>>>();
@@ -63,7 +63,7 @@ public static class MarketplaceWatcherHostExtensions
             foreach (var season in seasons)
             {
                 logger.LogInformation($"{s} - {season}");
-                var result = await tracker.TrackCardPrices(SeasonYear.Create(season));
+                var result = await tracker.TrackCardPrices(SeasonYear.Create(season), ct);
                 logger.LogInformation($"{s} - Total cards = {result.TotalCards}");
                 logger.LogInformation($"{s} - Total new listings = {result.TotalNewListings}");
                 logger.LogInformation($"{s} - Total updated listings = {result.TotalUpdatedListings}");
@@ -74,8 +74,8 @@ public static class MarketplaceWatcherHostExtensions
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IRosterUpdateOrchestrator"/>
     /// </summary>
-    private static readonly Func<IRosterUpdateOrchestrator, IServiceProvider, Task> RosterUpdateBackgroundWork =
-        async (rosterUpdater, sp) =>
+    private static readonly Func<IRosterUpdateOrchestrator, IServiceProvider, CancellationToken, Task>
+        RosterUpdateBackgroundWork = async (rosterUpdater, sp, ct) =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IRosterUpdateOrchestrator>>>();
@@ -88,7 +88,7 @@ public static class MarketplaceWatcherHostExtensions
             foreach (var season in seasons)
             {
                 logger.LogInformation($"{s} - {season}");
-                var results = await rosterUpdater.SyncRosterUpdates(SeasonYear.Create(season));
+                var results = await rosterUpdater.SyncRosterUpdates(SeasonYear.Create(season), ct);
                 foreach (var result in results)
                 {
                     logger.LogInformation($"{s} - Date = {result.Date}");

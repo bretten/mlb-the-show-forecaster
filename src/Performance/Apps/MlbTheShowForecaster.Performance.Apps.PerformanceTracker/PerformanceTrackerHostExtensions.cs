@@ -29,8 +29,8 @@ public static class PerformanceTrackerHostExtensions
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPerformanceTracker"/>
     /// </summary>
-    private static readonly Func<IPerformanceTracker, IServiceProvider, Task> PerformanceBackgroundWork =
-        async (tracker, sp) =>
+    private static readonly Func<IPerformanceTracker, IServiceProvider, CancellationToken, Task>
+        PerformanceBackgroundWork = async (tracker, sp, ct) =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPerformanceTracker>>>();
@@ -43,10 +43,11 @@ public static class PerformanceTrackerHostExtensions
             foreach (var season in seasons)
             {
                 logger.LogInformation($"{s} - {season}");
-                var result = await tracker.TrackPlayerPerformance(SeasonYear.Create(season));
+                var result = await tracker.TrackPlayerPerformance(SeasonYear.Create(season), ct);
                 logger.LogInformation($"{s} - Total player seasons = {result.TotalPlayerSeasons}");
                 logger.LogInformation($"{s} - Total player season updates = {result.TotalPlayerSeasonUpdates}");
-                logger.LogInformation($"{s} - Total up-to-date player seasons = {result.TotalUpToDatePlayerSeasons}");
+                logger.LogInformation(
+                    $"{s} - Total up-to-date player seasons = {result.TotalUpToDatePlayerSeasons}");
             }
         };
 

@@ -24,8 +24,8 @@ public static class PlayerTrackerHostExtensions
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPlayerStatusTracker"/>
     /// </summary>
-    private static readonly Func<IPlayerStatusTracker, IServiceProvider, Task> PlayerTrackerBackgroundWork =
-        async (tracker, sp) =>
+    private static readonly Func<IPlayerStatusTracker, IServiceProvider, CancellationToken, Task>
+        PlayerTrackerBackgroundWork = async (tracker, sp, ct) =>
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPlayerStatusTracker>>>();
@@ -38,7 +38,7 @@ public static class PlayerTrackerHostExtensions
             foreach (var season in seasons)
             {
                 logger.LogInformation($"{s} - {season}");
-                var result = await tracker.TrackPlayers(SeasonYear.Create(season));
+                var result = await tracker.TrackPlayers(SeasonYear.Create(season), ct);
                 logger.LogInformation($"{s} - Total roster entries = {result.TotalRosterEntries}");
                 logger.LogInformation($"{s} - Total new players = {result.TotalNewPlayers}");
                 logger.LogInformation($"{s} - Total updated players = {result.TotalUpdatedPlayers}");
