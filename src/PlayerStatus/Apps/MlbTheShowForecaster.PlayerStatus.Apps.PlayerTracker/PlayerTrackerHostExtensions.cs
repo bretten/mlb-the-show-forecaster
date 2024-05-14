@@ -19,7 +19,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker;
 /// <summary>
 /// Creates the host for tracking player statuses
 /// </summary>
-public static class HostCreator
+public static class PlayerTrackerHostExtensions
 {
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPlayerStatusTracker"/>
@@ -69,51 +69,46 @@ public static class HostCreator
     /// <summary>
     /// Builds the <see cref="IHost"/> for this domain
     /// </summary>
+    /// <param name="builder"><see cref="IHostBuilder"/></param>
     /// <param name="args">Command-line arguments</param>
-    /// <returns>The built <see cref="IHost"/></returns>
-    public static IHost Build(string[] args)
+    /// <returns>The <see cref="IHostBuilder"/> with the player tracker configured on it</returns>
+    public static IHostBuilder ConfigurePlayerTracker(this IHostBuilder builder, string[] args)
     {
-        var builder = Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((context, configurationBuilder) =>
+        builder.ConfigureServices((context, services) =>
+        {
+            services.AddLogging();
+
+            // Rabbit MQ
+            var factory = new ConnectionFactory
             {
-                configurationBuilder.AddJsonFile("appsettings.json");
-                configurationBuilder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json");
-            })
-            .ConfigureServices((context, services) =>
+                HostName = context.Configuration["Messaging:RabbitMq:HostName"],
+                UserName = context.Configuration["Messaging:RabbitMq:UserName"],
+                Password = context.Configuration["Messaging:RabbitMq:Password"],
+                Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
+                DispatchConsumersAsync = true
+            };
+            services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
             {
-                services.AddLogging();
-
-                // Rabbit MQ
-                var factory = new ConnectionFactory
-                {
-                    HostName = context.Configuration["Messaging:RabbitMq:HostName"],
-                    UserName = context.Configuration["Messaging:RabbitMq:UserName"],
-                    Password = context.Configuration["Messaging:RabbitMq:Password"],
-                    Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
-                    DispatchConsumersAsync = true
-                };
-                services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
-                {
-                    typeof(PlayerActivatedEvent).Assembly
-                });
-
-                // Player status tracking dependencies
-                services.AddPlayerTeamProvider();
-                services.AddPlayerStatusMapping();
-                services.AddPlayerStatusTracker(context.Configuration);
-                services.AddPlayerStatusEntityFrameworkCoreRepositories(context.Configuration);
-
-                // Background service for tracking player statuses
-                services.AddHostedService<ScheduledBackgroundService<IPlayerStatusTracker>>(sp =>
-                    new ScheduledBackgroundService<IPlayerStatusTracker>(
-                        sp.GetRequiredService<IServiceScopeFactory>(),
-                        PlayerTrackerBackgroundWork,
-                        TimeSpan.ParseExact(
-                            context.Configuration.GetRequiredValue<string>("PlayerStatusTracker:Interval"), "g",
-                            CultureInfo.InvariantCulture)
-                    ));
+                typeof(PlayerActivatedEvent).Assembly
             });
 
-        return builder.Build();
+            // Player status tracking dependencies
+            services.AddPlayerTeamProvider();
+            services.AddPlayerStatusMapping();
+            services.AddPlayerStatusTracker(context.Configuration);
+            services.AddPlayerStatusEntityFrameworkCoreRepositories(context.Configuration);
+
+            // Background service for tracking player statuses
+            services.AddHostedService<ScheduledBackgroundService<IPlayerStatusTracker>>(sp =>
+                new ScheduledBackgroundService<IPlayerStatusTracker>(
+                    sp.GetRequiredService<IServiceScopeFactory>(),
+                    PlayerTrackerBackgroundWork,
+                    TimeSpan.ParseExact(
+                        context.Configuration.GetRequiredValue<string>("PlayerStatusTracker:Interval"), "g",
+                        CultureInfo.InvariantCulture)
+                ));
+        });
+
+        return builder;
     }
 }

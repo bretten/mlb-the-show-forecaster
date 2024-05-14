@@ -20,7 +20,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher;
 /// <summary>
 /// Creates the host for tracking the MLB The Show cards and marketplace
 /// </summary>
-public static class HostCreator
+public static class MarketplaceWatcherHostExtensions
 {
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPlayerCardTracker"/>
@@ -125,70 +125,65 @@ public static class HostCreator
     /// <summary>
     /// Builds the <see cref="IHost"/> for this domain
     /// </summary>
+    /// <param name="builder"><see cref="IHostBuilder"/></param>
     /// <param name="args">Command-line arguments</param>
-    /// <returns>The built <see cref="IHost"/></returns>
-    public static IHost Build(string[] args)
+    /// <returns>The <see cref="IHostBuilder"/> with the marketplace watcher configured on it</returns>
+    public static IHostBuilder ConfigureMarketplaceWatcher(this IHostBuilder builder, string[] args)
     {
-        var builder = Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((context, configurationBuilder) =>
+        builder.ConfigureServices((context, services) =>
+        {
+            services.AddLogging();
+
+            // Rabbit MQ
+            var factory = new ConnectionFactory
             {
-                configurationBuilder.AddJsonFile("appsettings.json");
-                configurationBuilder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json");
-            })
-            .ConfigureServices((context, services) =>
+                HostName = context.Configuration["Messaging:RabbitMq:HostName"],
+                UserName = context.Configuration["Messaging:RabbitMq:UserName"],
+                Password = context.Configuration["Messaging:RabbitMq:Password"],
+                Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
+                DispatchConsumersAsync = true
+            };
+            services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
             {
-                services.AddLogging();
-
-                // Rabbit MQ
-                var factory = new ConnectionFactory
-                {
-                    HostName = context.Configuration["Messaging:RabbitMq:HostName"],
-                    UserName = context.Configuration["Messaging:RabbitMq:UserName"],
-                    Password = context.Configuration["Messaging:RabbitMq:Password"],
-                    Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
-                    DispatchConsumersAsync = true
-                };
-                services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
-                {
-                    typeof(PlayerCardOverallRatingDeclinedEvent).Assembly
-                });
-
-                // MLB The Show cards and marketplace dependencies
-                services.AddGameCardsMapping();
-                services.AddGameCardsPlayerCardTracker();
-                services.AddGameCardsPriceTracker(context.Configuration);
-                services.AddGameCardsRosterUpdates();
-                services.AddGameCardsEntityFrameworkCoreRepositories(context.Configuration);
-
-                // Background service for tracking player cards
-                services.AddHostedService<ScheduledBackgroundService<IPlayerCardTracker>>(sp =>
-                    new ScheduledBackgroundService<IPlayerCardTracker>(
-                        sp.GetRequiredService<IServiceScopeFactory>(),
-                        PlayerCardBackgroundWork,
-                        TimeSpan.ParseExact(
-                            context.Configuration.GetRequiredValue<string>("PlayerCardTracker:Interval"), "g",
-                            CultureInfo.InvariantCulture)
-                    ));
-                // Background service for tracking marketplace card prices
-                services.AddHostedService<ScheduledBackgroundService<ICardPriceTracker>>(sp =>
-                    new ScheduledBackgroundService<ICardPriceTracker>(
-                        sp.GetRequiredService<IServiceScopeFactory>(),
-                        CardPriceBackgroundWork,
-                        TimeSpan.ParseExact(
-                            context.Configuration.GetRequiredValue<string>("CardPriceTracker:Interval"), "g",
-                            CultureInfo.InvariantCulture)
-                    ));
-                // Background service for tracking marketplace card prices
-                services.AddHostedService<ScheduledBackgroundService<IRosterUpdateOrchestrator>>(sp =>
-                    new ScheduledBackgroundService<IRosterUpdateOrchestrator>(
-                        sp.GetRequiredService<IServiceScopeFactory>(),
-                        RosterUpdateBackgroundWork,
-                        TimeSpan.ParseExact(
-                            context.Configuration.GetRequiredValue<string>("PlayerCardTracker:Interval"), "g",
-                            CultureInfo.InvariantCulture)
-                    ));
+                typeof(PlayerCardOverallRatingDeclinedEvent).Assembly
             });
 
-        return builder.Build();
+            // MLB The Show cards and marketplace dependencies
+            services.AddGameCardsMapping();
+            services.AddGameCardsPlayerCardTracker();
+            services.AddGameCardsPriceTracker(context.Configuration);
+            services.AddGameCardsRosterUpdates();
+            services.AddGameCardsEntityFrameworkCoreRepositories(context.Configuration);
+
+            // Background service for tracking player cards
+            services.AddHostedService<ScheduledBackgroundService<IPlayerCardTracker>>(sp =>
+                new ScheduledBackgroundService<IPlayerCardTracker>(
+                    sp.GetRequiredService<IServiceScopeFactory>(),
+                    PlayerCardBackgroundWork,
+                    TimeSpan.ParseExact(
+                        context.Configuration.GetRequiredValue<string>("PlayerCardTracker:Interval"), "g",
+                        CultureInfo.InvariantCulture)
+                ));
+            // Background service for tracking marketplace card prices
+            services.AddHostedService<ScheduledBackgroundService<ICardPriceTracker>>(sp =>
+                new ScheduledBackgroundService<ICardPriceTracker>(
+                    sp.GetRequiredService<IServiceScopeFactory>(),
+                    CardPriceBackgroundWork,
+                    TimeSpan.ParseExact(
+                        context.Configuration.GetRequiredValue<string>("CardPriceTracker:Interval"), "g",
+                        CultureInfo.InvariantCulture)
+                ));
+            // Background service for tracking marketplace card prices
+            services.AddHostedService<ScheduledBackgroundService<IRosterUpdateOrchestrator>>(sp =>
+                new ScheduledBackgroundService<IRosterUpdateOrchestrator>(
+                    sp.GetRequiredService<IServiceScopeFactory>(),
+                    RosterUpdateBackgroundWork,
+                    TimeSpan.ParseExact(
+                        context.Configuration.GetRequiredValue<string>("PlayerCardTracker:Interval"), "g",
+                        CultureInfo.InvariantCulture)
+                ));
+        });
+
+        return builder;
     }
 }

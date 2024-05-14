@@ -24,7 +24,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracke
 /// <summary>
 /// Creates the host for tracking player performance
 /// </summary>
-public static class HostCreator
+public static class PerformanceTrackerHostExtensions
 {
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPerformanceTracker"/>
@@ -78,52 +78,47 @@ public static class HostCreator
     /// <summary>
     /// Builds the <see cref="IHost"/> for this domain
     /// </summary>
+    /// <param name="builder"><see cref="IHostBuilder"/></param>
     /// <param name="args">Command-line arguments</param>
-    /// <returns>The built <see cref="IHost"/></returns>
-    public static IHost Build(string[] args)
+    /// <returns>The <see cref="IHostBuilder"/> with the performance tracker configured on it</returns>
+    public static IHostBuilder ConfigurePerformanceTracker(this IHostBuilder builder, string[] args)
     {
-        var builder = Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((context, configurationBuilder) =>
+        builder.ConfigureServices((context, services) =>
+        {
+            services.AddLogging();
+
+            // Rabbit MQ
+            var factory = new ConnectionFactory
             {
-                configurationBuilder.AddJsonFile("appsettings.json");
-                configurationBuilder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json");
-            })
-            .ConfigureServices((context, services) =>
+                HostName = context.Configuration["Messaging:RabbitMq:HostName"],
+                UserName = context.Configuration["Messaging:RabbitMq:UserName"],
+                Password = context.Configuration["Messaging:RabbitMq:Password"],
+                Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
+                DispatchConsumersAsync = true
+            };
+            services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
             {
-                services.AddLogging();
-
-                // Rabbit MQ
-                var factory = new ConnectionFactory
-                {
-                    HostName = context.Configuration["Messaging:RabbitMq:HostName"],
-                    UserName = context.Configuration["Messaging:RabbitMq:UserName"],
-                    Password = context.Configuration["Messaging:RabbitMq:Password"],
-                    Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
-                    DispatchConsumersAsync = true
-                };
-                services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
-                {
-                    typeof(PlayerBattedInGameEvent).Assembly
-                });
-
-                // Player performance tracking dependencies
-                services.AddSingleton<ICalendar, Calendar>();
-                services.AddPerformanceMapping();
-                services.AddPerformancePlayerSeasonScorekeeper(context.Configuration);
-                services.AddPerformanceTracker(context.Configuration);
-                services.AddPerformanceEntityFrameworkCoreRepositories(context.Configuration);
-
-                // Background service for tracking player performance
-                services.AddHostedService<ScheduledBackgroundService<IPerformanceTracker>>(sp =>
-                    new ScheduledBackgroundService<IPerformanceTracker>(
-                        sp.GetRequiredService<IServiceScopeFactory>(),
-                        PerformanceBackgroundWork,
-                        TimeSpan.ParseExact(
-                            context.Configuration.GetRequiredValue<string>("PerformanceTracker:Interval"), "g",
-                            CultureInfo.InvariantCulture)
-                    ));
+                typeof(PlayerBattedInGameEvent).Assembly
             });
 
-        return builder.Build();
+            // Player performance tracking dependencies
+            services.AddSingleton<ICalendar, Calendar>();
+            services.AddPerformanceMapping();
+            services.AddPerformancePlayerSeasonScorekeeper(context.Configuration);
+            services.AddPerformanceTracker(context.Configuration);
+            services.AddPerformanceEntityFrameworkCoreRepositories(context.Configuration);
+
+            // Background service for tracking player performance
+            services.AddHostedService<ScheduledBackgroundService<IPerformanceTracker>>(sp =>
+                new ScheduledBackgroundService<IPerformanceTracker>(
+                    sp.GetRequiredService<IServiceScopeFactory>(),
+                    PerformanceBackgroundWork,
+                    TimeSpan.ParseExact(
+                        context.Configuration.GetRequiredValue<string>("PerformanceTracker:Interval"), "g",
+                        CultureInfo.InvariantCulture)
+                ));
+        });
+
+        return builder;
     }
 }
