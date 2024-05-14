@@ -15,7 +15,7 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
     /// <summary>
     /// The work that the service will do on an interval
     /// </summary>
-    private readonly Func<T, IServiceProvider, Task> _action;
+    private readonly Func<T, IServiceProvider, CancellationToken, Task> _action;
 
     /// <summary>
     /// The interval to run the nested service's work on
@@ -28,8 +28,8 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
     /// <param name="serviceScopeFactory"><inheritdoc /></param>
     /// <param name="action">The work that the service will do on an interval</param>
     /// <param name="interval">The interval to run the nested service's work on</param>
-    public ScheduledBackgroundService(IServiceScopeFactory serviceScopeFactory, Func<T, IServiceProvider, Task> action,
-        TimeSpan interval) : base(serviceScopeFactory)
+    public ScheduledBackgroundService(IServiceScopeFactory serviceScopeFactory,
+        Func<T, IServiceProvider, CancellationToken, Task> action, TimeSpan interval) : base(serviceScopeFactory)
     {
         _action = action;
         _interval = interval;
@@ -59,7 +59,7 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
             Service = scope.ServiceProvider.GetRequiredService<T>();
 
             // Get the task that the nested service will perform
-            var task = _action.Invoke(Service, scope.ServiceProvider);
+            var task = _action.Invoke(Service, scope.ServiceProvider, stoppingToken);
             // If the task has already been completed, force the method to complete asynchronously and return to the caller
             if (task.GetAwaiter().IsCompleted)
             {
