@@ -1,7 +1,9 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
@@ -9,6 +11,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker;
@@ -21,10 +24,27 @@ public static class HostCreator
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPlayerStatusTracker"/>
     /// </summary>
-    private static readonly Func<IPlayerStatusTracker, Task> PlayerTrackerBackgroundWork = async tracker =>
-    {
-        await tracker.TrackPlayers(SeasonYear.Create(2024));
-    };
+    private static readonly Func<IPlayerStatusTracker, IServiceProvider, Task> PlayerTrackerBackgroundWork =
+        async (tracker, sp) =>
+        {
+            var config = sp.GetRequiredService<IConfiguration>();
+            var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPlayerStatusTracker>>>();
+
+            // Service name
+            const string s = nameof(IPlayerStatusTracker);
+
+            // The seasons to track
+            var seasons = config.GetRequiredValue<ushort[]>("PlayerStatusTracker:Seasons");
+            foreach (var season in seasons)
+            {
+                logger.LogInformation($"{s} - {season}");
+                var result = await tracker.TrackPlayers(SeasonYear.Create(season));
+                logger.LogInformation($"{s} - Total roster entries = {result.TotalRosterEntries}");
+                logger.LogInformation($"{s} - Total new players = {result.TotalNewPlayers}");
+                logger.LogInformation($"{s} - Total updated players = {result.TotalUpdatedPlayers}");
+                logger.LogInformation($"{s} - Total unchanged players = {result.TotalUnchangedPlayers}");
+            }
+        };
 
     /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be published in this domain mapped to their corresponding
@@ -88,7 +108,9 @@ public static class HostCreator
                     new ScheduledBackgroundService<IPlayerStatusTracker>(
                         sp.GetRequiredService<IServiceScopeFactory>(),
                         PlayerTrackerBackgroundWork,
-                        TimeSpan.FromSeconds(5)
+                        TimeSpan.ParseExact(
+                            context.Configuration.GetRequiredValue<string>("PlayerStatusTracker:Interval"), "g",
+                            CultureInfo.InvariantCulture)
                     ));
             });
 

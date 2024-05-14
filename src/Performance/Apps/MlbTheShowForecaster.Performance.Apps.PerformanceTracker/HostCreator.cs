@@ -1,8 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
@@ -13,7 +15,9 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
+using Calendar = com.brettnamba.MlbTheShowForecaster.Common.DateAndTime.Calendar;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker;
 
@@ -25,10 +29,26 @@ public static class HostCreator
     /// <summary>
     /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPerformanceTracker"/>
     /// </summary>
-    private static readonly Func<IPerformanceTracker, Task> PerformanceBackgroundWork = async tracker =>
-    {
-        await tracker.TrackPlayerPerformance(SeasonYear.Create(2024));
-    };
+    private static readonly Func<IPerformanceTracker, IServiceProvider, Task> PerformanceBackgroundWork =
+        async (tracker, sp) =>
+        {
+            var config = sp.GetRequiredService<IConfiguration>();
+            var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPerformanceTracker>>>();
+
+            // Service name
+            const string s = nameof(IPerformanceTracker);
+
+            // The seasons to track
+            var seasons = config.GetRequiredValue<ushort[]>("PerformanceTracker:Seasons");
+            foreach (var season in seasons)
+            {
+                logger.LogInformation($"{s} - {season}");
+                var result = await tracker.TrackPlayerPerformance(SeasonYear.Create(season));
+                logger.LogInformation($"{s} - Total player seasons = {result.TotalPlayerSeasons}");
+                logger.LogInformation($"{s} - Total player season updates = {result.TotalPlayerSeasonUpdates}");
+                logger.LogInformation($"{s} - Total up-to-date player seasons = {result.TotalUpToDatePlayerSeasons}");
+            }
+        };
 
     /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be published in this domain mapped to their corresponding
@@ -98,7 +118,9 @@ public static class HostCreator
                     new ScheduledBackgroundService<IPerformanceTracker>(
                         sp.GetRequiredService<IServiceScopeFactory>(),
                         PerformanceBackgroundWork,
-                        TimeSpan.FromSeconds(5)
+                        TimeSpan.ParseExact(
+                            context.Configuration.GetRequiredValue<string>("PerformanceTracker:Interval"), "g",
+                            CultureInfo.InvariantCulture)
                     ));
             });
 
