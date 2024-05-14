@@ -1,6 +1,7 @@
 ﻿using System.Data.Common;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
+using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +11,7 @@ using RabbitMQ.Client;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
 
-namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.Tests;
+namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Tests;
 
 public class ProgramIntegrationTests : IAsyncLifetime
 {
@@ -25,13 +26,13 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
                 .WithPassword("password99")
-                .WithPortBinding(54325, 5432)
+                .WithPortBinding(54326, 5432)
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
                 .WithName(GetType().Name + Guid.NewGuid())
-                .WithPortBinding(56721, 5672)
-                .WithPortBinding(15674, 15672)
+                .WithPortBinding(56722, 5672)
+                .WithPortBinding(15675, 15672)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
                 .Build();
         }
@@ -48,7 +49,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async Task Program_PlayerTracker_ExecutesAndAddsPlayers()
+    public async Task Program_PerformanceTracker_ExecutesAndAddsSeasonStats()
     {
         /*
          * Arrange
@@ -59,14 +60,18 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Key-value pairs for IConfiguration
         var inMemoryConfig = new Dictionary<string, string>()
         {
-            { "ConnectionStrings:Players", _dbContainer.GetConnectionString() + ";Pooling=false;" },
-            { "PlayerStatusTracker:Interval", "01:00:00:00" },
-            { "PlayerStatusTracker:Seasons:0", "2024" },
-            { "Api:Mlb:BaseAddress", "https://statsapi.mlb.com/api" },
+            { "ConnectionStrings:PlayerSeasons", _dbContainer.GetConnectionString() + ";Pooling=false;" },
+            { "PerformanceTracker:Interval", "01:00:00:00" },
+            { "PerformanceTracker:Seasons:0", "2023" },
+            { "PerformanceAssessmentRequirements:StatPercentChangeThreshold", "0.25" },
+            { "PerformanceAssessmentRequirements:MinimumPlateAppearances", "10" },
+            { "PerformanceAssessmentRequirements:MinimumInningsPitched", "10" },
+            { "PerformanceAssessmentRequirements:MinimumBattersFaced", "10" },
+            { "PerformanceAssessmentRequirements:MinimumTotalChances", "10" },
             { "Messaging:RabbitMq:HostName", "localhost" },
             { "Messaging:RabbitMq:UserName", "rabbitmq" },
             { "Messaging:RabbitMq:Password", "rabbitmq" },
-            { "Messaging:RabbitMq:Port", "56721" },
+            { "Messaging:RabbitMq:Port", "56722" },
         };
 
         // Build the host
@@ -75,14 +80,19 @@ public class ProgramIntegrationTests : IAsyncLifetime
             {
                 configurationBuilder.AddInMemoryCollection(inMemoryConfig!);
             })
-            .ConfigurePlayerTracker(args); // Configure PlayerTracker
+            .ConfigurePerformanceTracker(args); // Configure PerformanceTracker
         var host = builder.Build();
 
         // Setup the database
         await using var connection = await GetDbConnection();
-        await using var dbContext = GetDbContext(connection, new TeamProvider());
+        await using var dbContext = GetDbContext(connection);
         await CreateSchema(connection);
         await dbContext.Database.MigrateAsync();
+
+        // Add a player season to get stats for
+        dbContext.PlayerStatsBySeasons.Add(PlayerStatsBySeason.Create(MlbId.Create(660271), SeasonYear.Create(2023), [],
+            [], []));
+        await dbContext.SaveChangesAsync();
 
         /*
          * Act
@@ -99,14 +109,16 @@ public class ProgramIntegrationTests : IAsyncLifetime
         /*
          * Assert
          */
-        // Some Players should have been added to the DB
+        // The player season should have performance stats
         await using var assertConnection = await GetDbConnection();
-        await using var assertDbContext = GetDbContext(connection, new TeamProvider());
-        var players = assertDbContext.Players.Count();
-        Assert.True(players > 0);
+        await using var assertDbContext = GetDbContext(connection);
+        var playerSeason = await assertDbContext.PlayerStatsBySeasonsWithGames().FirstAsync();
+        Assert.True(playerSeason.BattingStatsByGamesChronologically.Count > 0);
+        Assert.True(playerSeason.PitchingStatsByGamesChronologically.Count > 0);
+        Assert.True(playerSeason.FieldingStatsByGamesChronologically.Count > 0);
         // Domain events should have been published
         using var rabbitMqChannel = host.Services.GetRequiredService<IModel>();
-        var messageCount = rabbitMqChannel.MessageCount("PlayerActivated");
+        var messageCount = rabbitMqChannel.MessageCount("PlayerBattedInGame");
         Assert.True(messageCount > 0);
     }
 
@@ -129,17 +141,17 @@ public class ProgramIntegrationTests : IAsyncLifetime
         return connection;
     }
 
-    private PlayersDbContext GetDbContext(DbConnection connection, ITeamProvider teamProvider)
+    private PlayerSeasonsDbContext GetDbContext(DbConnection connection)
     {
-        var contextOptions = new DbContextOptionsBuilder<PlayersDbContext>()
+        var contextOptions = new DbContextOptionsBuilder<PlayerSeasonsDbContext>()
             .UseNpgsql(connection)
             .Options;
-        return new PlayersDbContext(contextOptions, teamProvider);
+        return new PlayerSeasonsDbContext(contextOptions);
     }
 
     private async Task CreateSchema(NpgsqlConnection connection)
     {
-        await using var cmd = new NpgsqlCommand("CREATE SCHEMA players;", connection);
+        await using var cmd = new NpgsqlCommand("CREATE SCHEMA performance;", connection);
         await cmd.ExecuteNonQueryAsync();
     }
 
