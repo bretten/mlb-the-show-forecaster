@@ -28,12 +28,9 @@ public class ClockTests
         var actual = clock.PstNow();
 
         // Assert
-        Console.WriteLine("PSTNOW " + actual.ToString());
         var pstNow = DateTime.UtcNow.AddHours(-7);
-        Console.WriteLine("PSTNOW " + pstNow.ToString());
         var pstNowOffset = new DateTimeOffset(DateOnly.FromDateTime(pstNow), TimeOnly.FromDateTime(pstNow),
             TimeSpan.FromHours(-7));
-        Console.WriteLine("PSTNOW " + pstNowOffset.ToString());
         var timeDifference = pstNowOffset - actual;
         Assert.InRange(timeDifference.TotalMilliseconds, 0, 50);
     }
