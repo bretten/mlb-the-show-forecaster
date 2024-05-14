@@ -15,7 +15,7 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
     /// <summary>
     /// The work that the service will do on an interval
     /// </summary>
-    private readonly Func<T, Task> _action;
+    private readonly Func<T, IServiceProvider, Task> _action;
 
     /// <summary>
     /// The interval to run the nested service's work on
@@ -28,8 +28,8 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
     /// <param name="serviceScopeFactory"><inheritdoc /></param>
     /// <param name="action">The work that the service will do on an interval</param>
     /// <param name="interval">The interval to run the nested service's work on</param>
-    public ScheduledBackgroundService(IServiceScopeFactory serviceScopeFactory, Func<T, Task> action, TimeSpan interval)
-        : base(serviceScopeFactory)
+    public ScheduledBackgroundService(IServiceScopeFactory serviceScopeFactory, Func<T, IServiceProvider, Task> action,
+        TimeSpan interval) : base(serviceScopeFactory)
     {
         _action = action;
         _interval = interval;
@@ -49,16 +49,17 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
         stopwatch.Start();
 
         // Check the timer and run the nested service on an interval
+        var initialRunDone = false; // Run immediately on startup
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (stopwatch.ElapsedMilliseconds <= _interval.TotalMilliseconds) continue;
+            if (initialRunDone && stopwatch.ElapsedMilliseconds <= _interval.TotalMilliseconds) continue;
 
             // Each run will be its own service scope
             using var scope = ServiceScopeFactory.CreateScope();
             Service = scope.ServiceProvider.GetRequiredService<T>();
 
             // Get the task that the nested service will perform
-            var task = _action.Invoke(Service);
+            var task = _action.Invoke(Service, scope.ServiceProvider);
             // If the task has already been completed, force the method to complete asynchronously and return to the caller
             if (task.GetAwaiter().IsCompleted)
             {
@@ -70,6 +71,9 @@ public sealed class ScheduledBackgroundService<T> : NestedBackgroundService<T> w
 
             // Restart the timer now that the nested service has executed
             stopwatch.Restart();
+
+            // No longer need to run immediately after startup
+            if (!initialRunDone) initialRunDone = true;
         }
     }
 }

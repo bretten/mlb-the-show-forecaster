@@ -26,7 +26,11 @@ public class ScheduledBackgroundServiceIntegrationTests
         services.AddHostedService<ScheduledBackgroundService<IIntervalService>>(sp =>
         {
             return new ScheduledBackgroundService<IIntervalService>(sp.GetRequiredService<IServiceScopeFactory>(),
-                async service => { await service.Execute(); }, TimeSpan.FromMilliseconds(nestedServiceIntervalInMs));
+                async (service, innerServiceProvider) =>
+                {
+                    var anotherServiceInstance = innerServiceProvider.GetRequiredService<IIntervalService>();
+                    await service.Execute();
+                }, TimeSpan.FromMilliseconds(nestedServiceIntervalInMs));
         });
         // Service provider
         var serviceProvider = services.BuildServiceProvider();
@@ -71,7 +75,8 @@ public class ScheduledBackgroundServiceIntegrationTests
         services.AddHostedService<ScheduledBackgroundService<IIntervalService>>(sp =>
         {
             return new ScheduledBackgroundService<IIntervalService>(sp.GetRequiredService<IServiceScopeFactory>(),
-                async service => { await service.Execute(); }, TimeSpan.FromMilliseconds(nestedServiceIntervalInMs));
+                async (service, innerServiceProvider) => { await service.Execute(); },
+                TimeSpan.FromMilliseconds(nestedServiceIntervalInMs));
         });
         // Service provider
         var serviceProvider = services.BuildServiceProvider();
