@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 
 /// <summary>
-/// An <see cref="Microsoft.EntityFrameworkCore"/> implementation of unit of work that creates and scopes a
+/// An <see cref="Microsoft.EntityFrameworkCore"/> implementation <see cref="IUnitOfWork{T}"/> that creates and scopes a
 /// <see cref="DbContext"/> to an instance of <see cref="UnitOfWork{T}"/>. <see cref="CommitAsync"/> will invoke the
 /// <see cref="DbContext"/>'s SaveChanges and persist any mutations performed
 /// by contributors to the unit of work

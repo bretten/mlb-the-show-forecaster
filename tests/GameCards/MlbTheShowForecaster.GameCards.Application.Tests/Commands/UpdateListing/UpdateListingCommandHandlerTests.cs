@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
@@ -30,6 +31,8 @@ public class UpdateListingCommandHandlerTests
         stubPriceChangeThreshold.Setup(x => x.SellPricePercentageChangeThreshold)
             .Returns(50m);
 
+        var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();
+
         var mockListingRepository = Mock.Of<IListingRepository>();
         var stubUnitOfWork = new Mock<IUnitOfWork<IMarketplaceWork>>();
         stubUnitOfWork.Setup(x => x.GetContributor<IListingRepository>())
@@ -37,7 +40,7 @@ public class UpdateListingCommandHandlerTests
 
         var cToken = CancellationToken.None;
         var command = new UpdateListingCommand(domainListing, externalCardListing, stubPriceChangeThreshold.Object);
-        var handler = new UpdateListingCommandHandler(stubUnitOfWork.Object);
+        var handler = new UpdateListingCommandHandler(stubUnitOfWork.Object, mockDomainEventDispatcher);
 
         // Act
         await handler.Handle(command, cToken);
@@ -45,6 +48,7 @@ public class UpdateListingCommandHandlerTests
         // Assert
         Mock.Get(mockListingRepository).Verify(x => x.Update(domainListing, cToken), Times.Once);
         stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
+        Mock.Get(mockDomainEventDispatcher).Verify(x => x.Dispatch(domainListing.DomainEvents));
 
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), domainListing.CardExternalId.Value);
         Assert.Equal(100, domainListing.BuyPrice.Value);

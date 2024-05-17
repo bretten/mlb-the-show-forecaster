@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
@@ -20,6 +21,11 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
     private readonly IUnitOfWork<IMarketplaceWork> _unitOfWork;
 
     /// <summary>
+    /// Publishes all domain events that were raised by the <see cref="Listing"/>
+    /// </summary>
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
+
+    /// <summary>
     /// The <see cref="Listing"/> repository
     /// </summary>
     private readonly IListingRepository _listingRepository;
@@ -28,9 +34,12 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
     /// Constructor
     /// </summary>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="Listing"/></param>
-    public UpdateListingCommandHandler(IUnitOfWork<IMarketplaceWork> unitOfWork)
+    /// <param name="domainEventDispatcher">Publishes all domain events that were raised by the <see cref="Listing"/></param>
+    public UpdateListingCommandHandler(IUnitOfWork<IMarketplaceWork> unitOfWork,
+        IDomainEventDispatcher domainEventDispatcher)
     {
         _unitOfWork = unitOfWork;
+        _domainEventDispatcher = domainEventDispatcher;
         _listingRepository = unitOfWork.GetContributor<IListingRepository>();
     }
 
@@ -59,5 +68,6 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
 
         await _listingRepository.Update(domainListing, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);
+        _domainEventDispatcher.Dispatch(domainListing.DomainEvents);
     }
 }
