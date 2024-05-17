@@ -76,6 +76,46 @@ public class DbUnitOfWorkTests
         Mock.Get(mockDbTransaction).Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 
+    [Fact]
+    public void Dispose_NoParams_TransactionDisposed()
+    {
+        // Arrange
+        var stubAtomicDatabaseOperation = new Mock<IAtomicDatabaseOperation>();
+
+        var (stubServiceScopeFactory, stubServiceScope) = MockScope();
+        stubServiceScope.Setup(x => x.ServiceProvider.GetService(typeof(IAtomicDatabaseOperation)))
+            .Returns(stubAtomicDatabaseOperation.Object);
+
+        var uow = new DbUnitOfWork<IDbUnitOfWork>(stubServiceScopeFactory.Object);
+
+        // Act
+        uow.Dispose();
+
+        // Assert
+        stubAtomicDatabaseOperation.Verify(x => x.Dispose(), Times.Once);
+        stubServiceScope.Verify(x => x.Dispose(), Times.Once);
+    }
+
+    [Fact]
+    public async Task DisposeAsync_NoParams_TransactionDisposed()
+    {
+        // Arrange
+        var stubAtomicDatabaseOperation = new Mock<IAtomicDatabaseOperation>();
+
+        var (stubServiceScopeFactory, stubServiceScope) = MockScope();
+        stubServiceScope.Setup(x => x.ServiceProvider.GetService(typeof(IAtomicDatabaseOperation)))
+            .Returns(stubAtomicDatabaseOperation.Object);
+
+        var uow = new DbUnitOfWork<IDbUnitOfWork>(stubServiceScopeFactory.Object);
+
+        // Act
+        await uow.DisposeAsync();
+
+        // Assert
+        stubAtomicDatabaseOperation.Verify(x => x.DisposeAsync(), Times.Once);
+        stubServiceScope.Verify(x => x.Dispose(), Times.Once);
+    }
+
     private interface IDbUnitOfWork : IUnitOfWorkType;
 
     public interface ISomeRepository;

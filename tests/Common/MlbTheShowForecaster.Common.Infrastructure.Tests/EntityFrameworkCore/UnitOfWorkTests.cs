@@ -105,6 +105,7 @@ public class UnitOfWorkTests
 
         // Assert
         Mock.Get(mockDbContext).Verify(x => x.Dispose(), Times.Once);
+        stubServiceScope.Verify(x => x.Dispose(), Times.Once);
     }
 
     [Fact]
@@ -125,6 +126,7 @@ public class UnitOfWorkTests
 
         // Assert
         Mock.Get(mockDbContext).Verify(x => x.DisposeAsync(), Times.Once);
+        stubServiceScope.Verify(x => x.Dispose(), Times.Once);
     }
 
     /// <summary>

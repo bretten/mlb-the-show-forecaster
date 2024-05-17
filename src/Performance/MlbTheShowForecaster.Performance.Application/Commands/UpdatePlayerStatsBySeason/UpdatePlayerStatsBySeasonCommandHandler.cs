@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain;
@@ -69,6 +70,12 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     {
         // The player season stats that the system currently has stored
         var playerStatsBySeason = await _playerStatsBySeasonRepository.GetById(command.PlayerStatsBySeason.Id);
+        if (playerStatsBySeason == null)
+        {
+            throw new PlayerStatsBySeasonNotFoundException(
+                $"{nameof(PlayerStatsBySeason)} not found for ID {command.PlayerStatsBySeason.Id}");
+        }
+
         // The most up-to-date player season stats retrieved from an MLB source
         var playerSeason = command.PlayerSeason;
 

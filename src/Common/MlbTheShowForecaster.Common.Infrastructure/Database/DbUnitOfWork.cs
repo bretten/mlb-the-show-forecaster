@@ -5,9 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 
 /// <summary>
-/// Npgsql implementation of <see cref="IUnitOfWork{T}"/> that creates and scopes a database transaction to the <see cref="IUnitOfWork{T}"/>.
-/// <see cref="CommitAsync"/> will commit the nested database transaction and persist any mutations performed by contributors
-/// to the unit of work
+/// Implementation of <see cref="IUnitOfWork{T}"/> using <see cref="System.Data.Common"/> database abstractions.
+/// It creates and scopes a database transaction to an instance of <see cref="DbUnitOfWork{T}"/>. <see cref="CommitAsync"/>
+/// will commit the nested database transaction and persist any mutations performed by contributors to the unit of work
 /// </summary>
 /// <typeparam name="T">The type of work that is being committed</typeparam>
 public sealed class DbUnitOfWork<T> : IUnitOfWork<T>, IDisposable, IAsyncDisposable where T : IUnitOfWorkType
@@ -51,7 +51,7 @@ public sealed class DbUnitOfWork<T> : IUnitOfWork<T>, IDisposable, IAsyncDisposa
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task CommitAsync(CancellationToken cancellationToken = default)
     {
-        var activeTransaction = await _atomicDatabaseOperation.GetCurrentActiveTransaction();
+        var activeTransaction = await _atomicDatabaseOperation.GetCurrentActiveTransaction(cancellationToken);
         await activeTransaction.CommitAsync(cancellationToken);
         await DisposeAsync();
     }
@@ -61,8 +61,8 @@ public sealed class DbUnitOfWork<T> : IUnitOfWork<T>, IDisposable, IAsyncDisposa
     /// </summary>
     public void Dispose()
     {
-        _scope.Dispose();
         _atomicDatabaseOperation.Dispose();
+        _scope.Dispose();
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public sealed class DbUnitOfWork<T> : IUnitOfWork<T>, IDisposable, IAsyncDisposa
     /// </summary>
     public async ValueTask DisposeAsync()
     {
-        _scope.Dispose();
         await _atomicDatabaseOperation.DisposeAsync();
+        _scope.Dispose();
     }
 }

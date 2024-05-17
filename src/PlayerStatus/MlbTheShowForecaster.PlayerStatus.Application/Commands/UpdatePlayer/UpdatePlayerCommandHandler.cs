@@ -18,14 +18,14 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.
 internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerCommand>
 {
     /// <summary>
-    /// The <see cref="Player"/> repository
-    /// </summary>
-    private readonly IPlayerRepository _playerRepository;
-
-    /// <summary>
     /// The unit of work that bundles all status updates for a <see cref="Player"/>
     /// </summary>
     private readonly IUnitOfWork<IPlayerWork> _unitOfWork;
+
+    /// <summary>
+    /// The <see cref="Player"/> repository
+    /// </summary>
+    private readonly IPlayerRepository _playerRepository;
 
     /// <summary>
     /// Constructor
