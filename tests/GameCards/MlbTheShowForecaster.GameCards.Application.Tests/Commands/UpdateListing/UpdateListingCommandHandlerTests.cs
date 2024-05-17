@@ -31,18 +31,20 @@ public class UpdateListingCommandHandlerTests
             .Returns(50m);
 
         var mockListingRepository = Mock.Of<IListingRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IMarketplaceWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<IMarketplaceWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IListingRepository>())
+            .Returns(mockListingRepository);
 
         var cToken = CancellationToken.None;
         var command = new UpdateListingCommand(domainListing, externalCardListing, stubPriceChangeThreshold.Object);
-        var handler = new UpdateListingCommandHandler(mockListingRepository, mockUnitOfWork);
+        var handler = new UpdateListingCommandHandler(stubUnitOfWork.Object);
 
         // Act
         await handler.Handle(command, cToken);
 
         // Assert
         Mock.Get(mockListingRepository).Verify(x => x.Update(domainListing, cToken), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
 
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), domainListing.CardExternalId.Value);
         Assert.Equal(100, domainListing.BuyPrice.Value);

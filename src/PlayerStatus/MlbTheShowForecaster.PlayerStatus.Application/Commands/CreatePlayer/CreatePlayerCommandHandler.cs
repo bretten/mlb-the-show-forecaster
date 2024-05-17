@@ -39,15 +39,14 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="playerRepository">The <see cref="Player"/> repository</param>
     /// <param name="unitOfWork">The unit of work that defines all actions for creating a <see cref="Player"/></param>
     /// <param name="playerMapper">Mapper that maps the player's status to a <see cref="Player"/></param>
     /// <param name="teamProvider">Provides information on teams</param>
-    public CreatePlayerCommandHandler(IPlayerRepository playerRepository, IUnitOfWork<IPlayerWork> unitOfWork,
-        IPlayerMapper playerMapper, ITeamProvider teamProvider)
+    public CreatePlayerCommandHandler(IUnitOfWork<IPlayerWork> unitOfWork, IPlayerMapper playerMapper,
+        ITeamProvider teamProvider)
     {
-        _playerRepository = playerRepository;
         _unitOfWork = unitOfWork;
+        _playerRepository = unitOfWork.GetContributor<IPlayerRepository>();
         _playerMapper = playerMapper;
         _teamProvider = teamProvider;
     }

@@ -19,14 +19,14 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.U
 internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<UpdatePlayerStatsBySeasonCommand>
 {
     /// <summary>
+    /// The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/>
+    /// </summary>
+    private readonly IUnitOfWork<IPlayerSeasonWork> _unitOfWork;
+
+    /// <summary>
     /// Maps <see cref="PlayerSeason"/> to other objects
     /// </summary>
     private readonly IPlayerSeasonMapper _playerSeasonMapper;
-
-    /// <summary>
-    /// Gets today's date
-    /// </summary>
-    private readonly ICalendar _calendar;
 
     /// <summary>
     /// Scorekeeper that logs new games for the season and assesses the player's performance to date
@@ -34,32 +34,30 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     private readonly IPlayerSeasonScorekeeper _playerSeasonScorekeeper;
 
     /// <summary>
+    /// Gets today's date
+    /// </summary>
+    private readonly ICalendar _calendar;
+
+    /// <summary>
     /// The <see cref="PlayerStatsBySeason"/> repository
     /// </summary>
     private readonly IPlayerStatsBySeasonRepository _playerStatsBySeasonRepository;
 
     /// <summary>
-    /// The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/>
-    /// </summary>
-    private readonly IUnitOfWork<IPlayerSeasonWork> _unitOfWork;
-
-    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="playerSeasonMapper">Maps <see cref="PlayerSeason"/> to other objects</param>
-    /// <param name="calendar">Gets today's date</param>
-    /// <param name="playerSeasonScorekeeper">Scorekeeper that logs new games for the season and assesses the player's performance to date</param>
-    /// <param name="playerStatsBySeasonRepository">The <see cref="PlayerStatsBySeason"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/></param>
-    public UpdatePlayerStatsBySeasonCommandHandler(IPlayerSeasonMapper playerSeasonMapper, ICalendar calendar,
-        IPlayerSeasonScorekeeper playerSeasonScorekeeper, IPlayerStatsBySeasonRepository playerStatsBySeasonRepository,
-        IUnitOfWork<IPlayerSeasonWork> unitOfWork)
+    /// <param name="playerSeasonMapper">Maps <see cref="PlayerSeason"/> to other objects</param>
+    /// <param name="playerSeasonScorekeeper">Scorekeeper that logs new games for the season and assesses the player's performance to date</param>
+    /// <param name="calendar">Gets today's date</param>
+    public UpdatePlayerStatsBySeasonCommandHandler(IUnitOfWork<IPlayerSeasonWork> unitOfWork,
+        IPlayerSeasonMapper playerSeasonMapper, IPlayerSeasonScorekeeper playerSeasonScorekeeper, ICalendar calendar)
     {
+        _unitOfWork = unitOfWork;
         _playerSeasonMapper = playerSeasonMapper;
         _playerSeasonScorekeeper = playerSeasonScorekeeper;
         _calendar = calendar;
-        _playerStatsBySeasonRepository = playerStatsBySeasonRepository;
-        _unitOfWork = unitOfWork;
+        _playerStatsBySeasonRepository = unitOfWork.GetContributor<IPlayerStatsBySeasonRepository>();
     }
 
     /// <summary>
@@ -70,7 +68,7 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     public async Task Handle(UpdatePlayerStatsBySeasonCommand command, CancellationToken cancellationToken = default)
     {
         // The player season stats that the system currently has stored
-        var playerStatsBySeason = command.PlayerStatsBySeason;
+        var playerStatsBySeason = await _playerStatsBySeasonRepository.GetById(command.PlayerStatsBySeason.Id);
         // The most up-to-date player season stats retrieved from an MLB source
         var playerSeason = command.PlayerSeason;
 

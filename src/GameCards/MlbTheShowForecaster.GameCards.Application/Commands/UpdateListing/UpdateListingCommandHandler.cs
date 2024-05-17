@@ -15,24 +15,23 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.Upd
 internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListingCommand>
 {
     /// <summary>
-    /// The <see cref="Listing"/> repository
-    /// </summary>
-    private readonly IListingRepository _listingRepository;
-
-    /// <summary>
     /// The unit of work that encapsulates all actions for updating a <see cref="Listing"/>
     /// </summary>
     private readonly IUnitOfWork<IMarketplaceWork> _unitOfWork;
 
     /// <summary>
+    /// The <see cref="Listing"/> repository
+    /// </summary>
+    private readonly IListingRepository _listingRepository;
+
+    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="listingRepository">The <see cref="Listing"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="Listing"/></param>
-    public UpdateListingCommandHandler(IListingRepository listingRepository, IUnitOfWork<IMarketplaceWork> unitOfWork)
+    public UpdateListingCommandHandler(IUnitOfWork<IMarketplaceWork> unitOfWork)
     {
-        _listingRepository = listingRepository;
         _unitOfWork = unitOfWork;
+        _listingRepository = unitOfWork.GetContributor<IListingRepository>();
     }
 
     /// <summary>

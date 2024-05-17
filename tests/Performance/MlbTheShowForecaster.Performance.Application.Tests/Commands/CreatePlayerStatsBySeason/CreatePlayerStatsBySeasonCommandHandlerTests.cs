@@ -21,18 +21,19 @@ public class CreatePlayerStatsBySeasonCommandHandlerTests
             Mock.Of<IPlayerSeasonMapper>(x => x.Map(fakePlayerSeason) == fakePlayerStatsBySeason);
 
         var mockPlayerStatsBySeasonRepository = Mock.Of<IPlayerStatsBySeasonRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerSeasonWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerSeasonWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerStatsBySeasonRepository>())
+            .Returns(mockPlayerStatsBySeasonRepository);
 
         var cToken = CancellationToken.None;
         var command = new CreatePlayerStatsBySeasonCommand(fakePlayerSeason);
-        var handler = new CreatePlayerStatsBySeasonCommandHandler(stubPlayerSeasonMapper,
-            mockPlayerStatsBySeasonRepository, mockUnitOfWork);
+        var handler = new CreatePlayerStatsBySeasonCommandHandler(stubUnitOfWork.Object, stubPlayerSeasonMapper);
 
         // Act
         await handler.Handle(command, cToken);
 
         // Assert
         Mock.Get(mockPlayerStatsBySeasonRepository).Verify(x => x.Add(fakePlayerStatsBySeason), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 }

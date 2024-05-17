@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
@@ -27,15 +28,19 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// </summary>
     private readonly NpgsqlDataSource _dbDataSource;
 
+    private readonly IAtomicDatabaseOperation _atomicDatabaseOperation;
+
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="dbContext">The DB context for <see cref="Listing"/></param>
     /// <param name="dbDataSource">Data source for getting Npgsql connections</param>
     /// <exception cref="InvalidNpgsqlDataSourceForListingRepositoryException">Thrown when the <see cref="NpgsqlDataSource"/> is invalid</exception>
-    public HybridNpgsqlEntityFrameworkCoreListingRepository(MarketplaceDbContext dbContext, DbDataSource dbDataSource)
+    public HybridNpgsqlEntityFrameworkCoreListingRepository(MarketplaceDbContext dbContext, DbDataSource dbDataSource,
+        IAtomicDatabaseOperation atomicDatabaseOperation)
     {
         _dbContext = dbContext;
+        _atomicDatabaseOperation = atomicDatabaseOperation;
         _dbDataSource = dbDataSource as NpgsqlDataSource ??
                         throw new InvalidNpgsqlDataSourceForListingRepositoryException(
                             $"No valid Npgsql datasource provided for {nameof(HybridNpgsqlEntityFrameworkCoreListingRepository)}");
@@ -49,8 +54,9 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     public async Task Add(Listing listing, CancellationToken cancellationToken = default)
     {
         // Open a connection and begin a transaction
-        await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var connection = (NpgsqlConnection)await _atomicDatabaseOperation.GetCurrentActiveConnection(cancellationToken);
+        var transaction =
+            (NpgsqlTransaction)await _atomicDatabaseOperation.GetCurrentActiveTransaction(cancellationToken);
 
         // INSERT the Listing
         await using var command = new NpgsqlCommand(ListingsInsertCommand, connection, transaction);
@@ -63,9 +69,6 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         // Bulk upsert the Listing's historical prices
         await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
             cancellationToken);
-
-        // Commit
-        await transaction.CommitAsync(cancellationToken);
     }
 
     /// <summary>
@@ -76,8 +79,8 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     public async Task Update(Listing listing, CancellationToken cancellationToken = default)
     {
         // Open a connection and begin a transaction
-        await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var connection = (NpgsqlConnection)await _atomicDatabaseOperation.GetCurrentActiveConnection(cancellationToken);
+        var transaction = (NpgsqlTransaction)await _atomicDatabaseOperation.GetCurrentActiveTransaction(cancellationToken);
 
         // UPDATE the Listing
         await using var command = new NpgsqlCommand(ListingsUpdateCommand, connection, transaction);
@@ -89,9 +92,6 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         // Bulk upsert the Listing's historical prices
         await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
             cancellationToken);
-
-        // Commit
-        await transaction.CommitAsync(cancellationToken);
     }
 
     /// <summary>

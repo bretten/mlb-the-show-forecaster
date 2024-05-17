@@ -19,18 +19,20 @@ public class UpdatePlayerCardCommandHandlerTests
         var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange(newPosition: Position.FirstBase);
 
         var mockPlayerCardRepository = Mock.Of<IPlayerCardRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<ICardWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())
+            .Returns(mockPlayerCardRepository);
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerCardCommand(playerCard, ratingChange, positionChange);
-        var handler = new UpdatePlayerCardCommandHandler(mockPlayerCardRepository, mockUnitOfWork);
+        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object);
 
         // Act
         await handler.Handle(command, cToken);
 
         // Assert
         Mock.Get(mockPlayerCardRepository).Verify(x => x.Update(playerCard), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
         Assert.Equal(90, playerCard.OverallRating.Value);
         Assert.Equal(Position.FirstBase, playerCard.Position);
     }

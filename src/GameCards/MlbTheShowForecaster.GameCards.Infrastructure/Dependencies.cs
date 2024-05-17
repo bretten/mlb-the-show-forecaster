@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
@@ -141,10 +142,17 @@ public static class Dependencies
                 new NpgsqlDataSourceBuilder(config.GetRequiredConnectionString(ConfigKeys.MarketplaceConnection))
                     .Build();
             return new HybridNpgsqlEntityFrameworkCoreListingRepository(sp.GetRequiredService<MarketplaceDbContext>(),
-                dataSource);
+                dataSource, sp.GetRequiredService<IAtomicDatabaseOperation>());
         });
         // UnitOfWork
+        services.AddScoped<IAtomicDatabaseOperation, DbAtomicDatabaseOperation>(sp =>
+        {
+            var dataSource =
+                new NpgsqlDataSourceBuilder(config.GetRequiredConnectionString(ConfigKeys.MarketplaceConnection))
+                    .Build();
+            return new DbAtomicDatabaseOperation(dataSource);
+        });
         services.AddTransient<IUnitOfWork<ICardWork>, UnitOfWork<CardsDbContext>>();
-        services.AddTransient<IUnitOfWork<IMarketplaceWork>, UnitOfWork<MarketplaceDbContext>>();
+        services.AddTransient<IUnitOfWork<IMarketplaceWork>, DbUnitOfWork<MarketplaceDbContext>>();
     }
 }

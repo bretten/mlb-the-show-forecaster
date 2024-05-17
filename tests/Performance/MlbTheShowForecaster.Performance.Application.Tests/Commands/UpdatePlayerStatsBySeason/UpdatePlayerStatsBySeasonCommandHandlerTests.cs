@@ -47,19 +47,24 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
         stubCalendar.Setup(x => x.Today())
             .Returns(today);
 
-        var mockPlayerStatsBySeasonRepository = Mock.Of<IPlayerStatsBySeasonRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerSeasonWork>>();
+        var stubPlayerStatsBySeasonRepository = new Mock<IPlayerStatsBySeasonRepository>();
+        stubPlayerStatsBySeasonRepository.Setup(x => x.GetById(fakePlayerStatsBySeason.Id))
+            .ReturnsAsync(fakePlayerStatsBySeason);
+
+        var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerSeasonWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerStatsBySeasonRepository>())
+            .Returns(stubPlayerStatsBySeasonRepository.Object);
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerStatsBySeasonCommand(fakePlayerStatsBySeason, fakePlayerSeason);
-        var handler = new UpdatePlayerStatsBySeasonCommandHandler(stubPlayerSeasonMapper.Object, stubCalendar.Object,
-            stubPlayerSeasonScorekeeper.Object, mockPlayerStatsBySeasonRepository, mockUnitOfWork);
+        var handler = new UpdatePlayerStatsBySeasonCommandHandler(stubUnitOfWork.Object, stubPlayerSeasonMapper.Object,
+            stubPlayerSeasonScorekeeper.Object, stubCalendar.Object);
 
         // Act
         await handler.Handle(command, cToken);
 
         // Assert
-        Mock.Get(mockPlayerStatsBySeasonRepository).Verify(x => x.Update(updatedPlayerStatsBySeason), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubPlayerStatsBySeasonRepository.Verify(x => x.Update(updatedPlayerStatsBySeason), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 }

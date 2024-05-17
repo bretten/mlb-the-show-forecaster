@@ -20,17 +20,19 @@ public class CreateListingCommandHandlerTests
         var stubListingMapper = Mock.Of<IListingMapper>(x => x.Map(externalCardListing) == domainListing);
 
         var mockListingRepository = Mock.Of<IListingRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IMarketplaceWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<IMarketplaceWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IListingRepository>())
+            .Returns(mockListingRepository);
 
         var cToken = CancellationToken.None;
         var command = new CreateListingCommand(externalCardListing);
-        var handler = new CreateListingCommandHandler(stubListingMapper, mockListingRepository, mockUnitOfWork);
+        var handler = new CreateListingCommandHandler(stubUnitOfWork.Object, stubListingMapper);
 
         // Act
         await handler.Handle(command, cToken);
 
         // Assert
         Mock.Get(mockListingRepository).Verify(x => x.Add(domainListing, cToken), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 }

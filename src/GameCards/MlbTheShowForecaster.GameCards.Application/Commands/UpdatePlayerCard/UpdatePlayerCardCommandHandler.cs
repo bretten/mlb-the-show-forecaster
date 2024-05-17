@@ -14,25 +14,23 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.Upd
 internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePlayerCardCommand>
 {
     /// <summary>
-    /// The <see cref="PlayerCard"/> repository
-    /// </summary>
-    private readonly IPlayerCardRepository _playerCardRepository;
-
-    /// <summary>
     /// The unit of work that encapsulates all actions for updating a <see cref="PlayerCard"/>
     /// </summary>
     private readonly IUnitOfWork<ICardWork> _unitOfWork;
 
     /// <summary>
+    /// The <see cref="PlayerCard"/> repository
+    /// </summary>
+    private readonly IPlayerCardRepository _playerCardRepository;
+
+    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="playerCardRepository">The <see cref="PlayerCard"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="PlayerCard"/></param>
-    public UpdatePlayerCardCommandHandler(IPlayerCardRepository playerCardRepository,
-        IUnitOfWork<ICardWork> unitOfWork)
+    public UpdatePlayerCardCommandHandler(IUnitOfWork<ICardWork> unitOfWork)
     {
-        _playerCardRepository = playerCardRepository;
         _unitOfWork = unitOfWork;
+        _playerCardRepository = unitOfWork.GetContributor<IPlayerCardRepository>();
     }
 
     /// <summary>

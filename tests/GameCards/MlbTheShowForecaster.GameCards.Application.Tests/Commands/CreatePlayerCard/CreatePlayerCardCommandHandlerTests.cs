@@ -21,18 +21,20 @@ public class CreatePlayerCardCommandHandlerTests
             Mock.Of<IPlayerCardMapper>(x => x.Map(fakeExternalPlayerCard) == fakeDomainPlayerCard);
 
         var mockPlayerCardRepository = Mock.Of<IPlayerCardRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<ICardWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())
+            .Returns(mockPlayerCardRepository);
 
         var cToken = CancellationToken.None;
         var command = new CreatePlayerCardCommand(fakeExternalPlayerCard);
         var handler =
-            new CreatePlayerCardCommandHandler(stubPlayerSeasonMapper, mockPlayerCardRepository, mockUnitOfWork);
+            new CreatePlayerCardCommandHandler(stubUnitOfWork.Object, stubPlayerSeasonMapper);
 
         // Act
         await handler.Handle(command, cToken);
 
         // Assert
         Mock.Get(mockPlayerCardRepository).Verify(x => x.Add(fakeDomainPlayerCard), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 }

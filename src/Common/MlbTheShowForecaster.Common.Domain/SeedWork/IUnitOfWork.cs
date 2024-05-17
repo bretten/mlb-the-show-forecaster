@@ -1,4 +1,6 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork.Exceptions;
+
+namespace com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
 /// <summary>
 /// Represents a set of mutations on the system that depend on each other and must be committed together.
@@ -6,6 +8,14 @@
 /// <typeparam name="T">The type of work, such as domain or bounded context, that is being committed</typeparam>
 public interface IUnitOfWork<out T> where T : IUnitOfWorkType
 {
+    /// <summary>
+    /// Gets a contributor to the unit of work of the specified type <see cref="TContributor"/>
+    /// </summary>
+    /// <typeparam name="TContributor">The type of contributor to get</typeparam>
+    /// <returns>The contributor to the unit of work</returns>
+    /// <exception cref="UnitOfWorkContributorNotFoundException">Thrown if the contributor could not be found</exception>
+    TContributor GetContributor<TContributor>() where TContributor : notnull;
+
     /// <summary>
     /// Commits all of the mutations that depend on each other
     /// </summary>

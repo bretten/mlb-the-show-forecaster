@@ -17,6 +17,11 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.C
 internal sealed class CreatePlayerStatsBySeasonCommandHandler : ICommandHandler<CreatePlayerStatsBySeasonCommand>
 {
     /// <summary>
+    /// The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/>
+    /// </summary>
+    private readonly IUnitOfWork<IPlayerSeasonWork> _unitOfWork;
+
+    /// <summary>
     /// Maps <see cref="PlayerSeason"/> to other objects
     /// </summary>
     private readonly IPlayerSeasonMapper _playerSeasonMapper;
@@ -27,22 +32,16 @@ internal sealed class CreatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     private readonly IPlayerStatsBySeasonRepository _playerStatsBySeasonRepository;
 
     /// <summary>
-    /// The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/>
-    /// </summary>
-    private readonly IUnitOfWork<IPlayerSeasonWork> _unitOfWork;
-
-    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="playerSeasonMapper">Maps <see cref="PlayerSeason"/> to other objects</param>
-    /// <param name="playerStatsBySeasonRepository">The <see cref="PlayerStatsBySeason"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/></param>
-    public CreatePlayerStatsBySeasonCommandHandler(IPlayerSeasonMapper playerSeasonMapper,
-        IPlayerStatsBySeasonRepository playerStatsBySeasonRepository, IUnitOfWork<IPlayerSeasonWork> unitOfWork)
+    /// <param name="playerSeasonMapper">Maps <see cref="PlayerSeason"/> to other objects</param>
+    public CreatePlayerStatsBySeasonCommandHandler(IUnitOfWork<IPlayerSeasonWork> unitOfWork,
+        IPlayerSeasonMapper playerSeasonMapper)
     {
-        _playerSeasonMapper = playerSeasonMapper;
-        _playerStatsBySeasonRepository = playerStatsBySeasonRepository;
         _unitOfWork = unitOfWork;
+        _playerSeasonMapper = playerSeasonMapper;
+        _playerStatsBySeasonRepository = unitOfWork.GetContributor<IPlayerStatsBySeasonRepository>();
     }
 
     /// <summary>

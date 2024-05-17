@@ -1,12 +1,15 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 
 /// <summary>
-/// An EF implementation of unit of work that forces any changes to the DB context (since the last call to commit)
-/// to be encapsulated as a single, logical unit of work by only saving changes when commit is invoked
+/// An EF implementation of unit of work that creates and scopes a <see cref="DbContext"/> to this <see cref="IUnitOfWork{T}"/>.
+/// <see cref="CommitAsync"/> will invoke the <see cref="DbContext"/>'s SaveChanges and persist any mutations performed
+/// by contributors to the unit of work
 /// </summary>
 /// <typeparam name="TDbContext">The type of work that is being committed. In this case, the work is for a <see cref="DbContext"/></typeparam>
 public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposable, IAsyncDisposable
@@ -23,14 +26,33 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposabl
     private readonly IDomainEventDispatcher _domainEventDispatcher;
 
     /// <summary>
+    /// Service scope used to resolve services that contribute to this <see cref="UnitOfWork{T}"/>
+    /// </summary>
+    private readonly IServiceScope _scope;
+
+    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="dbContext">The DB context</param>
     /// <param name="domainEventDispatcher">Publishes all domain events that were raised by any <see cref="Entity"/> that was changed</param>
-    public UnitOfWork(TDbContext dbContext, IDomainEventDispatcher domainEventDispatcher)
+    /// <param name="serviceScopeFactory">Factory for the service scope used to resolve services that contribute to this <see cref="UnitOfWork{T}"/></param>
+    public UnitOfWork(IDomainEventDispatcher domainEventDispatcher, IServiceScopeFactory serviceScopeFactory)
     {
-        _dbContext = dbContext;
         _domainEventDispatcher = domainEventDispatcher;
+        _scope = serviceScopeFactory.CreateScope();
+        _dbContext = _scope.ServiceProvider.GetRequiredService<TDbContext>();
+    }
+
+    /// <summary>
+    /// Gets a contributor to the unit of work of the specified type <see cref="TContributor"/>
+    /// </summary>
+    /// <typeparam name="TContributor">The type of contributor to get</typeparam>
+    /// <returns>The contributor to the unit of work</returns>
+    /// <exception cref="UnitOfWorkContributorNotFoundException">Thrown if the contributor could not be found</exception>
+    public TContributor GetContributor<TContributor>() where TContributor : notnull
+    {
+        return _scope.ServiceProvider.GetService<TContributor>() ??
+               throw new UnitOfWorkContributorNotFoundException(
+                   $"Contributor of type {nameof(TContributor)} not found");
     }
 
     /// <summary>
@@ -45,6 +67,7 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposabl
         PublishDomainEvents();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await DisposeAsync();
     }
 
     /// <summary>
@@ -53,6 +76,7 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposabl
     public void Dispose()
     {
         _dbContext.Dispose();
+        _scope.Dispose();
     }
 
     /// <summary>
@@ -61,6 +85,7 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposabl
     public async ValueTask DisposeAsync()
     {
         await _dbContext.DisposeAsync();
+        _scope.Dispose();
     }
 
     /// <summary>
