@@ -90,16 +90,25 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
                 cancellationToken)
             .Concat(PreparePlayerAdditions(seasonYear, rosterUpdate.NewPlayers, cancellationToken));
 
-        // Apply all roster update changes asynchronously
-        await Task.WhenAll(tasks)
-            .ContinueWith(x =>
+        // Apply all roster update changes synchronously until issue #172
+        var exceptions = new List<Exception>();
+        foreach (var task in tasks)
+        {
+            try
             {
-                if (x.Exception == null) return;
+                await task;
+            }
+            catch (Exception e)
+            {
+                exceptions.Add(e);
+            }
+        }
 
-                // If there was an exception among the roster update changes, let it bubble to the top
-                var msg = string.Join(", ", x.Exception.InnerExceptions.Select(e => e.Message));
-                throw new RosterUpdateOrchestratorInterruptedException(msg, x.Exception.InnerExceptions);
-            }, cancellationToken);
+        if (exceptions.Count != 0)
+        {
+            var msg = string.Join(", ", exceptions.Select(e => e.Message));
+            throw new RosterUpdateOrchestratorInterruptedException(msg, exceptions);
+        }
 
         // The roster update has been successfully applied, so close it
         await _rosterUpdateFeed.CompleteRosterUpdate(rosterUpdate, cancellationToken);
@@ -112,12 +121,11 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
     /// <param name="positionChanges">A collection of position changes for different player cards</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>A collection of Tasks that will execute the roster update changes</returns>
-    private IReadOnlyList<Task> PreparePlayerCardChanges(IReadOnlyList<PlayerRatingChange> ratingChanges,
+    private IEnumerable<Task> PreparePlayerCardChanges(IReadOnlyList<PlayerRatingChange> ratingChanges,
         IReadOnlyList<PlayerPositionChange> positionChanges, CancellationToken cancellationToken)
     {
         // Hash set is used to check if we already applied the position change in the rating change loop for a given player card
         var appliedPositionChangeCardExternalIds = new HashSet<CardExternalId>();
-        var tasks = new List<Task>();
 
         // Apply rating changes to the domain
         foreach (var ratingChange in ratingChanges.OrderByDescending(x => x.Improved ? 1 : 0))
@@ -131,7 +139,7 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
                 appliedPositionChangeCardExternalIds.Add(ratingChange.CardExternalId);
             }
 
-            tasks.Add(ApplyRatingChange(ratingChange, positionChange, cancellationToken));
+            yield return ApplyRatingChange(ratingChange, positionChange, cancellationToken);
         }
 
         // Now (after applying rating changes), apply pending position changes
@@ -143,10 +151,8 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
                 continue;
             }
 
-            tasks.Add(ApplyPositionChange(positionChange, cancellationToken));
+            yield return ApplyPositionChange(positionChange, cancellationToken);
         }
-
-        return tasks;
     }
 
     /// <summary>
@@ -156,16 +162,13 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
     /// <param name="playerAdditions">The players added to the roster</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>A collection of Tasks that will execute the roster update changes</returns>
-    private IReadOnlyList<Task> PreparePlayerAdditions(SeasonYear seasonYear,
+    private IEnumerable<Task> PreparePlayerAdditions(SeasonYear seasonYear,
         IEnumerable<PlayerAddition> playerAdditions, CancellationToken cancellationToken)
     {
-        var tasks = new List<Task>();
         foreach (var playerAddition in playerAdditions)
         {
-            tasks.Add(ApplyPlayerAddition(seasonYear, playerAddition, cancellationToken));
+            yield return ApplyPlayerAddition(seasonYear, playerAddition, cancellationToken);
         }
-
-        return tasks;
     }
 
     /// <summary>
