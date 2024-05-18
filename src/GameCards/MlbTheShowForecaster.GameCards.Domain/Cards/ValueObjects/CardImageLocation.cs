@@ -34,11 +34,11 @@ public sealed class CardImageLocation
             throw new EmptyCardImageException("A card image location is required");
         }
 
-        var created = Uri.TryCreate(cardImageLocation, UriKind.Relative, out var uri);
+        var created = Uri.TryCreate(cardImageLocation, UriKind.RelativeOrAbsolute, out var uri);
         if (!created || uri == null)
         {
             throw new InvalidCardImageLocationException(
-                $"The card image location must be a relative URI. Invalid value given: {cardImageLocation}");
+                $"The card image location must be a valid URI. Invalid value given: {cardImageLocation}");
         }
 
         return new CardImageLocation(uri);

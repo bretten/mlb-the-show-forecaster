@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 
@@ -98,4 +99,42 @@ public readonly record struct MlbPlayerCard(
     /// Returns true if this card is supported by the system, otherwise false
     /// </summary>
     public bool IsSupported => Series == CardSeries.Live;
+
+    /// <summary>
+    /// Gets the attributes as <see cref="PlayerCardAttributes"/>
+    /// </summary>
+    /// <returns>The attributes as <see cref="PlayerCardAttributes"/></returns>
+    public PlayerCardAttributes GetAttributes()
+    {
+        return PlayerCardAttributes.Create(
+            stamina: Stamina.Value,
+            pitchingClutch: PitchingClutch.Value,
+            hitsPerNine: HitsPerBf.Value,
+            strikeoutsPerNine: KPerBf.Value,
+            baseOnBallsPerNine: BbPerBf.Value,
+            homeRunsPerNine: HrPerBf.Value,
+            pitchVelocity: PitchVelocity.Value,
+            pitchControl: PitchControl.Value,
+            pitchMovement: PitchMovement.Value,
+            contactLeft: ContactLeft.Value,
+            contactRight: ContactRight.Value,
+            powerLeft: PowerLeft.Value,
+            powerRight: PowerRight.Value,
+            plateVision: PlateVision.Value,
+            plateDiscipline: PlateDiscipline.Value,
+            battingClutch: BattingClutch.Value,
+            buntingAbility: BuntingAbility.Value,
+            dragBuntingAbility: DragBuntingAbility.Value,
+            hittingDurability: HittingDurability.Value,
+            fieldingDurability: FieldingDurability.Value,
+            fieldingAbility: FieldingAbility.Value,
+            armStrength: ArmStrength.Value,
+            armAccuracy: ArmAccuracy.Value,
+            reactionTime: ReactionTime.Value,
+            blocking: Blocking.Value,
+            speed: Speed.Value,
+            baseRunningAbility: BaseRunningAbility.Value,
+            baseRunningAggression: BaseRunningAggression.Value
+        );
+    }
 };
