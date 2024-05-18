@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
@@ -40,7 +41,15 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task Handle(UpdatePlayerCardCommand command, CancellationToken cancellationToken = default)
     {
-        var domainPlayerCard = command.PlayerCard; // The domain PlayerCard that is being updated
+        // The domain PlayerCard that is being updated
+        var domainPlayerCard = await _playerCardRepository.GetByExternalId(command.PlayerCard.ExternalId);
+        if (domainPlayerCard == null)
+        {
+            throw new PlayerCardNotFoundException(
+                $"{nameof(PlayerCard)} not found for CardExternalId {command.PlayerCard.ExternalId.Value}");
+        }
+
+        // The changes from the external source
         var ratingChange = command.RatingChange;
         var positionChange = command.PositionChange;
 

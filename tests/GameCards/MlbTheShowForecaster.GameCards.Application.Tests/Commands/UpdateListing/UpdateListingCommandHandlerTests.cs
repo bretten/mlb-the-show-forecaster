@@ -1,9 +1,11 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using Moq;
@@ -13,17 +15,50 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Comman
 public class UpdateListingCommandHandlerTests
 {
     [Fact]
+    public async Task Handle_MissingListing_ThrowsException()
+    {
+        // Arrange
+        var cToken = CancellationToken.None;
+        var externalCardListing = Faker.FakeCardListing();
+        var domainListing = TestClasses.Faker.FakeListing();
+
+        var mockPriceChangeThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
+        var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();
+
+        var stubListingRepository = new Mock<IListingRepository>();
+        stubListingRepository.Setup(x => x.GetByExternalId(domainListing.CardExternalId, cToken))
+            .ReturnsAsync(null as Listing);
+
+        var stubUnitOfWork = new Mock<IUnitOfWork<IMarketplaceWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IListingRepository>())
+            .Returns(stubListingRepository.Object);
+
+        var command = new UpdateListingCommand(domainListing, externalCardListing, mockPriceChangeThreshold);
+        var handler = new UpdateListingCommandHandler(stubUnitOfWork.Object, mockDomainEventDispatcher);
+
+        var action = () => handler.Handle(command, cToken);
+
+        // Act
+        var actual = await Record.ExceptionAsync(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<ListingNotFoundException>(actual);
+    }
+
+    [Fact]
     public async Task Handle_UpdateListingCommand_UpdatesListing()
     {
         // Arrange
-        var externalId = Faker.FakeGuid1;
-        var externalCardListing = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: externalId,
+        var cToken = CancellationToken.None;
+        var externalId = TestClasses.Faker.FakeGuid1;
+        var externalCardListing = Faker.FakeCardListing(cardExternalId: externalId,
             bestBuyPrice: 100, bestSellPrice: 200, historicalPrices: new List<CardListingPrice>()
             {
-                Dtos.TestClasses.Faker.FakeCardListingPrice(new DateOnly(2024, 4, 2), 10, 20),
-                Dtos.TestClasses.Faker.FakeCardListingPrice(new DateOnly(2024, 4, 1), 1, 2)
+                Faker.FakeCardListingPrice(new DateOnly(2024, 4, 2), 10, 20),
+                Faker.FakeCardListingPrice(new DateOnly(2024, 4, 1), 1, 2)
             });
-        var domainListing = Faker.FakeListing(cardExternalId: externalId, buyPrice: 1, sellPrice: 1);
+        var domainListing = TestClasses.Faker.FakeListing(cardExternalId: externalId, buyPrice: 1, sellPrice: 1);
 
         var stubPriceChangeThreshold = new Mock<IListingPriceSignificantChangeThreshold>();
         stubPriceChangeThreshold.Setup(x => x.BuyPricePercentageChangeThreshold)
@@ -33,12 +68,14 @@ public class UpdateListingCommandHandlerTests
 
         var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();
 
-        var mockListingRepository = Mock.Of<IListingRepository>();
+        var stubListingRepository = new Mock<IListingRepository>();
+        stubListingRepository.Setup(x => x.GetByExternalId(domainListing.CardExternalId, cToken))
+            .ReturnsAsync(domainListing);
+
         var stubUnitOfWork = new Mock<IUnitOfWork<IMarketplaceWork>>();
         stubUnitOfWork.Setup(x => x.GetContributor<IListingRepository>())
-            .Returns(mockListingRepository);
+            .Returns(stubListingRepository.Object);
 
-        var cToken = CancellationToken.None;
         var command = new UpdateListingCommand(domainListing, externalCardListing, stubPriceChangeThreshold.Object);
         var handler = new UpdateListingCommandHandler(stubUnitOfWork.Object, mockDomainEventDispatcher);
 
@@ -46,7 +83,7 @@ public class UpdateListingCommandHandlerTests
         await handler.Handle(command, cToken);
 
         // Assert
-        Mock.Get(mockListingRepository).Verify(x => x.Update(domainListing, cToken), Times.Once);
+        stubListingRepository.Verify(x => x.Update(domainListing, cToken), Times.Once);
         stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
         Mock.Get(mockDomainEventDispatcher).Verify(x => x.Dispatch(domainListing.DomainEvents));
 

@@ -68,7 +68,7 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task Handle(UpdatePlayerStatsBySeasonCommand command, CancellationToken cancellationToken = default)
     {
-        // The player season stats that the system currently has stored
+        // The player season stats that the domain currently has stored
         var playerStatsBySeason = await _playerStatsBySeasonRepository.GetById(command.PlayerStatsBySeason.Id);
         if (playerStatsBySeason == null)
         {

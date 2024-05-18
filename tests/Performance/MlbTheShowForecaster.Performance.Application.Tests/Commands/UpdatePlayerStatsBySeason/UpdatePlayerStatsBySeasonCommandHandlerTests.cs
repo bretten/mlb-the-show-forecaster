@@ -24,7 +24,7 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
 
         var stubPlayerStatsBySeasonRepository = new Mock<IPlayerStatsBySeasonRepository>();
         stubPlayerStatsBySeasonRepository.Setup(x => x.GetById(fakePlayerStatsBySeason.Id))
-            .ReturnsAsync((PlayerStatsBySeason?)null);
+            .ReturnsAsync(null as PlayerStatsBySeason);
 
         var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerSeasonWork>>();
         stubUnitOfWork.Setup(x => x.GetContributor<IPlayerStatsBySeasonRepository>())
