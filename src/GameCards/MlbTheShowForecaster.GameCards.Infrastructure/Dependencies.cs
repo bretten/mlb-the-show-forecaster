@@ -136,14 +136,7 @@ public static class Dependencies
         });
         // Add repositories
         services.AddTransient<IPlayerCardRepository, EntityFrameworkCorePlayerCardRepository>();
-        services.AddTransient<IListingRepository, HybridNpgsqlEntityFrameworkCoreListingRepository>(sp =>
-        {
-            var dataSource =
-                new NpgsqlDataSourceBuilder(config.GetRequiredConnectionString(ConfigKeys.MarketplaceConnection))
-                    .Build();
-            return new HybridNpgsqlEntityFrameworkCoreListingRepository(sp.GetRequiredService<MarketplaceDbContext>(),
-                dataSource, sp.GetRequiredService<IAtomicDatabaseOperation>());
-        });
+        services.AddTransient<IListingRepository, HybridNpgsqlEntityFrameworkCoreListingRepository>();
         // UnitOfWork
         services.AddScoped<IAtomicDatabaseOperation, DbAtomicDatabaseOperation>(sp =>
         {

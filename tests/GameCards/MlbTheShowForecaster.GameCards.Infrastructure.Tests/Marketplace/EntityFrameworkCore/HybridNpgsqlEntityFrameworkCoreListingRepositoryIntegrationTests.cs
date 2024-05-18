@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore.Exceptions;
@@ -42,15 +43,45 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
     }
 
     [Fact]
-    public void Constructor_InvalidNpgsqlDataSource_ThrowsException()
+    public async Task GetConnection_InvalidNpgsqlDataSource_ThrowsException()
     {
         // Arrange
-        NpgsqlDataSource? dataSource = null;
+        var cToken = CancellationToken.None;
+
+        var stubbedDbAtomicOperation = new Mock<IAtomicDatabaseOperation>();
+        stubbedDbAtomicOperation.Setup(x => x.GetCurrentActiveConnection(cToken))
+            .ReturnsAsync(Mock.Of<DbConnection>());
+
         var mockDbContext = new MarketplaceDbContext(new DbContextOptions<MarketplaceDbContext>());
-        var action = () => new HybridNpgsqlEntityFrameworkCoreListingRepository(mockDbContext, dataSource!);
+        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(mockDbContext, stubbedDbAtomicOperation.Object);
+
+        var action = async () => await repo.Add(Faker.FakeListing(), cToken);
 
         // Act
-        var actual = Record.Exception(action);
+        var actual = await Record.ExceptionAsync(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<InvalidNpgsqlDataSourceForListingRepositoryException>(actual);
+    }
+
+    [Fact]
+    public async Task GetTransaction_InvalidNpgsqlDataSource_ThrowsException()
+    {
+        // Arrange
+        var cToken = CancellationToken.None;
+
+        var stubbedDbAtomicOperation = new Mock<IAtomicDatabaseOperation>();
+        stubbedDbAtomicOperation.Setup(x => x.GetCurrentActiveTransaction(cToken))
+            .ReturnsAsync(Mock.Of<DbTransaction>());
+
+        var mockDbContext = new MarketplaceDbContext(new DbContextOptions<MarketplaceDbContext>());
+        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(mockDbContext, stubbedDbAtomicOperation.Object);
+
+        var action = async () => await repo.Add(Faker.FakeListing(), cToken);
+
+        // Act
+        var actual = await Record.ExceptionAsync(action);
 
         // Assert
         Assert.NotNull(actual);
@@ -78,11 +109,14 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         await using var dbContext = GetDbContext(connection);
         await dbContext.Database.MigrateAsync();
         var dbDataSource = GetNpgsqlDataSource();
+        var atomicDbOperation = new DbAtomicDatabaseOperation(dbDataSource);
 
-        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, dbDataSource);
+        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, atomicDbOperation);
 
         // Act
         await repo.Add(fakeListing);
+        var transaction = await atomicDbOperation.GetCurrentActiveTransaction();
+        await transaction.CommitAsync();
 
         // Assert
         await using var assertConnection =
@@ -126,12 +160,13 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         await using var dbContext = GetDbContext(connection);
         await dbContext.Database.MigrateAsync();
         var dbDataSource = GetNpgsqlDataSource();
+        var atomicDbOperation = new DbAtomicDatabaseOperation(dbDataSource);
 
         await dbContext.AddAsync(fakeListing1);
         await dbContext.AddAsync(fakeListing2);
         await dbContext.SaveChangesAsync();
 
-        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, dbDataSource);
+        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, atomicDbOperation);
         var mockThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
 
         // Act
@@ -140,6 +175,8 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         fakeListing1.UpdatePrices(newBuyPrice: NaturalNumber.Create(1000), newSellPrice: NaturalNumber.Create(2000),
             mockThreshold);
         await repo.Update(fakeListing1);
+        var transaction = await atomicDbOperation.GetCurrentActiveTransaction();
+        await transaction.CommitAsync();
 
         // Assert
         await using var assertConnection =
@@ -188,11 +225,13 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         await using var dbContext = GetDbContext(connection);
         await dbContext.Database.MigrateAsync();
         var dbDataSource = GetNpgsqlDataSource();
+        var atomicDbOperation = new DbAtomicDatabaseOperation(dbDataSource);
 
-        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, dbDataSource);
+        var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, atomicDbOperation);
         await repo.Add(fakeListing1);
         await repo.Add(fakeListing2);
-        await dbContext.SaveChangesAsync();
+        var transaction = await atomicDbOperation.GetCurrentActiveTransaction();
+        await transaction.CommitAsync();
 
         // Act
         var actual = await repo.GetByExternalId(fakeListing1.CardExternalId);
