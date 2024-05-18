@@ -1,5 +1,4 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFrameworkCore.TestClasses;
 using Microsoft.EntityFrameworkCore;
@@ -10,51 +9,6 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.Entity
 
 public class UnitOfWorkTests
 {
-    [Fact]
-    public void GetContributor_UnknownTypeParam_ThrowsException()
-    {
-        // Arrange
-        var mockDbContext = Mock.Of<TestDbContext>();
-
-        var (stubServiceScopeFactory, stubServiceScope) = MockScope();
-        stubServiceScope.Setup(x => x.ServiceProvider.GetService(typeof(TestDbContext)))
-            .Returns(mockDbContext);
-        stubServiceScope.Setup(x => x.ServiceProvider.GetService(typeof(ISomeRepository)))
-            .Returns(null!);
-
-        var uow = new UnitOfWork<TestDbContext>(Mock.Of<IDomainEventDispatcher>(), stubServiceScopeFactory.Object);
-        var action = () => uow.GetContributor<ISomeRepository>();
-
-        // Act
-        var actual = Record.Exception(action);
-
-        // Assert
-        Assert.NotNull(actual);
-        Assert.IsType<UnitOfWorkContributorNotFoundException>(actual);
-    }
-
-    [Fact]
-    public void GetContributor_TypeParam_ReturnsContributorOfType()
-    {
-        // Arrange
-        var mockDbContext = Mock.Of<TestDbContext>();
-        var mockRepository = Mock.Of<ISomeRepository>();
-
-        var (stubServiceScopeFactory, stubServiceScope) = MockScope();
-        stubServiceScope.Setup(x => x.ServiceProvider.GetService(typeof(TestDbContext)))
-            .Returns(mockDbContext);
-        stubServiceScope.Setup(x => x.ServiceProvider.GetService(typeof(ISomeRepository)))
-            .Returns(mockRepository);
-
-        var uow = new UnitOfWork<TestDbContext>(Mock.Of<IDomainEventDispatcher>(), stubServiceScopeFactory.Object);
-
-        // Act
-        var actual = uow.GetContributor<ISomeRepository>();
-
-        // Assert
-        Assert.IsAssignableFrom<ISomeRepository>(actual);
-    }
-
     [Fact]
     public async Task CommitAsync_NoParams_SaveChangesAsyncInvoked()
     {
@@ -142,8 +96,6 @@ public class UnitOfWorkTests
             .Options;
         return new TestDbContext(dbContextOptions);
     }
-
-    public interface ISomeRepository;
 
     private (Mock<IServiceScopeFactory> stubServiceScopeFactory, Mock<IServiceScope> stubServiceScope) MockScope()
     {

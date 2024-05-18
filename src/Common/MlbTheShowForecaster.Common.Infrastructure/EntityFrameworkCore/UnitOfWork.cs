@@ -1,6 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,8 +13,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFramew
 /// by contributors to the unit of work
 /// </summary>
 /// <typeparam name="TDbContext">The type of work that is being committed. In this case, the work is for a <see cref="DbContext"/></typeparam>
-public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposable, IAsyncDisposable
-    where TDbContext : DbContext, IUnitOfWorkType
+public sealed class UnitOfWork<TDbContext> : ScopedUnitOfWork<TDbContext> where TDbContext : DbContext, IUnitOfWorkType
 {
     /// <summary>
     /// The DB context
@@ -27,33 +26,15 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposabl
     private readonly IDomainEventDispatcher _domainEventDispatcher;
 
     /// <summary>
-    /// Service scope used to resolve services that contribute to this <see cref="UnitOfWork{T}"/>
-    /// </summary>
-    private readonly IServiceScope _scope;
-
-    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="domainEventDispatcher">Publishes all domain events that were raised by any <see cref="Entity"/> that was changed</param>
     /// <param name="serviceScopeFactory">Factory for the service scope used to resolve services that contribute to this <see cref="UnitOfWork{T}"/></param>
-    public UnitOfWork(IDomainEventDispatcher domainEventDispatcher, IServiceScopeFactory serviceScopeFactory)
+    public UnitOfWork(IDomainEventDispatcher domainEventDispatcher, IServiceScopeFactory serviceScopeFactory) : base(
+        serviceScopeFactory)
     {
         _domainEventDispatcher = domainEventDispatcher;
-        _scope = serviceScopeFactory.CreateScope();
-        _dbContext = _scope.ServiceProvider.GetRequiredService<TDbContext>();
-    }
-
-    /// <summary>
-    /// Gets a contributor to the unit of work of the specified type <see cref="TContributor"/>
-    /// </summary>
-    /// <typeparam name="TContributor">The type of contributor to get</typeparam>
-    /// <returns>The contributor to the unit of work</returns>
-    /// <exception cref="UnitOfWorkContributorNotFoundException">Thrown if the contributor could not be found</exception>
-    public TContributor GetContributor<TContributor>() where TContributor : notnull
-    {
-        return _scope.ServiceProvider.GetService<TContributor>() ??
-               throw new UnitOfWorkContributorNotFoundException(
-                   $"Contributor of type {nameof(TContributor)} not found");
+        _dbContext = Scope.ServiceProvider.GetRequiredService<TDbContext>();
     }
 
     /// <summary>
@@ -63,7 +44,7 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposabl
     /// <see cref="DbContext"/> so that they are encapsulated in a logical transaction</para>
     /// </summary>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    public async Task CommitAsync(CancellationToken cancellationToken = default)
+    public override async Task CommitAsync(CancellationToken cancellationToken = default)
     {
         PublishDomainEvents();
 
@@ -74,19 +55,19 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposabl
     /// <summary>
     /// Disposes of the DB context
     /// </summary>
-    public void Dispose()
+    public override void Dispose()
     {
         _dbContext.Dispose();
-        _scope.Dispose();
+        base.Dispose();
     }
 
     /// <summary>
     /// Disposes of the DB context
     /// </summary>
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         await _dbContext.DisposeAsync();
-        _scope.Dispose();
+        await base.DisposeAsync();
     }
 
     /// <summary>
