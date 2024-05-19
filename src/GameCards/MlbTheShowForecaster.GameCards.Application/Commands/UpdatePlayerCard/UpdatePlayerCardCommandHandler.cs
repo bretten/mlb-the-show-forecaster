@@ -54,10 +54,10 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
         var positionChange = command.PositionChange;
 
         // If there was a rating change, apply it
-        if (ratingChange != null)
+        if (ratingChange != null && command.ExternalPlayerCard != null)
         {
             domainPlayerCard.ChangePlayerRating(ratingChange.Value.Date, ratingChange.Value.NewRating,
-                ratingChange.Value.AttributeChanges.ApplyAttributes(domainPlayerCard.PlayerCardAttributes));
+                command.ExternalPlayerCard.Value.GetAttributes());
         }
 
         // If there was a position change, apply it

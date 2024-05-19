@@ -197,8 +197,12 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
             return;
         }
 
+        // Get the current state of the player card from the external card catalog
+        var externalCard =
+            await _cardCatalog.GetMlbPlayerCard(playerCard.Year, playerCard.ExternalId, cancellationToken);
+
         // Update the domain PlayerCard with the rating and the position change if there is one
-        await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, ratingChange, positionChange),
+        await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, externalCard, ratingChange, positionChange),
             cancellationToken);
     }
 
@@ -220,7 +224,8 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
         }
 
         // Update the domain PlayerCard with the new position
-        await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, null, positionChange), cancellationToken);
+        await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, null, null, positionChange),
+            cancellationToken);
     }
 
     /// <summary>

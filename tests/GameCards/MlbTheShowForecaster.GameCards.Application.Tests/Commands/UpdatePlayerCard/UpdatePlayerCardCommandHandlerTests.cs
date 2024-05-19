@@ -16,9 +16,10 @@ public class UpdatePlayerCardCommandHandlerTests
     public async Task Handle_MissingPlayerCard_ThrowsException()
     {
         // Arrange
-        var playerCard = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
-        var ratingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(newOverallRating: 90);
-        var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange(newPosition: Position.FirstBase);
+        var playerCard = Faker.FakePlayerCard();
+        var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard();
+        var ratingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange();
+        var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange();
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
         stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
@@ -29,7 +30,7 @@ public class UpdatePlayerCardCommandHandlerTests
             .Returns(stubPlayerCardRepository.Object);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCardCommand(playerCard, ratingChange, positionChange);
+        var command = new UpdatePlayerCardCommand(playerCard, externalPlayerCard, ratingChange, positionChange);
         var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object);
 
         var action = () => handler.Handle(command, cToken);
@@ -47,6 +48,7 @@ public class UpdatePlayerCardCommandHandlerTests
     {
         // Arrange
         var playerCard = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
+        var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard(speed: 20);
         var ratingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(newOverallRating: 90);
         var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange(newPosition: Position.FirstBase);
 
@@ -59,7 +61,7 @@ public class UpdatePlayerCardCommandHandlerTests
             .Returns(stubPlayerCardRepository.Object);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCardCommand(playerCard, ratingChange, positionChange);
+        var command = new UpdatePlayerCardCommand(playerCard, externalPlayerCard, ratingChange, positionChange);
         var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object);
 
         // Act
@@ -68,6 +70,7 @@ public class UpdatePlayerCardCommandHandlerTests
         // Assert
         stubPlayerCardRepository.Verify(x => x.Update(playerCard), Times.Once);
         stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
+        Assert.Equal(20, playerCard.PlayerCardAttributes.Speed.Value);
         Assert.Equal(90, playerCard.OverallRating.Value);
         Assert.Equal(Position.FirstBase, playerCard.Position);
     }
