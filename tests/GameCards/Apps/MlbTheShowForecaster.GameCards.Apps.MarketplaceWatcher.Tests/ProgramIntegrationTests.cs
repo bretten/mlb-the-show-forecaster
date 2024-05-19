@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -65,8 +66,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
             { "PlayerCardTracker:Seasons:0", "2024" },
             { "CardPriceTracker:Interval", "01:00:00:00" },
             { "CardPriceTracker:Seasons:0", "2024" },
-            { "CardPriceTracker:BuyPricePercentageChangeThreshold", "15" },
-            { "CardPriceTracker:SellPricePercentageChangeThreshold", "15" },
+            { "CardPriceTracker:BuyPricePercentageChangeThreshold", "0.01" },
+            { "CardPriceTracker:SellPricePercentageChangeThreshold", "0.01" },
             { "Messaging:RabbitMq:HostName", "localhost" },
             { "Messaging:RabbitMq:UserName", "rabbitmq" },
             { "Messaging:RabbitMq:Password", "rabbitmq" },
@@ -87,10 +88,20 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await using var cardsDbContext = GetCardsDbContext(connection);
         await CreateSchema(connection);
         await cardsDbContext.Database.MigrateAsync();
+        // Add a PlayerCard (and a listing below) so the ICardPriceTracker can update the listing and dispatch price change domain events
+        var playerCardExternalId1 = Guid.Parse("a71cdf423ea5906c5fa85fff95d90360");
+        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId1));
+        // Add another PlayerCard (with no listing) so the ICardPriceTracker can create a new listing
+        var playerCardExternalId2 = Guid.Parse("7a1609ab176b59d06b0f9e4db8e079a8");
+        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId2));
+        await cardsDbContext.SaveChangesAsync();
 
         // Setup the marketplace database
         await using var marketplaceDbContext = GetMarketplaceDbContext(connection);
         await marketplaceDbContext.Database.MigrateAsync();
+        // Add a Listing so price change domain events can be dispatched
+        await marketplaceDbContext.Listings.AddAsync(Faker.FakeListing(playerCardExternalId1));
+        await marketplaceDbContext.SaveChangesAsync();
 
         /*
          * Act
@@ -107,18 +118,19 @@ public class ProgramIntegrationTests : IAsyncLifetime
         /*
          * Assert
          */
-        // There should be player cards
+        // There should be more than one player cards
         await using var assertConnection = await GetDbConnection();
         await using var assertCardsDbContext = GetCardsDbContext(connection);
         var playerCards = assertCardsDbContext.PlayerCards.Count();
-        Assert.True(playerCards > 0);
+        Assert.True(playerCards > 2); // Two were already inserted by the setup of this test
         // There should be marketplace listings
         await using var assertMarketplaceDbContext = GetMarketplaceDbContext(connection);
         var listings = assertMarketplaceDbContext.Listings.Count();
-        Assert.True(listings > 0);
+        Assert.True(listings > 1); // One was already inserted by the setup of this test
         // Domain events should have been published
         using var rabbitMqChannel = host.Services.GetRequiredService<IModel>();
-        var messageCount = rabbitMqChannel.MessageCount("PlayerCardOverallRatingImproved");
+        var messageCount = rabbitMqChannel.MessageCount("ListingBuyPriceDecreased") +
+                           rabbitMqChannel.MessageCount("ListingBuyPriceIncreased");
         Assert.True(messageCount > 0);
     }
 

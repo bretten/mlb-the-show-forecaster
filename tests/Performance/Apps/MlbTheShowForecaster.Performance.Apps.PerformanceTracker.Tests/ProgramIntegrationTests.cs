@@ -112,7 +112,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // The player season should have performance stats
         await using var assertConnection = await GetDbConnection();
         await using var assertDbContext = GetDbContext(connection);
-        var playerSeason = await assertDbContext.PlayerStatsBySeasonsWithGames().FirstAsync();
+        var playerSeason = assertDbContext.PlayerStatsBySeasonsWithGames().First();
         Assert.True(playerSeason.BattingStatsByGamesChronologically.Count > 0);
         Assert.True(playerSeason.PitchingStatsByGamesChronologically.Count > 0);
         Assert.True(playerSeason.FieldingStatsByGamesChronologically.Count > 0);

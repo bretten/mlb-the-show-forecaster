@@ -173,7 +173,7 @@ public static class MarketplaceWatcherHostExtensions
                         context.Configuration.GetRequiredValue<string>("CardPriceTracker:Interval"), "g",
                         CultureInfo.InvariantCulture)
                 ));
-            // Background service for tracking marketplace card prices
+            // Background service for tracking roster updates
             services.AddHostedService<ScheduledBackgroundService<IRosterUpdateOrchestrator>>(sp =>
                 new ScheduledBackgroundService<IRosterUpdateOrchestrator>(
                     sp.GetRequiredService<IServiceScopeFactory>(),
