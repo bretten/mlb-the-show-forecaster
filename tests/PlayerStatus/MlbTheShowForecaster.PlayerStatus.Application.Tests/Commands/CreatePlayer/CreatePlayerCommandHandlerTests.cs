@@ -20,7 +20,9 @@ public class CreatePlayerCommandHandlerTests
         var fakePlayer = Faker.FakePlayer(active: false, team: null);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerRepository>())
+            .Returns(mockPlayerRepository);
 
         var stubPlayerMapper = Mock.Of<IPlayerMapper>(x => x.Map(fakeRosterEntry) == fakePlayer);
 
@@ -30,8 +32,7 @@ public class CreatePlayerCommandHandlerTests
 
         var cToken = CancellationToken.None;
         var command = new CreatePlayerCommand(fakeRosterEntry);
-        var handler = new CreatePlayerCommandHandler(mockPlayerRepository, mockUnitOfWork, stubPlayerMapper,
-            stubTeamProvider.Object);
+        var handler = new CreatePlayerCommandHandler(stubUnitOfWork.Object, stubPlayerMapper, stubTeamProvider.Object);
 
         // Act
         await handler.Handle(command, cToken);
@@ -42,6 +43,6 @@ public class CreatePlayerCommandHandlerTests
         Assert.Equal(fakeTeam, fakePlayer.Team);
 
         Mock.Get(mockPlayerRepository).Verify(x => x.Add(fakePlayer), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 }

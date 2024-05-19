@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
@@ -168,11 +169,13 @@ public class DependenciesTests
         Assert.IsType<HybridNpgsqlEntityFrameworkCoreListingRepository>(
             actual.GetRequiredService<IListingRepository>());
 
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(IAtomicDatabaseOperation)).Lifetime);
+        Assert.IsType<DbAtomicDatabaseOperation>(actual.GetRequiredService<IAtomicDatabaseOperation>());
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IUnitOfWork<ICardWork>)).Lifetime);
         Assert.IsType<UnitOfWork<CardsDbContext>>(actual.GetRequiredService<IUnitOfWork<ICardWork>>());
         Assert.Equal(ServiceLifetime.Transient,
             s.First(x => x.ServiceType == typeof(IUnitOfWork<IMarketplaceWork>)).Lifetime);
-        Assert.IsType<UnitOfWork<MarketplaceDbContext>>(actual.GetRequiredService<IUnitOfWork<IMarketplaceWork>>());
+        Assert.IsType<DbUnitOfWork<MarketplaceDbContext>>(actual.GetRequiredService<IUnitOfWork<IMarketplaceWork>>());
     }
 
     private static IConfiguration GetConfig(Dictionary<string, string?> settings)

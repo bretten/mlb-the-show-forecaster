@@ -1,16 +1,19 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 
 /// <summary>
-/// An EF implementation of unit of work that forces any changes to the DB context (since the last call to commit)
-/// to be encapsulated as a single, logical unit of work by only saving changes when commit is invoked
+/// An <see cref="Microsoft.EntityFrameworkCore"/> implementation <see cref="IUnitOfWork{T}"/> that creates and scopes a
+/// <see cref="DbContext"/> to an instance of <see cref="UnitOfWork{T}"/>. <see cref="CommitAsync"/> will invoke the
+/// <see cref="DbContext"/>'s SaveChanges and persist any mutations performed
+/// by contributors to the unit of work
 /// </summary>
 /// <typeparam name="TDbContext">The type of work that is being committed. In this case, the work is for a <see cref="DbContext"/></typeparam>
-public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposable, IAsyncDisposable
-    where TDbContext : DbContext, IUnitOfWorkType
+public sealed class UnitOfWork<TDbContext> : ScopedUnitOfWork<TDbContext> where TDbContext : DbContext, IUnitOfWorkType
 {
     /// <summary>
     /// The DB context
@@ -25,12 +28,13 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposabl
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="dbContext">The DB context</param>
     /// <param name="domainEventDispatcher">Publishes all domain events that were raised by any <see cref="Entity"/> that was changed</param>
-    public UnitOfWork(TDbContext dbContext, IDomainEventDispatcher domainEventDispatcher)
+    /// <param name="serviceScopeFactory">Factory for the service scope used to resolve services that contribute to this <see cref="UnitOfWork{T}"/></param>
+    public UnitOfWork(IDomainEventDispatcher domainEventDispatcher, IServiceScopeFactory serviceScopeFactory) : base(
+        serviceScopeFactory)
     {
-        _dbContext = dbContext;
         _domainEventDispatcher = domainEventDispatcher;
+        _dbContext = Scope.ServiceProvider.GetRequiredService<TDbContext>();
     }
 
     /// <summary>
@@ -40,27 +44,30 @@ public sealed class UnitOfWork<TDbContext> : IUnitOfWork<TDbContext>, IDisposabl
     /// <see cref="DbContext"/> so that they are encapsulated in a logical transaction</para>
     /// </summary>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    public async Task CommitAsync(CancellationToken cancellationToken = default)
+    public override async Task CommitAsync(CancellationToken cancellationToken = default)
     {
         PublishDomainEvents();
 
         await _dbContext.SaveChangesAsync(cancellationToken);
+        await DisposeAsync();
     }
 
     /// <summary>
     /// Disposes of the DB context
     /// </summary>
-    public void Dispose()
+    public override void Dispose()
     {
         _dbContext.Dispose();
+        base.Dispose();
     }
 
     /// <summary>
     /// Disposes of the DB context
     /// </summary>
-    public async ValueTask DisposeAsync()
+    public override async ValueTask DisposeAsync()
     {
         await _dbContext.DisposeAsync();
+        await base.DisposeAsync();
     }
 
     /// <summary>

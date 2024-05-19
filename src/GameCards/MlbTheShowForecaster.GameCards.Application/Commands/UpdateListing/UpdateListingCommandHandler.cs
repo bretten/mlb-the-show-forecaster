@@ -1,5 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
@@ -15,24 +17,31 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.Upd
 internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListingCommand>
 {
     /// <summary>
-    /// The <see cref="Listing"/> repository
-    /// </summary>
-    private readonly IListingRepository _listingRepository;
-
-    /// <summary>
     /// The unit of work that encapsulates all actions for updating a <see cref="Listing"/>
     /// </summary>
     private readonly IUnitOfWork<IMarketplaceWork> _unitOfWork;
 
     /// <summary>
+    /// Publishes all domain events that were raised by the <see cref="Listing"/>
+    /// </summary>
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
+
+    /// <summary>
+    /// The <see cref="Listing"/> repository
+    /// </summary>
+    private readonly IListingRepository _listingRepository;
+
+    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="listingRepository">The <see cref="Listing"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="Listing"/></param>
-    public UpdateListingCommandHandler(IListingRepository listingRepository, IUnitOfWork<IMarketplaceWork> unitOfWork)
+    /// <param name="domainEventDispatcher">Publishes all domain events that were raised by the <see cref="Listing"/></param>
+    public UpdateListingCommandHandler(IUnitOfWork<IMarketplaceWork> unitOfWork,
+        IDomainEventDispatcher domainEventDispatcher)
     {
-        _listingRepository = listingRepository;
         _unitOfWork = unitOfWork;
+        _domainEventDispatcher = domainEventDispatcher;
+        _listingRepository = unitOfWork.GetContributor<IListingRepository>();
     }
 
     /// <summary>
@@ -43,7 +52,16 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task Handle(UpdateListingCommand command, CancellationToken cancellationToken = default)
     {
-        var domainListing = command.DomainListing;
+        // The domain Listing that is being updated
+        var domainListing =
+            await _listingRepository.GetByExternalId(command.DomainListing.CardExternalId, cancellationToken);
+        if (domainListing == null)
+        {
+            throw new ListingNotFoundException(
+                $"{nameof(Listing)} not found for CardExternalId {command.DomainListing.CardExternalId.Value}");
+        }
+
+        // The up-to-date listing data from the external source
         var externalCardListing = command.ExternalCardListing;
 
         // Get new historical prices that are in the external source but not the domain Listing
@@ -60,5 +78,6 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
 
         await _listingRepository.Update(domainListing, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);
+        _domainEventDispatcher.Dispatch(domainListing.DomainEvents);
     }
 }

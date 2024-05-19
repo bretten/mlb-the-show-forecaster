@@ -23,6 +23,13 @@ public interface IPlayerStatsBySeasonRepository
     Task Update(PlayerStatsBySeason stats);
 
     /// <summary>
+    /// Returns a <see cref="PlayerStatsBySeason"/> for the specified ID
+    /// </summary>
+    /// <param name="id">The ID of the <see cref="PlayerStatsBySeason"/></param>
+    /// <returns><see cref="PlayerStatsBySeason"/> for the specified ID</returns>
+    Task<PlayerStatsBySeason?> GetById(Guid id);
+
+    /// <summary>
     /// Returns all <see cref="PlayerStatsBySeason"/> for the specified season
     /// </summary>
     /// <param name="seasonYear">The season</param>

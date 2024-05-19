@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using System.Data.Common;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
@@ -23,22 +23,20 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     private readonly MarketplaceDbContext _dbContext;
 
     /// <summary>
-    /// Data source for getting Npgsql connections
+    /// The current, active database transaction
     /// </summary>
-    private readonly NpgsqlDataSource _dbDataSource;
+    private readonly IAtomicDatabaseOperation _atomicDatabaseOperation;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="dbContext">The DB context for <see cref="Listing"/></param>
-    /// <param name="dbDataSource">Data source for getting Npgsql connections</param>
-    /// <exception cref="InvalidNpgsqlDataSourceForListingRepositoryException">Thrown when the <see cref="NpgsqlDataSource"/> is invalid</exception>
-    public HybridNpgsqlEntityFrameworkCoreListingRepository(MarketplaceDbContext dbContext, DbDataSource dbDataSource)
+    /// <param name="atomicDatabaseOperation">The current, active database transaction</param>
+    public HybridNpgsqlEntityFrameworkCoreListingRepository(MarketplaceDbContext dbContext,
+        IAtomicDatabaseOperation atomicDatabaseOperation)
     {
         _dbContext = dbContext;
-        _dbDataSource = dbDataSource as NpgsqlDataSource ??
-                        throw new InvalidNpgsqlDataSourceForListingRepositoryException(
-                            $"No valid Npgsql datasource provided for {nameof(HybridNpgsqlEntityFrameworkCoreListingRepository)}");
+        _atomicDatabaseOperation = atomicDatabaseOperation;
     }
 
     /// <summary>
@@ -49,8 +47,8 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     public async Task Add(Listing listing, CancellationToken cancellationToken = default)
     {
         // Open a connection and begin a transaction
-        await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var connection = await GetConnection(cancellationToken);
+        var transaction = await GetTransaction(cancellationToken);
 
         // INSERT the Listing
         await using var command = new NpgsqlCommand(ListingsInsertCommand, connection, transaction);
@@ -63,9 +61,6 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         // Bulk upsert the Listing's historical prices
         await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
             cancellationToken);
-
-        // Commit
-        await transaction.CommitAsync(cancellationToken);
     }
 
     /// <summary>
@@ -76,8 +71,8 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     public async Task Update(Listing listing, CancellationToken cancellationToken = default)
     {
         // Open a connection and begin a transaction
-        await using var connection = await _dbDataSource.OpenConnectionAsync(cancellationToken);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var connection = await GetConnection(cancellationToken);
+        var transaction = await GetTransaction(cancellationToken);
 
         // UPDATE the Listing
         await using var command = new NpgsqlCommand(ListingsUpdateCommand, connection, transaction);
@@ -89,9 +84,6 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         // Bulk upsert the Listing's historical prices
         await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
             cancellationToken);
-
-        // Commit
-        await transaction.CommitAsync(cancellationToken);
     }
 
     /// <summary>
@@ -105,6 +97,40 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     {
         return await _dbContext.ListingsWithHistoricalPrices().FirstOrDefaultAsync(x => x.CardExternalId == externalId,
             cancellationToken: cancellationToken);
+    }
+
+    /// <summary>
+    /// Gets the current DB connection
+    /// </summary>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <returns>The current DB connection</returns>
+    /// <exception cref="InvalidNpgsqlDataSourceForListingRepositoryException">Thrown when the connection is not a <see cref="NpgsqlConnection"/></exception>
+    private async Task<NpgsqlConnection> GetConnection(CancellationToken cancellationToken = default)
+    {
+        if (await _atomicDatabaseOperation.GetCurrentActiveConnection(cancellationToken) is not NpgsqlConnection c)
+        {
+            throw new InvalidNpgsqlDataSourceForListingRepositoryException(
+                $"Connection was not a {nameof(NpgsqlConnection)} for {nameof(HybridNpgsqlEntityFrameworkCoreListingRepository)}");
+        }
+
+        return c;
+    }
+
+    /// <summary>
+    /// Gets the current DB transaction
+    /// </summary>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <returns>The current DB transaction</returns>
+    /// <exception cref="InvalidNpgsqlDataSourceForListingRepositoryException">Thrown when the transaction is not a <see cref="NpgsqlTransaction"/></exception>
+    private async Task<NpgsqlTransaction> GetTransaction(CancellationToken cancellationToken = default)
+    {
+        if (await _atomicDatabaseOperation.GetCurrentActiveTransaction(cancellationToken) is not NpgsqlTransaction t)
+        {
+            throw new InvalidNpgsqlDataSourceForListingRepositoryException(
+                $"Transaction was not a {nameof(NpgsqlTransaction)} for {nameof(HybridNpgsqlEntityFrameworkCoreListingRepository)}");
+        }
+
+        return t;
     }
 
     /// <summary>
