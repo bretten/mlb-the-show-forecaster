@@ -25,11 +25,13 @@ public class UpdatePlayerCommandHandlerTests
         }, Faker.NoTeam);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerRepository>())
+            .Returns(mockPlayerRepository);
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerCommand(fakePlayer, fakePlayerStatusChange);
-        var handler = new UpdatePlayerCommandHandler(mockPlayerRepository, mockUnitOfWork);
+        var handler = new UpdatePlayerCommandHandler(stubUnitOfWork.Object);
 
         // Act
         await handler.Handle(command, cToken);
@@ -39,7 +41,7 @@ public class UpdatePlayerCommandHandlerTests
         Assert.Null(fakePlayer.Team);
 
         Mock.Get(mockPlayerRepository).Verify(x => x.Update(fakePlayer), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 
     [Fact]
@@ -55,11 +57,13 @@ public class UpdatePlayerCommandHandlerTests
         }, fakeTeam);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerRepository>())
+            .Returns(mockPlayerRepository);
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerCommand(fakePlayer, fakePlayerStatusChange);
-        var handler = new UpdatePlayerCommandHandler(mockPlayerRepository, mockUnitOfWork);
+        var handler = new UpdatePlayerCommandHandler(stubUnitOfWork.Object);
 
         // Act
         await handler.Handle(command, cToken);
@@ -70,7 +74,7 @@ public class UpdatePlayerCommandHandlerTests
         Assert.Equal(fakeTeam, fakePlayer.Team);
 
         Mock.Get(mockPlayerRepository).Verify(x => x.Update(fakePlayer), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 
     [Fact]
@@ -85,11 +89,13 @@ public class UpdatePlayerCommandHandlerTests
         }, Faker.NoTeam); // <-- Cause of exception = No team specified in the status change
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerRepository>())
+            .Returns(mockPlayerRepository);
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerCommand(fakePlayer, fakePlayerStatusChange);
-        var handler = new UpdatePlayerCommandHandler(mockPlayerRepository, mockUnitOfWork);
+        var handler = new UpdatePlayerCommandHandler(stubUnitOfWork.Object);
         var action = async () => await handler.Handle(command, cToken);
 
         // Act
@@ -100,6 +106,6 @@ public class UpdatePlayerCommandHandlerTests
         Assert.IsType<MissingTeamContractSigningException>(actual);
 
         Mock.Get(mockPlayerRepository).Verify(x => x.Update(fakePlayer), Times.Never);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Never);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Never);
     }
 }

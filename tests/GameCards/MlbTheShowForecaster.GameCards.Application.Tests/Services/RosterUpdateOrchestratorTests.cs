@@ -320,6 +320,7 @@ public class RosterUpdateOrchestratorTests
         var ratingChange2 =
             Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId2, date: rosterUpdate2Date);
         var positionChange2 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId2);
+        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId2);
 
         // RosterUpdate2 - PlayerCard3 only has a position change
         var cardExternalId3 = Faker.FakeGuid3;
@@ -361,6 +362,8 @@ public class RosterUpdateOrchestratorTests
 
         // Card catalog
         var stubCardCatalog = new Mock<ICardCatalog>();
+        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(seasonYear, externalCard2.ExternalUuid, cToken))
+            .ReturnsAsync(externalCard2);
         stubCardCatalog.Setup(x => x.GetMlbPlayerCard(seasonYear, playerAddition4.CardExternalId, cToken))
             .ReturnsAsync(externalCard4);
 
@@ -400,13 +403,14 @@ public class RosterUpdateOrchestratorTests
         Mock.Get(mockCommandSender)
             .Verify(x => x.Send(It.Is<UpdatePlayerCardCommand>(c => c.PlayerCard == playerCard1), cToken), Times.Never);
         // PlayerCard2 - A rating change and position change command should have been sent for PlayerCard2
-        var playerCard2Command = new UpdatePlayerCardCommand(playerCard2, ratingChange2, positionChange2);
+        var playerCard2Command =
+            new UpdatePlayerCardCommand(playerCard2, externalCard2, ratingChange2, positionChange2);
         Mock.Get(mockCommandSender).Verify(x => x.Send(playerCard2Command, cToken), Times.Once);
         // PlayerCard2 - The position change was updated with the rating change, so there should be no command with just the position change
-        var playerCard2CommandNotSent = new UpdatePlayerCardCommand(playerCard2, null, positionChange2);
+        var playerCard2CommandNotSent = new UpdatePlayerCardCommand(playerCard2, null, null, positionChange2);
         Mock.Get(mockCommandSender).Verify(x => x.Send(playerCard2CommandNotSent, cToken), Times.Never);
         // PlayerCard3 - A position change command should have been sent
-        var playerCard3Command = new UpdatePlayerCardCommand(playerCard3, null, positionChange3);
+        var playerCard3Command = new UpdatePlayerCardCommand(playerCard3, null, null, positionChange3);
         Mock.Get(mockCommandSender).Verify(x => x.Send(playerCard3Command, cToken), Times.Once);
         // PlayerCard4 - A PlayerCard creation command should have been sent
         var playerCard4Command = new CreatePlayerCardCommand(externalCard4);

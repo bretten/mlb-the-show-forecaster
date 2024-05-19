@@ -41,6 +41,17 @@ public sealed class EntityFrameworkCorePlayerStatsBySeasonRepository : IPlayerSt
     }
 
     /// <summary>
+    /// Returns a <see cref="PlayerStatsBySeason"/> for the specified ID
+    /// </summary>
+    /// <param name="id">The ID of the <see cref="PlayerStatsBySeason"/></param>
+    /// <returns><see cref="PlayerStatsBySeason"/> for the specified ID</returns>
+    public async Task<PlayerStatsBySeason?> GetById(Guid id)
+    {
+        return await _dbContext.PlayerStatsBySeasonsWithGames()
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    /// <summary>
     /// Returns all <see cref="PlayerStatsBySeason"/> for the specified season
     /// </summary>
     /// <param name="seasonYear">The season</param>
@@ -49,7 +60,7 @@ public sealed class EntityFrameworkCorePlayerStatsBySeasonRepository : IPlayerSt
     {
         return await _dbContext.PlayerStatsBySeasonsWithGames()
             .Where(x => x.SeasonYear == seasonYear)
-            //.AsNoTracking() // The entities will be updated, so leave AsNoTracking commented since is not a read-only scenario
+            .AsNoTracking() // Entities will not be updated so no tracking necessary
             .ToListAsync();
     }
 }

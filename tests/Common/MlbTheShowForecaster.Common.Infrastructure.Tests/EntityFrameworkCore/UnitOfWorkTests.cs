@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFrameworkCore.TestClasses;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.EntityFrameworkCore;
@@ -21,14 +22,19 @@ public class UnitOfWorkTests
         var dbContext = GetTestDbContext(nameof(CommitAsync_NoParams_SaveChangesAsyncInvoked));
         await dbContext.TestEntities.AddAsync(fakeEntity, cToken);
 
+        var (stubServiceScopeFactory, stubServiceScope) = MockScope();
+        stubServiceScope.Setup(x => x.ServiceProvider.GetService(typeof(TestDbContext)))
+            .Returns(dbContext);
+
         var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();
-        var uow = new UnitOfWork<TestDbContext>(dbContext, mockDomainEventDispatcher);
+        var uow = new UnitOfWork<TestDbContext>(mockDomainEventDispatcher, stubServiceScopeFactory.Object);
 
         // Act
         await uow.CommitAsync(cToken);
 
         // Assert
-        Assert.Equal(fakeEntity, dbContext.TestEntities.First());
+        var assertDbContext = GetTestDbContext(nameof(CommitAsync_NoParams_SaveChangesAsyncInvoked));
+        Assert.Equal(fakeEntity, assertDbContext.TestEntities.First());
         Mock.Get(mockDomainEventDispatcher)
             .Verify(x => x.Dispatch(It.Is<IList<IDomainEvent>>(i => i.Contains(fakeDomainEvent) && i.Count == 1)),
                 Times.Once);
@@ -40,14 +46,20 @@ public class UnitOfWorkTests
     {
         // Arrange
         var mockDbContext = Mock.Of<TestDbContext>();
+
+        var (stubServiceScopeFactory, stubServiceScope) = MockScope();
+        stubServiceScope.Setup(x => x.ServiceProvider.GetService(typeof(TestDbContext)))
+            .Returns(mockDbContext);
+
         var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();
-        var uow = new UnitOfWork<TestDbContext>(mockDbContext, mockDomainEventDispatcher);
+        var uow = new UnitOfWork<TestDbContext>(mockDomainEventDispatcher, stubServiceScopeFactory.Object);
 
         // Act
         uow.Dispose();
 
         // Assert
         Mock.Get(mockDbContext).Verify(x => x.Dispose(), Times.Once);
+        stubServiceScope.Verify(x => x.Dispose(), Times.Once);
     }
 
     [Fact]
@@ -55,14 +67,20 @@ public class UnitOfWorkTests
     {
         // Arrange
         var mockDbContext = Mock.Of<TestDbContext>();
+
+        var (stubServiceScopeFactory, stubServiceScope) = MockScope();
+        stubServiceScope.Setup(x => x.ServiceProvider.GetService(typeof(TestDbContext)))
+            .Returns(mockDbContext);
+
         var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();
-        var uow = new UnitOfWork<TestDbContext>(mockDbContext, mockDomainEventDispatcher);
+        var uow = new UnitOfWork<TestDbContext>(mockDomainEventDispatcher, stubServiceScopeFactory.Object);
 
         // Act
         await uow.DisposeAsync();
 
         // Assert
         Mock.Get(mockDbContext).Verify(x => x.DisposeAsync(), Times.Once);
+        stubServiceScope.Verify(x => x.Dispose(), Times.Once);
     }
 
     /// <summary>
@@ -77,5 +95,16 @@ public class UnitOfWorkTests
             .UseInMemoryDatabase(testDbName)
             .Options;
         return new TestDbContext(dbContextOptions);
+    }
+
+    private (Mock<IServiceScopeFactory> stubServiceScopeFactory, Mock<IServiceScope> stubServiceScope) MockScope()
+    {
+        var mockServiceScope = new Mock<IServiceScope>();
+
+        var stubServiceScopeFactory = new Mock<IServiceScopeFactory>();
+        stubServiceScopeFactory.Setup(x => x.CreateScope())
+            .Returns(mockServiceScope.Object);
+
+        return (stubServiceScopeFactory, mockServiceScope);
     }
 }

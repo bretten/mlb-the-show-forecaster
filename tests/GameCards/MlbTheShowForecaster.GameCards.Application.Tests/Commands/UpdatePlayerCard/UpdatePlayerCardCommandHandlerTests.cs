@@ -1,8 +1,10 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using Moq;
 
@@ -11,26 +13,64 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Comman
 public class UpdatePlayerCardCommandHandlerTests
 {
     [Fact]
+    public async Task Handle_MissingPlayerCard_ThrowsException()
+    {
+        // Arrange
+        var playerCard = Faker.FakePlayerCard();
+        var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard();
+        var ratingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange();
+        var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange();
+
+        var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
+            .ReturnsAsync(null as PlayerCard);
+
+        var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())
+            .Returns(stubPlayerCardRepository.Object);
+
+        var cToken = CancellationToken.None;
+        var command = new UpdatePlayerCardCommand(playerCard, externalPlayerCard, ratingChange, positionChange);
+        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object);
+
+        var action = () => handler.Handle(command, cToken);
+
+        // Act
+        var actual = await Record.ExceptionAsync(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<PlayerCardNotFoundException>(actual);
+    }
+
+    [Fact]
     public async Task Handle_UpdatePlayerCardCommand_UpdatesPlayerCard()
     {
         // Arrange
         var playerCard = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
+        var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard(speed: 20);
         var ratingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(newOverallRating: 90);
         var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange(newPosition: Position.FirstBase);
 
-        var mockPlayerCardRepository = Mock.Of<IPlayerCardRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<ICardWork>>();
+        var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
+            .ReturnsAsync(playerCard);
+
+        var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())
+            .Returns(stubPlayerCardRepository.Object);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCardCommand(playerCard, ratingChange, positionChange);
-        var handler = new UpdatePlayerCardCommandHandler(mockPlayerCardRepository, mockUnitOfWork);
+        var command = new UpdatePlayerCardCommand(playerCard, externalPlayerCard, ratingChange, positionChange);
+        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object);
 
         // Act
         await handler.Handle(command, cToken);
 
         // Assert
-        Mock.Get(mockPlayerCardRepository).Verify(x => x.Update(playerCard), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubPlayerCardRepository.Verify(x => x.Update(playerCard), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
+        Assert.Equal(20, playerCard.PlayerCardAttributes.Speed.Value);
         Assert.Equal(90, playerCard.OverallRating.Value);
         Assert.Equal(Position.FirstBase, playerCard.Position);
     }

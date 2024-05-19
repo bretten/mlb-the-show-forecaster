@@ -1,9 +1,11 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Dtos.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
@@ -13,6 +15,36 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Comm
 
 public class UpdatePlayerStatsBySeasonCommandHandlerTests
 {
+    [Fact]
+    public async Task Handle_MissingPlayerStatsBySeason_ThrowsException()
+    {
+        // Arrange
+        var fakePlayerSeason = Faker.FakePlayerSeason();
+        var fakePlayerStatsBySeason = TestClasses.Faker.FakePlayerStatsBySeason();
+
+        var stubPlayerStatsBySeasonRepository = new Mock<IPlayerStatsBySeasonRepository>();
+        stubPlayerStatsBySeasonRepository.Setup(x => x.GetById(fakePlayerStatsBySeason.Id))
+            .ReturnsAsync(null as PlayerStatsBySeason);
+
+        var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerSeasonWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerStatsBySeasonRepository>())
+            .Returns(stubPlayerStatsBySeasonRepository.Object);
+
+        var cToken = CancellationToken.None;
+        var command = new UpdatePlayerStatsBySeasonCommand(fakePlayerStatsBySeason, fakePlayerSeason);
+        var handler = new UpdatePlayerStatsBySeasonCommandHandler(stubUnitOfWork.Object, Mock.Of<IPlayerSeasonMapper>(),
+            Mock.Of<IPlayerSeasonScorekeeper>(), Mock.Of<ICalendar>());
+
+        var action = () => handler.Handle(command, cToken);
+
+        // Act
+        var actual = await Record.ExceptionAsync(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<PlayerStatsBySeasonNotFoundException>(actual);
+    }
+
     [Fact]
     public async Task Handle_UpdatePlayerStatsBySeasonCommand_UpdatesPlayerStatsBySeason()
     {
@@ -47,19 +79,24 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
         stubCalendar.Setup(x => x.Today())
             .Returns(today);
 
-        var mockPlayerStatsBySeasonRepository = Mock.Of<IPlayerStatsBySeasonRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IPlayerSeasonWork>>();
+        var stubPlayerStatsBySeasonRepository = new Mock<IPlayerStatsBySeasonRepository>();
+        stubPlayerStatsBySeasonRepository.Setup(x => x.GetById(fakePlayerStatsBySeason.Id))
+            .ReturnsAsync(fakePlayerStatsBySeason);
+
+        var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerSeasonWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerStatsBySeasonRepository>())
+            .Returns(stubPlayerStatsBySeasonRepository.Object);
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerStatsBySeasonCommand(fakePlayerStatsBySeason, fakePlayerSeason);
-        var handler = new UpdatePlayerStatsBySeasonCommandHandler(stubPlayerSeasonMapper.Object, stubCalendar.Object,
-            stubPlayerSeasonScorekeeper.Object, mockPlayerStatsBySeasonRepository, mockUnitOfWork);
+        var handler = new UpdatePlayerStatsBySeasonCommandHandler(stubUnitOfWork.Object, stubPlayerSeasonMapper.Object,
+            stubPlayerSeasonScorekeeper.Object, stubCalendar.Object);
 
         // Act
         await handler.Handle(command, cToken);
 
         // Assert
-        Mock.Get(mockPlayerStatsBySeasonRepository).Verify(x => x.Update(updatedPlayerStatsBySeason), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubPlayerStatsBySeasonRepository.Verify(x => x.Update(updatedPlayerStatsBySeason), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 }

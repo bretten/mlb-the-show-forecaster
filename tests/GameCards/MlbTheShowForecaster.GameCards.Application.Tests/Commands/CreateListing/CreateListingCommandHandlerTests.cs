@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreateListing;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.TestClasses;
@@ -18,19 +19,24 @@ public class CreateListingCommandHandlerTests
         var domainListing = TestClasses.Faker.FakeListing();
 
         var stubListingMapper = Mock.Of<IListingMapper>(x => x.Map(externalCardListing) == domainListing);
+        var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();
 
         var mockListingRepository = Mock.Of<IListingRepository>();
-        var mockUnitOfWork = Mock.Of<IUnitOfWork<IMarketplaceWork>>();
+        var stubUnitOfWork = new Mock<IUnitOfWork<IMarketplaceWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IListingRepository>())
+            .Returns(mockListingRepository);
 
         var cToken = CancellationToken.None;
         var command = new CreateListingCommand(externalCardListing);
-        var handler = new CreateListingCommandHandler(stubListingMapper, mockListingRepository, mockUnitOfWork);
+        var handler =
+            new CreateListingCommandHandler(stubUnitOfWork.Object, stubListingMapper, mockDomainEventDispatcher);
 
         // Act
         await handler.Handle(command, cToken);
 
         // Assert
         Mock.Get(mockListingRepository).Verify(x => x.Add(domainListing, cToken), Times.Once);
-        Mock.Get(mockUnitOfWork).Verify(x => x.CommitAsync(cToken), Times.Once);
+        stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
+        Mock.Get(mockDomainEventDispatcher).Verify(x => x.Dispatch(domainListing.DomainEvents));
     }
 }

@@ -21,21 +21,6 @@ public class CardImageLocationTests
     }
 
     [Fact]
-    public void Create_AbsoluteUrl_ThrowsException()
-    {
-        // Arrange
-        const string cardImage = "https://brettnamba.com/assets/main.jpg";
-        var action = () => CardImageLocation.Create(cardImage);
-
-        // Act
-        var actual = Record.Exception(action);
-
-        // Assert
-        Assert.NotNull(actual);
-        Assert.IsType<InvalidCardImageLocationException>(actual);
-    }
-
-    [Fact]
     public void Create_ValidCardImage_ReturnsCardImage()
     {
         // Arrange

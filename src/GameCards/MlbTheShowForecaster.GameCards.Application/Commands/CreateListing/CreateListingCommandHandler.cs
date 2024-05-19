@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
@@ -16,9 +17,19 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.Cre
 internal sealed class CreateListingCommandHandler : ICommandHandler<CreateListingCommand>
 {
     /// <summary>
+    /// The unit of work that encapsulates all actions for creating a <see cref="Listing"/>
+    /// </summary>
+    private readonly IUnitOfWork<IMarketplaceWork> _unitOfWork;
+
+    /// <summary>
     /// Maps listing data from an external source to <see cref="Listing"/>
     /// </summary>
     private readonly IListingMapper _listingMapper;
+
+    /// <summary>
+    /// Publishes all domain events that were raised by the <see cref="Listing"/>
+    /// </summary>
+    private readonly IDomainEventDispatcher _domainEventDispatcher;
 
     /// <summary>
     /// The <see cref="Listing"/> repository
@@ -26,22 +37,18 @@ internal sealed class CreateListingCommandHandler : ICommandHandler<CreateListin
     private readonly IListingRepository _listingRepository;
 
     /// <summary>
-    /// The unit of work that encapsulates all actions for creating a <see cref="Listing"/>
-    /// </summary>
-    private readonly IUnitOfWork<IMarketplaceWork> _unitOfWork;
-
-    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="listingMapper">Maps listing data from an external source to <see cref="Listing"/></param>
-    /// <param name="listingRepository">The <see cref="Listing"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="Listing"/></param>
-    public CreateListingCommandHandler(IListingMapper listingMapper, IListingRepository listingRepository,
-        IUnitOfWork<IMarketplaceWork> unitOfWork)
+    /// <param name="listingMapper">Maps listing data from an external source to <see cref="Listing"/></param>
+    /// <param name="domainEventDispatcher">Publishes all domain events that were raised by the <see cref="Listing"/></param>
+    public CreateListingCommandHandler(IUnitOfWork<IMarketplaceWork> unitOfWork, IListingMapper listingMapper,
+        IDomainEventDispatcher domainEventDispatcher)
     {
-        _listingMapper = listingMapper;
-        _listingRepository = listingRepository;
         _unitOfWork = unitOfWork;
+        _listingMapper = listingMapper;
+        _domainEventDispatcher = domainEventDispatcher;
+        _listingRepository = unitOfWork.GetContributor<IListingRepository>();
     }
 
     /// <summary>
@@ -54,5 +61,6 @@ internal sealed class CreateListingCommandHandler : ICommandHandler<CreateListin
         var listing = _listingMapper.Map(command.ExternalCardListing);
         await _listingRepository.Add(listing, cancellationToken);
         await _unitOfWork.CommitAsync(cancellationToken);
+        _domainEventDispatcher.Dispatch(listing.DomainEvents);
     }
 }

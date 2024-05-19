@@ -51,7 +51,7 @@ public sealed class EntityFrameworkCorePlayerRepository : IPlayerRepository
     public async Task<Player?> GetByMlbId(MlbId mlbId)
     {
         return await _dbContext.Players
-            //.AsNoTracking() // The entities will be updated, so leave AsNoTracking commented since is not a read-only scenario
+            .AsNoTracking() // No tracking needed, will update with DbContext.Update(), which will start tracking
             .FirstOrDefaultAsync(x => x.MlbId == mlbId);
     }
 }

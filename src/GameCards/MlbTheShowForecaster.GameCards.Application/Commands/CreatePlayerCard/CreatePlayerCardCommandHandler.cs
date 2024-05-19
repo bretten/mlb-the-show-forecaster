@@ -16,6 +16,11 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.Cre
 internal sealed class CreatePlayerCardCommandHandler : ICommandHandler<CreatePlayerCardCommand>
 {
     /// <summary>
+    /// The unit of work that encapsulates all actions for creating a <see cref="PlayerCard"/>
+    /// </summary>
+    private readonly IUnitOfWork<ICardWork> _unitOfWork;
+
+    /// <summary>
     /// Maps the external card details to <see cref="PlayerCard"/>
     /// </summary>
     private readonly IPlayerCardMapper _playerCardMapper;
@@ -26,22 +31,15 @@ internal sealed class CreatePlayerCardCommandHandler : ICommandHandler<CreatePla
     private readonly IPlayerCardRepository _playerCardRepository;
 
     /// <summary>
-    /// The unit of work that encapsulates all actions for creating a <see cref="PlayerCard"/>
-    /// </summary>
-    private readonly IUnitOfWork<ICardWork> _unitOfWork;
-
-    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="playerCardMapper">Maps the external card details to <see cref="PlayerCard"/></param>
-    /// <param name="playerCardRepository">The <see cref="PlayerCard"/> repository</param>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="PlayerCard"/></param>
-    public CreatePlayerCardCommandHandler(IPlayerCardMapper playerCardMapper,
-        IPlayerCardRepository playerCardRepository, IUnitOfWork<ICardWork> unitOfWork)
+    /// <param name="playerCardMapper">Maps the external card details to <see cref="PlayerCard"/></param>
+    public CreatePlayerCardCommandHandler(IUnitOfWork<ICardWork> unitOfWork, IPlayerCardMapper playerCardMapper)
     {
-        _playerCardMapper = playerCardMapper;
-        _playerCardRepository = playerCardRepository;
         _unitOfWork = unitOfWork;
+        _playerCardMapper = playerCardMapper;
+        _playerCardRepository = unitOfWork.GetContributor<IPlayerCardRepository>();
     }
 
     /// <summary>
