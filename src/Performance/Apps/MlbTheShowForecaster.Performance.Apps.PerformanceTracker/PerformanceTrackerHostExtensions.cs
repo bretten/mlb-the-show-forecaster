@@ -33,6 +33,7 @@ public static class PerformanceTrackerHostExtensions
     private static readonly Func<IPerformanceTracker, IServiceProvider, CancellationToken, Task>
         PerformanceBackgroundWork = async (tracker, sp, ct) =>
         {
+            await Task.Delay(TimeSpan.FromSeconds(10)); // Wait for NewPlayerSeasonEvents to be consumed
             var config = sp.GetRequiredService<IConfiguration>();
             var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPerformanceTracker>>>();
 
@@ -101,7 +102,8 @@ public static class PerformanceTrackerHostExtensions
             };
             services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
             {
-                typeof(PlayerBattedInGameEvent).Assembly
+                typeof(PlayerBattedInGameEvent).Assembly,
+                typeof(NewPlayerSeasonEvent).Assembly
             });
 
             // Player performance tracking dependencies
@@ -110,6 +112,9 @@ public static class PerformanceTrackerHostExtensions
             services.AddPerformancePlayerSeasonScorekeeper(context.Configuration);
             services.AddPerformanceTracker(context.Configuration);
             services.AddPerformanceEntityFrameworkCoreRepositories(context.Configuration);
+
+            // Consumer for NewPlayerSeason events
+            services.AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<NewPlayerSeasonEvent>>>();
 
             // Background service for tracking player performance
             services.AddHostedService<ScheduledBackgroundService<IPerformanceTracker>>(sp =>
