@@ -6,6 +6,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Events.NewPlayerSeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Batting;
@@ -74,6 +75,7 @@ public static class PerformanceTrackerHostExtensions
     /// </summary>
     private static readonly Dictionary<Type, string> DomainEventConsumerTypes = new()
     {
+        { typeof(NewPlayerSeasonEvent), "PlayerActivated" },
     };
 
     /// <summary>
