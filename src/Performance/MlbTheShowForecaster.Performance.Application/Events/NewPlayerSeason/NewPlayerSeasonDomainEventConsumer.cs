@@ -49,13 +49,14 @@ public sealed class NewPlayerSeasonDomainEventConsumer : IDomainEventConsumer<Ne
     /// Handles a <see cref="NewPlayerSeasonEvent"/>
     /// </summary>
     /// <param name="e"><see cref="NewPlayerSeasonEvent"/></param>
-    public async Task Handle(NewPlayerSeasonEvent e)
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    public async Task Handle(NewPlayerSeasonEvent e, CancellationToken cancellationToken)
     {
         // Get the most recent season stats
         var seasonToDate =
             await _playerStats.GetPlayerSeason(e.PlayerMlbId, SeasonYear.Create((ushort)_calendar.Today().Year));
 
         // Create the player's season in the domain
-        await _commandSender.Send(new CreatePlayerStatsBySeasonCommand(seasonToDate));
+        await _commandSender.Send(new CreatePlayerStatsBySeasonCommand(seasonToDate), cancellationToken);
     }
 }
