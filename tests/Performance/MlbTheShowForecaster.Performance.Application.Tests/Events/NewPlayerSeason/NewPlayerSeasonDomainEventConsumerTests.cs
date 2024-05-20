@@ -33,7 +33,7 @@ public class NewPlayerSeasonDomainEventConsumerTests
         var e = new NewPlayerSeasonEvent(playerMlbId);
 
         // Act
-        await consumer.Handle(e);
+        await consumer.Handle(e, cToken);
 
         // Assert
         var expectedCommand = new CreatePlayerStatsBySeasonCommand(playerSeasonStats);
