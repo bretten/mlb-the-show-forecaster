@@ -60,6 +60,7 @@ public class RabbitMqDomainEventConsumerTests
     public async Task ReceivedEventHandler_ValidDomainEvent_UnderlyingConsumerIsInvoked()
     {
         // Arrange
+        var cToken = CancellationToken.None;
         var domainEvent = new TestDomainEvent("{\"Message\": \"DomainEventContent\"}");
 
         var mockUnderlyingConsumer = Mock.Of<IDomainEventConsumer<TestDomainEvent>>();
@@ -74,7 +75,7 @@ public class RabbitMqDomainEventConsumerTests
         await consumerWrapper.ReceivedEventHandler(consumerWrapper, CreateDelivery(body));
 
         // Assert
-        Mock.Get(mockUnderlyingConsumer).Verify(x => x.Handle(domainEvent));
+        Mock.Get(mockUnderlyingConsumer).Verify(x => x.Handle(domainEvent, cToken));
     }
 
     public sealed record TestDomainEvent(
