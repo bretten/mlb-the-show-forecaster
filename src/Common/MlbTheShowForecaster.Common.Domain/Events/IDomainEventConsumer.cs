@@ -9,6 +9,7 @@ public interface IDomainEventConsumer<in T>
     /// Consumes a domain event
     /// </summary>
     /// <param name="e">The domain event</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The completed task</returns>
-    Task Handle(T e);
+    Task Handle(T e, CancellationToken cancellationToken = default);
 }
