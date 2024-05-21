@@ -83,6 +83,7 @@ public sealed class RabbitMqDomainEventConsumer<T> : IDisposable
     /// </summary>
     public void Dispose()
     {
-        _channel.Dispose();
+        // Calling Dispose/Abort/Close twice on RabbitMQ channel leads to null ref exception. Disposal is already handled by connection
+        //_channel.Dispose();
     }
 }

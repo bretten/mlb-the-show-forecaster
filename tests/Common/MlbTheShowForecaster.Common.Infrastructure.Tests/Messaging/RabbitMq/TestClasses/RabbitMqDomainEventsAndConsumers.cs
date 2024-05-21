@@ -8,6 +8,8 @@ public sealed record EventType2 : IDomainEvent;
 
 public sealed record EventType3 : IDomainEvent;
 
+public sealed record EventType4 : IDomainEvent;
+
 public sealed class DomainEventConsumer1 : IDomainEventConsumer<EventType1>
 {
     public Action? Callback { get; set; }
