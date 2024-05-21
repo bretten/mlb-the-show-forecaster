@@ -34,6 +34,7 @@ public class DependenciesTests
             { typeof(EventType1), "exA" },
             { typeof(EventType2), "exB" },
             { typeof(EventType3), "exC" },
+            { typeof(EventType4), "exD" },
         };
 
         // Mock channel
@@ -79,13 +80,16 @@ public class DependenciesTests
         mockChannel.Verify(x => x.ExchangeDeclare("exA", ExchangeType.Fanout, false, true, null), Times.Once);
         mockChannel.Verify(x => x.ExchangeDeclare("exB", ExchangeType.Fanout, false, true, null), Times.Once);
         mockChannel.Verify(x => x.ExchangeDeclare("exC", ExchangeType.Fanout, false, true, null), Times.Once);
+        mockChannel.Verify(x => x.ExchangeDeclare("exD", ExchangeType.Fanout, false, true, null), Times.Once);
         // Verify the queues were setup
         mockChannel.Verify(x => x.QueueDeclare("exA", true, false, true, null), Times.Once);
         mockChannel.Verify(x => x.QueueDeclare("exB", true, false, true, null), Times.Once);
         mockChannel.Verify(x => x.QueueDeclare("exC", true, false, true, null), Times.Once);
+        mockChannel.Verify(x => x.QueueDeclare("exD", true, false, true, null), Times.Once);
         mockChannel.Verify(x => x.QueueBind("exA", "exA", "exA", null), Times.Once);
         mockChannel.Verify(x => x.QueueBind("exB", "exB", "exB", null), Times.Once);
         mockChannel.Verify(x => x.QueueBind("exC", "exC", "exC", null), Times.Once);
+        mockChannel.Verify(x => x.QueueBind("exD", "exD", "exD", null), Times.Once);
 
         // The domain event dispatcher should be registered as a transient so it gets a new channel from the connection every time
         mockServices.Verify(s => s.Add(It.Is<ServiceDescriptor>(x =>

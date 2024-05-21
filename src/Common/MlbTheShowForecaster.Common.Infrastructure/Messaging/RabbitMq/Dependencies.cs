@@ -30,7 +30,9 @@ public static class Dependencies
         services.TryAddSingleton(connection);
 
         // Setup the RabbitMQ exchanges
-        SetupExchanges(connection, publisherDomainEventsToExchanges);
+        SetupExchanges(connection, publisherDomainEventsToExchanges.Concat(consumerDomainEventsToExchanges)
+            .GroupBy(x => x.Key)
+            .ToDictionary(k => k.Key, v => v.First().Value));
 
         // Add the channel as a transient factory so it creates a new channel for every service that requests it
         services.TryAddTransient<IModel>(sp => connection.CreateModel());
