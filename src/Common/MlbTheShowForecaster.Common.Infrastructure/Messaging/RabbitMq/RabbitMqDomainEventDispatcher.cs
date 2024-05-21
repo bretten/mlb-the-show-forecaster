@@ -14,7 +14,7 @@ public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher, IDis
     /// <summary>
     /// The RabbitMQ channel
     /// </summary>
-    private readonly IModel _model;
+    private readonly IModel _channel;
 
     /// <summary>
     /// A mapping of <see cref="IDomainEvent"/> types to their corresponding RabbitMQ exchanges
@@ -24,11 +24,11 @@ public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher, IDis
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="model">The RabbitMQ channel</param>
+    /// <param name="channel">The RabbitMQ channel</param>
     /// <param name="domainEventTypes">A mapping of <see cref="IDomainEvent"/> types to their corresponding RabbitMQ exchanges</param>
-    public RabbitMqDomainEventDispatcher(IModel model, Dictionary<Type, string> domainEventTypes)
+    public RabbitMqDomainEventDispatcher(IModel channel, Dictionary<Type, string> domainEventTypes)
     {
-        _model = model;
+        _channel = channel;
         _domainEventTypes = domainEventTypes;
     }
 
@@ -43,7 +43,7 @@ public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher, IDis
             var exchange = _domainEventTypes[e.GetType()];
             var routingKey = _domainEventTypes[e.GetType()];
 
-            _model.BasicPublish(exchange: exchange,
+            _channel.BasicPublish(exchange: exchange,
                 routingKey: routingKey,
                 body: Encoding.UTF8.GetBytes(JsonSerializer.Serialize(e, e.GetType()))
             );
@@ -55,6 +55,7 @@ public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher, IDis
     /// </summary>
     public void Dispose()
     {
-        _model.Dispose();
+        // Calling Dispose/Abort/Close twice on RabbitMQ channel leads to null ref exception. Disposal is already handled by connection
+        //_channel.Dispose();
     }
 }
