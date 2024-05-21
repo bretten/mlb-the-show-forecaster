@@ -62,6 +62,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         {
             { "ConnectionStrings:PlayerSeasons", _dbContainer.GetConnectionString() + ";Pooling=false;" },
             { "PerformanceTracker:Interval", "01:00:00:00" },
+            { "PerformanceTracker:StartDelay", "0" },
             { "PerformanceTracker:Seasons:0", "2023" },
             { "PerformanceAssessmentRequirements:StatPercentChangeThreshold", "0.25" },
             { "PerformanceAssessmentRequirements:MinimumPlateAppearances", "10" },

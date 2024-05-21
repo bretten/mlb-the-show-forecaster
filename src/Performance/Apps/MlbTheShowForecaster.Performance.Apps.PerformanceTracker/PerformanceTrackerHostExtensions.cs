@@ -33,9 +33,10 @@ public static class PerformanceTrackerHostExtensions
     private static readonly Func<IPerformanceTracker, IServiceProvider, CancellationToken, Task>
         PerformanceBackgroundWork = async (tracker, sp, ct) =>
         {
-            await Task.Delay(TimeSpan.FromSeconds(10)); // Wait for NewPlayerSeasonEvents to be consumed
             var config = sp.GetRequiredService<IConfiguration>();
             var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPerformanceTracker>>>();
+            // Wait for NewPlayerSeasonEvents to be consumed
+            await Task.Delay(TimeSpan.FromSeconds(config.GetRequiredValue<int>("PerformanceTracker:StartDelay")));
 
             // Service name
             const string s = nameof(IPerformanceTracker);
