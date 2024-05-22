@@ -115,6 +115,7 @@ public static class Dependencies
         services.TryAddTransient<ICardCatalog, MlbTheShowApiCardCatalog>();
         services.TryAddTransient<IRosterUpdateFeed, MlbTheShowApiRosterUpdateFeed>();
         services.TryAddTransient<IRosterUpdateOrchestrator, RosterUpdateOrchestrator>();
+        services.TryAddTransient<IPlayerRatingHistoryService, PlayerRatingHistoryService>();
     }
 
     /// <summary>

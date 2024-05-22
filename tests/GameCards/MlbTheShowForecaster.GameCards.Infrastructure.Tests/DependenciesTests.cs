@@ -136,6 +136,10 @@ public class DependenciesTests
         Assert.Equal(ServiceLifetime.Transient,
             s.First(x => x.ServiceType == typeof(IRosterUpdateOrchestrator)).Lifetime);
         Assert.IsType<RosterUpdateOrchestrator>(actual.GetRequiredService<IRosterUpdateOrchestrator>());
+
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IPlayerRatingHistoryService)).Lifetime);
+        Assert.IsType<PlayerRatingHistoryService>(actual.GetRequiredService<IPlayerRatingHistoryService>());
     }
 
     [Fact]

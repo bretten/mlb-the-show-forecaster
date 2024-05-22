@@ -103,4 +103,103 @@ public class MlbPlayerAttributeChangesTests
         Assert.Equal(28, actual.BaseRunningAbility.Value);
         Assert.Equal(29, actual.BaseRunningAggression.Value);
     }
+
+    [Fact]
+    public void SubtractFrom_PlayerCardAttributes_ReturnsDifferenceOfAttributes()
+    {
+        // Arrange
+        var attributeChanges = new MlbPlayerAttributeChanges(
+            Stamina: 1,
+            PitchingClutch: 2,
+            HitsPerBf: 3,
+            KPerBf: 4,
+            BbPerBf: 5,
+            HrPerBf: 6,
+            PitchVelocity: 7,
+            PitchControl: 8,
+            PitchMovement: 9,
+            ContactLeft: 10,
+            ContactRight: 11,
+            PowerLeft: 12,
+            PowerRight: 13,
+            PlateVision: 14,
+            PlateDiscipline: 15,
+            BattingClutch: 16,
+            BuntingAbility: 17,
+            DragBuntingAbility: 18,
+            HittingDurability: 19,
+            FieldingDurability: 20,
+            FieldingAbility: 21,
+            ArmStrength: 22,
+            ArmAccuracy: 23,
+            ReactionTime: 24,
+            Blocking: 25,
+            Speed: 26,
+            BaseRunningAbility: 27,
+            BaseRunningAggression: 28
+        );
+        var currentAttributes = Faker.FakePlayerCardAttributes(
+            stamina: 100,
+            pitchingClutch: 100,
+            hitsPerNine: 100,
+            strikeoutsPerNine: 100,
+            baseOnBallsPerNine: 100,
+            homeRunsPerNine: 100,
+            pitchVelocity: 100,
+            pitchControl: 100,
+            pitchMovement: 100,
+            contactLeft: 100,
+            contactRight: 100,
+            powerLeft: 100,
+            powerRight: 100,
+            plateVision: 100,
+            plateDiscipline: 100,
+            battingClutch: 100,
+            buntingAbility: 100,
+            dragBuntingAbility: 100,
+            hittingDurability: 100,
+            fieldingDurability: 100,
+            fieldingAbility: 100,
+            armStrength: 100,
+            armAccuracy: 100,
+            reactionTime: 100,
+            blocking: 100,
+            speed: 100,
+            baseRunningAbility: 100,
+            baseRunningAggression: 100
+        );
+
+        // Act
+        var actual = attributeChanges.SubtractFrom(currentAttributes);
+
+        // Assert
+        Assert.Equal(100 - 1, actual.Stamina.Value);
+        Assert.Equal(100 - 2, actual.PitchingClutch.Value);
+        Assert.Equal(100 - 3, actual.HitsPerNine.Value);
+        Assert.Equal(100 - 4, actual.StrikeoutsPerNine.Value);
+        Assert.Equal(100 - 5, actual.BaseOnBallsPerNine.Value);
+        Assert.Equal(100 - 6, actual.HomeRunsPerNine.Value);
+        Assert.Equal(100 - 7, actual.PitchVelocity.Value);
+        Assert.Equal(100 - 8, actual.PitchControl.Value);
+        Assert.Equal(100 - 9, actual.PitchMovement.Value);
+        Assert.Equal(100 - 10, actual.ContactLeft.Value);
+        Assert.Equal(100 - 11, actual.ContactRight.Value);
+        Assert.Equal(100 - 12, actual.PowerLeft.Value);
+        Assert.Equal(100 - 13, actual.PowerRight.Value);
+        Assert.Equal(100 - 14, actual.PlateVision.Value);
+        Assert.Equal(100 - 15, actual.PlateDiscipline.Value);
+        Assert.Equal(100 - 16, actual.BattingClutch.Value);
+        Assert.Equal(100 - 17, actual.BuntingAbility.Value);
+        Assert.Equal(100 - 18, actual.DragBuntingAbility.Value);
+        Assert.Equal(100 - 19, actual.HittingDurability.Value);
+        Assert.Equal(100 - 20, actual.FieldingDurability.Value);
+        Assert.Equal(100 - 21, actual.FieldingAbility.Value);
+        Assert.Equal(100 - 22, actual.ArmStrength.Value);
+        Assert.Equal(100 - 23, actual.ArmAccuracy.Value);
+        Assert.Equal(100 - 24, actual.ReactionTime.Value);
+        Assert.Equal(100 - 25, actual.Blocking.Value);
+        Assert.Equal(100 - 26, actual.Speed.Value);
+        Assert.Equal(100 - 27, actual.BaseRunningAbility.Value);
+        Assert.Equal(100 - 28, actual.BaseRunningAggression.Value);
+    }
 }

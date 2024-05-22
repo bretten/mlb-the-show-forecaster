@@ -44,7 +44,7 @@ public class PlayerCardTests
         var newPlayerAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
 
         var date = new DateOnly(2024, 4, 2);
-        var expectedHistoricalRating = Faker.FakePlayerCardHistoricalRating(DateOnly.MinValue, date,
+        var expectedHistoricalRating = Faker.FakePlayerCardHistoricalRating(new DateOnly(2024, 1, 1), date,
             currentOverallRating, currentPlayerCardAttributes);
 
         // Act
@@ -74,7 +74,7 @@ public class PlayerCardTests
         var newPlayerAttributes = Faker.FakePlayerCardAttributes(scalar: 3);
         var date2 = new DateOnly(2024, 4, 2);
 
-        var expected1 = Faker.FakePlayerCardHistoricalRating(DateOnly.MinValue, date1, previousOverallRating,
+        var expected1 = Faker.FakePlayerCardHistoricalRating(new DateOnly(2024, 1, 1), date1, previousOverallRating,
             previousPlayerCardAttributes);
         var expected2 =
             Faker.FakePlayerCardHistoricalRating(date1, date2, currentOverallRating, currentPlayerCardAttributes);
@@ -166,6 +166,54 @@ public class PlayerCardTests
     }
 
     [Fact]
+    public void AddHistoricalRating_AlreadyExists_ThrowsException()
+    {
+        // Arrange
+        var card = Faker.FakePlayerCard();
+
+        var overallRating = Faker.FakeOverallRating(49);
+        var playerAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
+        var startDate = new DateOnly(2024, 4, 1);
+        var endDate = new DateOnly(2024, 4, 2);
+        var historicalRating =
+            Faker.FakePlayerCardHistoricalRating(startDate, endDate, overallRating, playerAttributes);
+
+        card.AddHistoricalRating(historicalRating); // Add the historical rating
+        var action = () => card.AddHistoricalRating(historicalRating); // Repeat
+
+        // Act
+        var actual = Record.Exception(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<PlayerCardHistoricalRatingExistsException>(actual);
+    }
+
+    [Fact]
+    public void AddHistoricalRating_NewPlayerCardHistoricalRating_AddsToCollectionOfPlayerCardHistoricalRatings()
+    {
+        // Arrange
+        var card = Faker.FakePlayerCard();
+
+        var overallRating = Faker.FakeOverallRating(49);
+        var playerAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
+        var startDate = new DateOnly(2024, 4, 1);
+        var endDate = new DateOnly(2024, 4, 2);
+        var historicalRating =
+            Faker.FakePlayerCardHistoricalRating(startDate, endDate, overallRating, playerAttributes);
+
+        // Act
+        card.AddHistoricalRating(historicalRating);
+
+        // Assert
+        Assert.Single(card.HistoricalRatingsChronologically);
+        Assert.Equal(new DateOnly(2024, 4, 1), card.HistoricalRatingsChronologically[0].StartDate);
+        Assert.Equal(new DateOnly(2024, 4, 2), card.HistoricalRatingsChronologically[0].EndDate);
+        Assert.Equal(49, card.HistoricalRatingsChronologically[0].OverallRating.Value);
+        Assert.Equal(playerAttributes, card.HistoricalRatingsChronologically[0].Attributes);
+    }
+
+    [Fact]
     public void ChangePosition_NewPosition_ChangesPositionAndRaisesPositionChangedEvent()
     {
         // Arrange
@@ -203,12 +251,13 @@ public class PlayerCardTests
     public void IsRatingAppliedFor_DateOfHistoricalRating_ReturnsTrue()
     {
         // Arrange
-        var date = new DateOnly(2024, 4, 1);
+        var startDate = new DateOnly(2024, 4, 1);
+        var endDate = new DateOnly(2024, 4, 2);
         var card = Faker.FakePlayerCard();
-        card.ChangePlayerRating(date, Faker.FakeOverallRating(), Faker.FakePlayerCardAttributes());
+        card.AddHistoricalRating(Faker.FakePlayerCardHistoricalRating(startDate, endDate));
 
         // Act
-        var actual = card.IsRatingAppliedFor(date);
+        var actual = card.IsRatingAppliedFor(new DateOnly(2024, 4, 1));
 
         // Assert
         Assert.True(actual);
@@ -218,9 +267,10 @@ public class PlayerCardTests
     public void IsRatingAppliedFor_DateDoesNotMatchAnyHistoricalRatings_ReturnsFalse()
     {
         // Arrange
-        var date = new DateOnly(2024, 4, 1);
+        var startDate = new DateOnly(2024, 4, 1);
+        var endDate = new DateOnly(2024, 4, 2);
         var card = Faker.FakePlayerCard();
-        card.ChangePlayerRating(date, Faker.FakeOverallRating(), Faker.FakePlayerCardAttributes());
+        card.AddHistoricalRating(Faker.FakePlayerCardHistoricalRating(startDate, endDate));
 
         // Act
         var actual = card.IsRatingAppliedFor(new DateOnly(2024, 5, 1));
