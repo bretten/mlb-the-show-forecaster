@@ -147,7 +147,7 @@ public sealed class PlayerCard : Card
     /// <exception cref="PlayerCardHistoricalRatingExistsException">Thrown if the <see cref="PlayerCardHistoricalRating"/> already exists</exception>
     public void AddHistoricalRating(PlayerCardHistoricalRating rating)
     {
-        if (_historicalRatings.Any(x => x.StartDate == rating.StartDate && x.EndDate == rating.EndDate))
+        if (DoesHistoricalRatingExist(rating))
         {
             throw new PlayerCardHistoricalRatingExistsException(
                 $"A player rating already exists for card = {ExternalId.Value} and StartDate = {rating.StartDate.ToShortDateString()} and EndDate = {rating.EndDate.ToShortDateString()}");
@@ -183,7 +183,17 @@ public sealed class PlayerCard : Card
     /// <returns>True if a rating change has already been applied for the specified date, otherwise false</returns>
     public bool IsRatingAppliedFor(DateOnly date)
     {
-        return _historicalRatings.Any(x => x.StartDate == date);
+        return _historicalRatings.Any(x => x.StartDate <= date && date < x.EndDate);
+    }
+
+    /// <summary>
+    /// Determines if the <see cref="PlayerCardHistoricalRating"/> exists in <see cref="_historicalRatings"/>
+    /// </summary>
+    /// <param name="rating">The <see cref="PlayerCardHistoricalRating"/> to check</param>
+    /// <returns>True if the <see cref="PlayerCardHistoricalRating"/> exists, otherwise false</returns>
+    private bool DoesHistoricalRatingExist(PlayerCardHistoricalRating rating)
+    {
+        return _historicalRatings.Any(x => x.StartDate == rating.StartDate && x.EndDate == rating.EndDate);
     }
 
     /// <summary>
