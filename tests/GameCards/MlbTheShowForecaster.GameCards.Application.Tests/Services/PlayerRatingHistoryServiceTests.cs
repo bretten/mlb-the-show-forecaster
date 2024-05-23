@@ -4,7 +4,6 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateP
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
@@ -16,7 +15,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Servic
 public class PlayerRatingHistoryServiceTests
 {
     [Fact]
-    public async Task SyncHistory_NoMatchingPlayerCard_ThrowsException()
+    public async Task SyncHistory_NoMatchingPlayerCard_SkipsProcessingAndNoExceptionThrown()
     {
         /*
          * Arrange
@@ -45,18 +44,16 @@ public class PlayerRatingHistoryServiceTests
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog,
             stubQuerySender.Object, mockCommandSender);
-        var action = async () => await service.SyncHistory(Year, cToken);
 
         /*
          * Act
          */
-        var actual = await Record.ExceptionAsync(action);
+        var actual = await service.SyncHistory(Year, cToken);
 
         /*
          * Assert
          */
-        Assert.NotNull(actual);
-        Assert.IsType<NoPlayerCardFoundForRosterUpdateException>(actual);
+        Assert.Empty(actual.UpdatedPlayerCards);
     }
 
     [Fact]
