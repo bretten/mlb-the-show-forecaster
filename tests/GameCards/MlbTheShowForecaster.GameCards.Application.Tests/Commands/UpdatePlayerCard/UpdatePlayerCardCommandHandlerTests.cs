@@ -47,13 +47,17 @@ public class UpdatePlayerCardCommandHandlerTests
     public async Task Handle_UpdatePlayerCardCommand_UpdatesPlayerCard()
     {
         // Arrange
-        var playerCard = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
+        var historicalRating = Faker.FakePlayerCardHistoricalRating(startDate: new DateOnly(2023, 1, 1),
+            endDate: new DateOnly(2023, 2, 1));
+        var playerCardInCommand = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
+        playerCardInCommand.AddHistoricalRating(historicalRating);
         var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard(speed: 20);
         var ratingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(newOverallRating: 90);
         var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange(newPosition: Position.FirstBase);
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
-        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
+        var playerCard = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCardInCommand.ExternalId))
             .ReturnsAsync(playerCard);
 
         var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
@@ -61,7 +65,8 @@ public class UpdatePlayerCardCommandHandlerTests
             .Returns(stubPlayerCardRepository.Object);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCardCommand(playerCard, externalPlayerCard, ratingChange, positionChange);
+        var command =
+            new UpdatePlayerCardCommand(playerCardInCommand, externalPlayerCard, ratingChange, positionChange);
         var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object);
 
         // Act
@@ -73,5 +78,7 @@ public class UpdatePlayerCardCommandHandlerTests
         Assert.Equal(20, playerCard.PlayerCardAttributes.Speed.Value);
         Assert.Equal(90, playerCard.OverallRating.Value);
         Assert.Equal(Position.FirstBase, playerCard.Position);
+        Assert.Equal(2, playerCard.HistoricalRatingsChronologically.Count);
+        Assert.Equal(historicalRating, playerCard.HistoricalRatingsChronologically[0]);
     }
 }

@@ -66,6 +66,13 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
             domainPlayerCard.ChangePosition(positionChange.Value.NewPosition);
         }
 
+        // Copy any new historical ratings
+        foreach (var historicalRating in command.PlayerCard.HistoricalRatingsChronologically)
+        {
+            if (domainPlayerCard.IsRatingAppliedFor(historicalRating.StartDate)) continue;
+            domainPlayerCard.AddHistoricalRating(historicalRating);
+        }
+
         await _playerCardRepository.Update(domainPlayerCard);
         await _unitOfWork.CommitAsync(cancellationToken);
     }
