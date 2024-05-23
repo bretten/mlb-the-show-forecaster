@@ -63,22 +63,46 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         // Get a list of all available roster updates from the external source
         var rosterUpdates = await _rosterUpdateFeed.GetNewRosterUpdates(seasonYear, cancellationToken);
 
+        // Sync historical ratings for all player card rating changes in the roster updates
+        var results = new List<PlayerCard>();
+        var tasks = SyncHistoryByPlayerCard(rosterUpdates, seasonYear, cancellationToken);
+        foreach (var task in tasks)
+        {
+            try
+            {
+                var result = await task;
+                if (result != null) results.Add(result);
+            }
+            catch (Exception)
+            {
+                // Log in issue #171
+            }
+        }
+
+        return new PlayerRatingHistoryResult(results);
+    }
+
+    /// <summary>
+    /// Gets the tasks for syncing historical ratings for all player card rating changes in the roster updates
+    /// </summary>
+    /// <param name="rosterUpdates">All available roster updates from the external source</param>
+    /// <param name="seasonYear">The season to sync rating changes for</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <returns>A collection of Tasks that will sync the historical ratings</returns>
+    private IEnumerable<Task<PlayerCard?>> SyncHistoryByPlayerCard(IEnumerable<RosterUpdate> rosterUpdates,
+        SeasonYear seasonYear,
+        CancellationToken cancellationToken)
+    {
         // Group rating changes by the card's external ID
         var ratingChanges = rosterUpdates.SelectMany(x => x.RatingChanges)
             .GroupBy(x => x.CardExternalId);
 
-        // Will hold updated PlayerCards
-        var updatedPlayerCards = new List<PlayerCard>();
-
-        // Add all historical ratings for each player card
+        // Add all historical ratings to each player card
         foreach (var ratingChangeByCardExternalId in ratingChanges)
         {
-            var result = await AddHistoricalRatingsForPlayerCard(seasonYear, ratingChangeByCardExternalId.Key,
+            yield return AddHistoricalRatingsForPlayerCard(seasonYear, ratingChangeByCardExternalId.Key,
                 ratingChangeByCardExternalId.ToImmutableList(), cancellationToken);
-            if (result != null) updatedPlayerCards.Add(result);
         }
-
-        return new PlayerRatingHistoryResult(updatedPlayerCards);
     }
 
     /// <summary>
@@ -148,10 +172,8 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
             return null;
         }
 
-        // Update the PlayerCard
-        var mostRecentRatingChange = changes[0];
-        await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, externalCard, mostRecentRatingChange, null),
-            cancellationToken);
+        // Update the PlayerCard with the new historical ratings, but don't update its current state
+        await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, null, null, null), cancellationToken);
         return playerCard;
     }
 

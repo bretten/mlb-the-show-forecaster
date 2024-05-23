@@ -110,9 +110,8 @@ public class PlayerRatingHistoryServiceTests
         Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
         Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
         Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
-        // An update command should have been sent with the most recent rating change
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, CardStateAfterRosterUpdate1.Card,
-            RosterUpdate1.RatingChange, null);
+        // An update command should have been sent with the new historical ratings
+        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
         mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Once);
         // The result should contain the updated PlayerCard
         Assert.Contains(playerCard, actual.UpdatedPlayerCards);
@@ -181,9 +180,8 @@ public class PlayerRatingHistoryServiceTests
         Assert.Equal(RosterUpdate3.Date, historical3.EndDate);
         Assert.Equal(CardStateAfterRosterUpdate2.OverallRating, historical3.OverallRating);
         Assert.Equal(CardStateAfterRosterUpdate2.Card.GetAttributes(), historical3.Attributes);
-        // An update command should have been sent with the most recent rating change (RosterUpdate3). The result should be CardStateCurrent
-        var expectedCommand =
-            new UpdatePlayerCardCommand(playerCard, CardStateCurrent.Card, RosterUpdate3.RatingChange, null);
+        // An update command should have been sent with the new historical ratings
+        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
         mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Once);
         // The result should contain the updated PlayerCard
         Assert.Contains(playerCard, actual.UpdatedPlayerCards);
@@ -256,9 +254,8 @@ public class PlayerRatingHistoryServiceTests
         Assert.Equal(RosterUpdate3.Date, historical3.EndDate);
         Assert.Equal(CardStateAfterRosterUpdate2.OverallRating, historical3.OverallRating);
         Assert.Equal(CardStateAfterRosterUpdate2.Card.GetAttributes(), historical3.Attributes);
-        // An update command should have been sent with the most recent rating change (RosterUpdate3). The result should be CardStateCurrent
-        var expectedCommand =
-            new UpdatePlayerCardCommand(playerCard, CardStateCurrent.Card, RosterUpdate3.RatingChange, null);
+        // An update command should have been sent with the new historical ratings
+        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
         mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Once);
         // The result should contain the updated PlayerCard
         Assert.Contains(playerCard, actual.UpdatedPlayerCards);
@@ -318,8 +315,7 @@ public class PlayerRatingHistoryServiceTests
         Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
         Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
         // No update command should have been sent
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, CardStateAfterRosterUpdate1.Card,
-            RosterUpdate1.RatingChange, null);
+        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
         mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Never);
         // The result should not contain the PlayerCard since it was not updated
         Assert.DoesNotContain(playerCard, actual.UpdatedPlayerCards);

@@ -79,15 +79,27 @@ public static class MarketplaceWatcherHostExtensions
         {
             var config = sp.GetRequiredService<IConfiguration>();
             var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IRosterUpdateOrchestrator>>>();
+            var historyService = sp.GetRequiredService<IPlayerRatingHistoryService>();
 
             // Service name
             const string s = nameof(IRosterUpdateOrchestrator);
+            const string h = nameof(IPlayerRatingHistoryService);
 
             // The seasons to track
             var seasons = config.GetRequiredValue<ushort[]>("PlayerCardTracker:Seasons");
             foreach (var season in seasons)
             {
                 logger.LogInformation($"{s} - {season}");
+
+                // Sync the player card historical ratings before running roster updates
+                var historyResult = await historyService.SyncHistory(SeasonYear.Create(season), ct);
+                logger.LogInformation($"{h} - Total cards updated = {historyResult.UpdatedPlayerCards.Count()}");
+                foreach (var historicalUpdate in historyResult.UpdatedPlayerCards)
+                {
+                    logger.LogInformation(
+                        $"{h} - Updated {historicalUpdate.Name.Value}, {historicalUpdate.ExternalId.Value}, {historicalUpdate.Id}");
+                }
+
                 var results = await rosterUpdater.SyncRosterUpdates(SeasonYear.Create(season), ct);
                 foreach (var result in results)
                 {
