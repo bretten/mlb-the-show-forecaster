@@ -107,7 +107,7 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
 
         // Only the current overall rating and attributes are known from the external card catalog
         // So the history has to be rebuilt starting with the most recent rating change
-        var changesNewToOld = changes.OrderByDescending(x => x.Date).ToImmutableList();
+        changes = changes.OrderByDescending(x => x.Date).ToImmutableList();
 
         // Will hold all rating changes in the form of the domain equivalent
         var historicalRatings = new List<PlayerCardHistoricalRating>();
@@ -117,8 +117,8 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         var currentState = externalCard.GetAttributes();
 
         // Iterate through all rating changes from newest to oldest
-        var lastRatingChangeIndex = changesNewToOld.Count - 1;
-        for (var i = 0; i < changesNewToOld.Count; i++)
+        var lastRatingChangeIndex = changes.Count - 1;
+        for (var i = 0; i < changes.Count; i++)
         {
             // Subtract the attribute changes from the current rating change so their previous values can be known at this point in the history
             currentState = changes[i].AttributeChanges.SubtractFrom(currentState);
@@ -157,7 +157,7 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         }
 
         // Update the PlayerCard
-        var mostRecentRatingChange = changesNewToOld.FirstOrDefault();
+        var mostRecentRatingChange = changes[0];
         await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, externalCard, mostRecentRatingChange, null),
             cancellationToken);
         return playerCard;

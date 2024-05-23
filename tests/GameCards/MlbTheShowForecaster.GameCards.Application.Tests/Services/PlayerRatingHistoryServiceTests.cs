@@ -7,7 +7,6 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 using Moq;
@@ -23,15 +22,9 @@ public class PlayerRatingHistoryServiceTests
          * Arrange
          */
         var cToken = CancellationToken.None;
-        var seasonYear = SeasonYear.Create(2024);
-        // RosterUpdate1 with RatingChange
-        PlayerCard? playerCard = null; // RatingChange1 has no corresponding PlayerCard
-        var cardExternalId = Faker.FakeGuid1;
-        var ratingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId);
-        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(ratingChange.CardExternalId);
-
-        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1),
-            new List<PlayerRatingChange>() { ratingChange });
+        // RatingChange has no corresponding PlayerCard
+        PlayerCard? playerCard = null;
+        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
@@ -43,8 +36,8 @@ public class PlayerRatingHistoryServiceTests
 
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
-        stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(seasonYear, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { rosterUpdate1 });
+        stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
+            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
 
         // Card catalog
         var mockCardCatalog = Mock.Of<ICardCatalog>();
@@ -52,7 +45,7 @@ public class PlayerRatingHistoryServiceTests
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog,
             stubQuerySender.Object, mockCommandSender);
-        var action = async () => await service.SyncHistory(seasonYear, cToken);
+        var action = async () => await service.SyncHistory(Year, cToken);
 
         /*
          * Act
@@ -79,10 +72,6 @@ public class PlayerRatingHistoryServiceTests
         // Query for PlayerCard
         var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
 
-        // RosterUpdate1 with RatingChange1
-        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(RatingChange1.Date,
-            new List<PlayerRatingChange>() { RatingChange1 });
-
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
         stubQuerySender.Setup(x => x.Send(getPlayerCardQuery, cToken))
@@ -94,12 +83,12 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { rosterUpdate1 });
+            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
 
         // Card catalog
         var mockCardCatalog = new Mock<ICardCatalog>();
         mockCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
-            .ReturnsAsync(ExternalCardCurrentState);
+            .ReturnsAsync(CardStateAfterRosterUpdate1.Card);
 
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog.Object,
@@ -117,12 +106,13 @@ public class PlayerRatingHistoryServiceTests
         // There should be a single historical rating
         Assert.Single(playerCard.HistoricalRatingsChronologically);
         var historical1 = playerCard.HistoricalRatingsChronologically[0];
-        Assert.Equal(new DateOnly(2024, 1, 1), historical1.StartDate);
-        Assert.Equal(new DateOnly(2024, 4, 21), historical1.EndDate);
-        Assert.Equal(80, historical1.OverallRating.Value);
-        Assert.Equal(AttributesBeforeRatingChange1IsApplied, historical1.Attributes);
+        Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
+        Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
+        Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
+        Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
         // An update command should have been sent with the most recent rating change
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, ExternalCardCurrentState, RatingChange1, null);
+        var expectedCommand = new UpdatePlayerCardCommand(playerCard, CardStateAfterRosterUpdate1.Card,
+            RosterUpdate1.RatingChange, null);
         mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Once);
         // The result should contain the updated PlayerCard
         Assert.Contains(playerCard, actual.UpdatedPlayerCards);
@@ -141,18 +131,6 @@ public class PlayerRatingHistoryServiceTests
         // Query for PlayerCard
         var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
 
-        // RosterUpdate1 with RatingChange1
-        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(RatingChange1.Date,
-            new List<PlayerRatingChange>() { RatingChange1 });
-
-        // RosterUpdate2 with RatingChange2
-        var rosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(RatingChange2.Date,
-            new List<PlayerRatingChange>() { RatingChange2 });
-
-        // RosterUpdate3 with RatingChange3
-        var rosterUpdate3 = Dtos.TestClasses.Faker.FakeRosterUpdate(RatingChange3.Date,
-            new List<PlayerRatingChange>() { RatingChange3 });
-
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
         stubQuerySender.Setup(x => x.Send(getPlayerCardQuery, cToken))
@@ -164,12 +142,12 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { rosterUpdate1, rosterUpdate2, rosterUpdate3 });
+            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value, RosterUpdate2.Value, RosterUpdate3.Value });
 
         // Card catalog
         var mockCardCatalog = new Mock<ICardCatalog>();
         mockCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
-            .ReturnsAsync(ExternalCardCurrentState);
+            .ReturnsAsync(CardStateCurrent.Card);
 
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog.Object,
@@ -185,23 +163,27 @@ public class PlayerRatingHistoryServiceTests
          */
         // There should be three historical ratings
         Assert.Equal(3, playerCard.HistoricalRatingsChronologically.Count);
+        // The 1st historical rating chronologically is the card's initial state: CardStateInitial
         var historical1 = playerCard.HistoricalRatingsChronologically[0];
-        Assert.Equal(new DateOnly(2024, 1, 1), historical1.StartDate);
-        Assert.Equal(new DateOnly(2024, 4, 7), historical1.EndDate);
-        Assert.Equal(70, historical1.OverallRating.Value);
-        Assert.Equal(AttributesBeforeRatingChange1And2And3IsApplied, historical1.Attributes);
+        Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
+        Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
+        Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
+        Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
+        // The 2nd historical rating chronologically is from RosterUpdate1: CardStateAfterRosterUpdate1
         var historical2 = playerCard.HistoricalRatingsChronologically[1];
-        Assert.Equal(new DateOnly(2024, 4, 7), historical2.StartDate);
-        Assert.Equal(new DateOnly(2024, 4, 14), historical2.EndDate);
-        Assert.Equal(75, historical2.OverallRating.Value);
-        Assert.Equal(AttributesBeforeRatingChange1And2IsApplied, historical2.Attributes);
+        Assert.Equal(RosterUpdate1.Date, historical2.StartDate);
+        Assert.Equal(RosterUpdate2.Date, historical2.EndDate);
+        Assert.Equal(CardStateAfterRosterUpdate1.OverallRating, historical2.OverallRating);
+        Assert.Equal(CardStateAfterRosterUpdate1.Card.GetAttributes(), historical2.Attributes);
+        // The 3rd historical rating chronologically is from RosterUpdate2: CardStateAfterRosterUpdate2
         var historical3 = playerCard.HistoricalRatingsChronologically[2];
-        Assert.Equal(new DateOnly(2024, 4, 14), historical3.StartDate);
-        Assert.Equal(new DateOnly(2024, 4, 21), historical3.EndDate);
-        Assert.Equal(80, historical3.OverallRating.Value);
-        Assert.Equal(AttributesBeforeRatingChange1IsApplied, historical3.Attributes);
-        // An update command should have been sent with the most recent rating change
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, ExternalCardCurrentState, RatingChange1, null);
+        Assert.Equal(RosterUpdate2.Date, historical3.StartDate);
+        Assert.Equal(RosterUpdate3.Date, historical3.EndDate);
+        Assert.Equal(CardStateAfterRosterUpdate2.OverallRating, historical3.OverallRating);
+        Assert.Equal(CardStateAfterRosterUpdate2.Card.GetAttributes(), historical3.Attributes);
+        // An update command should have been sent with the most recent rating change (RosterUpdate3). The result should be CardStateCurrent
+        var expectedCommand =
+            new UpdatePlayerCardCommand(playerCard, CardStateCurrent.Card, RosterUpdate3.RatingChange, null);
         mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Once);
         // The result should contain the updated PlayerCard
         Assert.Contains(playerCard, actual.UpdatedPlayerCards);
@@ -214,28 +196,15 @@ public class PlayerRatingHistoryServiceTests
          * Arrange
          */
         var cToken = CancellationToken.None;
-        // PlayerCard has no historical ratings
+        // PlayerCard
         var playerCard = Faker.FakePlayerCard(cardExternalId: CardExternalId.Value);
-        // Add RatingChange3 (the oldest) to the history
-        playerCard.AddHistoricalRating(Faker.FakePlayerCardHistoricalRating(new DateOnly(2024, 1, 1),
-            RatingChange3.Date, RatingChange3.OldRating.Value, AttributesBeforeRatingChange1And2And3IsApplied));
-        playerCard.AddHistoricalRating(Faker.FakePlayerCardHistoricalRating(RatingChange3.Date,
-            RatingChange2.Date, RatingChange2.OldRating.Value, AttributesBeforeRatingChange1And2IsApplied));
+        // Add the card's initial state the history
+        playerCard.AddHistoricalRating(RosterUpdate0.AsHistoricalRating);
+        // Add RosterUpdate1's changes to the history
+        playerCard.AddHistoricalRating(RosterUpdate1.AsHistoricalRating);
 
         // Query for PlayerCard
         var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
-
-        // RosterUpdate1 with RatingChange1
-        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(RatingChange1.Date,
-            new List<PlayerRatingChange>() { RatingChange1 });
-
-        // RosterUpdate2 with RatingChange2
-        var rosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(RatingChange2.Date,
-            new List<PlayerRatingChange>() { RatingChange2 });
-
-        // RosterUpdate3 with RatingChange3
-        var rosterUpdate3 = Dtos.TestClasses.Faker.FakeRosterUpdate(RatingChange3.Date,
-            new List<PlayerRatingChange>() { RatingChange3 });
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
@@ -248,12 +217,12 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { rosterUpdate1, rosterUpdate2, rosterUpdate3 });
+            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value, RosterUpdate2.Value, RosterUpdate3.Value });
 
         // Card catalog
         var mockCardCatalog = new Mock<ICardCatalog>();
         mockCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
-            .ReturnsAsync(ExternalCardCurrentState);
+            .ReturnsAsync(CardStateCurrent.Card);
 
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog.Object,
@@ -269,23 +238,27 @@ public class PlayerRatingHistoryServiceTests
          */
         // There should be three historical ratings
         Assert.Equal(3, playerCard.HistoricalRatingsChronologically.Count);
+        // The 1st historical rating chronologically is the card's initial state: CardStateInitial
         var historical1 = playerCard.HistoricalRatingsChronologically[0];
-        Assert.Equal(new DateOnly(2024, 1, 1), historical1.StartDate);
-        Assert.Equal(new DateOnly(2024, 4, 7), historical1.EndDate);
-        Assert.Equal(70, historical1.OverallRating.Value);
-        Assert.Equal(AttributesBeforeRatingChange1And2And3IsApplied, historical1.Attributes);
+        Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
+        Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
+        Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
+        Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
+        // The 2nd historical rating chronologically is from RosterUpdate1: CardStateAfterRosterUpdate1
         var historical2 = playerCard.HistoricalRatingsChronologically[1];
-        Assert.Equal(new DateOnly(2024, 4, 7), historical2.StartDate);
-        Assert.Equal(new DateOnly(2024, 4, 14), historical2.EndDate);
-        Assert.Equal(75, historical2.OverallRating.Value);
-        Assert.Equal(AttributesBeforeRatingChange1And2IsApplied, historical2.Attributes);
+        Assert.Equal(RosterUpdate1.Date, historical2.StartDate);
+        Assert.Equal(RosterUpdate2.Date, historical2.EndDate);
+        Assert.Equal(CardStateAfterRosterUpdate1.OverallRating, historical2.OverallRating);
+        Assert.Equal(CardStateAfterRosterUpdate1.Card.GetAttributes(), historical2.Attributes);
+        // The 3rd historical rating chronologically is from RosterUpdate2: CardStateAfterRosterUpdate2
         var historical3 = playerCard.HistoricalRatingsChronologically[2];
-        Assert.Equal(new DateOnly(2024, 4, 14), historical3.StartDate);
-        Assert.Equal(new DateOnly(2024, 4, 21), historical3.EndDate);
-        Assert.Equal(80, historical3.OverallRating.Value);
-        Assert.Equal(AttributesBeforeRatingChange1IsApplied, historical3.Attributes);
-        // An update command should have been sent with the most recent rating change
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, ExternalCardCurrentState, RatingChange1, null);
+        Assert.Equal(RosterUpdate2.Date, historical3.StartDate);
+        Assert.Equal(RosterUpdate3.Date, historical3.EndDate);
+        Assert.Equal(CardStateAfterRosterUpdate2.OverallRating, historical3.OverallRating);
+        Assert.Equal(CardStateAfterRosterUpdate2.Card.GetAttributes(), historical3.Attributes);
+        // An update command should have been sent with the most recent rating change (RosterUpdate3). The result should be CardStateCurrent
+        var expectedCommand =
+            new UpdatePlayerCardCommand(playerCard, CardStateCurrent.Card, RosterUpdate3.RatingChange, null);
         mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Once);
         // The result should contain the updated PlayerCard
         Assert.Contains(playerCard, actual.UpdatedPlayerCards);
@@ -298,18 +271,13 @@ public class PlayerRatingHistoryServiceTests
          * Arrange
          */
         var cToken = CancellationToken.None;
-        // PlayerCard has no historical ratings
+        // PlayerCard
         var playerCard = Faker.FakePlayerCard(cardExternalId: CardExternalId.Value);
-        // Add RatingChange3 (the oldest) to the history
-        playerCard.AddHistoricalRating(Faker.FakePlayerCardHistoricalRating(new DateOnly(2024, 1, 1),
-            RatingChange1.Date, RatingChange1.OldRating.Value, AttributesBeforeRatingChange1IsApplied));
+        // Add the card's initial state the history
+        playerCard.AddHistoricalRating(RosterUpdate0.AsHistoricalRating);
 
         // Query for PlayerCard
         var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
-
-        // RosterUpdate1 with RatingChange1
-        var rosterUpdate1 = Dtos.TestClasses.Faker.FakeRosterUpdate(RatingChange1.Date,
-            new List<PlayerRatingChange>() { RatingChange1 });
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
@@ -322,12 +290,12 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { rosterUpdate1 });
+            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
 
         // Card catalog
         var mockCardCatalog = new Mock<ICardCatalog>();
         mockCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
-            .ReturnsAsync(ExternalCardCurrentState);
+            .ReturnsAsync(CardStateAfterRosterUpdate1.Card);
 
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog.Object,
@@ -343,15 +311,17 @@ public class PlayerRatingHistoryServiceTests
          */
         // There should be a single historical rating
         Assert.Single(playerCard.HistoricalRatingsChronologically);
+        // The 1st historical rating chronologically is the card's initial state: CardStateInitial
         var historical1 = playerCard.HistoricalRatingsChronologically[0];
-        Assert.Equal(new DateOnly(2024, 1, 1), historical1.StartDate);
-        Assert.Equal(new DateOnly(2024, 4, 21), historical1.EndDate);
-        Assert.Equal(80, historical1.OverallRating.Value);
-        Assert.Equal(AttributesBeforeRatingChange1IsApplied, historical1.Attributes);
+        Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
+        Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
+        Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
+        Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
         // No update command should have been sent
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, ExternalCardCurrentState, RatingChange1, null);
+        var expectedCommand = new UpdatePlayerCardCommand(playerCard, CardStateAfterRosterUpdate1.Card,
+            RosterUpdate1.RatingChange, null);
         mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Never);
-        // The result should contain the updated PlayerCard
+        // The result should not contain the PlayerCard since it was not updated
         Assert.DoesNotContain(playerCard, actual.UpdatedPlayerCards);
     }
 
@@ -359,234 +329,17 @@ public class PlayerRatingHistoryServiceTests
     private static readonly CardExternalId CardExternalId = CardExternalId.Create(Faker.FakeGuid1);
 
     /// <summary>
-    /// The current overall rating from the external card catalog
+    /// The initial state of the PlayerCard, before any roster updates
     /// </summary>
-    private static readonly OverallRating CurrentOverallRating = Faker.FakeOverallRating(99);
+    private static class CardStateInitial
+    {
+        public static readonly OverallRating OverallRating = Faker.FakeOverallRating(70);
 
-    /// <summary>
-    /// The current attributes from the external card catalog
-    /// </summary>
-    private static readonly MlbPlayerCard ExternalCardCurrentState = Dtos.TestClasses.Faker.FakeMlbPlayerCard(
-        Year.Value,
-        CardExternalId.Value,
-        rarity: Rarity.Diamond,
-        overallRating: CurrentOverallRating.Value,
-        stamina: 100,
-        pitchingClutch: 100,
-        hitsPerNine: 100,
-        strikeoutsPerNine: 100,
-        baseOnBallsPerNine: 100,
-        homeRunsPerNine: 100,
-        pitchVelocity: 100,
-        pitchControl: 100,
-        pitchMovement: 100,
-        contactLeft: 100,
-        contactRight: 100,
-        powerLeft: 100,
-        powerRight: 100,
-        plateVision: 100,
-        plateDiscipline: 100,
-        battingClutch: 100,
-        buntingAbility: 100,
-        dragBuntingAbility: 100,
-        hittingDurability: 100,
-        fieldingDurability: 100,
-        fieldingAbility: 100,
-        armStrength: 100,
-        armAccuracy: 100,
-        reactionTime: 100,
-        blocking: 100,
-        speed: 100,
-        baseRunningAbility: 100,
-        baseRunningAggression: 100
-    );
-
-    /// <summary>
-    /// The most recent rating change for the player card
-    /// </summary>
-    private static readonly PlayerRatingChange RatingChange1 = Dtos.TestClasses.Faker.FakePlayerRatingChange(
-        new DateOnly(2024, 4, 21),
-        CardExternalId.Value,
-        newOverallRating: CurrentOverallRating.Value,
-        newRarity: Rarity.Diamond,
-        oldOverallRating: 80,
-        oldRarity: Rarity.Gold,
-        Dtos.TestClasses.Faker.FakeMlbPlayerAttributeChanges(
-            stamina: 25,
-            pitchingClutch: 25,
-            hitsPerNine: 25,
-            strikeoutsPerNine: 25,
-            baseOnBallsPerNine: 25,
-            homeRunsPerNine: 25,
-            pitchVelocity: 25,
-            pitchControl: 25,
-            pitchMovement: 25,
-            contactLeft: 25,
-            contactRight: 25,
-            powerLeft: 25,
-            powerRight: 25,
-            plateVision: 25,
-            plateDiscipline: 25,
-            battingClutch: 25,
-            buntingAbility: 25,
-            dragBuntingAbility: 25,
-            hittingDurability: 25,
-            fieldingDurability: 25,
-            fieldingAbility: 25,
-            armStrength: 25,
-            armAccuracy: 25,
-            reactionTime: 25,
-            blocking: 25,
-            speed: 25,
-            baseRunningAbility: 25,
-            baseRunningAggression: 25
-        )
-    );
-
-    private static readonly PlayerRatingChange RatingChange2 = Dtos.TestClasses.Faker.FakePlayerRatingChange(
-        new DateOnly(2024, 4, 14),
-        CardExternalId.Value,
-        newOverallRating: RatingChange1.OldRating.Value,
-        newRarity: Rarity.Gold,
-        oldOverallRating: 75,
-        oldRarity: Rarity.Silver,
-        Dtos.TestClasses.Faker.FakeMlbPlayerAttributeChanges(
-            stamina: 1,
-            pitchingClutch: 2,
-            hitsPerNine: 3,
-            strikeoutsPerNine: 4,
-            baseOnBallsPerNine: 5,
-            homeRunsPerNine: 6,
-            pitchVelocity: 7,
-            pitchControl: 8,
-            pitchMovement: 9,
-            contactLeft: 10,
-            contactRight: 11,
-            powerLeft: 12,
-            powerRight: 13,
-            plateVision: 14,
-            plateDiscipline: 15,
-            battingClutch: 16,
-            buntingAbility: 17,
-            dragBuntingAbility: 18,
-            hittingDurability: 19,
-            fieldingDurability: 20,
-            fieldingAbility: 21,
-            armStrength: 22,
-            armAccuracy: 23,
-            reactionTime: 24,
-            blocking: 25,
-            speed: 26,
-            baseRunningAbility: 27,
-            baseRunningAggression: 28
-        )
-    );
-
-    private static readonly PlayerRatingChange RatingChange3 = Dtos.TestClasses.Faker.FakePlayerRatingChange(
-        new DateOnly(2024, 4, 7),
-        CardExternalId.Value,
-        newOverallRating: RatingChange2.OldRating.Value,
-        newRarity: Rarity.Silver,
-        oldOverallRating: 70,
-        oldRarity: Rarity.Bronze,
-        Dtos.TestClasses.Faker.FakeMlbPlayerAttributeChanges(
-            stamina: 2,
-            pitchingClutch: 3,
-            hitsPerNine: 4,
-            strikeoutsPerNine: 5,
-            baseOnBallsPerNine: 6,
-            homeRunsPerNine: 7,
-            pitchVelocity: 8,
-            pitchControl: 9,
-            pitchMovement: 10,
-            contactLeft: 11,
-            contactRight: 12,
-            powerLeft: 13,
-            powerRight: 14,
-            plateVision: 15,
-            plateDiscipline: 16,
-            battingClutch: 17,
-            buntingAbility: 18,
-            dragBuntingAbility: 19,
-            hittingDurability: 20,
-            fieldingDurability: 21,
-            fieldingAbility: 22,
-            armStrength: 23,
-            armAccuracy: 24,
-            reactionTime: 25,
-            blocking: 26,
-            speed: 27,
-            baseRunningAbility: 28,
-            baseRunningAggression: 29
-        )
-    );
-
-    private static readonly PlayerCardAttributes AttributesBeforeRatingChange1IsApplied =
-        Faker.FakePlayerCardAttributes(
-            stamina: 100 - 25,
-            pitchingClutch: 100 - 25,
-            hitsPerNine: 100 - 25,
-            strikeoutsPerNine: 100 - 25,
-            baseOnBallsPerNine: 100 - 25,
-            homeRunsPerNine: 100 - 25,
-            pitchVelocity: 100 - 25,
-            pitchControl: 100 - 25,
-            pitchMovement: 100 - 25,
-            contactLeft: 100 - 25,
-            contactRight: 100 - 25,
-            powerLeft: 100 - 25,
-            powerRight: 100 - 25,
-            plateVision: 100 - 25,
-            plateDiscipline: 100 - 25,
-            battingClutch: 100 - 25,
-            buntingAbility: 100 - 25,
-            dragBuntingAbility: 100 - 25,
-            hittingDurability: 100 - 25,
-            fieldingDurability: 100 - 25,
-            fieldingAbility: 100 - 25,
-            armStrength: 100 - 25,
-            armAccuracy: 100 - 25,
-            reactionTime: 100 - 25,
-            blocking: 100 - 25,
-            speed: 100 - 25,
-            baseRunningAbility: 100 - 25,
-            baseRunningAggression: 100 - 25
-        );
-
-    private static readonly PlayerCardAttributes AttributesBeforeRatingChange1And2IsApplied =
-        Faker.FakePlayerCardAttributes(
-            stamina: 100 - 25 - 1,
-            pitchingClutch: 100 - 25 - 2,
-            hitsPerNine: 100 - 25 - 3,
-            strikeoutsPerNine: 100 - 25 - 4,
-            baseOnBallsPerNine: 100 - 25 - 5,
-            homeRunsPerNine: 100 - 25 - 6,
-            pitchVelocity: 100 - 25 - 7,
-            pitchControl: 100 - 25 - 8,
-            pitchMovement: 100 - 25 - 9,
-            contactLeft: 100 - 25 - 10,
-            contactRight: 100 - 25 - 11,
-            powerLeft: 100 - 25 - 12,
-            powerRight: 100 - 25 - 13,
-            plateVision: 100 - 25 - 14,
-            plateDiscipline: 100 - 25 - 15,
-            battingClutch: 100 - 25 - 16,
-            buntingAbility: 100 - 25 - 17,
-            dragBuntingAbility: 100 - 25 - 18,
-            hittingDurability: 100 - 25 - 19,
-            fieldingDurability: 100 - 25 - 20,
-            fieldingAbility: 100 - 25 - 21,
-            armStrength: 100 - 25 - 22,
-            armAccuracy: 100 - 25 - 23,
-            reactionTime: 100 - 25 - 24,
-            blocking: 100 - 25 - 25,
-            speed: 100 - 25 - 26,
-            baseRunningAbility: 100 - 25 - 27,
-            baseRunningAggression: 100 - 25 - 28
-        );
-
-    private static readonly PlayerCardAttributes AttributesBeforeRatingChange1And2And3IsApplied =
-        Faker.FakePlayerCardAttributes(
+        public static readonly MlbPlayerCard Card = Dtos.TestClasses.Faker.FakeMlbPlayerCard(
+            Year.Value,
+            CardExternalId.Value,
+            rarity: OverallRating.Rarity,
+            overallRating: OverallRating.Value,
             stamina: 100 - 25 - 1 - 2,
             pitchingClutch: 100 - 25 - 2 - 3,
             hitsPerNine: 100 - 25 - 3 - 4,
@@ -616,4 +369,309 @@ public class PlayerRatingHistoryServiceTests
             baseRunningAbility: 100 - 25 - 27 - 28,
             baseRunningAggression: 100 - 25 - 28 - 29
         );
+    }
+
+    /// <summary>
+    /// The state of the PlayerCard after <see cref="RosterUpdate1"/>
+    /// </summary>
+    private static class CardStateAfterRosterUpdate1
+    {
+        public static readonly OverallRating OverallRating = Faker.FakeOverallRating(75);
+
+        public static readonly MlbPlayerCard Card = Dtos.TestClasses.Faker.FakeMlbPlayerCard(
+            Year.Value,
+            CardExternalId.Value,
+            rarity: OverallRating.Rarity,
+            overallRating: OverallRating.Value,
+            stamina: 100 - 25 - 1,
+            pitchingClutch: 100 - 25 - 2,
+            hitsPerNine: 100 - 25 - 3,
+            strikeoutsPerNine: 100 - 25 - 4,
+            baseOnBallsPerNine: 100 - 25 - 5,
+            homeRunsPerNine: 100 - 25 - 6,
+            pitchVelocity: 100 - 25 - 7,
+            pitchControl: 100 - 25 - 8,
+            pitchMovement: 100 - 25 - 9,
+            contactLeft: 100 - 25 - 10,
+            contactRight: 100 - 25 - 11,
+            powerLeft: 100 - 25 - 12,
+            powerRight: 100 - 25 - 13,
+            plateVision: 100 - 25 - 14,
+            plateDiscipline: 100 - 25 - 15,
+            battingClutch: 100 - 25 - 16,
+            buntingAbility: 100 - 25 - 17,
+            dragBuntingAbility: 100 - 25 - 18,
+            hittingDurability: 100 - 25 - 19,
+            fieldingDurability: 100 - 25 - 20,
+            fieldingAbility: 100 - 25 - 21,
+            armStrength: 100 - 25 - 22,
+            armAccuracy: 100 - 25 - 23,
+            reactionTime: 100 - 25 - 24,
+            blocking: 100 - 25 - 25,
+            speed: 100 - 25 - 26,
+            baseRunningAbility: 100 - 25 - 27,
+            baseRunningAggression: 100 - 25 - 28
+        );
+    }
+
+    /// <summary>
+    /// The state of the PlayerCard after <see cref="RosterUpdate2"/>
+    /// </summary>
+    private static class CardStateAfterRosterUpdate2
+    {
+        public static readonly OverallRating OverallRating = Faker.FakeOverallRating(80);
+
+        public static readonly MlbPlayerCard Card = Dtos.TestClasses.Faker.FakeMlbPlayerCard(
+            Year.Value,
+            CardExternalId.Value,
+            rarity: OverallRating.Rarity,
+            overallRating: OverallRating.Value,
+            stamina: 100 - 25,
+            pitchingClutch: 100 - 25,
+            hitsPerNine: 100 - 25,
+            strikeoutsPerNine: 100 - 25,
+            baseOnBallsPerNine: 100 - 25,
+            homeRunsPerNine: 100 - 25,
+            pitchVelocity: 100 - 25,
+            pitchControl: 100 - 25,
+            pitchMovement: 100 - 25,
+            contactLeft: 100 - 25,
+            contactRight: 100 - 25,
+            powerLeft: 100 - 25,
+            powerRight: 100 - 25,
+            plateVision: 100 - 25,
+            plateDiscipline: 100 - 25,
+            battingClutch: 100 - 25,
+            buntingAbility: 100 - 25,
+            dragBuntingAbility: 100 - 25,
+            hittingDurability: 100 - 25,
+            fieldingDurability: 100 - 25,
+            fieldingAbility: 100 - 25,
+            armStrength: 100 - 25,
+            armAccuracy: 100 - 25,
+            reactionTime: 100 - 25,
+            blocking: 100 - 25,
+            speed: 100 - 25,
+            baseRunningAbility: 100 - 25,
+            baseRunningAggression: 100 - 25
+        );
+    }
+
+    /// <summary>
+    /// The card state after the most recent roster update, <see cref="RosterUpdate3"/>
+    /// </summary>
+    private static class CardStateCurrent
+    {
+        public static readonly OverallRating OverallRating = Faker.FakeOverallRating(99);
+
+        public static readonly MlbPlayerCard Card = Dtos.TestClasses.Faker.FakeMlbPlayerCard(
+            Year.Value,
+            CardExternalId.Value,
+            rarity: OverallRating.Rarity,
+            overallRating: OverallRating.Value,
+            stamina: 100,
+            pitchingClutch: 100,
+            hitsPerNine: 100,
+            strikeoutsPerNine: 100,
+            baseOnBallsPerNine: 100,
+            homeRunsPerNine: 100,
+            pitchVelocity: 100,
+            pitchControl: 100,
+            pitchMovement: 100,
+            contactLeft: 100,
+            contactRight: 100,
+            powerLeft: 100,
+            powerRight: 100,
+            plateVision: 100,
+            plateDiscipline: 100,
+            battingClutch: 100,
+            buntingAbility: 100,
+            dragBuntingAbility: 100,
+            hittingDurability: 100,
+            fieldingDurability: 100,
+            fieldingAbility: 100,
+            armStrength: 100,
+            armAccuracy: 100,
+            reactionTime: 100,
+            blocking: 100,
+            speed: 100,
+            baseRunningAbility: 100,
+            baseRunningAggression: 100
+        );
+    }
+
+    /// <summary>
+    /// Not actually a roster update, but the state of everything before <see cref="RosterUpdate1"/>
+    /// </summary>
+    private static class RosterUpdate0
+    {
+        public static readonly DateOnly Date = new(2024, 1, 1);
+
+        public static readonly PlayerCardHistoricalRating AsHistoricalRating = Faker.FakePlayerCardHistoricalRating(
+            Date, RosterUpdate1.Date, CardStateInitial.OverallRating.Value, CardStateInitial.Card.GetAttributes());
+    }
+
+    /// <summary>
+    /// The first roster update
+    /// It changes the player card from <see cref="CardStateInitial"/> to <see cref="CardStateAfterRosterUpdate1"/>
+    /// </summary>
+    private static class RosterUpdate1
+    {
+        public static readonly DateOnly Date = new(2024, 4, 7);
+
+        public static readonly PlayerCardHistoricalRating AsHistoricalRating = Faker.FakePlayerCardHistoricalRating(
+            Date, RosterUpdate2.Date, CardStateAfterRosterUpdate1.OverallRating.Value,
+            CardStateAfterRosterUpdate1.Card.GetAttributes());
+
+        public static readonly PlayerRatingChange RatingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(
+            Date,
+            CardExternalId.Value,
+            newOverallRating: CardStateAfterRosterUpdate1.OverallRating.Value,
+            newRarity: CardStateAfterRosterUpdate1.OverallRating.Rarity,
+            oldOverallRating: CardStateInitial.OverallRating.Value,
+            oldRarity: CardStateInitial.OverallRating.Rarity,
+            Dtos.TestClasses.Faker.FakeMlbPlayerAttributeChanges(
+                stamina: 2,
+                pitchingClutch: 3,
+                hitsPerNine: 4,
+                strikeoutsPerNine: 5,
+                baseOnBallsPerNine: 6,
+                homeRunsPerNine: 7,
+                pitchVelocity: 8,
+                pitchControl: 9,
+                pitchMovement: 10,
+                contactLeft: 11,
+                contactRight: 12,
+                powerLeft: 13,
+                powerRight: 14,
+                plateVision: 15,
+                plateDiscipline: 16,
+                battingClutch: 17,
+                buntingAbility: 18,
+                dragBuntingAbility: 19,
+                hittingDurability: 20,
+                fieldingDurability: 21,
+                fieldingAbility: 22,
+                armStrength: 23,
+                armAccuracy: 24,
+                reactionTime: 25,
+                blocking: 26,
+                speed: 27,
+                baseRunningAbility: 28,
+                baseRunningAggression: 29
+            )
+        );
+
+        public static readonly RosterUpdate Value = Dtos.TestClasses.Faker.FakeRosterUpdate(ratingChanges:
+            new List<PlayerRatingChange>() { RatingChange });
+    }
+
+    /// <summary>
+    /// The 2nd roster update
+    /// It changes the player card from <see cref="CardStateAfterRosterUpdate1"/> to <see cref="CardStateAfterRosterUpdate2"/>
+    /// </summary>
+    private static class RosterUpdate2
+    {
+        public static readonly DateOnly Date = new(2024, 4, 14);
+
+        public static readonly PlayerCardHistoricalRating AsHistoricalRating = Faker.FakePlayerCardHistoricalRating(
+            Date, RosterUpdate3.Date, CardStateAfterRosterUpdate2.OverallRating.Value,
+            CardStateAfterRosterUpdate2.Card.GetAttributes());
+
+        public static readonly PlayerRatingChange RatingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(
+            Date,
+            CardExternalId.Value,
+            newOverallRating: CardStateAfterRosterUpdate2.OverallRating.Value,
+            newRarity: CardStateAfterRosterUpdate2.OverallRating.Rarity,
+            oldOverallRating: CardStateAfterRosterUpdate1.OverallRating.Value,
+            oldRarity: CardStateAfterRosterUpdate1.OverallRating.Rarity,
+            Dtos.TestClasses.Faker.FakeMlbPlayerAttributeChanges(
+                stamina: 1,
+                pitchingClutch: 2,
+                hitsPerNine: 3,
+                strikeoutsPerNine: 4,
+                baseOnBallsPerNine: 5,
+                homeRunsPerNine: 6,
+                pitchVelocity: 7,
+                pitchControl: 8,
+                pitchMovement: 9,
+                contactLeft: 10,
+                contactRight: 11,
+                powerLeft: 12,
+                powerRight: 13,
+                plateVision: 14,
+                plateDiscipline: 15,
+                battingClutch: 16,
+                buntingAbility: 17,
+                dragBuntingAbility: 18,
+                hittingDurability: 19,
+                fieldingDurability: 20,
+                fieldingAbility: 21,
+                armStrength: 22,
+                armAccuracy: 23,
+                reactionTime: 24,
+                blocking: 25,
+                speed: 26,
+                baseRunningAbility: 27,
+                baseRunningAggression: 28
+            )
+        );
+
+        public static readonly RosterUpdate Value = Dtos.TestClasses.Faker.FakeRosterUpdate(ratingChanges:
+            new List<PlayerRatingChange>() { RatingChange });
+    }
+
+    /// <summary>
+    /// The most recent (3rd) roster update
+    /// It changes the player card from <see cref="CardStateAfterRosterUpdate2"/> to <see cref="CardStateCurrent"/>
+    /// </summary>
+    private static class RosterUpdate3
+    {
+        public static readonly DateOnly Date = new(2024, 4, 21);
+
+        public static readonly PlayerCardHistoricalRating AsHistoricalRating = Faker.FakePlayerCardHistoricalRating(
+            Date, DateOnly.MaxValue, CardStateCurrent.OverallRating.Value, CardStateInitial.Card.GetAttributes());
+
+        public static readonly PlayerRatingChange RatingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(
+            Date,
+            CardExternalId.Value,
+            newOverallRating: CardStateCurrent.OverallRating.Value,
+            newRarity: CardStateCurrent.OverallRating.Rarity,
+            oldOverallRating: CardStateAfterRosterUpdate2.OverallRating.Value,
+            oldRarity: CardStateAfterRosterUpdate2.OverallRating.Rarity,
+            Dtos.TestClasses.Faker.FakeMlbPlayerAttributeChanges(
+                stamina: 25,
+                pitchingClutch: 25,
+                hitsPerNine: 25,
+                strikeoutsPerNine: 25,
+                baseOnBallsPerNine: 25,
+                homeRunsPerNine: 25,
+                pitchVelocity: 25,
+                pitchControl: 25,
+                pitchMovement: 25,
+                contactLeft: 25,
+                contactRight: 25,
+                powerLeft: 25,
+                powerRight: 25,
+                plateVision: 25,
+                plateDiscipline: 25,
+                battingClutch: 25,
+                buntingAbility: 25,
+                dragBuntingAbility: 25,
+                hittingDurability: 25,
+                fieldingDurability: 25,
+                fieldingAbility: 25,
+                armStrength: 25,
+                armAccuracy: 25,
+                reactionTime: 25,
+                blocking: 25,
+                speed: 25,
+                baseRunningAbility: 25,
+                baseRunningAggression: 25
+            )
+        );
+
+        public static readonly RosterUpdate Value = Dtos.TestClasses.Faker.FakeRosterUpdate(ratingChanges:
+            new List<PlayerRatingChange>() { RatingChange });
+    }
 }
