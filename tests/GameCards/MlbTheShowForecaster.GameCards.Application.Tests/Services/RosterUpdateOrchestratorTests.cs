@@ -306,7 +306,8 @@ public class RosterUpdateOrchestratorTests
         var rosterUpdate1Date = new DateOnly(2024, 4, 1);
         var cardExternalId1 = Faker.FakeGuid1;
         var playerCard1 = Faker.FakePlayerCard(cardExternalId: cardExternalId1);
-        playerCard1.ChangePlayerRating(rosterUpdate1Date, Faker.FakeOverallRating(), Faker.FakePlayerCardAttributes());
+        var playerCard1Rating = Faker.FakePlayerCardHistoricalRating(rosterUpdate1Date, new DateOnly(2024, 4, 2));
+        playerCard1.AddHistoricalRating(playerCard1Rating);
         var ratingChange1 =
             Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId1, date: rosterUpdate1Date);
 

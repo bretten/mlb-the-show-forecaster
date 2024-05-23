@@ -109,7 +109,7 @@ public sealed class PlayerCard : Card
         }
 
         // The end date of the last rating state is the beginning of the rating state that is currently being replaced
-        var previousEndDate = _historicalRatings.MaxBy(x => x.EndDate)?.EndDate ?? DateOnly.MinValue;
+        var previousEndDate = _historicalRatings.MaxBy(x => x.EndDate)?.EndDate ?? new DateOnly(date.Year, 1, 1);
 
         // Add previous values to history before updating with new values
         _historicalRatings.Add(
@@ -141,6 +141,22 @@ public sealed class PlayerCard : Card
     }
 
     /// <summary>
+    /// Adds a <see cref="PlayerCardHistoricalRating"/> to the history
+    /// </summary>
+    /// <param name="rating"><see cref="PlayerCardHistoricalRating"/></param>
+    /// <exception cref="PlayerCardHistoricalRatingExistsException">Thrown if the <see cref="PlayerCardHistoricalRating"/> already exists</exception>
+    public void AddHistoricalRating(PlayerCardHistoricalRating rating)
+    {
+        if (DoesHistoricalRatingExist(rating))
+        {
+            throw new PlayerCardHistoricalRatingExistsException(
+                $"A player rating already exists for card = {ExternalId.Value} and StartDate = {rating.StartDate.ToShortDateString()} and EndDate = {rating.EndDate.ToShortDateString()}");
+        }
+
+        _historicalRatings.Add(rating);
+    }
+
+    /// <summary>
     /// Changes the player card's primary position
     /// </summary>
     /// <param name="newPosition">The new position</param>
@@ -167,7 +183,17 @@ public sealed class PlayerCard : Card
     /// <returns>True if a rating change has already been applied for the specified date, otherwise false</returns>
     public bool IsRatingAppliedFor(DateOnly date)
     {
-        return _historicalRatings.Any(x => x.EndDate == date);
+        return _historicalRatings.Any(x => x.StartDate <= date && date < x.EndDate);
+    }
+
+    /// <summary>
+    /// Determines if the <see cref="PlayerCardHistoricalRating"/> exists in <see cref="_historicalRatings"/>
+    /// </summary>
+    /// <param name="rating">The <see cref="PlayerCardHistoricalRating"/> to check</param>
+    /// <returns>True if the <see cref="PlayerCardHistoricalRating"/> exists, otherwise false</returns>
+    private bool DoesHistoricalRatingExist(PlayerCardHistoricalRating rating)
+    {
+        return _historicalRatings.Any(x => x.StartDate == rating.StartDate && x.EndDate == rating.EndDate);
     }
 
     /// <summary>

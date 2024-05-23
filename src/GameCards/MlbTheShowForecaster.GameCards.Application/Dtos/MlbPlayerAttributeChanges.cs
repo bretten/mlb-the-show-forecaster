@@ -103,4 +103,43 @@ public readonly record struct MlbPlayerAttributeChanges(
             baseRunningAggression: currentAttributes.BaseRunningAggression.Value + BaseRunningAggression
         );
     }
+
+    /// <summary>
+    /// Subtracts this <see cref="MlbPlayerAttributeChanges"/> from the specified <see cref="PlayerCardAttributes"/>
+    /// </summary>
+    /// <param name="currentAttributes">The <see cref="PlayerCardAttributes"/> to subtract from</param>
+    /// <returns>A new <see cref="PlayerCardAttributes"/> with this <see cref="MlbPlayerAttributeChanges"/> subtracted from it</returns>
+    public PlayerCardAttributes SubtractFrom(PlayerCardAttributes currentAttributes)
+    {
+        return PlayerCardAttributes.Create(
+            stamina: currentAttributes.Stamina.Value - Stamina,
+            pitchingClutch: currentAttributes.PitchingClutch.Value - PitchingClutch,
+            hitsPerNine: currentAttributes.HitsPerNine.Value - HitsPerBf,
+            strikeoutsPerNine: currentAttributes.StrikeoutsPerNine.Value - KPerBf,
+            baseOnBallsPerNine: currentAttributes.BaseOnBallsPerNine.Value - BbPerBf,
+            homeRunsPerNine: currentAttributes.HomeRunsPerNine.Value - HrPerBf,
+            pitchVelocity: currentAttributes.PitchVelocity.Value - PitchVelocity,
+            pitchControl: currentAttributes.PitchControl.Value - PitchControl,
+            pitchMovement: currentAttributes.PitchMovement.Value - PitchMovement,
+            contactLeft: currentAttributes.ContactLeft.Value - ContactLeft,
+            contactRight: currentAttributes.ContactRight.Value - ContactRight,
+            powerLeft: currentAttributes.PowerLeft.Value - PowerLeft,
+            powerRight: currentAttributes.PowerRight.Value - PowerRight,
+            plateVision: currentAttributes.PlateVision.Value - PlateVision,
+            plateDiscipline: currentAttributes.PlateDiscipline.Value - PlateDiscipline,
+            battingClutch: currentAttributes.BattingClutch.Value - BattingClutch,
+            buntingAbility: currentAttributes.BuntingAbility.Value - BuntingAbility,
+            dragBuntingAbility: currentAttributes.DragBuntingAbility.Value - DragBuntingAbility,
+            hittingDurability: currentAttributes.HittingDurability.Value - HittingDurability,
+            fieldingDurability: currentAttributes.FieldingDurability.Value - FieldingDurability,
+            fieldingAbility: currentAttributes.FieldingAbility.Value - FieldingAbility,
+            armStrength: currentAttributes.ArmStrength.Value - ArmStrength,
+            armAccuracy: currentAttributes.ArmAccuracy.Value - ArmAccuracy,
+            reactionTime: currentAttributes.ReactionTime.Value - ReactionTime,
+            blocking: currentAttributes.Blocking.Value - Blocking,
+            speed: currentAttributes.Speed.Value - Speed,
+            baseRunningAbility: currentAttributes.BaseRunningAbility.Value - BaseRunningAbility,
+            baseRunningAggression: currentAttributes.BaseRunningAggression.Value - BaseRunningAggression
+        );
+    }
 };
