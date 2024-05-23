@@ -109,8 +109,8 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         // So the history has to be rebuilt starting with the most recent rating change
         changes = changes.OrderByDescending(x => x.Date).ToImmutableList();
 
-        // Will hold all rating changes in the form of the domain equivalent
-        var historicalRatings = new List<PlayerCardHistoricalRating>();
+        // Determines if the PlayerCard's historical ratings were updated
+        var wasUpdated = false;
 
         // Get the current attributes. Each attribute change set will be subtracted from the current state, starting with the newest
         // This will rebuild the history
@@ -120,31 +120,23 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         var lastRatingChangeIndex = changes.Count - 1;
         for (var i = 0; i < changes.Count; i++)
         {
-            // Subtract the attribute changes from the current rating change so their previous values can be known at this point in the history
+            // Start with the current, recent state of the card and subtract each rating change in newest to oldest order
+            // This gives the attribute state before each rating change
             currentState = changes[i].AttributeChanges.SubtractFrom(currentState);
 
+            // A historical rating is being created for the state of the card BEFORE the current PlayerRatingChange (changes[i])
             // The last item is the oldest/first rating change. Its start date is considered to be the beginning of the year
-            if (i == lastRatingChangeIndex)
-            {
-                var startOfYear = new DateOnly(seasonYear.Value, 1, 1);
-                historicalRatings.Add(PlayerCardHistoricalRating.Create(startOfYear, changes[i].Date,
-                    changes[i].OldRating, currentState));
-                continue;
-            }
+            var startDate = i == lastRatingChangeIndex
+                ? new DateOnly(seasonYear.Value, 1, 1)
+                // The start date of any other rating change is the date of the next, older rating change (changes[i + 1])
+                : changes[i + 1].Date;
+            // The end date is the date of the current rating change (changes[i])
+            var endDate = changes[i].Date;
+            // Since this is the state of the card BEFORE the current PlayerRatingChange (changes[i]), use the old rating
+            var rating = changes[i].OldRating;
 
-            // Add a historical rating for each rating change. The start date is the date of the next oldest rating change
-            var isThereAnother = (i + 1) <= lastRatingChangeIndex;
-            if (isThereAnother)
-            {
-                historicalRatings.Add(PlayerCardHistoricalRating.Create(changes[i + 1].Date, changes[i].Date,
-                    changes[i].OldRating, currentState));
-            }
-        }
-
-        // Add any historical ratings to the PlayerCard that have not yet been added
-        var wasUpdated = false;
-        foreach (var historicalRating in historicalRatings)
-        {
+            // Add the historical rating to the PlayerCard if it has no record of it
+            var historicalRating = PlayerCardHistoricalRating.Create(startDate, endDate, rating, currentState);
             if (playerCard.IsRatingAppliedFor(historicalRating.StartDate)) continue;
             wasUpdated = true;
             playerCard.AddHistoricalRating(historicalRating);
