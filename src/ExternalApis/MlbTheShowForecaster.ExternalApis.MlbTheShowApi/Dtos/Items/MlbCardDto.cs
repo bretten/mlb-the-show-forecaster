@@ -113,5 +113,15 @@ public sealed record MlbCardDto(
     [property: JsonPropertyName("baserunning_ability")]
     int BaseRunningAbility,
     [property: JsonPropertyName("baserunning_aggression")]
-    int BaseRunningAggression
+    int BaseRunningAggression,
+    [property: JsonPropertyName("has_augment")]
+    bool HasAugment,
+    [property: JsonPropertyName("augment_text")]
+    string AugmentText,
+    [property: JsonPropertyName("augment_end_date")]
+    DateTime? AugmentEndDate,
+    [property: JsonPropertyName("new_rank")]
+    int NewRank,
+    [property: JsonPropertyName("has_rank_change")]
+    bool HasRankChange
 ) : ItemDto(Uuid, Type, ImageUrl, Name, Rarity, IsSellable);

@@ -59,6 +59,11 @@ public class ItemJsonConverterTests
         Assert.Equal(86, actualItem.Speed);
         Assert.Equal(62, actualItem.BaseRunningAbility);
         Assert.Equal(72, actualItem.BaseRunningAggression);
+        Assert.True(actualItem.HasAugment);
+        Assert.Equal("Hit 5 HRs", actualItem.AugmentText);
+        Assert.Equal(new DateTime(2024, 5, 28, 1, 36, 49), actualItem.AugmentEndDate);
+        Assert.True(actualItem.HasRankChange);
+        Assert.Equal(99, actualItem.NewRank);
     }
 
     [Fact]
