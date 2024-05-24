@@ -153,6 +153,52 @@ public class EntityFrameworkCorePlayerCardRepositoryIntegrationTests : IAsyncLif
         Assert.Equal(fakePlayerCard, actual);
     }
 
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task Exists_PlayerCardExists_ReturnsTrue()
+    {
+        // Arrange
+        var fakePlayerCard = Faker.FakePlayerCard(externalId: Faker.FakeGuid1);
+
+        await using var connection = await GetDbConnection();
+        await using var dbContext = GetDbContext(connection);
+        await dbContext.Database.MigrateAsync();
+
+        await dbContext.AddAsync(fakePlayerCard);
+        await dbContext.SaveChangesAsync();
+
+        await using var assertConnection =
+            await GetDbConnection(); // Re-create the context so that the record is freshly retrieved from the database
+        await using var assertDbContext = GetDbContext(assertConnection);
+        await assertDbContext.Database.MigrateAsync();
+
+        var repo = new EntityFrameworkCorePlayerCardRepository(assertDbContext);
+
+        // Act
+        var actual = await repo.Exists(Faker.FakeCardExternalId(Faker.FakeGuid1));
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task Exists_PlayerCardDoesNotExist_ReturnsFalse()
+    {
+        // Arrange
+        await using var connection = await GetDbConnection();
+        await using var dbContext = GetDbContext(connection);
+        await dbContext.Database.MigrateAsync();
+
+        var repo = new EntityFrameworkCorePlayerCardRepository(dbContext);
+
+        // Act
+        var actual = await repo.Exists(Faker.FakeCardExternalId(Faker.FakeGuid1));
+
+        // Assert
+        Assert.False(actual);
+    }
+
     public async Task InitializeAsync() => await _container.StartAsync();
 
     public async Task DisposeAsync() => await _container.StopAsync();

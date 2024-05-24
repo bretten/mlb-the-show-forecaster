@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
@@ -49,6 +50,12 @@ internal sealed class CreatePlayerCardCommandHandler : ICommandHandler<CreatePla
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task Handle(CreatePlayerCardCommand command, CancellationToken cancellationToken = default)
     {
+        if (await _playerCardRepository.Exists(command.MlbPlayerCard.ExternalUuid))
+        {
+            throw new PlayerCardAlreadyExistsException(
+                $"{nameof(PlayerCard)} already exists for {command.MlbPlayerCard.ExternalUuid.Value}");
+        }
+
         var playerCard = _playerCardMapper.Map(command.MlbPlayerCard);
 
         await _playerCardRepository.Add(playerCard);

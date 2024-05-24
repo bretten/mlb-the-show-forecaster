@@ -36,4 +36,11 @@ public interface IPlayerCardRepository
     /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="PlayerCard"/></param>
     /// <returns>The corresponding <see cref="PlayerCard"/></returns>
     Task<PlayerCard?> GetByExternalId(CardExternalId externalId);
+
+    /// <summary>
+    /// Should determine if a <see cref="PlayerCard"/> exists
+    /// </summary>
+    /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="PlayerCard"/></param>
+    /// <returns>True if the <see cref="PlayerCard"/> exists, otherwise false</returns>
+    Task<bool> Exists(CardExternalId externalId);
 }

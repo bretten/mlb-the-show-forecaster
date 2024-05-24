@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Exceptions;
@@ -256,6 +257,10 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
         {
             // We can safely skip these as an external service doesn't have any further info on the player in this case
             // This will be logged in issue #140
+        }
+        catch (PlayerCardAlreadyExistsException)
+        {
+            // The player card has already been added. Creating a player card is idempotent and multiple create commands should do nothing
         }
     }
 
