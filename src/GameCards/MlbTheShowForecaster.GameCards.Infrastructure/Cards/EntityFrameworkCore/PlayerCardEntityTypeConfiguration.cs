@@ -26,6 +26,10 @@ public sealed class PlayerCardEntityTypeConfiguration : IEntityTypeConfiguration
         builder.HasKey(e => e.Id)
             .HasName(Constants.PlayerCards.Keys.PrimaryKey);
 
+        // Unique constraint for External ID
+        builder.HasAlternateKey(e => e.ExternalId)
+            .HasName(Constants.PlayerCards.Keys.ExternalIdKey);
+
         // Index for querying by game year and then the card's external ID
         builder.HasIndex(e => new { e.Year, e.ExternalId }, Constants.PlayerCards.Indexes.YearAndExternalId)
             .HasMethod("btree");
