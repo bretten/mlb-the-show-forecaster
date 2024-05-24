@@ -233,6 +233,11 @@ public static class Constants
             /// Primary key
             /// </summary>
             public const string PrimaryKey = $"{TableName}_pkey";
+
+            /// <summary>
+            /// Card External ID key. Enforces the uniqueness of <see cref="Cards.ExternalId"/> and adds an index
+            /// </summary>
+            public const string ExternalIdKey = $"{TableName}_{Cards.ExternalId}_key";
         }
 
         /// <summary>

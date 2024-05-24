@@ -64,6 +64,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                 constraints: table =>
                 {
                     table.PrimaryKey("player_cards_pkey", x => x.id);
+                    table.UniqueConstraint("player_cards_external_id_key", x => x.external_id);
                 });
 
             migrationBuilder.CreateTable(
