@@ -66,4 +66,16 @@ public sealed class EntityFrameworkCorePlayerCardRepository : IPlayerCardReposit
         return await _dbContext.PlayerCardsWithHistoricalRatings()
             .FirstOrDefaultAsync(x => x.ExternalId == externalId);
     }
+
+    /// <summary>
+    /// Checks if a <see cref="PlayerCard"/> exists
+    /// </summary>
+    /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="PlayerCard"/></param>
+    /// <returns>True if the <see cref="PlayerCard"/> exists, otherwise false</returns>
+    public async Task<bool> Exists(CardExternalId externalId)
+    {
+        return await _dbContext.PlayerCards
+            .AsNoTracking()
+            .AnyAsync(x => x.ExternalId == externalId);
+    }
 }

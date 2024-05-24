@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
@@ -215,7 +216,7 @@ public class RosterUpdateOrchestratorTests
     }
 
     [Fact]
-    public async Task SyncRosterUpdates_PlayerAdditionExternalCardIdInvalid_SkipsProcessing()
+    public async Task SyncRosterUpdates_PlayerAdditionExternalCardIdInvalidAndPlayerCardAlreadyExists_SkipsProcessing()
     {
         /*
          * Arrange
@@ -241,7 +242,10 @@ public class RosterUpdateOrchestratorTests
         var mockQuerySender = new Mock<IQuerySender>();
 
         // Command sender
-        var mockCommandSender = Mock.Of<ICommandSender>();
+        var stubCommandSender = new Mock<ICommandSender>();
+        var createPlayerCard2Command = new CreatePlayerCardCommand(externalCard2);
+        stubCommandSender.Setup(x => x.Send(createPlayerCard2Command, cToken))
+            .ThrowsAsync(new PlayerCardAlreadyExistsException("PlayerCard already exists"));
 
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
@@ -255,7 +259,7 @@ public class RosterUpdateOrchestratorTests
 
         // Orchestrator
         var orchestrator = new RosterUpdateOrchestrator(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
-            mockQuerySender.Object, mockCommandSender);
+            mockQuerySender.Object, stubCommandSender.Object);
 
         /*
          * Act
@@ -281,16 +285,16 @@ public class RosterUpdateOrchestratorTests
         Assert.Equal(1, rosterUpdate2Result.TotalNewPlayers);
 
         // No command should have been sent for PlayerAddition1 in RosterUpdate1
-        var createPlayer1Command =
+        var createPlayerCard1Command =
             new CreatePlayerCardCommand(Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId1));
-        Mock.Get(mockCommandSender).Verify(x => x.Send(createPlayer1Command, cToken), Times.Never);
+        stubCommandSender.Verify(x => x.Send(createPlayerCard1Command, cToken), Times.Never);
         // ICardCatalog should not have been queried for PlayerAddition1 in RosterUpdate1, due to the invalid card external ID
         var externalId1 = CardExternalId.Create(Guid.Empty); // Empty = invalid
         stubCardCatalog.Verify(x => x.GetMlbPlayerCard(seasonYear, externalId1, cToken), Times.Never);
         // ICardCatalog should have been queried for PlayerAddition2 in RosterUpdate2
         stubCardCatalog.Verify(x => x.GetMlbPlayerCard(seasonYear, playerAddition2.CardExternalId, cToken), Times.Once);
-        // A CreatePlayerCommand should have been sent for PlayerAddition2
-        Mock.Get(mockCommandSender).Verify(x => x.Send(new CreatePlayerCardCommand(externalCard2), cToken), Times.Once);
+        // A CreatePlayerCommand should have been sent for PlayerAddition2, but it threw an exception since it already exists
+        stubCommandSender.Verify(x => x.Send(new CreatePlayerCardCommand(externalCard2), cToken), Times.Once);
     }
 
     [Fact]
@@ -423,5 +427,25 @@ public class RosterUpdateOrchestratorTests
         // Was the order of the roster updates correct?
         Assert.Equal(new List<RosterUpdate>() { rosterUpdate1, rosterUpdate2, rosterUpdate3 },
             capturedCompleteRosterUpdateInvocations);
+    }
+
+    [Fact]
+    public void Dispose_NoParams_DisposesOfDependencies()
+    {
+        // Arrange
+        var mockRosterUpdateFeed = Mock.Of<IRosterUpdateFeed>();
+        var mockCardCatalog = Mock.Of<ICardCatalog>();
+        var mockQuerySender = Mock.Of<IQuerySender>();
+        var mockCommandSender = Mock.Of<ICommandSender>();
+
+        var orchestrator =
+            new RosterUpdateOrchestrator(mockRosterUpdateFeed, mockCardCatalog, mockQuerySender, mockCommandSender);
+
+        // Act
+        orchestrator.Dispose();
+
+        // Assert
+        Mock.Get(mockRosterUpdateFeed).Verify(x => x.Dispose(), Times.Once);
+        Mock.Get(mockCardCatalog).Verify(x => x.Dispose(), Times.Once);
     }
 }
