@@ -70,7 +70,12 @@ public class MlbTheShowItemMapperTests
             Blocking: 25,
             Speed: 26,
             BaseRunningAbility: 27,
-            BaseRunningAggression: 28
+            BaseRunningAggression: 28,
+            HasAugment: true,
+            AugmentText: "Hit 5 HRs",
+            AugmentEndDate: new DateTime(2024, 5, 23, 1, 2, 3),
+            NewRank: 95,
+            HasRankChange: true
         );
         var mapper = new MlbTheShowItemMapper();
 

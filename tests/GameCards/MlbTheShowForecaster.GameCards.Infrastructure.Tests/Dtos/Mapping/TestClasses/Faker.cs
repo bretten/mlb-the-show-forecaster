@@ -27,7 +27,9 @@ public static class Faker
         int powerLeft = 2, int powerRight = 3, int plateVision = 4, int plateDiscipline = 5, int battingClutch = 6,
         int buntingAbility = 7, int dragBuntingAbility = 8, int hittingDurability = 9, int fieldingDurability = 10,
         int fieldingAbility = 1, int armStrength = 2, int armAccuracy = 3, int reactionTime = 4, int blocking = 5,
-        int speed = 6, int baseRunningAbility = 7, int baseRunningAggression = 8, int scalar = 1)
+        int speed = 6, int baseRunningAbility = 7, int baseRunningAggression = 8, int scalar = 1,
+        bool hasAugment = false, string augmentText = "Hit 5 HRs", DateTime? augmentEndDate = null, int newRank = 60,
+        bool hasRankChange = false)
     {
         return new MlbCardDto(
             Uuid: FakeUuidDto(uuid),
@@ -67,7 +69,12 @@ public static class Faker
             Blocking: scalar * blocking,
             Speed: scalar * speed,
             BaseRunningAbility: scalar * baseRunningAbility,
-            BaseRunningAggression: scalar * baseRunningAggression
+            BaseRunningAggression: scalar * baseRunningAggression,
+            HasAugment: hasAugment,
+            AugmentText: augmentText,
+            AugmentEndDate: augmentEndDate ?? new DateTime(2024, 5, 23, 1, 2, 3),
+            NewRank: newRank,
+            HasRankChange: hasRankChange
         );
     }
 
