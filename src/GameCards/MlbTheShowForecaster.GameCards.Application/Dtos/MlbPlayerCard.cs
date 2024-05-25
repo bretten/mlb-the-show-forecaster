@@ -48,6 +48,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// <param name="Speed">The speed of the player</param>
 /// <param name="BaseRunningAbility">How well the player can run around the bases</param>
 /// <param name="BaseRunningAggression">How likely it is the player can steal a base</param>
+/// <param name="BoostReason">If the card is boosted, the reason why. Null if there is no boost</param>
+/// <param name="TemporaryOverallRating">The temporary overall rating of the card</param>
 public readonly record struct MlbPlayerCard(
     SeasonYear Year,
     CardExternalId ExternalUuid,
@@ -87,7 +89,9 @@ public readonly record struct MlbPlayerCard(
     AbilityAttribute Blocking,
     AbilityAttribute Speed,
     AbilityAttribute BaseRunningAbility,
-    AbilityAttribute BaseRunningAggression
+    AbilityAttribute BaseRunningAggression,
+    string? BoostReason,
+    OverallRating? TemporaryOverallRating
 )
 {
     /// <summary>

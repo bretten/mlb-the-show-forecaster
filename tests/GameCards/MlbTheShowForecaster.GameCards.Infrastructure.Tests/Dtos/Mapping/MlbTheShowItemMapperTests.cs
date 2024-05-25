@@ -122,6 +122,9 @@ public class MlbTheShowItemMapperTests
         Assert.Equal(26, actual.Speed.Value);
         Assert.Equal(27, actual.BaseRunningAbility.Value);
         Assert.Equal(28, actual.BaseRunningAggression.Value);
+        Assert.Equal("Hit 5 HRs", actual.BoostReason);
+        Assert.NotNull(actual.TemporaryOverallRating);
+        Assert.Equal(95, actual.TemporaryOverallRating.Value);
     }
 
     [Theory]

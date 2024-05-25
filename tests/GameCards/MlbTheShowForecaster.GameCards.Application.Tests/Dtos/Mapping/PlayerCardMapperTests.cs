@@ -53,7 +53,9 @@ public class PlayerCardMapperTests
             Blocking: AbilityAttribute.Create(25),
             Speed: AbilityAttribute.Create(26),
             BaseRunningAbility: AbilityAttribute.Create(27),
-            BaseRunningAggression: AbilityAttribute.Create(28)
+            BaseRunningAggression: AbilityAttribute.Create(28),
+            BoostReason: "Hit 5 HRs",
+            TemporaryOverallRating: OverallRating.Create(95)
         );
         var mapper = new PlayerCardMapper();
 
