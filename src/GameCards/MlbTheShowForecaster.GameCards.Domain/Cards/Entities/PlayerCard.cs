@@ -35,6 +35,16 @@ public sealed class PlayerCard : Card
     public OverallRating OverallRating { get; private set; }
 
     /// <summary>
+    /// A temporary and minor overall rating change based off of real-world stats
+    /// </summary>
+    public OverallRating? TemporaryOverallRating { get; private set; }
+
+    /// <summary>
+    /// True if the player card has a significant rating and attribute boost
+    /// </summary>
+    public bool IsBoosted { get; private set; }
+
+    /// <summary>
     /// The player ability attributes
     /// </summary>
     public PlayerCardAttributes PlayerCardAttributes { get; private set; } = null!;
@@ -121,13 +131,13 @@ public sealed class PlayerCard : Card
         {
             RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(ExternalId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
-                NewPlayerCardAttributes: PlayerCardAttributes, RarityChanged: rarityChanged));
+                NewPlayerCardAttributes: newAttributes, RarityChanged: rarityChanged));
         }
         else if (OverallRating.Value > newOverallRating.Value)
         {
             RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(ExternalId, PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes, NewOverallRating: newOverallRating,
-                NewPlayerCardAttributes: PlayerCardAttributes, RarityChanged: rarityChanged));
+                NewPlayerCardAttributes: newAttributes, RarityChanged: rarityChanged));
         }
         // If the overall rating hasn't changed, it means the player has negligible changes, and is not important or actionable
 
@@ -138,6 +148,71 @@ public sealed class PlayerCard : Card
         {
             ChangeRarity(newOverallRating.Rarity);
         }
+    }
+
+    /// <summary>
+    /// Assigns a temporary overall rating change for the card
+    /// </summary>
+    /// <param name="date">The date the temporary rating was assigned</param>
+    /// <param name="temporaryOverallRating">The temporary <see cref="OverallRating"/></param>
+    public void SetTemporaryRating(DateOnly date, OverallRating temporaryOverallRating)
+    {
+        TemporaryOverallRating = temporaryOverallRating;
+
+        AddHistoricalRating(
+            PlayerCardHistoricalRating.Create(date, date, temporaryOverallRating, PlayerCardAttributes));
+
+        // Notify subscribers that the player card overall rating has changed
+        if (temporaryOverallRating.Value > OverallRating.Value)
+        {
+            RaiseDomainEvent(new PlayerCardOverallRatingTemporarilyImprovedEvent(ExternalId,
+                PreviousOverallRating: OverallRating, NewOverallRating: temporaryOverallRating));
+        }
+        else if (temporaryOverallRating.Value < OverallRating.Value)
+        {
+            RaiseDomainEvent(new PlayerCardOverallRatingTemporarilyDeclinedEvent(ExternalId,
+                PreviousOverallRating: OverallRating, NewOverallRating: temporaryOverallRating));
+        }
+    }
+
+    /// <summary>
+    /// Removes the temporary overall rating
+    /// </summary>
+    public void RemoveTemporaryRating(DateOnly date)
+    {
+        TemporaryOverallRating = null;
+
+        AddHistoricalRating(PlayerCardHistoricalRating.Create(date, date, OverallRating, PlayerCardAttributes));
+    }
+
+    /// <summary>
+    /// Significantly increases the rating and attributes of the card
+    /// </summary>
+    /// <param name="date">The date of the boost</param>
+    /// <param name="boostedAttributes">The boosted <see cref="PlayerCardAttributes"/></param>
+    public void Boost(DateOnly date, PlayerCardAttributes boostedAttributes)
+    {
+        IsBoosted = true;
+        TemporaryOverallRating = OverallRating.Create(99);
+        PlayerCardAttributes = boostedAttributes;
+
+        AddHistoricalRating(PlayerCardHistoricalRating.Create(date, date, TemporaryOverallRating, boostedAttributes));
+
+        RaiseDomainEvent(new PlayerCardBoostedEvent(ExternalId, TemporaryOverallRating, boostedAttributes));
+    }
+
+    /// <summary>
+    /// Removes the significant boost of rating and attributes
+    /// </summary>
+    /// <param name="date">The date the boost was removed</param>
+    /// <param name="normalAttributes">The normal <see cref="PlayerCardAttributes"/></param>
+    public void RemoveBoost(DateOnly date, PlayerCardAttributes normalAttributes)
+    {
+        IsBoosted = false;
+        TemporaryOverallRating = null;
+        PlayerCardAttributes = normalAttributes;
+
+        AddHistoricalRating(PlayerCardHistoricalRating.Create(date, date, OverallRating, normalAttributes));
     }
 
     /// <summary>

@@ -4,6 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.Entities;
@@ -163,6 +164,159 @@ public class PlayerCardTests
 
         // Assert
         Assert.Empty(card.DomainEvents);
+    }
+
+    [Fact]
+    public void SetTemporaryRating_HigherOverallRating_SetsTempRatingAndAddsToHistoryAndRaisesImprovementEvent()
+    {
+        // Arrange
+        var card = Faker.FakePlayerCard(overallRating: Faker.FakeOverallRating(48));
+        var tempOverallRating = Faker.FakeOverallRating(70);
+        var date = new DateOnly(2024, 5, 24);
+
+        // Act
+        card.SetTemporaryRating(date, tempOverallRating);
+
+        /*
+         * Assert
+         */
+        // OverallRating remains unchanged, TemporaryOverallRating changed
+        Assert.Equal(48, card.OverallRating.Value);
+        Assert.NotNull(card.TemporaryOverallRating);
+        Assert.Equal(70, card.TemporaryOverallRating.Value);
+
+        // Temporary rating added to history
+        Assert.Single(card.HistoricalRatingsChronologically);
+        var expectedRating = Faker.FakePlayerCardHistoricalRating(date, date, OverallRating.Create(70));
+        Assert.Equal(expectedRating, card.HistoricalRatingsChronologically[0]);
+
+        // A temporary improvement event should have been raised
+        Assert.Single(card.DomainEvents);
+        Assert.IsType<PlayerCardOverallRatingTemporarilyImprovedEvent>(card.DomainEvents[0]);
+        var e = card.DomainEvents[0] as PlayerCardOverallRatingTemporarilyImprovedEvent;
+        Assert.Equal(card.ExternalId, e!.CardExternalId);
+        Assert.Equal(48, e.PreviousOverallRating.Value);
+        Assert.Equal(70, e.NewOverallRating.Value);
+    }
+
+    [Fact]
+    public void SetTemporaryRating_LowerOverallRating_SetsTempRatingAndAddsToHistoryAndRaisesDeclineEvent()
+    {
+        // Arrange
+        var card = Faker.FakePlayerCard(overallRating: Faker.FakeOverallRating(90));
+        var tempOverallRating = Faker.FakeOverallRating(80);
+        var date = new DateOnly(2024, 5, 24);
+
+        // Act
+        card.SetTemporaryRating(date, tempOverallRating);
+
+        /*
+         * Assert
+         */
+        // OverallRating remains unchanged, TemporaryOverallRating changed
+        Assert.Equal(90, card.OverallRating.Value);
+        Assert.NotNull(card.TemporaryOverallRating);
+        Assert.Equal(80, card.TemporaryOverallRating.Value);
+
+        // Temporary rating added to history
+        Assert.Single(card.HistoricalRatingsChronologically);
+        var expectedRating = Faker.FakePlayerCardHistoricalRating(date, date, OverallRating.Create(80));
+        Assert.Equal(expectedRating, card.HistoricalRatingsChronologically[0]);
+
+        // A temporary decline event should have been raised
+        Assert.Single(card.DomainEvents);
+        Assert.IsType<PlayerCardOverallRatingTemporarilyDeclinedEvent>(card.DomainEvents[0]);
+        var e = card.DomainEvents[0] as PlayerCardOverallRatingTemporarilyDeclinedEvent;
+        Assert.Equal(card.ExternalId, e!.CardExternalId);
+        Assert.Equal(90, e.PreviousOverallRating.Value);
+        Assert.Equal(80, e.NewOverallRating.Value);
+    }
+
+    [Fact]
+    public void RemoveTemporaryRating_HasTemporaryRating_TemporaryRatingRemoved()
+    {
+        // Arrange
+        var card = Faker.FakePlayerCard(overallRating: Faker.FakeOverallRating(60));
+        card.SetTemporaryRating(new DateOnly(2024, 5, 23), Faker.FakeOverallRating(80));
+
+        var date = new DateOnly(2024, 5, 24);
+
+        // Act
+        card.RemoveTemporaryRating(date);
+
+        // Assert
+        Assert.Null(card.TemporaryOverallRating);
+
+        var expectedRating = Faker.FakePlayerCardHistoricalRating(date, date, OverallRating.Create(60));
+        Assert.Equal(expectedRating, card.HistoricalRatingsChronologically[1]);
+    }
+
+    [Fact]
+    public void Boost_BoostedAttributes_BoostsRatingAndAddsToHistoryAndRaisesEvent()
+    {
+        // Arrange
+        var card = Faker.FakePlayerCard(overallRating: Faker.FakeOverallRating(75));
+        var boostedAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
+        var date = new DateOnly(2024, 5, 24);
+
+        // Act
+        card.Boost(date, boostedAttributes);
+
+        /*
+         * Assert
+         */
+        // Boosted flag
+        Assert.True(card.IsBoosted);
+
+        // OverallRating remains unchanged, TemporaryOverallRating changed
+        Assert.Equal(75, card.OverallRating.Value);
+        Assert.NotNull(card.TemporaryOverallRating);
+        Assert.Equal(99, card.TemporaryOverallRating.Value);
+
+        // Boost added to history
+        Assert.Single(card.HistoricalRatingsChronologically);
+        var expectedRating =
+            Faker.FakePlayerCardHistoricalRating(date, date, OverallRating.Create(99), boostedAttributes);
+        Assert.Equal(expectedRating, card.HistoricalRatingsChronologically[0]);
+
+        // An boost event should have been raised
+        Assert.Single(card.DomainEvents);
+        Assert.IsType<PlayerCardBoostedEvent>(card.DomainEvents[0]);
+        var e = card.DomainEvents[0] as PlayerCardBoostedEvent;
+        Assert.Equal(card.ExternalId, e!.CardExternalId);
+        Assert.Equal(99, e.NewOverallRating.Value);
+        Assert.Equal(boostedAttributes, e.NewPlayerCardAttributes);
+    }
+
+    [Fact]
+    public void RemoveBoost_BoostedCard_CardIsNoLongerBoosted()
+    {
+        // Arrange
+        var card = Faker.FakePlayerCard(overallRating: OverallRating.Create(50));
+        card.Boost(new DateOnly(2024, 5, 23), Faker.FakePlayerCardAttributes(scalar: 4));
+
+        var date = new DateOnly(2024, 5, 24);
+        var normalAttributes = Faker.FakePlayerCardAttributes(scalar: 2);
+
+        // Act
+        card.RemoveBoost(date, normalAttributes);
+
+        /*
+         * Assert
+         */
+        // Boosted flag
+        Assert.False(card.IsBoosted);
+
+        // Temporary rating is null
+        Assert.Null(card.TemporaryOverallRating);
+
+        // Attributes returned to normal
+        Assert.Equal(normalAttributes, card.PlayerCardAttributes);
+
+        // Added to history
+        var expectedRating =
+            Faker.FakePlayerCardHistoricalRating(date, date, OverallRating.Create(50), normalAttributes);
+        Assert.Equal(expectedRating, card.HistoricalRatingsChronologically[1]);
     }
 
     [Fact]
