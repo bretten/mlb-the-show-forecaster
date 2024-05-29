@@ -49,6 +49,13 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
                 $"{nameof(PlayerCard)} not found for CardExternalId {command.PlayerCard.ExternalId.Value}");
         }
 
+        // Copy the previous historical ratings BEFORE updating with the most recent rating
+        foreach (var historicalRating in command.PlayerCard.HistoricalRatingsChronologically)
+        {
+            if (domainPlayerCard.IsRatingAppliedFor(historicalRating.StartDate)) continue;
+            domainPlayerCard.AddHistoricalRating(historicalRating);
+        }
+
         // The changes from the external source
         var ratingChange = command.RatingChange;
         var positionChange = command.PositionChange;
@@ -64,13 +71,6 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
         if (positionChange != null)
         {
             domainPlayerCard.ChangePosition(positionChange.Value.NewPosition);
-        }
-
-        // Copy any new historical ratings
-        foreach (var historicalRating in command.PlayerCard.HistoricalRatingsChronologically)
-        {
-            if (domainPlayerCard.IsRatingAppliedFor(historicalRating.StartDate)) continue;
-            domainPlayerCard.AddHistoricalRating(historicalRating);
         }
 
         await _playerCardRepository.Update(domainPlayerCard);

@@ -105,6 +105,16 @@ public readonly record struct MlbPlayerCard(
     public bool IsSupported => Series == CardSeries.Live;
 
     /// <summary>
+    /// True if the card is boosted
+    /// </summary>
+    public bool IsBoosted => !string.IsNullOrEmpty(BoostReason);
+
+    /// <summary>
+    /// True if the card has a temporary rating
+    /// </summary>
+    public bool HasTemporaryRating => TemporaryOverallRating != null;
+
+    /// <summary>
     /// Gets the attributes as <see cref="PlayerCardAttributes"/>
     /// </summary>
     /// <returns>The attributes as <see cref="PlayerCardAttributes"/></returns>

@@ -42,11 +42,11 @@ public static class Faker
             playerCardAttributes ?? FakePlayerCardAttributes());
     }
 
-    public static PlayerCardHistoricalRating FakePlayerCardHistoricalRating(DateOnly? startDate = null,
+    public static PlayerCardHistoricalRating FakeBaselinePlayerCardHistoricalRating(DateOnly? startDate = null,
         DateOnly? endDate = null, int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null)
     {
-        return PlayerCardHistoricalRating.Create(startDate: startDate ?? new DateOnly(2024, 4, 1),
-            endDate: endDate ?? new DateOnly(2024, 4, 2),
+        return PlayerCardHistoricalRating.Baseline(startDate: startDate ?? new DateOnly(2024, 4, 1),
+            endDate: endDate,
             OverallRating.Create(overallRating),
             playerCardAttributes ?? FakePlayerCardAttributes()
         );

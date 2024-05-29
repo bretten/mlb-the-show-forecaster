@@ -42,6 +42,37 @@ public class MlbPlayerCardTests
         Assert.Equal(expected, actual);
     }
 
+    [Theory]
+    [InlineData("Hit 5 HRs", true)]
+    [InlineData(null, false)]
+    [InlineData("", false)]
+    public void IsBoosted_BoostReason_ReturnsTrueIfBoosted(string? boostReason, bool expected)
+    {
+        // Arrange
+        var mlbPlayerCard = Faker.FakeMlbPlayerCard(boostReason: boostReason);
+
+        // Act
+        var actual = mlbPlayerCard.IsBoosted;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
+    [Theory]
+    [InlineData(90, true)]
+    [InlineData(null, false)]
+    public void HasTemporaryRating_TempAndNoTemp_ReturnsTrueAndFalse(int? tempOverall, bool expected)
+    {
+        // Arrange
+        var mlbPlayerCard = Faker.FakeMlbPlayerCard(temporaryOverallRating: tempOverall);
+
+        // Act
+        var actual = mlbPlayerCard.HasTemporaryRating;
+
+        // Assert
+        Assert.Equal(expected, actual);
+    }
+
     [Fact]
     public void GetAttributes_NoParams_ReturnsPlayerCardAttributes()
     {

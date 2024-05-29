@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
@@ -33,6 +34,9 @@ public class DependenciesTests
         var actual = s.BuildServiceProvider();
 
         // Assert
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(ICalendar)).Lifetime);
+        Assert.IsType<Calendar>(actual.GetRequiredService<ICalendar>());
+
         Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IPlayerCardMapper)).Lifetime);
         Assert.IsType<PlayerCardMapper>(actual.GetRequiredService<IPlayerCardMapper>());
 

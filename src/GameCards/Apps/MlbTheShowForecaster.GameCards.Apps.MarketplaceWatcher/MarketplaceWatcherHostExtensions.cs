@@ -119,6 +119,7 @@ public static class MarketplaceWatcherHostExtensions
     {
         { typeof(PlayerCardOverallRatingDeclinedEvent), "PlayerCardOverallRatingDeclined" },
         { typeof(PlayerCardOverallRatingImprovedEvent), "PlayerCardOverallRatingImproved" },
+        { typeof(PlayerCardBoostedEvent), "PlayerCardBoostedEvent" },
         { typeof(PlayerCardPositionChangedEvent), "PlayerCardPositionChanged" },
         { typeof(ListingBuyPriceDecreasedEvent), "ListingBuyPriceDecreased" },
         { typeof(ListingBuyPriceIncreasedEvent), "ListingBuyPriceIncreased" },

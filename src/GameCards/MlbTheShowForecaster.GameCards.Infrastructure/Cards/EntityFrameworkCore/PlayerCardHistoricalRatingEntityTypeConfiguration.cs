@@ -1,4 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+﻿using System.ComponentModel;
+using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 using Microsoft.EntityFrameworkCore;
@@ -26,14 +28,23 @@ public sealed class
             .HasConstraintName(Constants.PlayerCardHistoricalRatings.Keys.PlayerCardsForeignKeyConstraint);
 
         builder.HasKey([
-            Constants.PlayerCardHistoricalRatings.PlayerCardId, nameof(PlayerCardHistoricalRating.StartDate),
-            nameof(PlayerCardHistoricalRating.EndDate)
+            Constants.PlayerCardHistoricalRatings.PlayerCardId, nameof(PlayerCardHistoricalRating.Type),
+            nameof(PlayerCardHistoricalRating.StartDate)
         ]).HasName(Constants.PlayerCardHistoricalRatings.Keys.PrimaryKey);
 
         var columnOrder = 0;
 
         builder.Property(Constants.PlayerCardHistoricalRatings.PlayerCardId)
             .HasColumnOrder(columnOrder++);
+
+        builder.Property(e => e.Type)
+            .IsRequired()
+            .HasColumnType("varchar(4)")
+            .HasColumnName(Constants.PlayerCardHistoricalRatings.Type)
+            .HasColumnOrder(columnOrder++)
+            .HasConversion(v => v.GetDisplayName(),
+                v => (PlayerCardHistoricalRatingType)TypeDescriptor.GetConverter(typeof(PlayerCardHistoricalRatingType))
+                    .ConvertFrom(v)!);
 
         builder.Property(e => e.StartDate)
             .IsRequired()
@@ -42,7 +53,6 @@ public sealed class
             .HasColumnOrder(columnOrder++);
 
         builder.Property(e => e.EndDate)
-            .IsRequired()
             .HasColumnType("date")
             .HasColumnName(Constants.PlayerCardHistoricalRatings.EndDate)
             .HasColumnOrder(columnOrder++);

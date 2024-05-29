@@ -92,7 +92,7 @@ public class EntityFrameworkCorePlayerCardRepositoryIntegrationTests : IAsyncLif
         await assertDbContext.Database.MigrateAsync();
         var actual = assertDbContext.PlayerCardsWithHistoricalRatings().First();
         Assert.Equal(fakePlayerCard, actual);
-        Assert.Single(actual.HistoricalRatingsChronologically);
+        Assert.Equal(2, actual.HistoricalRatingsChronologically.Count);
         Assert.Equal(70, actual.OverallRating.Value);
         Assert.Equal(111, actual.PlayerCardAttributes.Stamina.Value);
     }

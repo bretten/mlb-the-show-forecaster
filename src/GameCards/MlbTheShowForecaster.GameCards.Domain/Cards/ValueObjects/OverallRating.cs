@@ -177,4 +177,13 @@ public sealed class OverallRating : ValueObject
 
         return new OverallRating(rating);
     }
+
+    /// <summary>
+    /// Creates a maxed <see cref="OverallRating"/>
+    /// </summary>
+    /// <returns>A maxed <see cref="OverallRating"/></returns>
+    public static OverallRating Max()
+    {
+        return new OverallRating(MaxValue);
+    }
 }

@@ -73,8 +73,9 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                 columns: table => new
                 {
                     player_card_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    type = table.Column<string>(type: "varchar(4)", nullable: false),
                     start_date = table.Column<DateOnly>(type: "date", nullable: false),
-                    end_date = table.Column<DateOnly>(type: "date", nullable: false),
+                    end_date = table.Column<DateOnly>(type: "date", nullable: true),
                     overall_rating = table.Column<short>(type: "smallint", nullable: false),
                     stamina = table.Column<short>(type: "smallint", nullable: false),
                     pitching_clutch = table.Column<short>(type: "smallint", nullable: false),
@@ -107,7 +108,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("player_card_historical_ratings_pkey", x => new { x.player_card_id, x.start_date, x.end_date });
+                    table.PrimaryKey("player_card_historical_ratings_pkey", x => new { x.player_card_id, x.type, x.start_date });
                     table.ForeignKey(
                         name: "player_card_historical_ratings_player_cards_id_fkey",
                         column: x => x.player_card_id,

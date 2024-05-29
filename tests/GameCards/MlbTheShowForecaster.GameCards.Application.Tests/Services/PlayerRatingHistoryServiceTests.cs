@@ -83,12 +83,12 @@ public class PlayerRatingHistoryServiceTests
             .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
 
         // Card catalog
-        var mockCardCatalog = new Mock<ICardCatalog>();
-        mockCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
+        var stubCardCatalog = new Mock<ICardCatalog>();
+        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
             .ReturnsAsync(CardStateAfterRosterUpdate1.Card);
 
         // Service
-        var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog.Object,
+        var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
             stubQuerySender.Object, mockCommandSender.Object);
 
         /*
@@ -103,6 +103,7 @@ public class PlayerRatingHistoryServiceTests
         // There should be a single historical rating
         Assert.Single(playerCard.HistoricalRatingsChronologically);
         var historical1 = playerCard.HistoricalRatingsChronologically[0];
+        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical1.Type);
         Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
         Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
         Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
@@ -141,12 +142,12 @@ public class PlayerRatingHistoryServiceTests
             .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value, RosterUpdate2.Value, RosterUpdate3.Value });
 
         // Card catalog
-        var mockCardCatalog = new Mock<ICardCatalog>();
-        mockCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
+        var stubCardCatalog = new Mock<ICardCatalog>();
+        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
             .ReturnsAsync(CardStateCurrent.Card);
 
         // Service
-        var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog.Object,
+        var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
             stubQuerySender.Object, mockCommandSender.Object);
 
         /*
@@ -161,18 +162,21 @@ public class PlayerRatingHistoryServiceTests
         Assert.Equal(3, playerCard.HistoricalRatingsChronologically.Count);
         // The 1st historical rating chronologically is the card's initial state: CardStateInitial
         var historical1 = playerCard.HistoricalRatingsChronologically[0];
+        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical1.Type);
         Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
         Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
         Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
         Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
         // The 2nd historical rating chronologically is from RosterUpdate1: CardStateAfterRosterUpdate1
         var historical2 = playerCard.HistoricalRatingsChronologically[1];
+        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical2.Type);
         Assert.Equal(RosterUpdate1.Date, historical2.StartDate);
         Assert.Equal(RosterUpdate2.Date, historical2.EndDate);
         Assert.Equal(CardStateAfterRosterUpdate1.OverallRating, historical2.OverallRating);
         Assert.Equal(CardStateAfterRosterUpdate1.Card.GetAttributes(), historical2.Attributes);
         // The 3rd historical rating chronologically is from RosterUpdate2: CardStateAfterRosterUpdate2
         var historical3 = playerCard.HistoricalRatingsChronologically[2];
+        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical3.Type);
         Assert.Equal(RosterUpdate2.Date, historical3.StartDate);
         Assert.Equal(RosterUpdate3.Date, historical3.EndDate);
         Assert.Equal(CardStateAfterRosterUpdate2.OverallRating, historical3.OverallRating);
@@ -215,12 +219,12 @@ public class PlayerRatingHistoryServiceTests
             .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value, RosterUpdate2.Value, RosterUpdate3.Value });
 
         // Card catalog
-        var mockCardCatalog = new Mock<ICardCatalog>();
-        mockCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
+        var stubCardCatalog = new Mock<ICardCatalog>();
+        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
             .ReturnsAsync(CardStateCurrent.Card);
 
         // Service
-        var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog.Object,
+        var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
             stubQuerySender.Object, mockCommandSender.Object);
 
         /*
@@ -235,18 +239,21 @@ public class PlayerRatingHistoryServiceTests
         Assert.Equal(3, playerCard.HistoricalRatingsChronologically.Count);
         // The 1st historical rating chronologically is the card's initial state: CardStateInitial
         var historical1 = playerCard.HistoricalRatingsChronologically[0];
+        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical1.Type);
         Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
         Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
         Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
         Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
         // The 2nd historical rating chronologically is from RosterUpdate1: CardStateAfterRosterUpdate1
         var historical2 = playerCard.HistoricalRatingsChronologically[1];
+        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical2.Type);
         Assert.Equal(RosterUpdate1.Date, historical2.StartDate);
         Assert.Equal(RosterUpdate2.Date, historical2.EndDate);
         Assert.Equal(CardStateAfterRosterUpdate1.OverallRating, historical2.OverallRating);
         Assert.Equal(CardStateAfterRosterUpdate1.Card.GetAttributes(), historical2.Attributes);
         // The 3rd historical rating chronologically is from RosterUpdate2: CardStateAfterRosterUpdate2
         var historical3 = playerCard.HistoricalRatingsChronologically[2];
+        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical3.Type);
         Assert.Equal(RosterUpdate2.Date, historical3.StartDate);
         Assert.Equal(RosterUpdate3.Date, historical3.EndDate);
         Assert.Equal(CardStateAfterRosterUpdate2.OverallRating, historical3.OverallRating);
@@ -287,12 +294,12 @@ public class PlayerRatingHistoryServiceTests
             .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
 
         // Card catalog
-        var mockCardCatalog = new Mock<ICardCatalog>();
-        mockCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
+        var stubCardCatalog = new Mock<ICardCatalog>();
+        stubCardCatalog.Setup(x => x.GetMlbPlayerCard(Year, CardExternalId, cToken))
             .ReturnsAsync(CardStateAfterRosterUpdate1.Card);
 
         // Service
-        var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog.Object,
+        var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
             stubQuerySender.Object, mockCommandSender.Object);
 
         /*
@@ -307,10 +314,69 @@ public class PlayerRatingHistoryServiceTests
         Assert.Single(playerCard.HistoricalRatingsChronologically);
         // The 1st historical rating chronologically is the card's initial state: CardStateInitial
         var historical1 = playerCard.HistoricalRatingsChronologically[0];
+        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical1.Type);
         Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
         Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
         Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
         Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
+        // No update command should have been sent
+        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
+        mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Never);
+        // The result should not contain the PlayerCard since it was not updated
+        Assert.DoesNotContain(playerCard, actual.UpdatedPlayerCards);
+    }
+
+    [Fact]
+    public async Task SyncHistory_BoostedPlayerCard_SkipsUpdate()
+    {
+        /*
+         * Arrange
+         */
+        var cToken = CancellationToken.None;
+        // PlayerCard
+        var playerCard = Faker.FakePlayerCard(cardExternalId: CardExternalId.Value);
+        // Boost the card
+        var boostDate = new DateOnly(2024, 5, 1);
+        playerCard.Boost(boostDate, Faker.FakePlayerCardAttributes(scalar: 2));
+
+        // Query for PlayerCard
+        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
+
+        // Query sender
+        var stubQuerySender = new Mock<IQuerySender>();
+        stubQuerySender.Setup(x => x.Send(getPlayerCardQuery, cToken))
+            .ReturnsAsync(playerCard);
+
+        // Command sender
+        var mockCommandSender = new Mock<ICommandSender>();
+
+        // Roster update feed
+        var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
+        stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
+            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
+
+        // Card catalog
+        var mockCardCatalog = Mock.Of<ICardCatalog>();
+
+        // Service
+        var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog,
+            stubQuerySender.Object, mockCommandSender.Object);
+
+        /*
+         * Act
+         */
+        var actual = await service.SyncHistory(Year, cToken);
+
+        /*
+         * Assert
+         */
+        // There should be a single historical rating for the boost, but not the roster update
+        Assert.Single(playerCard.HistoricalRatingsChronologically);
+        // The only historical rating is the boost
+        var historical1 = playerCard.HistoricalRatingsChronologically[0];
+        Assert.Equal(PlayerCardHistoricalRatingType.Boost, historical1.Type);
+        Assert.Equal(boostDate, historical1.StartDate);
+        Assert.Null(historical1.EndDate);
         // No update command should have been sent
         var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
         mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Never);
@@ -500,8 +566,9 @@ public class PlayerRatingHistoryServiceTests
     {
         public static readonly DateOnly Date = new(2024, 1, 1);
 
-        public static readonly PlayerCardHistoricalRating AsHistoricalRating = Faker.FakePlayerCardHistoricalRating(
-            Date, RosterUpdate1.Date, CardStateInitial.OverallRating.Value, CardStateInitial.Card.GetAttributes());
+        public static readonly PlayerCardHistoricalRating AsHistoricalRating =
+            Faker.FakeBaselinePlayerCardHistoricalRating(Date, RosterUpdate1.Date,
+                CardStateInitial.OverallRating.Value, CardStateInitial.Card.GetAttributes());
     }
 
     /// <summary>
@@ -512,9 +579,9 @@ public class PlayerRatingHistoryServiceTests
     {
         public static readonly DateOnly Date = new(2024, 4, 7);
 
-        public static readonly PlayerCardHistoricalRating AsHistoricalRating = Faker.FakePlayerCardHistoricalRating(
-            Date, RosterUpdate2.Date, CardStateAfterRosterUpdate1.OverallRating.Value,
-            CardStateAfterRosterUpdate1.Card.GetAttributes());
+        public static readonly PlayerCardHistoricalRating AsHistoricalRating =
+            Faker.FakeBaselinePlayerCardHistoricalRating(Date, RosterUpdate2.Date,
+                CardStateAfterRosterUpdate1.OverallRating.Value, CardStateAfterRosterUpdate1.Card.GetAttributes());
 
         public static readonly PlayerRatingChange RatingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(
             Date,
@@ -567,9 +634,9 @@ public class PlayerRatingHistoryServiceTests
     {
         public static readonly DateOnly Date = new(2024, 4, 14);
 
-        public static readonly PlayerCardHistoricalRating AsHistoricalRating = Faker.FakePlayerCardHistoricalRating(
-            Date, RosterUpdate3.Date, CardStateAfterRosterUpdate2.OverallRating.Value,
-            CardStateAfterRosterUpdate2.Card.GetAttributes());
+        public static readonly PlayerCardHistoricalRating AsHistoricalRating =
+            Faker.FakeBaselinePlayerCardHistoricalRating(Date, RosterUpdate3.Date,
+                CardStateAfterRosterUpdate2.OverallRating.Value, CardStateAfterRosterUpdate2.Card.GetAttributes());
 
         public static readonly PlayerRatingChange RatingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(
             Date,
@@ -622,8 +689,9 @@ public class PlayerRatingHistoryServiceTests
     {
         public static readonly DateOnly Date = new(2024, 4, 21);
 
-        public static readonly PlayerCardHistoricalRating AsHistoricalRating = Faker.FakePlayerCardHistoricalRating(
-            Date, DateOnly.MaxValue, CardStateCurrent.OverallRating.Value, CardStateInitial.Card.GetAttributes());
+        public static readonly PlayerCardHistoricalRating AsHistoricalRating =
+            Faker.FakeBaselinePlayerCardHistoricalRating(Date, DateOnly.MaxValue, CardStateCurrent.OverallRating.Value,
+                CardStateInitial.Card.GetAttributes());
 
         public static readonly PlayerRatingChange RatingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(
             Date,
