@@ -256,20 +256,25 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                         .HasColumnType("uuid")
                         .HasColumnOrder(0);
 
+                    b.Property<string>("Type")
+                        .HasColumnType("varchar(4)")
+                        .HasColumnName("type")
+                        .HasColumnOrder(1);
+
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date")
                         .HasColumnName("start_date")
-                        .HasColumnOrder(1);
+                        .HasColumnOrder(2);
 
-                    b.Property<DateOnly>("EndDate")
+                    b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date")
                         .HasColumnName("end_date")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<int>("OverallRating")
                         .HasColumnType("smallint")
                         .HasColumnName("overall_rating")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
 
                     b.ComplexProperty<Dictionary<string, object>>("Attributes", "com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards.PlayerCardHistoricalRating.Attributes#PlayerCardAttributes", b1 =>
                         {
@@ -278,145 +283,145 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                             b1.Property<int>("ArmAccuracy")
                                 .HasColumnType("smallint")
                                 .HasColumnName("arm_accuracy")
-                                .HasColumnOrder(26);
+                                .HasColumnOrder(27);
 
                             b1.Property<int>("ArmStrength")
                                 .HasColumnType("smallint")
                                 .HasColumnName("arm_strength")
-                                .HasColumnOrder(25);
+                                .HasColumnOrder(26);
 
                             b1.Property<int>("BaseOnBallsPerNine")
                                 .HasColumnType("smallint")
                                 .HasColumnName("base_on_balls_per_nine")
-                                .HasColumnOrder(8);
+                                .HasColumnOrder(9);
 
                             b1.Property<int>("BaseRunningAbility")
                                 .HasColumnType("smallint")
                                 .HasColumnName("base_running_ability")
-                                .HasColumnOrder(30);
+                                .HasColumnOrder(31);
 
                             b1.Property<int>("BaseRunningAggression")
                                 .HasColumnType("smallint")
                                 .HasColumnName("base_running_aggression")
-                                .HasColumnOrder(31);
+                                .HasColumnOrder(32);
 
                             b1.Property<int>("BattingClutch")
                                 .HasColumnType("smallint")
                                 .HasColumnName("batting_clutch")
-                                .HasColumnOrder(19);
+                                .HasColumnOrder(20);
 
                             b1.Property<int>("Blocking")
                                 .HasColumnType("smallint")
                                 .HasColumnName("blocking")
-                                .HasColumnOrder(28);
+                                .HasColumnOrder(29);
 
                             b1.Property<int>("BuntingAbility")
                                 .HasColumnType("smallint")
                                 .HasColumnName("bunting_ability")
-                                .HasColumnOrder(20);
+                                .HasColumnOrder(21);
 
                             b1.Property<int>("ContactLeft")
                                 .HasColumnType("smallint")
                                 .HasColumnName("contact_left")
-                                .HasColumnOrder(13);
+                                .HasColumnOrder(14);
 
                             b1.Property<int>("ContactRight")
                                 .HasColumnType("smallint")
                                 .HasColumnName("contact_right")
-                                .HasColumnOrder(14);
+                                .HasColumnOrder(15);
 
                             b1.Property<int>("DragBuntingAbility")
                                 .HasColumnType("smallint")
                                 .HasColumnName("drag_bunting_ability")
-                                .HasColumnOrder(21);
+                                .HasColumnOrder(22);
 
                             b1.Property<int>("FieldingAbility")
                                 .HasColumnType("smallint")
                                 .HasColumnName("fielding_ability")
-                                .HasColumnOrder(24);
+                                .HasColumnOrder(25);
 
                             b1.Property<int>("FieldingDurability")
                                 .HasColumnType("smallint")
                                 .HasColumnName("fielding_durability")
-                                .HasColumnOrder(23);
+                                .HasColumnOrder(24);
 
                             b1.Property<int>("HitsPerNine")
                                 .HasColumnType("smallint")
                                 .HasColumnName("hits_per_nine")
-                                .HasColumnOrder(6);
+                                .HasColumnOrder(7);
 
                             b1.Property<int>("HittingDurability")
                                 .HasColumnType("smallint")
                                 .HasColumnName("hitting_durability")
-                                .HasColumnOrder(22);
+                                .HasColumnOrder(23);
 
                             b1.Property<int>("HomeRunsPerNine")
                                 .HasColumnType("smallint")
                                 .HasColumnName("home_runs_per_nine")
-                                .HasColumnOrder(9);
+                                .HasColumnOrder(10);
 
                             b1.Property<int>("PitchControl")
                                 .HasColumnType("smallint")
                                 .HasColumnName("pitch_control")
-                                .HasColumnOrder(11);
+                                .HasColumnOrder(12);
 
                             b1.Property<int>("PitchMovement")
                                 .HasColumnType("smallint")
                                 .HasColumnName("pitch_movement")
-                                .HasColumnOrder(12);
+                                .HasColumnOrder(13);
 
                             b1.Property<int>("PitchVelocity")
                                 .HasColumnType("smallint")
                                 .HasColumnName("pitch_velocity")
-                                .HasColumnOrder(10);
+                                .HasColumnOrder(11);
 
                             b1.Property<int>("PitchingClutch")
                                 .HasColumnType("smallint")
                                 .HasColumnName("pitching_clutch")
-                                .HasColumnOrder(5);
+                                .HasColumnOrder(6);
 
                             b1.Property<int>("PlateDiscipline")
                                 .HasColumnType("smallint")
                                 .HasColumnName("plate_discipline")
-                                .HasColumnOrder(18);
+                                .HasColumnOrder(19);
 
                             b1.Property<int>("PlateVision")
                                 .HasColumnType("smallint")
                                 .HasColumnName("plate_vision")
-                                .HasColumnOrder(17);
+                                .HasColumnOrder(18);
 
                             b1.Property<int>("PowerLeft")
                                 .HasColumnType("smallint")
                                 .HasColumnName("power_left")
-                                .HasColumnOrder(15);
+                                .HasColumnOrder(16);
 
                             b1.Property<int>("PowerRight")
                                 .HasColumnType("smallint")
                                 .HasColumnName("power_right")
-                                .HasColumnOrder(16);
+                                .HasColumnOrder(17);
 
                             b1.Property<int>("ReactionTime")
                                 .HasColumnType("smallint")
                                 .HasColumnName("reaction_time")
-                                .HasColumnOrder(27);
+                                .HasColumnOrder(28);
 
                             b1.Property<int>("Speed")
                                 .HasColumnType("smallint")
                                 .HasColumnName("speed")
-                                .HasColumnOrder(29);
+                                .HasColumnOrder(30);
 
                             b1.Property<int>("Stamina")
                                 .HasColumnType("smallint")
                                 .HasColumnName("stamina")
-                                .HasColumnOrder(4);
+                                .HasColumnOrder(5);
 
                             b1.Property<int>("StrikeoutsPerNine")
                                 .HasColumnType("smallint")
                                 .HasColumnName("strikeouts_per_nine")
-                                .HasColumnOrder(7);
+                                .HasColumnOrder(8);
                         });
 
-                    b.HasKey("player_card_id", "StartDate", "EndDate")
+                    b.HasKey("player_card_id", "Type", "StartDate")
                         .HasName("player_card_historical_ratings_pkey");
 
                     b.ToTable("player_card_historical_ratings", "game_cards");

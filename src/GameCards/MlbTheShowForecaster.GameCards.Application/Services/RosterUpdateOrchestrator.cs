@@ -192,8 +192,7 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
         }
 
         // If the ratings have already been applied to the player card, no further action is required
-        if (ratingChange.IsApplied(playerCard) &&
-            (positionChange == null || positionChange.Value.IsApplied(playerCard)))
+        if (ratingChange.IsApplied(playerCard))
         {
             return;
         }

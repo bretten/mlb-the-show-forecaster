@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
@@ -9,11 +10,47 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping
 public sealed class PlayerCardMapper : IPlayerCardMapper
 {
     /// <summary>
+    /// Calendar to get the current date
+    /// </summary>
+    private readonly ICalendar _calendar;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="calendar">Calendar to get the current date</param>
+    public PlayerCardMapper(ICalendar calendar)
+    {
+        _calendar = calendar;
+    }
+
+    /// <summary>
     /// Maps <see cref="MlbPlayerCard"/> to <see cref="PlayerCard"/>
     /// </summary>
     /// <param name="card">The player card to map</param>
     /// <returns><see cref="PlayerCard"/></returns>
     public PlayerCard Map(MlbPlayerCard card)
+    {
+        var mappedCard = MapCard(card);
+
+        // A boost is also a temporary rating, so don't apply both
+        if (card.IsBoosted)
+        {
+            mappedCard.Boost(_calendar.Today(), mappedCard.PlayerCardAttributes);
+        }
+        else if (card.HasTemporaryRating)
+        {
+            mappedCard.SetTemporaryRating(_calendar.Today(), card.TemporaryOverallRating!);
+        }
+
+        return mappedCard;
+    }
+
+    /// <summary>
+    /// Only maps <see cref="MlbPlayerCard"/> to <see cref="PlayerCard"/>, but does not apply any temporary rating changes
+    /// </summary>
+    /// <param name="card">The player card to map</param>
+    /// <returns><see cref="PlayerCard"/></returns>
+    private PlayerCard MapCard(MlbPlayerCard card)
     {
         return PlayerCard.Create(card.Year,
             card.ExternalUuid,

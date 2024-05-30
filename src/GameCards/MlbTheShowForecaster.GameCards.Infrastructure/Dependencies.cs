@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
@@ -62,6 +63,7 @@ public static class Dependencies
     public static void AddGameCardsMapping(this IServiceCollection services)
     {
         services.TryAddSingleton<IListingMapper, ListingMapper>();
+        services.TryAddSingleton<ICalendar, Calendar>();
         services.TryAddSingleton<IPlayerCardMapper, PlayerCardMapper>();
     }
 

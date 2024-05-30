@@ -46,39 +46,71 @@ public class UpdatePlayerCardCommandHandlerTests
     [Fact]
     public async Task Handle_UpdatePlayerCardCommand_UpdatesPlayerCard()
     {
-        // Arrange
-        var historicalRating = Faker.FakePlayerCardHistoricalRating(startDate: new DateOnly(2023, 1, 1),
-            endDate: new DateOnly(2023, 2, 1));
+        /*
+         * Arrange
+         */
+        // The PlayerCard that is included in the command
         var playerCardInCommand = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
-        playerCardInCommand.AddHistoricalRating(historicalRating);
+        // Add the original state to the history
+        var originalState = Faker.FakeBaselinePlayerCardHistoricalRating(
+            startDate: new DateOnly(2024, 1, 1), endDate: new DateOnly(2024, 4, 1));
+        playerCardInCommand.AddHistoricalRating(originalState);
+        // Add the current state
+        var currentState = Faker.FakeBaselinePlayerCardHistoricalRating(
+            startDate: new DateOnly(2024, 4, 1), endDate: null);
+        playerCardInCommand.AddHistoricalRating(currentState);
+
+        // The card data from the external card catalog
         var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard(speed: 20);
-        var ratingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(newOverallRating: 90);
+
+        // The rating change that will be applied to the card
+        var ratingChangeDate = new DateOnly(2024, 5, 29);
+        var ratingChange = Dtos.TestClasses.Faker.FakePlayerRatingChange(date: ratingChangeDate, newOverallRating: 90);
+
+        // The card is changing its position
         var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange(newPosition: Position.FirstBase);
 
+        // Returns the matching card from the repository
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
         var playerCard = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
         stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCardInCommand.ExternalId))
             .ReturnsAsync(playerCard);
 
+        // Unit of work
         var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
         stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())
             .Returns(stubPlayerCardRepository.Object);
 
+        // The command and handler
         var cToken = CancellationToken.None;
         var command =
             new UpdatePlayerCardCommand(playerCardInCommand, externalPlayerCard, ratingChange, positionChange);
         var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object);
 
-        // Act
+        /*
+         * Act
+         */
         await handler.Handle(command, cToken);
 
-        // Assert
+        /*
+         * Assert
+         */
+        // The repository should have updated the PlayerCard
         stubPlayerCardRepository.Verify(x => x.Update(playerCard), Times.Once);
+        // The unit of work should have committed the changes
         stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
-        Assert.Equal(20, playerCard.PlayerCardAttributes.Speed.Value);
+        // The rating and attributes should have been updated
         Assert.Equal(90, playerCard.OverallRating.Value);
+        Assert.Equal(20, playerCard.PlayerCardAttributes.Speed.Value);
+        // The position should have been updated
         Assert.Equal(Position.FirstBase, playerCard.Position);
-        Assert.Equal(2, playerCard.HistoricalRatingsChronologically.Count);
-        Assert.Equal(historicalRating, playerCard.HistoricalRatingsChronologically[0]);
+        // The historical ratings should have been updated
+        Assert.Equal(3, playerCard.HistoricalRatingsChronologically.Count);
+        Assert.Equal(originalState, playerCard.HistoricalRatingsChronologically[0]);
+        Assert.Equal(currentState, playerCard.HistoricalRatingsChronologically[1]);
+        // The most recent rating change should have ended the previous one and started a new one
+        var newRating = playerCard.HistoricalRatingsChronologically[2];
+        Assert.Equal(new DateOnly(2024, 5, 29), newRating.StartDate);
+        Assert.Null(newRating.EndDate);
     }
 }

@@ -126,6 +126,14 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
                 $"Found a rating update for {cardExternalId}, but there is no corresponding PlayerCard");
         }
 
+        // If the card is boosted, the history can't accurately be recreated due to its temporary stats
+        if (playerCard.IsBoosted)
+        {
+            // The service runs regularly, so let it build the history later
+            // Can be logged #171
+            return null;
+        }
+
         // Get the current state of the player card from the external card catalog
         var externalCard = await _cardCatalog.GetMlbPlayerCard(seasonYear, cardExternalId, cancellationToken);
 
@@ -160,7 +168,7 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
             var rating = changes[i].OldRating;
 
             // Add the historical rating to the PlayerCard if it has no record of it
-            var historicalRating = PlayerCardHistoricalRating.Create(startDate, endDate, rating, currentState);
+            var historicalRating = PlayerCardHistoricalRating.Baseline(startDate, endDate, rating, currentState);
             if (playerCard.IsRatingAppliedFor(historicalRating.StartDate)) continue;
             wasUpdated = true;
             playerCard.AddHistoricalRating(historicalRating);
@@ -172,7 +180,12 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
             return null;
         }
 
-        // Update the PlayerCard with the new historical ratings, but don't update its current state
+        // Add a rating for the most recent state
+        var recentState = PlayerCardHistoricalRating.Baseline(changes[0].Date, null, changes[0].NewRating,
+            externalCard.GetAttributes());
+        if (!playerCard.IsRatingAppliedFor(recentState.StartDate)) playerCard.AddHistoricalRating(recentState);
+
+        // Update the PlayerCard with the new historical ratings
         await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, null, null, null), cancellationToken);
         return playerCard;
     }

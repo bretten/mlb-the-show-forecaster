@@ -1,10 +1,12 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.Mapping;
 
@@ -53,9 +55,12 @@ public class PlayerCardMapperTests
             Blocking: AbilityAttribute.Create(25),
             Speed: AbilityAttribute.Create(26),
             BaseRunningAbility: AbilityAttribute.Create(27),
-            BaseRunningAggression: AbilityAttribute.Create(28)
+            BaseRunningAggression: AbilityAttribute.Create(28),
+            BoostReason: null,
+            TemporaryOverallRating: null
         );
-        var mapper = new PlayerCardMapper();
+
+        var mapper = new PlayerCardMapper(Mock.Of<ICalendar>());
 
         // Act
         var actual = mapper.Map(mlbPlayerCard);
@@ -99,5 +104,44 @@ public class PlayerCardMapperTests
         Assert.Equal(26, actual.PlayerCardAttributes.Speed.Value);
         Assert.Equal(27, actual.PlayerCardAttributes.BaseRunningAbility.Value);
         Assert.Equal(28, actual.PlayerCardAttributes.BaseRunningAggression.Value);
+        Assert.False(actual.IsBoosted);
+        Assert.Null(actual.TemporaryOverallRating);
+    }
+
+    [Fact]
+    public void Map_BoostedMlbPlayerCardDto_ReturnsBoostedPlayerCard()
+    {
+        // Arrange
+        var mlbPlayerCard = TestClasses.Faker.FakeMlbPlayerCard(boostReason: "Hit 5 HRs",
+            temporaryOverallRating: 99);
+
+        var stubCalendar = Mock.Of<ICalendar>(x => x.Today() == new DateOnly(2024, 5, 29));
+        var mapper = new PlayerCardMapper(stubCalendar);
+
+        // Act
+        var actual = mapper.Map(mlbPlayerCard);
+
+        // Assert
+        Assert.True(actual.IsBoosted);
+        Assert.NotNull(actual.TemporaryOverallRating);
+        Assert.Equal(99, actual.TemporaryOverallRating.Value);
+    }
+
+    [Fact]
+    public void Map_MlbPlayerCardDtoWithTempRating_ReturnsPlayerCardWithTempRating()
+    {
+        // Arrange
+        var mlbPlayerCard = TestClasses.Faker.FakeMlbPlayerCard(boostReason: null,
+            temporaryOverallRating: 80);
+
+        var stubCalendar = Mock.Of<ICalendar>(x => x.Today() == new DateOnly(2024, 5, 29));
+        var mapper = new PlayerCardMapper(stubCalendar);
+
+        // Act
+        var actual = mapper.Map(mlbPlayerCard);
+
+        // Assert
+        Assert.NotNull(actual.TemporaryOverallRating);
+        Assert.Equal(80, actual.TemporaryOverallRating.Value);
     }
 }

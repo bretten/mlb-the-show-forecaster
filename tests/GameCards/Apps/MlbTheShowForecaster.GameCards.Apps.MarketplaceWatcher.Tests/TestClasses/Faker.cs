@@ -40,17 +40,6 @@ public static class Faker
             playerCardAttributes ?? FakePlayerCardAttributes());
     }
 
-    public static PlayerCardHistoricalRating FakePlayerCardHistoricalRating(DateOnly? startDate = null,
-        DateOnly? endDate = null, OverallRating? overallRating = null,
-        PlayerCardAttributes? playerCardAttributes = null)
-    {
-        return PlayerCardHistoricalRating.Create(startDate: startDate ?? new DateOnly(2024, 4, 1),
-            endDate: endDate ?? new DateOnly(2024, 4, 2),
-            overallRating ?? FakeOverallRating(),
-            playerCardAttributes ?? FakePlayerCardAttributes()
-        );
-    }
-
     public static CardImageLocation FakeCardImage(string cardImage = "img.jpg")
     {
         return CardImageLocation.Create(cardImage);

@@ -268,6 +268,11 @@ public static class Constants
         public const string PlayerCardId = "player_card_id";
 
         /// <summary>
+        /// The type of the historical rating
+        /// </summary>
+        public const string Type = "type";
+
+        /// <summary>
         /// The first date the player card had this rating
         /// </summary>
         public const string StartDate = "start_date";

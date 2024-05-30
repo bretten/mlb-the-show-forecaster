@@ -39,7 +39,7 @@ public class PlayerRatingChangeTests
         var startDate = new DateOnly(2024, 4, 1);
         var endDate = new DateOnly(2024, 4, 2);
         var card = Tests.TestClasses.Faker.FakePlayerCard();
-        card.AddHistoricalRating(Tests.TestClasses.Faker.FakePlayerCardHistoricalRating(startDate, endDate));
+        card.AddHistoricalRating(Tests.TestClasses.Faker.FakeBaselinePlayerCardHistoricalRating(startDate, endDate));
         var ratingChange = new PlayerRatingChange { Date = date };
 
         // Act

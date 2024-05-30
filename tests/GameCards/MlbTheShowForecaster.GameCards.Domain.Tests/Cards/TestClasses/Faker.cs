@@ -22,7 +22,7 @@ public static class Faker
     public static PlayerCard FakePlayerCard(ushort? year = null, Guid? externalId = null,
         CardType type = CardType.MlbCard, CardImageLocation? image = null, CardName? name = null,
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
-        TeamShortName? teamShortName = null, OverallRating? overallRating = null,
+        TeamShortName? teamShortName = null, int overallRating = 50,
         PlayerCardAttributes? playerCardAttributes = null)
     {
         return PlayerCard.Create(year.HasValue ? SeasonYear.Create(year.Value) : SeasonYear.Create(2024),
@@ -34,17 +34,36 @@ public static class Faker
             series,
             position,
             teamShortName ?? FakeTeamShortName(),
-            overallRating ?? FakeOverallRating(),
+            FakeOverallRating(overallRating),
             playerCardAttributes ?? FakePlayerCardAttributes());
     }
 
-    public static PlayerCardHistoricalRating FakePlayerCardHistoricalRating(DateOnly? startDate = null,
-        DateOnly? endDate = null, OverallRating? overallRating = null,
-        PlayerCardAttributes? playerCardAttributes = null)
+    public static PlayerCardHistoricalRating FakeBaselinePlayerCardHistoricalRating(DateOnly? startDate = null,
+        DateOnly? endDate = null, int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null)
     {
-        return PlayerCardHistoricalRating.Create(startDate: startDate ?? new DateOnly(2024, 4, 1),
-            endDate: endDate ?? new DateOnly(2024, 4, 2),
-            overallRating ?? FakeOverallRating(),
+        return PlayerCardHistoricalRating.Baseline(startDate: startDate ?? new DateOnly(2024, 4, 1),
+            endDate: endDate,
+            FakeOverallRating(overallRating),
+            playerCardAttributes ?? FakePlayerCardAttributes()
+        );
+    }
+
+    public static PlayerCardHistoricalRating FakeTemporaryPlayerCardHistoricalRating(DateOnly? startDate = null,
+        DateOnly? endDate = null, int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null)
+    {
+        return PlayerCardHistoricalRating.Temporary(startDate: startDate ?? new DateOnly(2024, 4, 1),
+            endDate: endDate,
+            FakeOverallRating(overallRating),
+            playerCardAttributes ?? FakePlayerCardAttributes()
+        );
+    }
+
+    public static PlayerCardHistoricalRating FakeBoostPlayerCardHistoricalRating(DateOnly? startDate = null,
+        DateOnly? endDate = null, int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null)
+    {
+        return PlayerCardHistoricalRating.Boost(startDate: startDate ?? new DateOnly(2024, 4, 1),
+            endDate: endDate,
+            FakeOverallRating(overallRating),
             playerCardAttributes ?? FakePlayerCardAttributes()
         );
     }
