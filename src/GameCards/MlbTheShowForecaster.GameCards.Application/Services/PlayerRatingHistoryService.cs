@@ -180,7 +180,12 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
             return null;
         }
 
-        // Update the PlayerCard with the new historical ratings, but don't update its current state
+        // Add a rating for the most recent state
+        var recentState = PlayerCardHistoricalRating.Baseline(changes[0].Date, null, changes[0].NewRating,
+            externalCard.GetAttributes());
+        if (!playerCard.IsRatingAppliedFor(recentState.StartDate)) playerCard.AddHistoricalRating(recentState);
+
+        // Update the PlayerCard with the new historical ratings
         await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, null, null, null), cancellationToken);
         return playerCard;
     }
