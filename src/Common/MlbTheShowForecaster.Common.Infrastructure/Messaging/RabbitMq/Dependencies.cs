@@ -38,7 +38,7 @@ public static class Dependencies
         services.TryAddTransient<IModel>(sp => connection.CreateModel());
 
         // Register the dispatcher as transient so it gets a new channel for each instance
-        services.TryAddTransient<IDomainEventDispatcher>(sp =>
+        services.TryAddSingleton<IDomainEventDispatcher>(sp =>
             new RabbitMqDomainEventDispatcher(sp.GetRequiredService<IModel>(), publisherDomainEventsToExchanges));
 
         // Register the domain event consumers
