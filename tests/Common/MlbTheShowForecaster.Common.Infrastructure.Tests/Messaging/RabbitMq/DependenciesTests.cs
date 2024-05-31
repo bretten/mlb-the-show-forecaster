@@ -94,7 +94,7 @@ public class DependenciesTests
         // The domain event dispatcher should be registered as a transient so it gets a new channel from the connection every time
         mockServices.Verify(s => s.Add(It.Is<ServiceDescriptor>(x =>
             x.ServiceType == typeof(IDomainEventDispatcher) &&
-            x.Lifetime == ServiceLifetime.Transient)), Times.Once);
+            x.Lifetime == ServiceLifetime.Singleton)), Times.Once);
 
         // The Rabbit MQ consumer wrapper should have been registered for each domain event type
         mockServices.Verify(s => s.Add(It.Is<ServiceDescriptor>(x =>
