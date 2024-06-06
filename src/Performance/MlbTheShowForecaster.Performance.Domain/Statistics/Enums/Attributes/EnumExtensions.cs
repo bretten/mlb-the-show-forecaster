@@ -8,6 +8,8 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.Enum
 public static class EnumExtensions
 {
     private static readonly Type BattingStatEnumType = typeof(BattingStat);
+    private static readonly Type PitchingStatEnumType = typeof(PitchingStat);
+    private static readonly Type FieldingStatEnumType = typeof(FieldingStat);
 
     /// <summary>
     /// Returns true if the <see cref="BattingStat"/> is better when its value is lower
@@ -17,6 +19,28 @@ public static class EnumExtensions
     public static bool IsLowerStatBetter(this BattingStat stat)
     {
         var attribute = GetLowerStatIsBetterAttribute(BattingStatEnumType, stat.ToString());
+        return attribute?.IsLowerStatBetter ?? false;
+    }
+
+    /// <summary>
+    /// Returns true if the <see cref="PitchingStat"/> is better when its value is lower
+    /// </summary>
+    /// <param name="stat"><see cref="PitchingStat"/></param>
+    /// <returns>True if the <see cref="PitchingStat"/> is better when its value is lower</returns>
+    public static bool IsLowerStatBetter(this PitchingStat stat)
+    {
+        var attribute = GetLowerStatIsBetterAttribute(PitchingStatEnumType, stat.ToString());
+        return attribute?.IsLowerStatBetter ?? false;
+    }
+
+    /// <summary>
+    /// Returns true if the <see cref="FieldingStat"/> is better when its value is lower
+    /// </summary>
+    /// <param name="stat"><see cref="FieldingStat"/></param>
+    /// <returns>True if the <see cref="FieldingStat"/> is better when its value is lower</returns>
+    public static bool IsLowerStatBetter(this FieldingStat stat)
+    {
+        var attribute = GetLowerStatIsBetterAttribute(FieldingStatEnumType, stat.ToString());
         return attribute?.IsLowerStatBetter ?? false;
     }
 
