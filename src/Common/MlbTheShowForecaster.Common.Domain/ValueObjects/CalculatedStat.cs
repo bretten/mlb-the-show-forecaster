@@ -22,9 +22,19 @@ public abstract class CalculatedStat : ValueObject, IStat
     {
         get
         {
-            if (!_value.HasValue)
+            if (_value.HasValue)
+            {
+                return _value.Value;
+            }
+
+            // If the calculation involves dividing by zero, consider it to be zero as MLB does
+            try
             {
                 _value = Math.Round(Calculate(), FractionalDigitCount, MidpointRounding.AwayFromZero);
+            }
+            catch (DivideByZeroException)
+            {
+                _value = 0;
             }
 
             return _value.Value;
