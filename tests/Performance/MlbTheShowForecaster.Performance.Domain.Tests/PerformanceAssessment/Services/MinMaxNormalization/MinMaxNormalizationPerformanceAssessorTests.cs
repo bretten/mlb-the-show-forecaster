@@ -23,7 +23,7 @@ public class MinMaxNormalizationPerformanceAssessorTests
 
         var stats = Faker.FakeBattingStats(hits: hits, doubles: doubles, strikeouts: strikeouts);
 
-        var options = new MinMaxNormalizationCriteria(criteria, BasicPitchingCriteria, BasicFieldingCriteria);
+        var options = new MinMaxNormalizationCriteria(0.1m, criteria, BasicPitchingCriteria, BasicFieldingCriteria);
         var assessor = new MinMaxNormalizationPerformanceAssessor(options);
 
         // Act
@@ -49,7 +49,7 @@ public class MinMaxNormalizationPerformanceAssessorTests
 
         var stats = Faker.FakePitchingStats(strikeouts: strikeouts, wins: wins, losses: losses);
 
-        var options = new MinMaxNormalizationCriteria(BasicBattingCriteria, criteria, BasicFieldingCriteria);
+        var options = new MinMaxNormalizationCriteria(0.1m, BasicBattingCriteria, criteria, BasicFieldingCriteria);
         var assessor = new MinMaxNormalizationPerformanceAssessor(options);
 
         // Act
@@ -75,7 +75,7 @@ public class MinMaxNormalizationPerformanceAssessorTests
 
         var stats = Faker.FakeFieldingStats(assists: assists, putouts: putouts, errors: errors);
 
-        var options = new MinMaxNormalizationCriteria(BasicBattingCriteria, BasicPitchingCriteria, criteria);
+        var options = new MinMaxNormalizationCriteria(0.1m, BasicBattingCriteria, BasicPitchingCriteria, criteria);
         var assessor = new MinMaxNormalizationPerformanceAssessor(options);
 
         // Act
@@ -98,7 +98,7 @@ public class MinMaxNormalizationPerformanceAssessorTests
 
         var stats = Faker.FakeFieldingStats(assists: 1, putouts: 1, errors: 1);
 
-        var options = new MinMaxNormalizationCriteria(BasicBattingCriteria, BasicPitchingCriteria, criteria);
+        var options = new MinMaxNormalizationCriteria(0.1m, BasicBattingCriteria, BasicPitchingCriteria, criteria);
         var assessor = new MinMaxNormalizationPerformanceAssessor(options);
 
         var action = () => assessor.AssessFielding(stats);

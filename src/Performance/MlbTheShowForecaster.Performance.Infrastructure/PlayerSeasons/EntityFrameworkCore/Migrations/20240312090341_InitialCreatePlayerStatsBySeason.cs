@@ -23,7 +23,10 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     player_mlb_id = table.Column<int>(type: "integer", nullable: false),
-                    season = table.Column<short>(type: "smallint", nullable: false)
+                    season = table.Column<short>(type: "smallint", nullable: false),
+                    batting_score = table.Column<decimal>(type: "numeric(5,4)", nullable: false),
+                    pitching_score = table.Column<decimal>(type: "numeric(5,4)", nullable: false),
+                    fielding_score = table.Column<decimal>(type: "numeric(5,4)", nullable: false)
                 },
                 constraints: table =>
                 {

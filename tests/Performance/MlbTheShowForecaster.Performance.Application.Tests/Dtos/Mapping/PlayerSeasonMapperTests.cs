@@ -3,6 +3,11 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Dtos.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
+using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Dtos.Mapping;
 
@@ -28,7 +33,15 @@ public class PlayerSeasonMapperTests
             new List<PlayerGameFieldingStats>() { fieldingGame1, fieldingGame2 }
         );
 
-        var mapper = new PlayerSeasonMapper();
+        var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
+        stubPerformanceAssessor.Setup(x => x.AssessBatting(It.IsAny<BattingStats>()))
+            .Returns(Tests.TestClasses.Faker.FakePerformanceAssessmentResult(0.1m));
+        stubPerformanceAssessor.Setup(x => x.AssessPitching(It.IsAny<PitchingStats>()))
+            .Returns(Tests.TestClasses.Faker.FakePerformanceAssessmentResult(0.2m));
+        stubPerformanceAssessor.Setup(x => x.AssessFielding(It.IsAny<FieldingStats>()))
+            .Returns(Tests.TestClasses.Faker.FakePerformanceAssessmentResult(0.3m));
+
+        var mapper = new PlayerSeasonMapper(stubPerformanceAssessor.Object);
 
         // Act
         var actual = mapper.Map(playerSeason);
@@ -36,6 +49,9 @@ public class PlayerSeasonMapperTests
         // Assert
         Assert.Equal(1, actual.PlayerMlbId.Value);
         Assert.Equal(2024, actual.SeasonYear.Value);
+        Assert.Equal(0.1m, actual.BattingScore.Value);
+        Assert.Equal(0.2m, actual.PitchingScore.Value);
+        Assert.Equal(0.3m, actual.FieldingScore.Value);
         Assert.Equal(2, actual.BattingStatsByGamesChronologically.Count);
         Assert.Equal(2, actual.PitchingStatsByGamesChronologically.Count);
         Assert.Equal(2, actual.FieldingStatsByGamesChronologically.Count);

@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects.Contracts;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services.MinMaxNormalization.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
@@ -65,6 +66,13 @@ public sealed class MinMaxNormalizationPerformanceAssessor : IPerformanceAssesso
         return new PerformanceAssessmentResult(CalculateScore(stats, _normalizationCriteria.FieldingCriteria));
     }
 
+    /// <inheritdoc />
+    public PerformanceScoreComparison Compare(PerformanceScore oldScore, PerformanceScore newScore)
+    {
+        return PerformanceScoreComparison.Create(oldScore, newScore,
+            _normalizationCriteria.ScorePercentageChangeThreshold);
+    }
+
     /// <summary>
     /// Calculates a score for a set of stats <see cref="T"/>
     /// </summary>
@@ -88,7 +96,7 @@ public sealed class MinMaxNormalizationPerformanceAssessor : IPerformanceAssesso
             {
                 NaturalNumber n => n.Value,
                 InningsCount n => n.Value,
-                CalculatedStat n => n.Value,
+                IStat n => n.Value,
                 _ => throw new UnexpectedMinMaxStatTypeException(
                     $"Stat of type {value.GetType().Name} cannot be scored")
             };

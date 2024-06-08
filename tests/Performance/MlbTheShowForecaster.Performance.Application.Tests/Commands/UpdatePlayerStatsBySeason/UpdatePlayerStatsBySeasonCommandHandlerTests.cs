@@ -1,5 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
@@ -33,7 +32,7 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerStatsBySeasonCommand(fakePlayerStatsBySeason, fakePlayerSeason);
         var handler = new UpdatePlayerStatsBySeasonCommandHandler(stubUnitOfWork.Object, Mock.Of<IPlayerSeasonMapper>(),
-            Mock.Of<IPlayerSeasonScorekeeper>(), Mock.Of<ICalendar>());
+            Mock.Of<IPlayerSeasonScorekeeper>());
 
         var action = () => handler.Handle(command, cToken);
 
@@ -49,7 +48,6 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
     public async Task Handle_UpdatePlayerStatsBySeasonCommand_UpdatesPlayerStatsBySeason()
     {
         // Arrange
-        var today = new DateOnly(2024, 4, 1);
         var fakePlayerSeason = Faker.FakePlayerSeason();
 
         var fakePlayerStatsBySeason = TestClasses.Faker.FakePlayerStatsBySeason();
@@ -71,13 +69,9 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
             .Returns(fakeMappedFieldingStatsByGame);
 
         var stubPlayerSeasonScorekeeper = new Mock<IPlayerSeasonScorekeeper>();
-        stubPlayerSeasonScorekeeper.Setup(x => x.ScoreSeason(fakePlayerStatsBySeason, today,
+        stubPlayerSeasonScorekeeper.Setup(x => x.ScoreSeason(fakePlayerStatsBySeason,
                 fakeMappedBattingStatsByGame, fakeMappedPitchingStatsByGame, fakeMappedFieldingStatsByGame))
             .Returns(updatedPlayerStatsBySeason);
-
-        var stubCalendar = new Mock<ICalendar>();
-        stubCalendar.Setup(x => x.Today())
-            .Returns(today);
 
         var stubPlayerStatsBySeasonRepository = new Mock<IPlayerStatsBySeasonRepository>();
         stubPlayerStatsBySeasonRepository.Setup(x => x.GetById(fakePlayerStatsBySeason.Id))
@@ -90,7 +84,7 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerStatsBySeasonCommand(fakePlayerStatsBySeason, fakePlayerSeason);
         var handler = new UpdatePlayerStatsBySeasonCommandHandler(stubUnitOfWork.Object, stubPlayerSeasonMapper.Object,
-            stubPlayerSeasonScorekeeper.Object, stubCalendar.Object);
+            stubPlayerSeasonScorekeeper.Object);
 
         // Act
         await handler.Handle(command, cToken);

@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -47,6 +48,30 @@ public sealed class PlayerStatsBySeasonEntityTypeConfiguration : IEntityTypeConf
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => SeasonYear.Create(v));
+
+        builder.Property(e => e.BattingScore)
+            .IsRequired()
+            .HasColumnType("decimal(5,4)")
+            .HasColumnName(Constants.PlayerStatsBySeasons.BattingScore)
+            .HasColumnOrder(columnOrder++)
+            .HasConversion(v => v.Value,
+                v => PerformanceScore.Create(v));
+
+        builder.Property(e => e.PitchingScore)
+            .IsRequired()
+            .HasColumnType("decimal(5,4)")
+            .HasColumnName(Constants.PlayerStatsBySeasons.PitchingScore)
+            .HasColumnOrder(columnOrder++)
+            .HasConversion(v => v.Value,
+                v => PerformanceScore.Create(v));
+
+        builder.Property(e => e.FieldingScore)
+            .IsRequired()
+            .HasColumnType("decimal(5,4)")
+            .HasColumnName(Constants.PlayerStatsBySeasons.FieldingScore)
+            .HasColumnOrder(columnOrder++)
+            .HasConversion(v => v.Value,
+                v => PerformanceScore.Create(v));
 
         // Ignore these properties. They are not relationships/navigation properties, but just convenience methods for other members of the class
         builder.Ignore(x => x.BattingStatsByGamesChronologically);

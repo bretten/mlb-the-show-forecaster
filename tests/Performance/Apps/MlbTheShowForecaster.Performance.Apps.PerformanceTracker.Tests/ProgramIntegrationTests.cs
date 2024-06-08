@@ -1,6 +1,4 @@
 ﻿using System.Data.Common;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -64,11 +62,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
             { "PerformanceTracker:Interval", "01:00:00:00" },
             { "PerformanceTracker:StartDelay", "0" },
             { "PerformanceTracker:Seasons:0", "2023" },
-            { "PerformanceAssessmentRequirements:StatPercentChangeThreshold", "0.25" },
-            { "PerformanceAssessmentRequirements:MinimumPlateAppearances", "10" },
-            { "PerformanceAssessmentRequirements:MinimumInningsPitched", "10" },
-            { "PerformanceAssessmentRequirements:MinimumBattersFaced", "10" },
-            { "PerformanceAssessmentRequirements:MinimumTotalChances", "10" },
             { "Messaging:RabbitMq:HostName", "localhost" },
             { "Messaging:RabbitMq:UserName", "rabbitmq" },
             { "Messaging:RabbitMq:Password", "rabbitmq" },
@@ -91,8 +84,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await dbContext.Database.MigrateAsync();
 
         // Add a player season to get stats for
-        dbContext.PlayerStatsBySeasons.Add(PlayerStatsBySeason.Create(MlbId.Create(660271), SeasonYear.Create(2023), [],
-            [], []));
+        dbContext.PlayerStatsBySeasons.Add(Faker.FakePlayerStatsBySeason(660271, 2023));
         await dbContext.SaveChangesAsync();
 
         /*

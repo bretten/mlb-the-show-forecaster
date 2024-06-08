@@ -8,6 +8,12 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAsse
 public sealed record MinMaxNormalizationCriteria
 {
     /// <summary>
+    /// The required amount (as a percentage) for a performance score to change by for it to be considered significant.
+    /// If the score has not increased or decreased past this threshold, it is negligible
+    /// </summary>
+    public decimal ScorePercentageChangeThreshold { get; }
+
+    /// <summary>
     /// Criteria for batting
     /// </summary>
     public IReadOnlyList<MinMaxBattingStatCriteria> BattingCriteria { get; }
@@ -25,13 +31,16 @@ public sealed record MinMaxNormalizationCriteria
     /// <summary>
     /// Constructor
     /// </summary>
+    /// <param name="scorePercentageChangeThreshold">The required amount (as a percentage) for a performance score to change by for it to be considered significant</param>
     /// <param name="battingCriteria">Criteria for batting</param>
     /// <param name="pitchingCriteria">Criteria for pitching</param>
     /// <param name="fieldingCriteria">Criteria for fielding</param>
-    public MinMaxNormalizationCriteria(IReadOnlyList<MinMaxBattingStatCriteria> battingCriteria,
+    public MinMaxNormalizationCriteria(decimal scorePercentageChangeThreshold,
+        IReadOnlyList<MinMaxBattingStatCriteria> battingCriteria,
         IReadOnlyList<MinMaxPitchingStatCriteria> pitchingCriteria,
         IReadOnlyList<MinMaxFieldingStatCriteria> fieldingCriteria)
     {
+        ScorePercentageChangeThreshold = scorePercentageChangeThreshold;
         BattingCriteria = battingCriteria;
         PitchingCriteria = pitchingCriteria;
         FieldingCriteria = fieldingCriteria;

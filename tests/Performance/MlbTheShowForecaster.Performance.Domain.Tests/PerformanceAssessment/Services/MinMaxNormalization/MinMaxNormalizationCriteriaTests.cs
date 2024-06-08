@@ -15,8 +15,8 @@ public class MinMaxNormalizationCriteriaTests
             new("Hits", 0.5m, false, min: 1, max: 100),
             new("HomeRuns", 0.6m, false, min: 1, max: 100), // Weights sum > 1
         };
-        var action = ()
-            => new MinMaxNormalizationCriteria(invalidBattingCriteria, ValidPitchingCriteria, ValidFieldingCriteria);
+        var action = () =>
+            new MinMaxNormalizationCriteria(0.1m, invalidBattingCriteria, ValidPitchingCriteria, ValidFieldingCriteria);
 
         // Act
         var actual = Record.Exception(action);

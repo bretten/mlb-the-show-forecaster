@@ -1,5 +1,4 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
@@ -35,11 +34,6 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     private readonly IPlayerSeasonScorekeeper _playerSeasonScorekeeper;
 
     /// <summary>
-    /// Gets today's date
-    /// </summary>
-    private readonly ICalendar _calendar;
-
-    /// <summary>
     /// The <see cref="PlayerStatsBySeason"/> repository
     /// </summary>
     private readonly IPlayerStatsBySeasonRepository _playerStatsBySeasonRepository;
@@ -50,14 +44,12 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for creating a <see cref="PlayerStatsBySeason"/></param>
     /// <param name="playerSeasonMapper">Maps <see cref="PlayerSeason"/> to other objects</param>
     /// <param name="playerSeasonScorekeeper">Scorekeeper that logs new games for the season and assesses the player's performance to date</param>
-    /// <param name="calendar">Gets today's date</param>
     public UpdatePlayerStatsBySeasonCommandHandler(IUnitOfWork<IPlayerSeasonWork> unitOfWork,
-        IPlayerSeasonMapper playerSeasonMapper, IPlayerSeasonScorekeeper playerSeasonScorekeeper, ICalendar calendar)
+        IPlayerSeasonMapper playerSeasonMapper, IPlayerSeasonScorekeeper playerSeasonScorekeeper)
     {
         _unitOfWork = unitOfWork;
         _playerSeasonMapper = playerSeasonMapper;
         _playerSeasonScorekeeper = playerSeasonScorekeeper;
-        _calendar = calendar;
         _playerStatsBySeasonRepository = unitOfWork.GetContributor<IPlayerStatsBySeasonRepository>();
     }
 
@@ -85,7 +77,7 @@ internal sealed class UpdatePlayerStatsBySeasonCommandHandler : ICommandHandler<
         var playerFieldingStatsByGamesToDate = _playerSeasonMapper.MapFieldingGames(playerSeason.GameFieldingStats);
 
         // Score the player's season to date
-        var updatedPlayerStatsBySeason = _playerSeasonScorekeeper.ScoreSeason(playerStatsBySeason, _calendar.Today(),
+        var updatedPlayerStatsBySeason = _playerSeasonScorekeeper.ScoreSeason(playerStatsBySeason,
             playerBattingStatsByGamesToDate, playerPitchingStatsByGamesToDate, playerFieldingStatsByGamesToDate);
 
         // Update

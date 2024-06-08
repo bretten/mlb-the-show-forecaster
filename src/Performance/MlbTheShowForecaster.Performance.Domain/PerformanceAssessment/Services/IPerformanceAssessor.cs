@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
 
@@ -30,4 +31,12 @@ public interface IPerformanceAssessor
     /// <param name="stats"><see cref="FieldingStats"/></param>
     /// <returns>The assessment result</returns>
     PerformanceAssessmentResult AssessFielding(FieldingStats stats);
+
+    /// <summary>
+    /// Should compare an old and new <see cref="PerformanceScore"/>
+    /// </summary>
+    /// <param name="oldScore">The old <see cref="PerformanceScore"/></param>
+    /// <param name="newScore">The new <see cref="PerformanceScore"/></param>
+    /// <returns>A comparison of the two scores</returns>
+    PerformanceScoreComparison Compare(PerformanceScore oldScore, PerformanceScore newScore);
 }

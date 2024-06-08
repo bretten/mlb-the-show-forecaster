@@ -7,7 +7,8 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessme
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Fielding;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Pitching;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.PerformanceChanges;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
@@ -44,6 +45,21 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// The season
     /// </summary>
     public SeasonYear SeasonYear { get; }
+
+    /// <summary>
+    /// A <see cref="PerformanceScore"/> for the player's season batting stats
+    /// </summary>
+    public PerformanceScore BattingScore { get; private set; }
+
+    /// <summary>
+    /// A <see cref="PerformanceScore"/> for the player's season pitching stats
+    /// </summary>
+    public PerformanceScore PitchingScore { get; private set; }
+
+    /// <summary>
+    /// A <see cref="PerformanceScore"/> for the player's season fielding stats
+    /// </summary>
+    public PerformanceScore FieldingScore { get; private set; }
 
     /// <summary>
     /// The player's batting stats by game in chronological order
@@ -90,15 +106,22 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// </summary>
     /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
+    /// <param name="battingScore">A <see cref="PerformanceScore"/> for the player's season batting stats</param>
+    /// <param name="pitchingScore">A <see cref="PerformanceScore"/> for the player's season pitching stats</param>
+    /// <param name="fieldingScore">A <see cref="PerformanceScore"/> for the player's season fielding stats</param>
     /// <param name="battingStatsByGames">The player's batting stats by game</param>
     /// <param name="pitchingStatsByGames">The player's pitching stats by game</param>
     /// <param name="fieldingStatsByGames">The player's fielding stats by game</param>
     private PlayerStatsBySeason(MlbId playerMlbId, SeasonYear seasonYear,
+        PerformanceScore battingScore, PerformanceScore pitchingScore, PerformanceScore fieldingScore,
         List<PlayerBattingStatsByGame> battingStatsByGames, List<PlayerPitchingStatsByGame> pitchingStatsByGames,
         List<PlayerFieldingStatsByGame> fieldingStatsByGames) : base(Guid.NewGuid())
     {
         PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
+        BattingScore = battingScore;
+        PitchingScore = pitchingScore;
+        FieldingScore = fieldingScore;
         _battingStatsByGames = battingStatsByGames;
         _pitchingStatsByGames = pitchingStatsByGames;
         _fieldingStatsByGames = fieldingStatsByGames;
@@ -109,10 +132,17 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// </summary>
     /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
-    private PlayerStatsBySeason(MlbId playerMlbId, SeasonYear seasonYear) : base(Guid.NewGuid())
+    /// <param name="battingScore">A <see cref="PerformanceScore"/> for the player's season batting stats</param>
+    /// <param name="pitchingScore">A <see cref="PerformanceScore"/> for the player's season pitching stats</param>
+    /// <param name="fieldingScore">A <see cref="PerformanceScore"/> for the player's season fielding stats</param>
+    private PlayerStatsBySeason(MlbId playerMlbId, SeasonYear seasonYear, PerformanceScore battingScore,
+        PerformanceScore pitchingScore, PerformanceScore fieldingScore) : base(Guid.NewGuid())
     {
         PlayerMlbId = playerMlbId;
         SeasonYear = seasonYear;
+        BattingScore = battingScore;
+        PitchingScore = pitchingScore;
+        FieldingScore = fieldingScore;
         _battingStatsByGames = new List<PlayerBattingStatsByGame>();
         _pitchingStatsByGames = new List<PlayerPitchingStatsByGame>();
         _fieldingStatsByGames = new List<PlayerFieldingStatsByGame>();
@@ -149,121 +179,75 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     }
 
     /// <summary>
-    /// Analyzes the player's season batting stats before and since the specified comparison date and looks for
-    /// improvements or declines in performance
+    /// Analyzes the player's season batting stats and calculates a score based off of their performance
     /// </summary>
-    /// <param name="comparisonDate">The date of comparison -- batting stats before this date will be compared to stats since this date</param>
-    /// <param name="assessmentRequirements">Service that ensures there are enough batting stats this season from before and since the comparison date</param>
-    public void AssessBattingPerformance(DateOnly comparisonDate,
-        IPerformanceAssessmentRequirements assessmentRequirements)
+    /// <param name="performanceAssessor">Service that assesses the player's batting performance</param>
+    public void AssessBattingPerformance(IPerformanceAssessor performanceAssessor)
     {
-        // Stats from before the comparison date
-        var statsBefore = BattingStatsBeforeDate(comparisonDate);
-        // Stats since the comparison date
-        var statsSince = BattingStatsSinceDate(comparisonDate);
-
-        // Make sure the player has seen enough batting playtime
-        if (!assessmentRequirements.AreBattingAssessmentRequirementsMet(statsBefore.PlateAppearances)
-            || !assessmentRequirements.AreBattingAssessmentRequirementsMet(statsSince.PlateAppearances))
-        {
-            // Player has not had enough playtime to warrant a valid assessment. No domain event needed
-            return;
-        }
-
-        // Create a comparison of the stats from before and the stats since the comparison date
-        var comparison = PlayerBattingPeriodComparison.Create(PlayerMlbId, comparisonDate,
-            statsBeforeComparisonDate: statsBefore,
-            statsSinceComparisonDate: statsSince
-        );
+        // Assess and compare the player's to-date performance
+        var newAssessment = performanceAssessor.AssessBatting(SeasonBattingStats);
+        var comparison = performanceAssessor.Compare(BattingScore, newAssessment.Score);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
-        if (comparison.HasIncreasedBy(assessmentRequirements.StatPercentChangeThreshold))
+        if (comparison.IsSignificantIncrease)
         {
-            RaiseDomainEvent(new BattingImprovementEvent(comparison));
+            RaiseDomainEvent(new BattingImprovementEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
         }
-        else if (comparison.HasDecreasedBy(assessmentRequirements.StatPercentChangeThreshold))
+        else if (comparison.IsSignificantDecrease)
         {
-            RaiseDomainEvent(new BattingDeclineEvent(comparison));
+            RaiseDomainEvent(new BattingDeclineEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
         }
+
+        // Set the new score
+        BattingScore = newAssessment.Score;
     }
 
     /// <summary>
-    /// Analyzes the player's season pitching stats before and since the specified comparison date and looks for
-    /// improvements or declines in performance
+    /// Analyzes the player's season pitching stats and calculates a score based off of their performance
     /// </summary>
-    /// <param name="comparisonDate">The date of comparison -- pitching stats before this date will be compared to stats since this date</param>
-    /// <param name="assessmentRequirements">Service that ensures there are enough pitching stats this season from before and since the comparison date</param>
-    public void AssessPitchingPerformance(DateOnly comparisonDate,
-        IPerformanceAssessmentRequirements assessmentRequirements)
+    /// <param name="performanceAssessor">Service that assesses the player's pitching performance</param>
+    public void AssessPitchingPerformance(IPerformanceAssessor performanceAssessor)
     {
-        // Stats from before the comparison date
-        var statsBefore = PitchingStatsBeforeDate(comparisonDate);
-        // Stats since the comparison date
-        var statsSince = PitchingStatsSinceDate(comparisonDate);
-
-        // Make sure the player has seen enough pitching playtime
-        if (!assessmentRequirements.ArePitchingAssessmentRequirementsMet(statsBefore.InningsPitched,
-                statsBefore.BattersFaced) ||
-            !assessmentRequirements.ArePitchingAssessmentRequirementsMet(statsSince.InningsPitched,
-                statsSince.BattersFaced))
-        {
-            // Player has not had enough playtime to warrant a valid assessment. No domain event needed
-            return;
-        }
-
-        // Create a comparison of the stats from before and the stats since the comparison date
-        var comparison = PlayerPitchingPeriodComparison.Create(PlayerMlbId, comparisonDate,
-            statsBeforeComparisonDate: statsBefore,
-            statsSinceComparisonDate: statsSince
-        );
+        // Assess and compare the player's to-date performance
+        var newAssessment = performanceAssessor.AssessPitching(SeasonPitchingStats);
+        var comparison = performanceAssessor.Compare(PitchingScore, newAssessment.Score);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
-        if (comparison.HasDecreasedBy(assessmentRequirements.StatPercentChangeThreshold)) // Lower ERA is better
+        if (comparison.IsSignificantIncrease)
         {
-            RaiseDomainEvent(new PitchingImprovementEvent(comparison));
+            RaiseDomainEvent(new PitchingImprovementEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
         }
-        else if (comparison.HasIncreasedBy(assessmentRequirements.StatPercentChangeThreshold))
+        else if (comparison.IsSignificantDecrease)
         {
-            RaiseDomainEvent(new PitchingDeclineEvent(comparison));
+            RaiseDomainEvent(new PitchingDeclineEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
         }
+
+        // Set the new score
+        PitchingScore = newAssessment.Score;
     }
 
     /// <summary>
-    /// Analyzes the player's season fielding stats before and since the specified comparison date and looks for
-    /// improvements or declines in performance
+    /// Analyzes the player's season fielding stats and calculates a score based off of their performance
     /// </summary>
-    /// <param name="comparisonDate">The date of comparison -- fielding stats before this date will be compared to stats since this date</param>
-    /// <param name="assessmentRequirements">Service that ensures there are enough fielding stats this season from before and since the comparison date</param>
-    public void AssessFieldingPerformance(DateOnly comparisonDate,
-        IPerformanceAssessmentRequirements assessmentRequirements)
+    /// <param name="performanceAssessor">Service that assesses the player's fielding performance</param>
+    public void AssessFieldingPerformance(IPerformanceAssessor performanceAssessor)
     {
-        // Stats from before the comparison date
-        var statsBefore = FieldingStatsBeforeDate(comparisonDate);
-        // Stats since the comparison date
-        var statsSince = FieldingStatsSinceDate(comparisonDate);
-
-        // Make sure the player has seen enough fielding playtime
-        if (!assessmentRequirements.AreFieldingAssessmentRequirementsMet(statsBefore.TotalChances.ToNaturalNumber())
-            || !assessmentRequirements.AreFieldingAssessmentRequirementsMet(statsSince.TotalChances.ToNaturalNumber()))
-        {
-            return;
-        }
-
-        // Create a comparison of the stats from before and the stats since the comparison date
-        var comparison = PlayerFieldingPeriodComparison.Create(PlayerMlbId, comparisonDate,
-            statsBeforeComparisonDate: statsBefore,
-            statsSinceComparisonDate: statsSince
-        );
+        // Assess and compare the player's to-date performance
+        var newAssessment = performanceAssessor.AssessFielding(SeasonAggregateFieldingStats);
+        var comparison = performanceAssessor.Compare(FieldingScore, newAssessment.Score);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
-        if (comparison.HasIncreasedBy(assessmentRequirements.StatPercentChangeThreshold))
+        if (comparison.IsSignificantIncrease)
         {
-            RaiseDomainEvent(new FieldingImprovementEvent(comparison));
+            RaiseDomainEvent(new FieldingImprovementEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
         }
-        else if (comparison.HasDecreasedBy(assessmentRequirements.StatPercentChangeThreshold))
+        else if (comparison.IsSignificantDecrease)
         {
-            RaiseDomainEvent(new FieldingDeclineEvent(comparison));
+            RaiseDomainEvent(new FieldingDeclineEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
         }
+
+        // Set the new score
+        FieldingScore = newAssessment.Score;
     }
 
     /// <summary>
@@ -319,15 +303,20 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// </summary>
     /// <param name="playerMlbId">The MLB ID of the Player</param>
     /// <param name="seasonYear">The season</param>
+    /// <param name="battingScore">A <see cref="PerformanceScore"/> for the player's season batting stats</param>
+    /// <param name="pitchingScore">A <see cref="PerformanceScore"/> for the player's season pitching stats</param>
+    /// <param name="fieldingScore">A <see cref="PerformanceScore"/> for the player's season fielding stats</param>
     /// <param name="battingStatsByGames">The player's batting stats by game</param>
     /// <param name="pitchingStatsByGames">The player's pitching stats by game</param>
     /// <param name="fieldingStatsByGames">The player's fielding stats by game</param>
     /// <returns><see cref="PlayerStatsBySeason"/></returns>
     public static PlayerStatsBySeason Create(MlbId playerMlbId, SeasonYear seasonYear,
+        PerformanceScore battingScore, PerformanceScore pitchingScore, PerformanceScore fieldingScore,
         List<PlayerBattingStatsByGame> battingStatsByGames, List<PlayerPitchingStatsByGame> pitchingStatsByGames,
         List<PlayerFieldingStatsByGame> fieldingStatsByGames)
     {
-        return new PlayerStatsBySeason(playerMlbId, seasonYear, battingStatsByGames, pitchingStatsByGames,
+        return new PlayerStatsBySeason(playerMlbId, seasonYear, battingScore: battingScore,
+            pitchingScore: pitchingScore, fieldingScore: fieldingScore, battingStatsByGames, pitchingStatsByGames,
             fieldingStatsByGames);
     }
 }
