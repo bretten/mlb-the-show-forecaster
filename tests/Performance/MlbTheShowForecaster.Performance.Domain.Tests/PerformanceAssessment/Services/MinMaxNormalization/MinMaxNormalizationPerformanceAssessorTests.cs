@@ -11,6 +11,8 @@ public class MinMaxNormalizationPerformanceAssessorTests
     [InlineData(80, 60, 70, 0.5455)]
     [InlineData(40, 90, 60, 0.6465)]
     [InlineData(70, 50, 80, 0.4444)]
+    [InlineData(101, 101, 0, 1)]
+    [InlineData(0, 0, 101, 0)]
     public void AssessBatting_BattingStats_CreatesScore(int hits, int doubles, int strikeouts, double expectedScore)
     {
         // Arrange
@@ -37,6 +39,8 @@ public class MinMaxNormalizationPerformanceAssessorTests
     [InlineData(80, 60, 70, 0.5455)]
     [InlineData(40, 90, 60, 0.6465)]
     [InlineData(70, 50, 80, 0.4444)]
+    [InlineData(101, 101, 0, 1)]
+    [InlineData(0, 0, 101, 0)]
     public void AssessPitching_PitchingStats_CreatesScore(int strikeouts, int wins, int losses, double expectedScore)
     {
         // Arrange
@@ -63,6 +67,8 @@ public class MinMaxNormalizationPerformanceAssessorTests
     [InlineData(80, 60, 70, 0.5455)]
     [InlineData(40, 90, 60, 0.6465)]
     [InlineData(70, 50, 80, 0.4444)]
+    [InlineData(101, 101, 0, 1)]
+    [InlineData(0, 0, 101, 0)]
     public void AssessFielding_FieldingStats_CreatesScore(int assists, int putouts, int errors, double expectedScore)
     {
         // Arrange

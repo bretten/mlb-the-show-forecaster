@@ -125,7 +125,16 @@ public sealed class MinMaxNormalizationPerformanceAssessor : IPerformanceAssesso
             value = stat.Max - value;
         }
 
-        return (value - stat.Min) / stat.MaxMinusMin;
+        // Min-max normalization
+        var normalized = (value - stat.Min) / stat.MaxMinusMin;
+
+        // If the stat exceeds the min or max, cap it at 0 or 1 respectively
+        return normalized switch
+        {
+            > 1 => 1,
+            < 0 => 0,
+            _ => normalized
+        };
     }
 
     /// <summary>
