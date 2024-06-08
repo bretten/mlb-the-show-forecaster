@@ -22,6 +22,22 @@ public class CalculatedStatTests
     }
 
     [Fact]
+    public void Value_ZeroDenominator_ReturnsZero()
+    {
+        // Arrange
+        const int var1 = 4;
+        const int var2 = 0;
+        const int var3 = 0;
+        var stat = TestCalculatedStat.Create(var1, var2, var3); // Calculation is (var1 / var2) + var3
+
+        // Act
+        var actual = stat.Value;
+
+        // Assert
+        Assert.Equal(0, actual);
+    }
+
+    [Fact]
     public void FractionalDigitCount_Two_ReturnsValueRoundedToSpecifiedFractionalDigitCount()
     {
         // Arrange
