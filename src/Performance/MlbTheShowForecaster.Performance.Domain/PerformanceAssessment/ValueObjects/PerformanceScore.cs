@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
@@ -10,9 +11,19 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAsse
 public sealed class PerformanceScore : ValueObject
 {
     /// <summary>
+    /// The raw score value
+    /// </summary>
+    private readonly decimal _value;
+
+    /// <summary>
     /// The underlying score value
     /// </summary>
-    public decimal Value { get; }
+    public decimal Value => Math.Round(_value, FractionalDigitCount, MidpointRounding.AwayFromZero);
+
+    /// <summary>
+    /// The number of fractional digits to round the decimal value to
+    /// </summary>
+    private const int FractionalDigitCount = 4;
 
     /// <summary>
     /// Constructor
@@ -26,7 +37,7 @@ public sealed class PerformanceScore : ValueObject
             throw new InvalidPerformanceScoreException($"Invalid {nameof(PerformanceScore)}: {value}");
         }
 
-        Value = value;
+        _value = value;
     }
 
     /// <summary>
