@@ -31,7 +31,10 @@ public sealed class PlayerSeasonsDbContext : DbContext, IPlayerSeasonWork
         return PlayerStatsBySeasons
             .Include("_battingStatsByGames")
             .Include("_pitchingStatsByGames")
-            .Include("_fieldingStatsByGames");
+            .Include("_fieldingStatsByGames")
+            // Split query is faster in this case due to foreign key index. Non-split query would be 'StatsBySeason' LEFT J 'Batting' LEFT J 'Pitching' LEFT J 'Fielding'
+            // https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries#split-queries
+            .AsSplitQuery();
     }
 
     /// <summary>
