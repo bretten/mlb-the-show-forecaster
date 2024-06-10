@@ -92,14 +92,53 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <summary>
     /// Fielding stats for all positions for the whole season to date
     /// </summary>
-    public FieldingStats SeasonAggregateFieldingStats => FieldingStats.Create(_fieldingStatsByGames);
+    public FieldingStats SeasonFieldingStats => FieldingStats.Create(_fieldingStatsByGames);
 
     /// <summary>
     /// Fielding stats by position for the whole season to date
     /// </summary>
-    public Dictionary<Position, FieldingStats> SeasonFieldingStatsByPosition => _fieldingStatsByGames
+    public ImmutableDictionary<Position, FieldingStats> SeasonFieldingStatsByPosition => _fieldingStatsByGames
         .GroupBy(x => x.Position)
-        .ToDictionary(x => x.Key, FieldingStats.Create);
+        .ToImmutableDictionary(x => x.Key, FieldingStats.Create);
+
+    /// <summary>
+    /// Batting stats for an inclusive date range
+    /// </summary>
+    /// <param name="start">The start date, inclusive</param>
+    /// <param name="end">The end date, inclusive</param>
+    /// <returns>Aggregated batting stats for the date range</returns>
+    public BattingStats BattingStatsFor(DateOnly start, DateOnly end) =>
+        BattingStats.Create(_battingStatsByGames.Where(x => x.GameDate >= start && x.GameDate <= end));
+
+    /// <summary>
+    /// Pitching stats for an inclusive date range
+    /// </summary>
+    /// <param name="start">The start date, inclusive</param>
+    /// <param name="end">The end date, inclusive</param>
+    /// <returns>Aggregated pitching stats for the date range</returns>
+    public PitchingStats PitchingStatsFor(DateOnly start, DateOnly end) =>
+        PitchingStats.Create(_pitchingStatsByGames.Where(x => x.GameDate >= start && x.GameDate <= end));
+
+    /// <summary>
+    /// Fielding stats for an inclusive date range
+    /// </summary>
+    /// <param name="start">The start date, inclusive</param>
+    /// <param name="end">The end date, inclusive</param>
+    /// <returns>Aggregated fielding stats for the date range</returns>
+    public FieldingStats FieldingStatsFor(DateOnly start, DateOnly end) =>
+        FieldingStats.Create(_fieldingStatsByGames.Where(x => x.GameDate >= start && x.GameDate <= end));
+
+    /// <summary>
+    /// Fielding stats by position for an inclusive date range
+    /// </summary>
+    /// <param name="start">The start date, inclusive</param>
+    /// <param name="end">The end date, inclusive</param>
+    /// <returns>Aggregated fielding stats by position for the date range</returns>
+    public ImmutableDictionary<Position, FieldingStats> FieldingStatsByPositionFor(DateOnly start, DateOnly end) =>
+        _fieldingStatsByGames
+            .Where(x => x.GameDate >= start && x.GameDate <= end)
+            .GroupBy(x => x.Position)
+            .ToImmutableDictionary(x => x.Key, FieldingStats.Create);
 
     /// <summary>
     /// Constructor
@@ -233,7 +272,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     public void AssessFieldingPerformance(IPerformanceAssessor performanceAssessor)
     {
         // Assess and compare the player's to-date performance
-        var newAssessment = performanceAssessor.AssessFielding(SeasonAggregateFieldingStats);
+        var newAssessment = performanceAssessor.AssessFielding(SeasonFieldingStats);
         var comparison = performanceAssessor.Compare(FieldingScore, newAssessment.Score);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
@@ -249,54 +288,6 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         // Set the new score
         FieldingScore = newAssessment.Score;
     }
-
-    /// <summary>
-    /// Returns the player's season batting stats from before the specified date
-    /// </summary>
-    /// <param name="date">The date used to filter stats</param>
-    /// <returns>Player's season batting stats from before the specified date</returns>
-    private BattingStats BattingStatsBeforeDate(DateOnly date) =>
-        BattingStats.Create(_battingStatsByGames.Where(x => x.GameDate < date));
-
-    /// <summary>
-    /// Returns the player's season batting stats since the specified date
-    /// </summary>
-    /// <param name="date">The date used to filter stats</param>
-    /// <returns>Player's season batting stats since the specified date</returns>
-    private BattingStats BattingStatsSinceDate(DateOnly date) =>
-        BattingStats.Create(_battingStatsByGames.Where(x => x.GameDate >= date));
-
-    /// <summary>
-    /// Returns the player's season pitching stats from before the specified date
-    /// </summary>
-    /// <param name="date">The date used to filter stats</param>
-    /// <returns>Player's season pitching stats from before the specified date</returns>
-    private PitchingStats PitchingStatsBeforeDate(DateOnly date) =>
-        PitchingStats.Create(_pitchingStatsByGames.Where(x => x.GameDate < date));
-
-    /// <summary>
-    /// Returns the player's season pitching stats since the specified date
-    /// </summary>
-    /// <param name="date">The date used to filter stats</param>
-    /// <returns>Player's season pitching stats since the specified date</returns>
-    private PitchingStats PitchingStatsSinceDate(DateOnly date) =>
-        PitchingStats.Create(_pitchingStatsByGames.Where(x => x.GameDate >= date));
-
-    /// <summary>
-    /// Returns the player's season fielding stats from before the specified date
-    /// </summary>
-    /// <param name="date">The date used to filter stats</param>
-    /// <returns>Player's season fielding stats from before the specified date</returns>
-    private FieldingStats FieldingStatsBeforeDate(DateOnly date) =>
-        FieldingStats.Create(_fieldingStatsByGames.Where(x => x.GameDate < date));
-
-    /// <summary>
-    /// Returns the player's season fielding stats since the specified date
-    /// </summary>
-    /// <param name="date">The date used to filter stats</param>
-    /// <returns>Player's season fielding stats since the specified date</returns>
-    private FieldingStats FieldingStatsSinceDate(DateOnly date) =>
-        FieldingStats.Create(_fieldingStatsByGames.Where(x => x.GameDate >= date));
 
     /// <summary>
     /// Creates <see cref="PlayerStatsBySeason"/>
