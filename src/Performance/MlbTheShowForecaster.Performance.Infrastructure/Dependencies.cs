@@ -53,20 +53,17 @@ public static class Dependencies
         /// <summary>
         /// Section key for min-max normalization batting criteria
         /// </summary>
-        public const string MinMaxNormBattingCriteriaSection =
-            "PerformanceAssessment:MinMaxNormalization:BattingCriteria";
+        public const string MinMaxNormBattingCriteria = "PerformanceAssessment:MinMaxNormalization:BattingCriteria";
 
         /// <summary>
         /// Section key for min-max normalization pitching criteria
         /// </summary>
-        public const string MinMaxNormPitchingCriteriaSection =
-            "PerformanceAssessment:MinMaxNormalization:PitchingCriteria";
+        public const string MinMaxNormPitchingCriteria = "PerformanceAssessment:MinMaxNormalization:PitchingCriteria";
 
         /// <summary>
         /// Section key for min-max normalization fielding criteria
         /// </summary>
-        public const string MinMaxNormFieldingCriteriaSection =
-            "PerformanceAssessment:MinMaxNormalization:FieldingCriteria";
+        public const string MinMaxNormFieldingCriteria = "PerformanceAssessment:MinMaxNormalization:FieldingCriteria";
     }
 
     /// <summary>
@@ -78,9 +75,9 @@ public static class Dependencies
     {
         services.AddSingleton(new MinMaxNormalizationCriteria(
             config.GetRequiredValue<decimal>(ConfigKeys.ScorePercentageChangeThreshold),
-            config.GetRequiredValue<MinMaxBattingStatCriteria[]>(ConfigKeys.MinMaxNormBattingCriteriaSection),
-            config.GetRequiredValue<MinMaxPitchingStatCriteria[]>(ConfigKeys.MinMaxNormPitchingCriteriaSection),
-            config.GetRequiredValue<MinMaxFieldingStatCriteria[]>(ConfigKeys.MinMaxNormFieldingCriteriaSection)
+            config.GetRequiredValue<MinMaxBattingStatCriteria[]>(ConfigKeys.MinMaxNormBattingCriteria),
+            config.GetRequiredValue<MinMaxPitchingStatCriteria[]>(ConfigKeys.MinMaxNormPitchingCriteria),
+            config.GetRequiredValue<MinMaxFieldingStatCriteria[]>(ConfigKeys.MinMaxNormFieldingCriteria)
         ));
         services.AddSingleton<IPerformanceAssessor, MinMaxNormalizationPerformanceAssessor>();
     }
