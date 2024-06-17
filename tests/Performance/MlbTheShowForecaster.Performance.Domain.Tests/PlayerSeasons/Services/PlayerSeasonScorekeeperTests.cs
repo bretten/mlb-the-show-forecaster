@@ -1,9 +1,11 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
 using Moq;
 
@@ -19,7 +21,7 @@ public class PlayerSeasonScorekeeperTests
          */
 
         // The entity in the system only has games scored on 3/31
-        var fakePlayerStatsBySeason = Faker.FakePlayerSeasonStats(
+        var fakePlayerStatsBySeason = Faker.FakePlayerStatsBySeason(
             battingStatsByGames: new List<PlayerBattingStatsByGame>()
                 { Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31)) },
             pitchingStatsByGames: new List<PlayerPitchingStatsByGame>()
@@ -46,17 +48,24 @@ public class PlayerSeasonScorekeeperTests
         };
 
         // Performance assessment
-        var mockPerformanceAssessmentRequirements = Mock.Of<IPerformanceAssessmentRequirements>();
-        var comparisonDate = new DateOnly(2024, 4, 1);
+        var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
+        stubPerformanceAssessor.Setup(x => x.AssessBatting(It.IsAny<BattingStats>()))
+            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult());
+        stubPerformanceAssessor.Setup(x => x.AssessPitching(It.IsAny<PitchingStats>()))
+            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult());
+        stubPerformanceAssessor.Setup(x => x.AssessFielding(It.IsAny<FieldingStats>()))
+            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult());
+        stubPerformanceAssessor.Setup(x => x.Compare(It.IsAny<PerformanceScore>(), It.IsAny<PerformanceScore>()))
+            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparison());
 
         // Scorekeeper
-        var scorekeeper = new PlayerSeasonScorekeeper(mockPerformanceAssessmentRequirements);
+        var scorekeeper = new PlayerSeasonScorekeeper(stubPerformanceAssessor.Object);
 
         /*
          * Act
          */
-        var actual = scorekeeper.ScoreSeason(fakePlayerStatsBySeason, comparisonDate,
-            fakeBattingStatsByGameToDate, fakePitchingStatsByGameToDate, fakeFieldingStatsByGameToDate);
+        var actual = scorekeeper.ScoreSeason(fakePlayerStatsBySeason, fakeBattingStatsByGameToDate,
+            fakePitchingStatsByGameToDate, fakeFieldingStatsByGameToDate);
 
         /*
          * Assert
@@ -82,12 +91,8 @@ public class PlayerSeasonScorekeeperTests
                 x is PlayerFieldedInGameEvent gameEvent && gameEvent.Date == new DateOnly(2024, 4, 1)));
 
         // Was the player's performance assessed?
-        Mock.Get(mockPerformanceAssessmentRequirements)
-            .Verify(x => x.AreBattingAssessmentRequirementsMet(It.IsAny<NaturalNumber>()), Times.Once);
-        Mock.Get(mockPerformanceAssessmentRequirements).Verify(
-            x => x.ArePitchingAssessmentRequirementsMet(It.IsAny<InningsCount>(), It.IsAny<NaturalNumber>()),
-            Times.Once);
-        Mock.Get(mockPerformanceAssessmentRequirements)
-            .Verify(x => x.AreFieldingAssessmentRequirementsMet(It.IsAny<NaturalNumber>()), Times.Once);
+        stubPerformanceAssessor.Verify(x => x.AssessBatting(It.IsAny<BattingStats>()), Times.Once);
+        stubPerformanceAssessor.Verify(x => x.AssessPitching(It.IsAny<PitchingStats>()), Times.Once);
+        stubPerformanceAssessor.Verify(x => x.AssessFielding(It.IsAny<FieldingStats>()), Times.Once);
     }
 }

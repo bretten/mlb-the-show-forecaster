@@ -2,7 +2,6 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Tests.TestClasses;
@@ -51,7 +50,6 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
     public async Task Add_PlayerStatsBySeason_AddsPlayerStatsBySeasonToDbContextSet()
     {
         // Arrange
-        var seasonYear = SeasonYear.Create(2024);
         var batting = new List<PlayerBattingStatsByGame>
         {
             Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31), gameId: 1),
@@ -67,8 +65,8 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1),
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5), gameId: 2)
         };
-        var fakePlayerStatsBySeason =
-            PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
+        var fakePlayerStatsBySeason = Faker.FakePlayerStatsBySeason(1, 2024, battingStatsByGames: batting,
+            pitchingStatsByGames: pitching, fieldingStatsByGames: fielding);
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);
@@ -91,7 +89,6 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
     public async Task Add_MultipleFieldingPositionsInSingleGame_AddsPlayerStatsBySeasonToDbContextSet()
     {
         // Arrange
-        var seasonYear = SeasonYear.Create(2024);
         var batting = new List<PlayerBattingStatsByGame>();
         var pitching = new List<PlayerPitchingStatsByGame>();
         var fielding = new List<PlayerFieldingStatsByGame>
@@ -99,8 +96,8 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1, position: Position.FirstBase),
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1, position: Position.SecondBase)
         };
-        var fakePlayerStatsBySeason =
-            PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
+        var fakePlayerStatsBySeason = Faker.FakePlayerStatsBySeason(1, 2024, battingStatsByGames: batting,
+            pitchingStatsByGames: pitching, fieldingStatsByGames: fielding);
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);
@@ -123,7 +120,6 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
     public async Task Update_ExistingPlayerStatsBySeason_UpdatesPlayerStatsBySeasonInDbContextSet()
     {
         // Arrange
-        var seasonYear = SeasonYear.Create(2024);
         var batting = new List<PlayerBattingStatsByGame>
         {
             Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31), gameId: 1),
@@ -139,8 +135,8 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1),
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5), gameId: 2)
         };
-        var fakePlayerStatsBySeason =
-            PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
+        var fakePlayerStatsBySeason = Faker.FakePlayerStatsBySeason(1, 2024, battingStatsByGames: batting,
+            pitchingStatsByGames: pitching, fieldingStatsByGames: fielding);
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);
@@ -194,7 +190,6 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
     public async Task GetById_Id_ReturnsPlayerStatsBySeasonForId()
     {
         // Arrange
-        var seasonYear = SeasonYear.Create(2024);
         var batting = new List<PlayerBattingStatsByGame>
         {
             Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31), gameId: 1),
@@ -210,8 +205,9 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1),
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5), gameId: 2)
         };
-        var fakePlayerStatsBySeason =
-            PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
+        var fakePlayerStatsBySeason = Faker.FakePlayerStatsBySeason(1, 2024, battingScore: 0.1234m,
+            pitchingScore: 0.2345m, fieldingScore: 0.3456m, battingStatsByGames: batting,
+            pitchingStatsByGames: pitching, fieldingStatsByGames: fielding);
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);
@@ -232,6 +228,9 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
         // Assert
         Assert.NotNull(actual);
         Assert.Equal(fakePlayerStatsBySeason, actual);
+        Assert.Equal(0.1234m, actual.BattingScore.Value);
+        Assert.Equal(0.2345m, actual.PitchingScore.Value);
+        Assert.Equal(0.3456m, actual.FieldingScore.Value);
         Assert.Equal(batting, actual.BattingStatsByGamesChronologically);
         Assert.Equal(pitching, actual.PitchingStatsByGamesChronologically);
         Assert.Equal(fielding, actual.FieldingStatsByGamesChronologically);
@@ -258,8 +257,8 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1),
             Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5), gameId: 2)
         };
-        var fakePlayerStatsBySeason =
-            PlayerStatsBySeason.Create(MlbId.Create(1), seasonYear, batting, pitching, fielding);
+        var fakePlayerStatsBySeason = Faker.FakePlayerStatsBySeason(1, seasonYear.Value, battingStatsByGames: batting,
+            pitchingStatsByGames: pitching, fieldingStatsByGames: fielding);
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);

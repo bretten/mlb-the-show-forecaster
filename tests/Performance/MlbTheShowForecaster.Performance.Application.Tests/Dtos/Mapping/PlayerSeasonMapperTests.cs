@@ -3,6 +3,11 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Dtos.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
+using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Dtos.Mapping;
 
@@ -28,7 +33,15 @@ public class PlayerSeasonMapperTests
             new List<PlayerGameFieldingStats>() { fieldingGame1, fieldingGame2 }
         );
 
-        var mapper = new PlayerSeasonMapper();
+        var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
+        stubPerformanceAssessor.Setup(x => x.AssessBatting(It.IsAny<BattingStats>()))
+            .Returns(Tests.TestClasses.Faker.FakePerformanceAssessmentResult(0.1m));
+        stubPerformanceAssessor.Setup(x => x.AssessPitching(It.IsAny<PitchingStats>()))
+            .Returns(Tests.TestClasses.Faker.FakePerformanceAssessmentResult(0.2m));
+        stubPerformanceAssessor.Setup(x => x.AssessFielding(It.IsAny<FieldingStats>()))
+            .Returns(Tests.TestClasses.Faker.FakePerformanceAssessmentResult(0.3m));
+
+        var mapper = new PlayerSeasonMapper(stubPerformanceAssessor.Object);
 
         // Act
         var actual = mapper.Map(playerSeason);
@@ -36,6 +49,9 @@ public class PlayerSeasonMapperTests
         // Assert
         Assert.Equal(1, actual.PlayerMlbId.Value);
         Assert.Equal(2024, actual.SeasonYear.Value);
+        Assert.Equal(0.1m, actual.BattingScore.Value);
+        Assert.Equal(0.2m, actual.PitchingScore.Value);
+        Assert.Equal(0.3m, actual.FieldingScore.Value);
         Assert.Equal(2, actual.BattingStatsByGamesChronologically.Count);
         Assert.Equal(2, actual.PitchingStatsByGamesChronologically.Count);
         Assert.Equal(2, actual.FieldingStatsByGamesChronologically.Count);
@@ -104,20 +120,20 @@ public class PlayerSeasonMapperTests
         Assert.Equal(28028, actual.SeasonPitchingStats.SacrificeBunts.Value);
         Assert.Equal(29029, actual.SeasonPitchingStats.SacrificeFlies.Value);
 
-        Assert.Equal(Position.Catcher, actual.SeasonAggregateFieldingStats.Position);
-        Assert.Equal(1, actual.SeasonAggregateFieldingStats.GamesStarted.Value);
-        Assert.Equal(1001, actual.SeasonAggregateFieldingStats.InningsPlayed.Value);
-        Assert.Equal(2002, actual.SeasonAggregateFieldingStats.Assists.Value);
-        Assert.Equal(3003, actual.SeasonAggregateFieldingStats.Putouts.Value);
-        Assert.Equal(4004, actual.SeasonAggregateFieldingStats.Errors.Value);
-        Assert.Equal(5005, actual.SeasonAggregateFieldingStats.ThrowingErrors.Value);
-        Assert.Equal(6006, actual.SeasonAggregateFieldingStats.DoublePlays.Value);
-        Assert.Equal(7007, actual.SeasonAggregateFieldingStats.TriplePlays.Value);
-        Assert.Equal(8008, actual.SeasonAggregateFieldingStats.CaughtStealing.Value);
-        Assert.Equal(9009, actual.SeasonAggregateFieldingStats.StolenBases.Value);
-        Assert.Equal(10010, actual.SeasonAggregateFieldingStats.PassedBalls.Value);
-        Assert.Equal(11011, actual.SeasonAggregateFieldingStats.CatcherInterferences.Value);
-        Assert.Equal(12012, actual.SeasonAggregateFieldingStats.WildPitches.Value);
-        Assert.Equal(13013, actual.SeasonAggregateFieldingStats.Pickoffs.Value);
+        Assert.Equal(Position.Catcher, actual.SeasonFieldingStats.Position);
+        Assert.Equal(1, actual.SeasonFieldingStats.GamesStarted.Value);
+        Assert.Equal(1001, actual.SeasonFieldingStats.InningsPlayed.Value);
+        Assert.Equal(2002, actual.SeasonFieldingStats.Assists.Value);
+        Assert.Equal(3003, actual.SeasonFieldingStats.Putouts.Value);
+        Assert.Equal(4004, actual.SeasonFieldingStats.Errors.Value);
+        Assert.Equal(5005, actual.SeasonFieldingStats.ThrowingErrors.Value);
+        Assert.Equal(6006, actual.SeasonFieldingStats.DoublePlays.Value);
+        Assert.Equal(7007, actual.SeasonFieldingStats.TriplePlays.Value);
+        Assert.Equal(8008, actual.SeasonFieldingStats.CaughtStealing.Value);
+        Assert.Equal(9009, actual.SeasonFieldingStats.StolenBases.Value);
+        Assert.Equal(10010, actual.SeasonFieldingStats.PassedBalls.Value);
+        Assert.Equal(11011, actual.SeasonFieldingStats.CatcherInterferences.Value);
+        Assert.Equal(12012, actual.SeasonFieldingStats.WildPitches.Value);
+        Assert.Equal(13013, actual.SeasonFieldingStats.Pickoffs.Value);
     }
 }

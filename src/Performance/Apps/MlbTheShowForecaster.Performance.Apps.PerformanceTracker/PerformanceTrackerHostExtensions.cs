@@ -109,8 +109,9 @@ public static class PerformanceTrackerHostExtensions
 
             // Player performance tracking dependencies
             services.AddSingleton<ICalendar, Calendar>();
+            services.AddPerformanceAssessment(context.Configuration);
             services.AddPerformanceMapping();
-            services.AddPerformancePlayerSeasonScorekeeper(context.Configuration);
+            services.AddPerformancePlayerSeasonScorekeeper();
             services.AddPerformanceTracker(context.Configuration);
             services.AddPerformanceEntityFrameworkCoreRepositories(context.Configuration);
 

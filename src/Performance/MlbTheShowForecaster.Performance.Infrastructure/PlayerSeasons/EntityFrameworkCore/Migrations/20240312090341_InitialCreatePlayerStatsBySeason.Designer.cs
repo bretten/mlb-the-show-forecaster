@@ -34,6 +34,21 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerS
                         .HasColumnName("id")
                         .HasColumnOrder(0);
 
+                    b.Property<decimal>("BattingScore")
+                        .HasColumnType("decimal(5,4)")
+                        .HasColumnName("batting_score")
+                        .HasColumnOrder(3);
+
+                    b.Property<decimal>("FieldingScore")
+                        .HasColumnType("decimal(5,4)")
+                        .HasColumnName("fielding_score")
+                        .HasColumnOrder(5);
+
+                    b.Property<decimal>("PitchingScore")
+                        .HasColumnType("decimal(5,4)")
+                        .HasColumnName("pitching_score")
+                        .HasColumnOrder(4);
+
                     b.Property<int>("PlayerMlbId")
                         .HasColumnType("integer")
                         .HasColumnName("player_mlb_id")

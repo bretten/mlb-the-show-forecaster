@@ -39,6 +39,21 @@ public static class Constants
         public const string Season = "season";
 
         /// <summary>
+        /// Batting score
+        /// </summary>
+        public const string BattingScore = "batting_score";
+
+        /// <summary>
+        /// Pitching score
+        /// </summary>
+        public const string PitchingScore = "pitching_score";
+
+        /// <summary>
+        /// Fielding score
+        /// </summary>
+        public const string FieldingScore = "fielding_score";
+
+        /// <summary>
         /// Key names for <see cref="PlayerStatsBySeason"/>
         /// </summary>
         public static class Keys

@@ -1,10 +1,8 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.Comparisons;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.PerformanceChanges;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Pitching;
 
 /// <summary>
-/// Published when a player has an improvement in their pitching performance during a period of time
+/// Published when there is an improvement in pitching performance
 /// </summary>
-/// <param name="Comparison">A comparison of their performance before the improvement period and during the improvement period</param>
-public sealed record PitchingImprovementEvent(PlayerPitchingPeriodComparison Comparison) : IDomainEvent;
+public sealed record PitchingImprovementEvent(IPerformanceChange Change) : IPerformanceChangeEvent;

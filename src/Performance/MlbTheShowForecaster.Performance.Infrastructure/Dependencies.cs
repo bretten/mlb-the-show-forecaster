@@ -2,7 +2,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
@@ -11,9 +10,10 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services.MinMaxNormalization;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Services;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Shared;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Services;
@@ -46,29 +46,40 @@ public static class Dependencies
         public const string MlbApiBaseAddress = "Api:Mlb:BaseAddress";
 
         /// <summary>
-        /// <see cref="IPerformanceAssessmentRequirements.StatPercentChangeThreshold"/> config key
+        /// <see cref="PerformanceScoreComparison"/> threshold config key
         /// </summary>
-        public const string StatPercentChangeThreshold = "PerformanceAssessmentRequirements:StatPercentChangeThreshold";
+        public const string ScorePercentageChangeThreshold = "PerformanceAssessment:ScorePercentageChangeThreshold";
 
         /// <summary>
-        /// <see cref="IPerformanceAssessmentRequirements.MinimumPlateAppearances"/> config key
+        /// Section key for min-max normalization batting criteria
         /// </summary>
-        public const string MinimumPlateAppearances = "PerformanceAssessmentRequirements:MinimumPlateAppearances";
+        public const string MinMaxNormBattingCriteria = "PerformanceAssessment:MinMaxNormalization:BattingCriteria";
 
         /// <summary>
-        /// <see cref="IPerformanceAssessmentRequirements.MinimumInningsPitched"/> config key
+        /// Section key for min-max normalization pitching criteria
         /// </summary>
-        public const string MinimumInningsPitched = "PerformanceAssessmentRequirements:MinimumInningsPitched";
+        public const string MinMaxNormPitchingCriteria = "PerformanceAssessment:MinMaxNormalization:PitchingCriteria";
 
         /// <summary>
-        /// <see cref="IPerformanceAssessmentRequirements.MinimumBattersFaced"/> config key
+        /// Section key for min-max normalization fielding criteria
         /// </summary>
-        public const string MinimumBattersFaced = "PerformanceAssessmentRequirements:MinimumBattersFaced";
+        public const string MinMaxNormFieldingCriteria = "PerformanceAssessment:MinMaxNormalization:FieldingCriteria";
+    }
 
-        /// <summary>
-        /// <see cref="IPerformanceAssessmentRequirements.MinimumTotalChances"/> config key
-        /// </summary>
-        public const string MinimumTotalChances = "PerformanceAssessmentRequirements:MinimumTotalChances";
+    /// <summary>
+    /// Registers Performance assessment
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
+    /// <param name="config">Configuration for performance assessment</param>
+    public static void AddPerformanceAssessment(this IServiceCollection services, IConfiguration config)
+    {
+        services.AddSingleton(new MinMaxNormalizationCriteria(
+            config.GetRequiredValue<decimal>(ConfigKeys.ScorePercentageChangeThreshold),
+            config.GetRequiredValue<MinMaxBattingStatCriteria[]>(ConfigKeys.MinMaxNormBattingCriteria),
+            config.GetRequiredValue<MinMaxPitchingStatCriteria[]>(ConfigKeys.MinMaxNormPitchingCriteria),
+            config.GetRequiredValue<MinMaxFieldingStatCriteria[]>(ConfigKeys.MinMaxNormFieldingCriteria)
+        ));
+        services.AddSingleton<IPerformanceAssessor, MinMaxNormalizationPerformanceAssessor>();
     }
 
     /// <summary>
@@ -84,23 +95,8 @@ public static class Dependencies
     /// Registers Performance <see cref="PlayerSeasonScorekeeper"/>
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
-    /// <param name="config">Configuration for performance assessment requirements</param>
-    public static void AddPerformancePlayerSeasonScorekeeper(this IServiceCollection services, IConfiguration config)
+    public static void AddPerformancePlayerSeasonScorekeeper(this IServiceCollection services)
     {
-        services.AddSingleton<IPerformanceAssessmentRequirements, PerformanceAssessmentRequirements>(sp =>
-        {
-            var changeThreshold = config.GetRequiredValue<decimal>(ConfigKeys.StatPercentChangeThreshold);
-            var minPa = config.GetRequiredValue<int>(ConfigKeys.MinimumPlateAppearances);
-            var minIp = config.GetRequiredValue<int>(ConfigKeys.MinimumInningsPitched);
-            var minBf = config.GetRequiredValue<int>(ConfigKeys.MinimumBattersFaced);
-            var minTc = config.GetRequiredValue<int>(ConfigKeys.MinimumTotalChances);
-            return new PerformanceAssessmentRequirements(changeThreshold,
-                minimumPlateAppearances: NaturalNumber.Create(minPa),
-                minimumInningsPitched: InningsCount.Create(minIp),
-                minimumBattersFaced: NaturalNumber.Create(minBf),
-                minimumTotalChances: NaturalNumber.Create(minTc)
-            );
-        });
         services.TryAddSingleton<IPlayerSeasonScorekeeper, PlayerSeasonScorekeeper>();
     }
 

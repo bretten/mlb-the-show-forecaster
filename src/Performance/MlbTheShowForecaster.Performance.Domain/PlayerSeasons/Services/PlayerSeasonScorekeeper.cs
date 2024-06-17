@@ -11,36 +11,35 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.S
 public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
 {
     /// <summary>
-    /// Performance assessment requirements
+    /// Service that assesses the performance of the player's season
     /// </summary>
-    private readonly IPerformanceAssessmentRequirements _performanceAssessmentRequirements;
+    private readonly IPerformanceAssessor _performanceAssessor;
 
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="performanceAssessmentRequirements">Performance assessment requirements</param>
-    public PlayerSeasonScorekeeper(IPerformanceAssessmentRequirements performanceAssessmentRequirements)
+    /// <param name="performanceAssessor">Service that assesses the performance of the player's season</param>
+    public PlayerSeasonScorekeeper(IPerformanceAssessor performanceAssessor)
     {
-        _performanceAssessmentRequirements = performanceAssessmentRequirements;
+        _performanceAssessor = performanceAssessor;
     }
 
     /// <summary>
     /// Scores a player's season by logging new games and assessing the player's performance
     /// </summary>
     /// <param name="playerStatsBySeason">The player's season stats</param>
-    /// <param name="performanceComparisonDate">The date used in the player's performance assessment</param>
     /// <param name="playerBattingStatsByGamesToDate">The player's batting stats by games to date</param>
     /// <param name="playerPitchingStatsByGamesToDate">The player's pitching stats by games to date</param>
     /// <param name="playerFieldingStatsByGamesToDate">The player's fielding stats by games to date</param>
     /// <returns>The updated <see cref="PlayerStatsBySeason"/></returns>
-    public PlayerStatsBySeason ScoreSeason(PlayerStatsBySeason playerStatsBySeason, DateOnly performanceComparisonDate,
+    public PlayerStatsBySeason ScoreSeason(PlayerStatsBySeason playerStatsBySeason,
         IEnumerable<PlayerBattingStatsByGame> playerBattingStatsByGamesToDate,
         IEnumerable<PlayerPitchingStatsByGame> playerPitchingStatsByGamesToDate,
         IEnumerable<PlayerFieldingStatsByGame> playerFieldingStatsByGamesToDate)
     {
-        ScoreBatting(ref playerStatsBySeason, performanceComparisonDate, playerBattingStatsByGamesToDate);
-        ScorePitching(ref playerStatsBySeason, performanceComparisonDate, playerPitchingStatsByGamesToDate);
-        ScoreFielding(ref playerStatsBySeason, performanceComparisonDate, playerFieldingStatsByGamesToDate);
+        ScoreBatting(ref playerStatsBySeason, playerBattingStatsByGamesToDate);
+        ScorePitching(ref playerStatsBySeason, playerPitchingStatsByGamesToDate);
+        ScoreFielding(ref playerStatsBySeason, playerFieldingStatsByGamesToDate);
         return playerStatsBySeason;
     }
 
@@ -48,9 +47,8 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
     /// Logs new batting games
     /// </summary>
     /// <param name="playerStatsBySeason">The player season stats as it exists in the system currently</param>
-    /// <param name="performanceComparisonDate">The date used in the player's performance assessment</param>
     /// <param name="statsByGamesToDate">The most up-to-date player season stats from the external MLB source</param>
-    private void ScoreBatting(ref PlayerStatsBySeason playerStatsBySeason, DateOnly performanceComparisonDate,
+    private void ScoreBatting(ref PlayerStatsBySeason playerStatsBySeason,
         IEnumerable<PlayerBattingStatsByGame> statsByGamesToDate)
     {
         // The stats by games before the most recent update
@@ -70,16 +68,15 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
         }
 
         // Assess performance to date
-        playerStatsBySeason.AssessBattingPerformance(performanceComparisonDate, _performanceAssessmentRequirements);
+        playerStatsBySeason.AssessBattingPerformance(_performanceAssessor);
     }
 
     /// <summary>
     /// Logs new pitching games
     /// </summary>
     /// <param name="playerStatsBySeason">The player season stats as it exists in the system currently</param>
-    /// <param name="performanceComparisonDate">The date used in the player's performance assessment</param>
     /// <param name="statsByGamesToDate">The most up-to-date player season stats from the external MLB source</param>
-    private void ScorePitching(ref PlayerStatsBySeason playerStatsBySeason, DateOnly performanceComparisonDate,
+    private void ScorePitching(ref PlayerStatsBySeason playerStatsBySeason,
         IEnumerable<PlayerPitchingStatsByGame> statsByGamesToDate)
     {
         // The stats by games before the most recent update
@@ -99,16 +96,15 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
         }
 
         // Assess performance to date
-        playerStatsBySeason.AssessPitchingPerformance(performanceComparisonDate, _performanceAssessmentRequirements);
+        playerStatsBySeason.AssessPitchingPerformance(_performanceAssessor);
     }
 
     /// <summary>
     /// Logs new fielding games
     /// </summary>
     /// <param name="playerStatsBySeason">The player season stats as it exists in the system currently</param>
-    /// <param name="performanceComparisonDate">The date used in the player's performance assessment</param>
     /// <param name="statsByGamesToDate">The most up-to-date player season stats from the external MLB source</param>
-    private void ScoreFielding(ref PlayerStatsBySeason playerStatsBySeason, DateOnly performanceComparisonDate,
+    private void ScoreFielding(ref PlayerStatsBySeason playerStatsBySeason,
         IEnumerable<PlayerFieldingStatsByGame> statsByGamesToDate)
     {
         // The stats by games before the most recent update
@@ -128,6 +124,6 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
         }
 
         // Assess performance to date
-        playerStatsBySeason.AssessFieldingPerformance(performanceComparisonDate, _performanceAssessmentRequirements);
+        playerStatsBySeason.AssessFieldingPerformance(_performanceAssessor);
     }
 }
