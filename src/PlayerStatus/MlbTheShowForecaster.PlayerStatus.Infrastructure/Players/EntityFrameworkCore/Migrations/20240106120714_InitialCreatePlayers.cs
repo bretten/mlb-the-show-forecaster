@@ -16,6 +16,8 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
             migrationBuilder.EnsureSchema(
                 name: "players");
 
+            migrationBuilder.Sql(Constants.Collations.AccentInsensitiveDefinition);
+
             migrationBuilder.CreateTable(
                 name: "players",
                 schema: "players",
@@ -23,8 +25,8 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     mlb_id = table.Column<int>(type: "integer", nullable: false),
-                    first_name = table.Column<string>(type: "text", nullable: false),
-                    last_name = table.Column<string>(type: "text", nullable: false),
+                    first_name = table.Column<string>(type: "text", nullable: false, collation: "accent_insensitive"),
+                    last_name = table.Column<string>(type: "text", nullable: false, collation: "accent_insensitive"),
                     birthdate = table.Column<DateOnly>(type: "date", nullable: false),
                     position = table.Column<string>(type: "varchar(4)", nullable: false),
                     mlb_debut_date = table.Column<DateOnly>(type: "date", nullable: false),
@@ -38,6 +40,14 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
                     table.PrimaryKey("players_pkey", x => x.id);
                     table.UniqueConstraint("players_mlb_id_key", x => x.mlb_id);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "players_first_name_last_name_idx",
+                schema: "players",
+                table: "players",
+                columns: new[] { "first_name", "last_name" })
+                .Annotation("Npgsql:IndexMethod", "btree")
+                .Annotation("Relational:Collation", new[] { "accent_insensitive" });
         }
 
         /// <inheritdoc />
@@ -46,6 +56,8 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
             migrationBuilder.DropTable(
                 name: "players",
                 schema: "players");
+
+            migrationBuilder.Sql($"DROP COLLATION IF EXISTS {Constants.Collations.AccentInsensitive}");
         }
     }
 }

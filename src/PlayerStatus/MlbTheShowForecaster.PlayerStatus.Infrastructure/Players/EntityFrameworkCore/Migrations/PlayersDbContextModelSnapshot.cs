@@ -53,13 +53,15 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("first_name")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(2)
+                        .UseCollation("accent_insensitive");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("last_name")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(3)
+                        .UseCollation("accent_insensitive");
 
                     b.Property<DateOnly>("MlbDebutDate")
                         .HasColumnType("date")
@@ -94,6 +96,11 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Player
 
                     b.HasAlternateKey("MlbId")
                         .HasName("players_mlb_id_key");
+
+                    b.HasIndex(new[] { "FirstName", "LastName" }, "players_first_name_last_name_idx");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "FirstName", "LastName" }, "players_first_name_last_name_idx"), "btree");
+                    NpgsqlIndexBuilderExtensions.UseCollation(b.HasIndex(new[] { "FirstName", "LastName" }, "players_first_name_last_name_idx"), new[] { "accent_insensitive" });
 
                     b.ToTable("players", "players");
                 });

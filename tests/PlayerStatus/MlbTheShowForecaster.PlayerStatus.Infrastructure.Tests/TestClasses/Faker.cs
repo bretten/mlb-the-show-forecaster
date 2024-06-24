@@ -57,12 +57,13 @@ public static class Faker
         );
     }
 
-    public static Player FakePlayer(int? mlbId = null, Team? team = null, bool active = false)
+    public static Player FakePlayer(int? mlbId = null, string? firstName = null, string? lastName = null,
+        Team? team = null, bool active = false)
     {
         return Player.Create(
             mlbId == null ? MlbId.Create(DefaultMlbId) : MlbId.Create(mlbId.Value),
-            PersonName.Create(DefaultFirstName),
-            PersonName.Create(DefaultLastName),
+            PersonName.Create(firstName ?? DefaultFirstName),
+            PersonName.Create(lastName ?? DefaultLastName),
             new DateOnly(1990, 1, 1),
             Position.Catcher,
             new DateOnly(2010, 1, 1),

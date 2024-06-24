@@ -45,6 +45,11 @@ public sealed class PlayerEntityTypeConfiguration : IEntityTypeConfiguration<Pla
         builder.HasAlternateKey(e => e.MlbId)
             .HasName(Constants.Players.Keys.MlbIdKey);
 
+        // Index for querying by first and last name
+        builder.HasIndex(e => new { e.FirstName, e.LastName }, Constants.Players.Indexes.FirstNameAndLastName)
+            .HasMethod("btree")
+            .UseCollation(Constants.Collations.AccentInsensitive);
+
         var columnOrder = 0;
 
         builder.Property(e => e.Id)
@@ -64,14 +69,16 @@ public sealed class PlayerEntityTypeConfiguration : IEntityTypeConfiguration<Pla
             .HasColumnName(Constants.Players.FirstName)
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
-                v => PersonName.Create(v));
+                v => PersonName.Create(v))
+            .UseCollation(Constants.Collations.AccentInsensitive);
 
         builder.Property(e => e.LastName)
             .IsRequired()
             .HasColumnName(Constants.Players.LastName)
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
-                v => PersonName.Create(v));
+                v => PersonName.Create(v))
+            .UseCollation(Constants.Collations.AccentInsensitive);
 
         builder.Property(e => e.Birthdate)
             .IsRequired()

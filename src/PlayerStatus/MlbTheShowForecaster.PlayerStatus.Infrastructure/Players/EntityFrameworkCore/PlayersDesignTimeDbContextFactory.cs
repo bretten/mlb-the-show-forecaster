@@ -25,7 +25,8 @@ public sealed class PlayersDesignTimeDbContextFactory : IDesignTimeDbContextFact
         }
 
         var optionsBuilder = new DbContextOptionsBuilder<PlayersDbContext>();
-        optionsBuilder.UseNpgsql(args[0]);
+        optionsBuilder.UseNpgsql(args[0],
+            builder => { builder.MigrationsHistoryTable(Constants.MigrationsTable, Constants.Schema); });
         return new PlayersDbContext(optionsBuilder.Options, new TeamProvider());
     }
 }
