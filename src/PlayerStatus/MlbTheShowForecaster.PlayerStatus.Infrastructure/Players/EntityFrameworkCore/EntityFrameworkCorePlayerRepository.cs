@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
@@ -53,5 +54,19 @@ public sealed class EntityFrameworkCorePlayerRepository : IPlayerRepository
         return await _dbContext.Players
             .AsNoTracking() // No tracking needed, will update with DbContext.Update(), which will start tracking
             .FirstOrDefaultAsync(x => x.MlbId == mlbId);
+    }
+
+    /// <summary>
+    /// Retrieves all <see cref="Player"/>s by their name
+    /// </summary>
+    /// <param name="firstName">The <see cref="Player"/>'s first name</param>
+    /// <param name="lastName">The <see cref="Player"/>'s last name</param>
+    /// <returns>Any players with a matching name</returns>
+    public async Task<IEnumerable<Player>> GetAllByName(PersonName firstName, PersonName lastName)
+    {
+        return await _dbContext.Players
+            .AsNoTracking()
+            .Where(x => x.FirstName == firstName && x.LastName == lastName)
+            .ToListAsync();
     }
 }

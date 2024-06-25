@@ -97,6 +97,7 @@ public static class PlayerTrackerHostExtensions
             services.AddPlayerStatusMapping();
             services.AddPlayerStatusTracker(context.Configuration);
             services.AddPlayerStatusEntityFrameworkCoreRepositories(context.Configuration);
+            services.AddPlayerSearchService(context.Configuration);
 
             // Background service for tracking player statuses
             services.AddHostedService<ScheduledBackgroundService<IPlayerStatusTracker>>(sp =>

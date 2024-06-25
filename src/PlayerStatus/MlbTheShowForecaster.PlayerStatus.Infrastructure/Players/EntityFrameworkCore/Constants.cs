@@ -13,6 +13,32 @@ public static class Constants
     public const string Schema = "players";
 
     /// <summary>
+    /// Name of the migrations table
+    /// </summary>
+    public const string MigrationsTable = "__EFMigrationsHistory";
+
+    /// <summary>
+    /// Constants for collations
+    /// </summary>
+    public static class Collations
+    {
+        /// <summary>
+        /// Name of the accent insensitive collation
+        /// </summary>
+        public const string AccentInsensitive = "accent_insensitive";
+
+        /// <summary>
+        /// Definition of the accent insensitive collation
+        /// </summary>
+        public const string AccentInsensitiveDefinition = $@"
+           CREATE COLLATION IF NOT EXISTS {AccentInsensitive} (
+                provider = 'icu',
+                locale = 'und-u-ks-level1',
+                deterministic = false
+            );";
+    }
+
+    /// <summary>
     /// Constants for the Players table
     /// </summary>
     public static class Players
@@ -91,6 +117,17 @@ public static class Constants
             /// MLB ID key. Enforces the uniqueness of the MLB ID and adds an index
             /// </summary>
             public const string MlbIdKey = $"{TableName}_{MlbId}_key";
+        }
+
+        /// <summary>
+        /// Index names for <see cref="Player"/>
+        /// </summary>
+        public static class Indexes
+        {
+            /// <summary>
+            /// For querying by first and last name
+            /// </summary>
+            public const string FirstNameAndLastName = $"{TableName}_{FirstName}_{LastName}_idx";
         }
     }
 }

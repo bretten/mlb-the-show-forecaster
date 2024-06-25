@@ -12,6 +12,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
+        <PackageReference Include="Moq" Version="4.20.70" />
         <PackageReference Include="Testcontainers.PostgreSql" Version="3.8.0" />
         <PackageReference Include="Testcontainers.RabbitMq" Version="3.8.0" />
         <PackageReference Include="xunit" Version="2.4.2"/>
@@ -27,6 +28,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\..\src\PlayerStatus\Apps\MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker\MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.csproj" />
+      <ProjectReference Include="..\..\MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests\MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.csproj" />
     </ItemGroup>
 
 </Project>

@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 
@@ -28,4 +29,12 @@ public interface IPlayerRepository
     /// <param name="mlbId">The <see cref="MlbId"/> of the <see cref="Player"/></param>
     /// <returns>A <see cref="Player"/> corresponding to the <see cref="MlbId"/>, otherwise null</returns>
     Task<Player?> GetByMlbId(MlbId mlbId);
+
+    /// <summary>
+    /// Retrieves all <see cref="Player"/>s by their name
+    /// </summary>
+    /// <param name="firstName">The <see cref="Player"/>'s first name</param>
+    /// <param name="lastName">The <see cref="Player"/>'s last name</param>
+    /// <returns>Any players with a matching name</returns>
+    Task<IEnumerable<Player>> GetAllByName(PersonName firstName, PersonName lastName);
 }

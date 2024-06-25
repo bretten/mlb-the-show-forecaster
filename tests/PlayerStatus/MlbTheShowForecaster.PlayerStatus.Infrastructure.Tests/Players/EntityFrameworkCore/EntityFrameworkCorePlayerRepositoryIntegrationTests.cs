@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
@@ -26,6 +27,8 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
         try
         {
             _container = new PostgreSqlBuilder()
+                .WithImage("postgres:15-alpine") // Has support for locale-provider=icu
+                .WithEnvironment("POSTGRES_INITDB_ARGS", "--locale-provider=icu --icu-locale=en-US")
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
                 .WithPassword("password99")
@@ -120,6 +123,42 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
         Assert.Equal(fakePlayer, actual);
     }
 
+    [Theory]
+    // Both db and query accent are equal
+    [InlineData("áéíóúñ", "áéíóúñ", "áéíóúñ", "áéíóúñ")]
+    [InlineData("aeioun", "aeioun", "aeioun", "aeioun")]
+    // Db accent is different than query
+    [InlineData("áéíóúñ", "áéíóúñ", "aeioun", "aeioun")]
+    [InlineData("aeioun", "aeioun", "áéíóúñ", "áéíóúñ")]
+    // DB accent and case is different than query
+    [InlineData("áéíóúñ", "áéíóúñ", "AEIOUN", "AEIOUN")]
+    [InlineData("AEIOUN", "AEIOUN", "áéíóúñ", "áéíóúñ")]
+    [Trait("Category", "Integration")]
+    public async Task GetAllByName_FirstAndLastName_ReturnsPlayerFromDbContextSet(string firstName, string lastName,
+        string firstNameQuery, string lastNameQuery)
+    {
+        // Arrange
+        var fakeTeam = Faker.FakeTeam();
+        var fakePlayer = Faker.FakePlayer(firstName: firstName, lastName: lastName, team: fakeTeam);
+        var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.Abbreviation) == fakeTeam);
+
+        await using var connection = await GetDbConnection();
+        await using var dbContext = GetDbContext(connection, stubTeamProvider);
+        await dbContext.Database.MigrateAsync();
+
+        await dbContext.AddAsync(fakePlayer);
+        await dbContext.SaveChangesAsync();
+
+        var repo = new EntityFrameworkCorePlayerRepository(dbContext);
+
+        // Act
+        var actual = await repo.GetAllByName(firstName: PersonName.Create(firstNameQuery),
+            lastName: PersonName.Create(lastNameQuery));
+
+        // Assert
+        Assert.Equal(fakePlayer, actual.First());
+    }
+
     public async Task InitializeAsync() => await _container.StartAsync();
 
     public async Task DisposeAsync() => await _container.StopAsync();
@@ -134,7 +173,10 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
     private PlayersDbContext GetDbContext(DbConnection connection, ITeamProvider stubTeamProvider)
     {
         var contextOptions = new DbContextOptionsBuilder<PlayersDbContext>()
-            .UseNpgsql(connection)
+            .UseNpgsql(connection,
+                builder => { builder.MigrationsHistoryTable(Constants.MigrationsTable, Constants.Schema); })
+            .LogTo(Console.WriteLine)
+            .EnableSensitiveDataLogging()
             .Options;
         return new PlayersDbContext(contextOptions, stubTeamProvider);
     }
