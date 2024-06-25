@@ -21,4 +21,11 @@ public interface ITeamProvider
     /// <param name="abbreviation">The <see cref="TeamAbbreviation"/></param>
     /// <returns>The corresponding <see cref="Team"/></returns>
     Team GetBy(TeamAbbreviation abbreviation);
+
+    /// <summary>
+    /// Retrieves a <see cref="Team"/> by its common names or abbreviations
+    /// </summary>
+    /// <param name="name">The name of the team</param>
+    /// <returns>The corresponding <see cref="Team"/> or null</returns>
+    Team? GetBy(string name);
 }

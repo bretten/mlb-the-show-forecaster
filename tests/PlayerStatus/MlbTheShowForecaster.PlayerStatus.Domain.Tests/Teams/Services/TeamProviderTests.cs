@@ -71,4 +71,62 @@ public class TeamProviderTests
         Assert.Equal("Seattle Mariners", actual.Name.Value);
         Assert.Equal("SEA", actual.Abbreviation.Value);
     }
+
+    [Theory]
+    [InlineData("AZ", TeamInfo.AZ)]
+    [InlineData("ATL", TeamInfo.ATL)]
+    [InlineData("BAL", TeamInfo.BAL)]
+    [InlineData("BOS", TeamInfo.BOS)]
+    [InlineData("CHC", TeamInfo.CHC)]
+    [InlineData("CIN", TeamInfo.CIN)]
+    [InlineData("CLE", TeamInfo.CLE)]
+    [InlineData("COL", TeamInfo.COL)]
+    [InlineData("CWS", TeamInfo.CWS)]
+    [InlineData("DET", TeamInfo.DET)]
+    [InlineData("HOU", TeamInfo.HOU)]
+    [InlineData("KC", TeamInfo.KC)]
+    [InlineData("LAA", TeamInfo.LAA)]
+    [InlineData("LAD", TeamInfo.LAD)]
+    [InlineData("MIA", TeamInfo.MIA)]
+    [InlineData("MIL", TeamInfo.MIL)]
+    [InlineData("MIN", TeamInfo.MIN)]
+    [InlineData("NYM", TeamInfo.NYM)]
+    [InlineData("NYY", TeamInfo.NYY)]
+    [InlineData("OAK", TeamInfo.OAK)]
+    [InlineData("PHI", TeamInfo.PHI)]
+    [InlineData("PIT", TeamInfo.PIT)]
+    [InlineData("SD", TeamInfo.SD)]
+    [InlineData("SEA", TeamInfo.SEA)]
+    [InlineData("SF", TeamInfo.SF)]
+    [InlineData("STL", TeamInfo.STL)]
+    [InlineData("TB", TeamInfo.TB)]
+    [InlineData("TEX", TeamInfo.TEX)]
+    [InlineData("TOR", TeamInfo.TOR)]
+    [InlineData("WSH", TeamInfo.WSH)]
+    public void GetBy_Name_ReturnsTeam(string team, TeamInfo expectedResult)
+    {
+        // Arrange
+        var provider = new TeamProvider();
+        var expectedTeam = Team.Create(expectedResult);
+
+        // Act
+        var actual = provider.GetBy(team);
+
+        // Assert
+        Assert.Equal(expectedTeam, actual);
+    }
+
+    [Fact]
+    public void GetBy_UnknownTeam_ReturnsNull()
+    {
+        // Arrange
+        var provider = new TeamProvider();
+        const string unknownTeam = "team";
+
+        // Act
+        var actual = provider.GetBy(unknownTeam);
+
+        // Assert
+        Assert.Null(actual);
+    }
 }
