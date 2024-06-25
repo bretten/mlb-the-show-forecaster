@@ -35,24 +35,25 @@ public class PlayerController : Controller
     /// <summary>
     /// Finds a player by their name and team
     /// </summary>
-    /// <param name="name">The player's name</param>
-    /// <param name="team">the player's team</param>
+    /// <param name="nameQuery">The player's name</param>
+    /// <param name="teamQuery">the player's team</param>
     /// <returns>The player, or returns a 404 status code if not found</returns>
-    [HttpGet("players/name/{name}/{team}")]
-    public async Task<ActionResult<PlayerResponse>> FindPlayer(string name, string team)
+    [HttpGet("players")]
+    public async Task<ActionResult> FindPlayer([FromQuery(Name = "name")] string nameQuery,
+        [FromQuery(Name = "team")] string teamQuery)
     {
-        var correspondingTeam = _teamProvider.GetBy(team);
-        if (correspondingTeam == null)
+        var team = _teamProvider.GetBy(teamQuery);
+        if (team == null)
         {
             return new NotFoundResult();
         }
 
-        var player = await _playerSearchService.FindPlayer(name, correspondingTeam);
+        var player = await _playerSearchService.FindPlayer(nameQuery, team);
         if (player == null)
         {
             return new NotFoundResult();
         }
 
-        return new ActionResult<PlayerResponse>(PlayerResponse.From(player));
+        return new JsonResult(PlayerResponse.From(player));
     }
 }
