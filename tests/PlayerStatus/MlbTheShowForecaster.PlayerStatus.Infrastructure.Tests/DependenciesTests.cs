@@ -114,6 +114,27 @@ public class DependenciesTests
         Assert.IsType<UnitOfWork<PlayersDbContext>>(actual.GetRequiredService<IUnitOfWork<IPlayerWork>>());
     }
 
+    [Fact]
+    public void AddPlayerSearchService_ServiceCollection_RegistersDependencies()
+    {
+        // Arrange
+        var s = new ServiceCollection();
+        const string cs = "Server=localhost;Port=5432;Database=test;Uid=postgres;Pwd=postgres;";
+        var settings = new Dictionary<string, string?>
+        {
+            { $"ConnectionStrings:{Dependencies.ConfigKeys.PlayersConnection}", cs }
+        };
+        var config = GetConfig(settings);
+
+        // Act
+        s.AddPlayerSearchService(config);
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPlayerSearchService)).Lifetime);
+        Assert.IsType<PlayerSearchService>(actual.GetRequiredService<IPlayerSearchService>());
+    }
+
     private static IConfiguration GetConfig(Dictionary<string, string?> settings)
     {
         return new ConfigurationBuilder()

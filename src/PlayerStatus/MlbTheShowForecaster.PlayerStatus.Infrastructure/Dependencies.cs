@@ -98,6 +98,18 @@ public static class Dependencies
     }
 
     /// <summary>
+    /// Registers <see cref="IPlayerSearchService"/>
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
+    /// <param name="config">Configuration with connection strings</param>
+    public static void AddPlayerSearchService(this IServiceCollection services, IConfiguration config)
+    {
+        services.AddPlayerTeamProvider();
+        services.AddPlayerStatusEntityFrameworkCoreRepositories(config);
+        services.TryAddTransient<IPlayerSearchService, PlayerSearchService>();
+    }
+
+    /// <summary>
     /// Registers the MLB API
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
