@@ -116,6 +116,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{9F0C9E91-9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.Tests", "tests\PlayerStatus\Apps\MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.Tests\MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.Tests.csproj", "{AE047F79-B47E-4902-85F6-7B4467A5FB92}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DomainApis", "DomainApis", "{3C09392D-9C90-40C3-82D4-927ED6C71BF2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DomainApis", "DomainApis", "{10A84B0E-28AD-40D9-9CFB-BA14F0D2A4E7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.DomainApis.PlayerStatusApi", "src\DomainApis\MlbTheShowForecaster.DomainApis.PlayerStatusApi\MlbTheShowForecaster.DomainApis.PlayerStatusApi.csproj", "{5E4D248B-C958-45A7-B696-720CCBBA8F30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.DomainApis.PlayerStatusApi.Tests", "tests\DomainApis\MlbTheShowForecaster.DomainApis.PlayerStatusApi.Tests\MlbTheShowForecaster.DomainApis.PlayerStatusApi.Tests.csproj", "{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -178,6 +186,10 @@ Global
 		{11C4B691-85F8-476E-98F3-14A0993F3404} = {B5DC79AD-1CE1-42B0-BAB1-390756F0FE70}
 		{9F0C9E91-9A77-402D-9BC9-F67DD195ACA0} = {BF2368C4-74CE-4B23-91C1-11CF1495E01B}
 		{AE047F79-B47E-4902-85F6-7B4467A5FB92} = {9F0C9E91-9A77-402D-9BC9-F67DD195ACA0}
+		{3C09392D-9C90-40C3-82D4-927ED6C71BF2} = {FC3388A5-780A-43D2-B29D-FCBBDF014891}
+		{10A84B0E-28AD-40D9-9CFB-BA14F0D2A4E7} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
+		{5E4D248B-C958-45A7-B696-720CCBBA8F30} = {3C09392D-9C90-40C3-82D4-927ED6C71BF2}
+		{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C} = {10A84B0E-28AD-40D9-9CFB-BA14F0D2A4E7}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{037B88D0-DEA8-4F3E-83B8-94E49DF2641B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -332,5 +344,13 @@ Global
 		{AE047F79-B47E-4902-85F6-7B4467A5FB92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AE047F79-B47E-4902-85F6-7B4467A5FB92}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AE047F79-B47E-4902-85F6-7B4467A5FB92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E4D248B-C958-45A7-B696-720CCBBA8F30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E4D248B-C958-45A7-B696-720CCBBA8F30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E4D248B-C958-45A7-B696-720CCBBA8F30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E4D248B-C958-45A7-B696-720CCBBA8F30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
