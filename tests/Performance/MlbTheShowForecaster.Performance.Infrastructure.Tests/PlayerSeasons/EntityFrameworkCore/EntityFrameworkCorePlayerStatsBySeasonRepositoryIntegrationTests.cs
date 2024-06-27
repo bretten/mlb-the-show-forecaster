@@ -238,7 +238,7 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async Task GetByMlbId_MlbId_ReturnsPlayerStatsBySeasonForMlbId()
+    public async Task GetBy_SeasonAndMlbId_ReturnsPlayerStatsBySeasonForMlbId()
     {
         // Arrange
         var batting = new List<PlayerBattingStatsByGame>
@@ -274,7 +274,7 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
         var repo = new EntityFrameworkCorePlayerStatsBySeasonRepository(assertDbContext);
 
         // Act
-        var actual = await repo.GetByMlbId(fakePlayerStatsBySeason.PlayerMlbId);
+        var actual = await repo.GetBy(fakePlayerStatsBySeason.SeasonYear, fakePlayerStatsBySeason.PlayerMlbId);
 
         // Assert
         Assert.NotNull(actual);

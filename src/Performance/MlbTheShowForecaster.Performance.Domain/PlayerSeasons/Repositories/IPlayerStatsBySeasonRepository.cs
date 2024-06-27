@@ -30,11 +30,12 @@ public interface IPlayerStatsBySeasonRepository
     Task<PlayerStatsBySeason?> GetById(Guid id);
 
     /// <summary>
-    /// Returns a <see cref="PlayerStatsBySeason"/> for the specified MLB ID
+    /// Returns a <see cref="PlayerStatsBySeason"/> for the specified season and MLB ID
     /// </summary>
+    /// <param name="seasonYear">The season</param>
     /// <param name="mlbId">The MLB ID of the <see cref="PlayerStatsBySeason"/></param>
-    /// <returns><see cref="PlayerStatsBySeason"/> for the specified MLB ID</returns>
-    Task<PlayerStatsBySeason?> GetByMlbId(MlbId mlbId);
+    /// <returns><see cref="PlayerStatsBySeason"/> for the specified season and MLB ID</returns>
+    Task<PlayerStatsBySeason?> GetBy(SeasonYear seasonYear, MlbId mlbId);
 
     /// <summary>
     /// Returns all <see cref="PlayerStatsBySeason"/> for the specified season
