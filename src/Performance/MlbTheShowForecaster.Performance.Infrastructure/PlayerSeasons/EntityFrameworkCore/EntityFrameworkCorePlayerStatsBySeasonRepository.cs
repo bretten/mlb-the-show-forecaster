@@ -52,6 +52,18 @@ public sealed class EntityFrameworkCorePlayerStatsBySeasonRepository : IPlayerSt
     }
 
     /// <summary>
+    /// Returns a <see cref="PlayerStatsBySeason"/> for the specified season and MLB ID
+    /// </summary>
+    /// <param name="seasonYear">The season</param>
+    /// <param name="mlbId">The MLB ID of the <see cref="PlayerStatsBySeason"/></param>
+    /// <returns><see cref="PlayerStatsBySeason"/> for the specified season and MLB ID</returns>
+    public async Task<PlayerStatsBySeason?> GetBy(SeasonYear seasonYear, MlbId mlbId)
+    {
+        return await _dbContext.PlayerStatsBySeasonsWithGames()
+            .FirstOrDefaultAsync(x => x.SeasonYear == seasonYear && x.PlayerMlbId == mlbId);
+    }
+
+    /// <summary>
     /// Returns all <see cref="PlayerStatsBySeason"/> for the specified season
     /// </summary>
     /// <param name="seasonYear">The season</param>

@@ -238,6 +238,57 @@ public class EntityFrameworkCorePlayerStatsBySeasonRepositoryIntegrationTests : 
 
     [Fact]
     [Trait("Category", "Integration")]
+    public async Task GetBy_SeasonAndMlbId_ReturnsPlayerStatsBySeasonForMlbId()
+    {
+        // Arrange
+        var batting = new List<PlayerBattingStatsByGame>
+        {
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 3, 31), gameId: 1),
+            Faker.FakePlayerBattingStats(gameDate: new DateOnly(2024, 4, 1), gameId: 2)
+        };
+        var pitching = new List<PlayerPitchingStatsByGame>
+        {
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 2), gameId: 1),
+            Faker.FakePlayerPitchingStats(gameDate: new DateOnly(2024, 4, 3), gameId: 2)
+        };
+        var fielding = new List<PlayerFieldingStatsByGame>
+        {
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 4), gameId: 1),
+            Faker.FakePlayerFieldingStats(gameDate: new DateOnly(2024, 4, 5), gameId: 2)
+        };
+        var fakePlayerStatsBySeason = Faker.FakePlayerStatsBySeason(1, 2024, battingScore: 0.1234m,
+            pitchingScore: 0.2345m, fieldingScore: 0.3456m, battingStatsByGames: batting,
+            pitchingStatsByGames: pitching, fieldingStatsByGames: fielding);
+
+        await using var connection = await GetDbConnection();
+        await using var dbContext = GetDbContext(connection);
+        await dbContext.Database.MigrateAsync();
+
+        await dbContext.AddAsync(fakePlayerStatsBySeason);
+        await dbContext.SaveChangesAsync();
+
+        await using var assertConnection =
+            await GetDbConnection(); // Re-create the context so that the record is freshly retrieved from the database
+        await using var assertDbContext = GetDbContext(assertConnection);
+        await assertDbContext.Database.MigrateAsync();
+        var repo = new EntityFrameworkCorePlayerStatsBySeasonRepository(assertDbContext);
+
+        // Act
+        var actual = await repo.GetBy(fakePlayerStatsBySeason.SeasonYear, fakePlayerStatsBySeason.PlayerMlbId);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.Equal(fakePlayerStatsBySeason, actual);
+        Assert.Equal(0.1234m, actual.BattingScore.Value);
+        Assert.Equal(0.2345m, actual.PitchingScore.Value);
+        Assert.Equal(0.3456m, actual.FieldingScore.Value);
+        Assert.Equal(batting, actual.BattingStatsByGamesChronologically);
+        Assert.Equal(pitching, actual.PitchingStatsByGamesChronologically);
+        Assert.Equal(fielding, actual.FieldingStatsByGamesChronologically);
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
     public async Task GetAll_SeasonYear_ReturnsAllPlayerStatsBySeasonWithMatchingSeason()
     {
         // Arrange
