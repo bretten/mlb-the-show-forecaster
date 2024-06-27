@@ -3,7 +3,7 @@
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Api.Responses;
 
 /// <summary>
-/// Represents a player's season stats
+/// Represents a player's season performance
 /// </summary>
 /// <param name="Season">The player's season</param>
 /// <param name="MlbId">The player's MLB ID</param>

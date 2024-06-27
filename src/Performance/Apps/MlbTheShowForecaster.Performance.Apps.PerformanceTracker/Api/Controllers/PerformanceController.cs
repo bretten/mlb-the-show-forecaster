@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Api.Controllers;
 
 /// <summary>
-/// Exposes statistics
+/// Exposes performance data
 /// </summary>
 [ApiController]
 public sealed class PerformanceController : Controller
