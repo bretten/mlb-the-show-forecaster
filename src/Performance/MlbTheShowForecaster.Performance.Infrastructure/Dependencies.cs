@@ -80,6 +80,7 @@ public static class Dependencies
             config.GetRequiredValue<MinMaxFieldingStatCriteria[]>(ConfigKeys.MinMaxNormFieldingCriteria)
         ));
         services.AddSingleton<IPerformanceAssessor, MinMaxNormalizationPerformanceAssessor>();
+        services.AddSingleton<IParticipationAssessor, MinimumRequirementsParticipationAssessor>();
     }
 
     /// <summary>

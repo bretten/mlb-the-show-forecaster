@@ -131,10 +131,15 @@ public class DependenciesTests
         Assert.Equal(8, fieldingCriteria1.Min);
         Assert.Equal(80, fieldingCriteria1.Max);
 
-        // Assessor
+        // Performance assessor
         Assert.Equal(ServiceLifetime.Singleton,
             s.First(x => x.ServiceType == typeof(IPerformanceAssessor)).Lifetime);
         Assert.IsType<MinMaxNormalizationPerformanceAssessor>(actual.GetRequiredService<IPerformanceAssessor>());
+
+        // Participation assessor
+        Assert.Equal(ServiceLifetime.Singleton,
+            s.First(x => x.ServiceType == typeof(IParticipationAssessor)).Lifetime);
+        Assert.IsType<MinimumRequirementsParticipationAssessor>(actual.GetRequiredService<IParticipationAssessor>());
     }
 
     [Fact]
