@@ -51,7 +51,7 @@ public class MinMaxNormalizationPerformanceAssessorTests
             new("Losses", 0.3m, true, min: 1, max: 100) // Lower is better
         };
 
-        var stats = Faker.FakePitchingStats(strikeouts: strikeouts, wins: wins, losses: losses);
+        var stats = Faker.FakePitchingStats(strikeouts: strikeouts, wins: wins, losses: losses, numberOfPitches: 1);
 
         var options = new MinMaxNormalizationCriteria(0.1m, BasicBattingCriteria, criteria, BasicFieldingCriteria);
         var assessor = new MinMaxNormalizationPerformanceAssessor(options);
