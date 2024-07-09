@@ -50,11 +50,11 @@ public class PlayerSeasonScorekeeperTests
         // Performance assessment
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessBatting(It.IsAny<BattingStats>()))
-            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult());
+            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScore());
         stubPerformanceAssessor.Setup(x => x.AssessPitching(It.IsAny<PitchingStats>()))
-            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult());
+            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScore());
         stubPerformanceAssessor.Setup(x => x.AssessFielding(It.IsAny<FieldingStats>()))
-            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult());
+            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScore());
         stubPerformanceAssessor.Setup(x => x.Compare(It.IsAny<PerformanceScore>(), It.IsAny<PerformanceScore>()))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparison());
 

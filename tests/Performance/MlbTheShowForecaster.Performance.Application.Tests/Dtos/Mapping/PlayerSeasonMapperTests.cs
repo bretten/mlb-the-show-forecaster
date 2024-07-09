@@ -35,11 +35,11 @@ public class PlayerSeasonMapperTests
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessBatting(It.IsAny<BattingStats>()))
-            .Returns(Tests.TestClasses.Faker.FakePerformanceAssessmentResult(0.1m));
+            .Returns(Tests.TestClasses.Faker.FakePerformanceScore(0.1m));
         stubPerformanceAssessor.Setup(x => x.AssessPitching(It.IsAny<PitchingStats>()))
-            .Returns(Tests.TestClasses.Faker.FakePerformanceAssessmentResult(0.2m));
+            .Returns(Tests.TestClasses.Faker.FakePerformanceScore(0.2m));
         stubPerformanceAssessor.Setup(x => x.AssessFielding(It.IsAny<FieldingStats>()))
-            .Returns(Tests.TestClasses.Faker.FakePerformanceAssessmentResult(0.3m));
+            .Returns(Tests.TestClasses.Faker.FakePerformanceScore(0.3m));
 
         var mapper = new PlayerSeasonMapper(stubPerformanceAssessor.Object);
 

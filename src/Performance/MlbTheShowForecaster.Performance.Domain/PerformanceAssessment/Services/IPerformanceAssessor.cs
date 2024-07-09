@@ -16,21 +16,21 @@ public interface IPerformanceAssessor
     /// </summary>
     /// <param name="stats"><see cref="BattingStats"/></param>
     /// <returns>The assessment result</returns>
-    PerformanceAssessmentResult AssessBatting(BattingStats stats);
+    PerformanceScore AssessBatting(BattingStats stats);
 
     /// <summary>
     /// Should assess <see cref="PitchingStats"/>
     /// </summary>
     /// <param name="stats"><see cref="PitchingStats"/></param>
     /// <returns>The assessment result</returns>
-    PerformanceAssessmentResult AssessPitching(PitchingStats stats);
+    PerformanceScore AssessPitching(PitchingStats stats);
 
     /// <summary>
     /// Should assess <see cref="FieldingStats"/>
     /// </summary>
     /// <param name="stats"><see cref="FieldingStats"/></param>
     /// <returns>The assessment result</returns>
-    PerformanceAssessmentResult AssessFielding(FieldingStats stats);
+    PerformanceScore AssessFielding(FieldingStats stats);
 
     /// <summary>
     /// Should compare an old and new <see cref="PerformanceScore"/>

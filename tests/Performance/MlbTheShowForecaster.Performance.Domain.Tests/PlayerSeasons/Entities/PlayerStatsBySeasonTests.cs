@@ -567,7 +567,7 @@ public class PlayerStatsBySeasonTests
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessBatting(It.IsAny<BattingStats>()))
-            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult(newScore.Value));
+            .Returns(newScore);
         stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonIncrease());
 
@@ -590,7 +590,7 @@ public class PlayerStatsBySeasonTests
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessBatting(It.IsAny<BattingStats>()))
-            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult(newScore.Value));
+            .Returns(newScore);
         stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonDecrease());
 
@@ -613,7 +613,7 @@ public class PlayerStatsBySeasonTests
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessPitching(It.IsAny<PitchingStats>()))
-            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult(newScore.Value));
+            .Returns(newScore);
         stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonIncrease());
 
@@ -636,7 +636,7 @@ public class PlayerStatsBySeasonTests
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessPitching(It.IsAny<PitchingStats>()))
-            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult(newScore.Value));
+            .Returns(newScore);
         stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonDecrease());
 
@@ -659,7 +659,7 @@ public class PlayerStatsBySeasonTests
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessFielding(It.IsAny<FieldingStats>()))
-            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult(newScore.Value));
+            .Returns(newScore);
         stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonIncrease());
 
@@ -682,7 +682,7 @@ public class PlayerStatsBySeasonTests
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessFielding(It.IsAny<FieldingStats>()))
-            .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceAssessmentResult(newScore.Value));
+            .Returns(newScore);
         stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonDecrease());
 
