@@ -37,13 +37,13 @@ public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
         var pitchingStatsByGame = MapPitchingGames(playerSeason.GamePitchingStats).ToList();
         var fieldingStatsByGame = MapFieldingGames(playerSeason.GameFieldingStats).ToList();
 
-        var battingAssessment = _performanceAssessor.AssessBatting(BattingStats.Create(battingStatsByGame));
-        var pitchingAssessment = _performanceAssessor.AssessPitching(PitchingStats.Create(pitchingStatsByGame));
-        var fieldingAssessment = _performanceAssessor.AssessFielding(FieldingStats.Create(fieldingStatsByGame));
+        var battingScore = _performanceAssessor.AssessBatting(BattingStats.Create(battingStatsByGame));
+        var pitchingScore = _performanceAssessor.AssessPitching(PitchingStats.Create(pitchingStatsByGame));
+        var fieldingScore = _performanceAssessor.AssessFielding(FieldingStats.Create(fieldingStatsByGame));
 
-        return PlayerStatsBySeason.Create(playerSeason.PlayerMlbId, playerSeason.SeasonYear,
-            battingScore: battingAssessment.Score, pitchingScore: pitchingAssessment.Score,
-            fieldingScore: fieldingAssessment.Score, battingStatsByGame, pitchingStatsByGame, fieldingStatsByGame);
+        return PlayerStatsBySeason.Create(playerSeason.PlayerMlbId, playerSeason.SeasonYear, battingScore: battingScore,
+            pitchingScore: pitchingScore, fieldingScore: fieldingScore, battingStatsByGame, pitchingStatsByGame,
+            fieldingStatsByGame);
     }
 
     /// <summary>

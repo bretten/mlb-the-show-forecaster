@@ -76,11 +76,11 @@ public sealed class PerformanceController : Controller
 
         return new JsonResult(new PlayerSeasonPerformanceResponse(playerStatsBySeason.SeasonYear.Value,
             playerStatsBySeason.PlayerMlbId.Value,
-            BattingScore: battingScore.Score.Value,
+            BattingScore: battingScore.Value,
             HadSignificantBattingParticipation: significantBattingParticipation,
-            PitchingScore: pitchingScore.Score.Value,
+            PitchingScore: pitchingScore.Value,
             HadSignificantPitchingParticipation: significantPitchingParticipation,
-            FieldingScore: fieldingScore.Score.Value,
+            FieldingScore: fieldingScore.Value,
             HadSignificantFieldingParticipation: significantFieldingParticipation
         ));
     }

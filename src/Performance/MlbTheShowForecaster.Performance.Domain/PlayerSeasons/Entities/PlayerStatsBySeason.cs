@@ -224,8 +224,8 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     public void AssessBattingPerformance(IPerformanceAssessor performanceAssessor)
     {
         // Assess and compare the player's to-date performance
-        var newAssessment = performanceAssessor.AssessBatting(SeasonBattingStats);
-        var comparison = performanceAssessor.Compare(BattingScore, newAssessment.Score);
+        var newScore = performanceAssessor.AssessBatting(SeasonBattingStats);
+        var comparison = performanceAssessor.Compare(BattingScore, newScore);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
@@ -238,7 +238,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         }
 
         // Set the new score
-        BattingScore = newAssessment.Score;
+        BattingScore = newScore;
     }
 
     /// <summary>
@@ -248,8 +248,8 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     public void AssessPitchingPerformance(IPerformanceAssessor performanceAssessor)
     {
         // Assess and compare the player's to-date performance
-        var newAssessment = performanceAssessor.AssessPitching(SeasonPitchingStats);
-        var comparison = performanceAssessor.Compare(PitchingScore, newAssessment.Score);
+        var newScore = performanceAssessor.AssessPitching(SeasonPitchingStats);
+        var comparison = performanceAssessor.Compare(PitchingScore, newScore);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
@@ -262,7 +262,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         }
 
         // Set the new score
-        PitchingScore = newAssessment.Score;
+        PitchingScore = newScore;
     }
 
     /// <summary>
@@ -272,8 +272,8 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     public void AssessFieldingPerformance(IPerformanceAssessor performanceAssessor)
     {
         // Assess and compare the player's to-date performance
-        var newAssessment = performanceAssessor.AssessFielding(SeasonFieldingStats);
-        var comparison = performanceAssessor.Compare(FieldingScore, newAssessment.Score);
+        var newScore = performanceAssessor.AssessFielding(SeasonFieldingStats);
+        var comparison = performanceAssessor.Compare(FieldingScore, newScore);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
@@ -286,7 +286,7 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         }
 
         // Set the new score
-        FieldingScore = newAssessment.Score;
+        FieldingScore = newScore;
     }
 
     /// <summary>

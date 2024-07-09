@@ -32,7 +32,7 @@ public class MinMaxNormalizationPerformanceAssessorTests
         var actual = assessor.AssessBatting(stats);
 
         // Assert
-        Assert.Equal((decimal)expectedScore, actual.Score.Value);
+        Assert.Equal((decimal)expectedScore, actual.Value);
     }
 
     [Theory]
@@ -60,7 +60,29 @@ public class MinMaxNormalizationPerformanceAssessorTests
         var actual = assessor.AssessPitching(stats);
 
         // Assert
-        Assert.Equal((decimal)expectedScore, actual.Score.Value);
+        Assert.Equal((decimal)expectedScore, actual.Value);
+    }
+
+    [Fact]
+    public void AssessPitching_LowerIsBetterPitchingStatsAndNoPitches_CreatesZeroScore()
+    {
+        // Arrange
+        var criteria = new List<MinMaxPitchingStatCriteria>()
+        {
+            new("EarnedRuns", 0.5m, true, min: 0, max: 10),
+            new("Losses", 0.5m, true, min: 0, max: 100)
+        };
+
+        var stats = Faker.FakePitchingStats(earnedRuns: 0, losses: 0, numberOfPitches: 0);
+
+        var options = new MinMaxNormalizationCriteria(0.1m, BasicBattingCriteria, criteria, BasicFieldingCriteria);
+        var assessor = new MinMaxNormalizationPerformanceAssessor(options);
+
+        // Act
+        var actual = assessor.AssessPitching(stats);
+
+        // Assert
+        Assert.Equal(0, actual.Value);
     }
 
     [Theory]
@@ -88,7 +110,7 @@ public class MinMaxNormalizationPerformanceAssessorTests
         var actual = assessor.AssessFielding(stats);
 
         // Assert
-        Assert.Equal((decimal)expectedScore, actual.Score.Value);
+        Assert.Equal((decimal)expectedScore, actual.Value);
     }
 
     [Fact]

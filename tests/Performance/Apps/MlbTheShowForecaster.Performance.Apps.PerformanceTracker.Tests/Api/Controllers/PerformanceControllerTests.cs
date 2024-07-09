@@ -56,11 +56,11 @@ public class PerformanceControllerTests
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessBatting(battingStats))
-            .Returns(Faker.FakePerformanceAssessmentResult(0.1m));
+            .Returns(Faker.FakePerformanceScore(0.1m));
         stubPerformanceAssessor.Setup(x => x.AssessPitching(pitchingStats))
-            .Returns(Faker.FakePerformanceAssessmentResult(0.2m));
+            .Returns(Faker.FakePerformanceScore(0.2m));
         stubPerformanceAssessor.Setup(x => x.AssessFielding(fieldingStats))
-            .Returns(Faker.FakePerformanceAssessmentResult(0.3m));
+            .Returns(Faker.FakePerformanceScore(0.3m));
 
         var stubParticipationAssessor = new Mock<IParticipationAssessor>();
         stubParticipationAssessor.Setup(x => x.AssessBatting(start, end, battingStats))

@@ -49,4 +49,13 @@ public sealed class PerformanceScore : ValueObject
     {
         return new PerformanceScore(score);
     }
+
+    /// <summary>
+    /// Creates a score of zero
+    /// </summary>
+    /// <returns><see cref="PerformanceScore"/> of zero</returns>
+    public static PerformanceScore Zero()
+    {
+        return new PerformanceScore(0);
+    }
 }

@@ -40,30 +40,35 @@ public sealed class MinMaxNormalizationPerformanceAssessor : IPerformanceAssesso
     /// Assesses <see cref="BattingStats"/> using min-max normalization
     /// </summary>
     /// <param name="stats"><see cref="BattingStats"/></param>
-    /// <returns><see cref="PerformanceAssessmentResult"/></returns>
-    public PerformanceAssessmentResult AssessBatting(BattingStats stats)
+    /// <returns><see cref="PerformanceScore"/></returns>
+    public PerformanceScore AssessBatting(BattingStats stats)
     {
-        return new PerformanceAssessmentResult(CalculateScore(stats, _normalizationCriteria.BattingCriteria));
+        return CalculateScore(stats, _normalizationCriteria.BattingCriteria);
     }
 
     /// <summary>
     /// Assesses <see cref="PitchingStats"/> using min-max normalization
     /// </summary>
     /// <param name="stats"><see cref="PitchingStats"/></param>
-    /// <returns><see cref="PerformanceAssessmentResult"/></returns>
-    public PerformanceAssessmentResult AssessPitching(PitchingStats stats)
+    /// <returns><see cref="PerformanceScore"/></returns>
+    public PerformanceScore AssessPitching(PitchingStats stats)
     {
-        return new PerformanceAssessmentResult(CalculateScore(stats, _normalizationCriteria.PitchingCriteria));
+        if (stats.NumberOfPitches.Value == 0)
+        {
+            return PerformanceScore.Zero();
+        }
+
+        return CalculateScore(stats, _normalizationCriteria.PitchingCriteria);
     }
 
     /// <summary>
     /// Assesses <see cref="FieldingStats"/> using min-max normalization
     /// </summary>
     /// <param name="stats"><see cref="FieldingStats"/></param>
-    /// <returns><see cref="PerformanceAssessmentResult"/></returns>
-    public PerformanceAssessmentResult AssessFielding(FieldingStats stats)
+    /// <returns><see cref="PerformanceScore"/></returns>
+    public PerformanceScore AssessFielding(FieldingStats stats)
     {
-        return new PerformanceAssessmentResult(CalculateScore(stats, _normalizationCriteria.FieldingCriteria));
+        return CalculateScore(stats, _normalizationCriteria.FieldingCriteria);
     }
 
     /// <inheritdoc />
