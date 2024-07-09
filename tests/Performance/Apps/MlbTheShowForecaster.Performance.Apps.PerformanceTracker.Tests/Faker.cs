@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
@@ -29,5 +30,10 @@ public static class Faker
     public static PerformanceScore FakePerformanceScore(decimal score = 0.5m)
     {
         return PerformanceScore.Create(score);
+    }
+
+    public static PerformanceAssessmentResult FakePerformanceAssessmentResult(decimal score = 0.5m)
+    {
+        return new PerformanceAssessmentResult(FakePerformanceScore(score));
     }
 }
