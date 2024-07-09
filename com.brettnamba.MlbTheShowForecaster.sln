@@ -124,6 +124,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.Domain
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.DomainApis.PlayerStatusApi.Tests", "tests\DomainApis\MlbTheShowForecaster.DomainApis.PlayerStatusApi.Tests\MlbTheShowForecaster.DomainApis.PlayerStatusApi.Tests.csproj", "{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.DomainApis.PerformanceApi", "src\DomainApis\MlbTheShowForecaster.DomainApis.PerformanceApi\MlbTheShowForecaster.DomainApis.PerformanceApi.csproj", "{5D566CF9-0106-4BD3-8122-00BDB49E9DCC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MlbTheShowForecaster.DomainApis.PerformanceApi.Tests", "tests\DomainApis\MlbTheShowForecaster.DomainApis.PerformanceApi.Tests\MlbTheShowForecaster.DomainApis.PerformanceApi.Tests.csproj", "{93B542FE-D8F9-4571-A6EF-43B8292CA2FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -190,6 +194,8 @@ Global
 		{10A84B0E-28AD-40D9-9CFB-BA14F0D2A4E7} = {E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}
 		{5E4D248B-C958-45A7-B696-720CCBBA8F30} = {3C09392D-9C90-40C3-82D4-927ED6C71BF2}
 		{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C} = {10A84B0E-28AD-40D9-9CFB-BA14F0D2A4E7}
+		{5D566CF9-0106-4BD3-8122-00BDB49E9DCC} = {3C09392D-9C90-40C3-82D4-927ED6C71BF2}
+		{93B542FE-D8F9-4571-A6EF-43B8292CA2FB} = {10A84B0E-28AD-40D9-9CFB-BA14F0D2A4E7}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{037B88D0-DEA8-4F3E-83B8-94E49DF2641B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -352,5 +358,13 @@ Global
 		{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36BAD9B7-2420-4C67-89D2-FC7189DCEB0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D566CF9-0106-4BD3-8122-00BDB49E9DCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D566CF9-0106-4BD3-8122-00BDB49E9DCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D566CF9-0106-4BD3-8122-00BDB49E9DCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D566CF9-0106-4BD3-8122-00BDB49E9DCC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93B542FE-D8F9-4571-A6EF-43B8292CA2FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93B542FE-D8F9-4571-A6EF-43B8292CA2FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93B542FE-D8F9-4571-A6EF-43B8292CA2FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93B542FE-D8F9-4571-A6EF-43B8292CA2FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
