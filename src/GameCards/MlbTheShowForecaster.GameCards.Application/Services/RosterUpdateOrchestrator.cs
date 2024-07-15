@@ -67,7 +67,7 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
 
         // Apply each roster update sequentially (synchronously) so that historical changes are preserved in order
         var results = new List<RosterUpdateOrchestratorResult>();
-        foreach (var rosterUpdate in rosterUpdates)
+        foreach (var rosterUpdate in rosterUpdates.OldToNew)
         {
             await ApplyRosterUpdate(seasonYear, rosterUpdate, cancellationToken);
             results.Add(RosterUpdateOrchestratorResult.Create(rosterUpdate));

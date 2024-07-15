@@ -36,7 +36,7 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
+            .ReturnsAsync(new AllRosterUpdates(new List<RosterUpdate>() { RosterUpdate1.Value }));
 
         // Card catalog
         var mockCardCatalog = Mock.Of<ICardCatalog>();
@@ -80,7 +80,7 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
+            .ReturnsAsync(new AllRosterUpdates(new List<RosterUpdate>() { RosterUpdate1.Value }));
 
         // Card catalog
         var stubCardCatalog = new Mock<ICardCatalog>();
@@ -147,7 +147,8 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value, RosterUpdate2.Value, RosterUpdate3.Value });
+            .ReturnsAsync(new AllRosterUpdates(new List<RosterUpdate>()
+                { RosterUpdate1.Value, RosterUpdate2.Value, RosterUpdate3.Value }));
 
         // Card catalog
         var stubCardCatalog = new Mock<ICardCatalog>();
@@ -231,7 +232,8 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value, RosterUpdate2.Value, RosterUpdate3.Value });
+            .ReturnsAsync(new AllRosterUpdates(new List<RosterUpdate>()
+                { RosterUpdate1.Value, RosterUpdate2.Value, RosterUpdate3.Value }));
 
         // Card catalog
         var stubCardCatalog = new Mock<ICardCatalog>();
@@ -313,7 +315,7 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
+            .ReturnsAsync(new AllRosterUpdates(new List<RosterUpdate>() { RosterUpdate1.Value }));
 
         // Card catalog
         var stubCardCatalog = new Mock<ICardCatalog>();
@@ -375,7 +377,7 @@ public class PlayerRatingHistoryServiceTests
         // Roster update feed
         var stubRosterUpdateFeed = new Mock<IRosterUpdateFeed>();
         stubRosterUpdateFeed.Setup(x => x.GetNewRosterUpdates(Year, cToken))
-            .ReturnsAsync(new List<RosterUpdate>() { RosterUpdate1.Value });
+            .ReturnsAsync(new AllRosterUpdates(new List<RosterUpdate>() { RosterUpdate1.Value }));
 
         // Card catalog
         var mockCardCatalog = Mock.Of<ICardCatalog>();
