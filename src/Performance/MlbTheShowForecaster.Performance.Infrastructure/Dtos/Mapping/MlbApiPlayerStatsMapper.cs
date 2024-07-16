@@ -32,36 +32,38 @@ public sealed class MlbApiPlayerStatsMapper : IMlbApiPlayerStatsMapper
     /// <returns>Batting stats by games</returns>
     private IReadOnlyList<PlayerGameBattingStats> MapBatting(PlayerSeasonStatsByGameDto dto)
     {
-        return dto.GetHittingStats().Select(x => new PlayerGameBattingStats(
-            PlayerMlbId: MlbId.Create(dto.Id),
-            SeasonYear: SeasonYear.Create((ushort)dto.SeasonYear),
-            GameDate: x.Date,
-            GameMlbId: MlbId.Create(x.Game.GamePk),
-            TeamMlbId: MlbId.Create(x.Team.Id),
-            PlateAppearances: NaturalNumber.Create(x.Stat.PlateAppearances),
-            AtBats: NaturalNumber.Create(x.Stat.AtBats),
-            Runs: NaturalNumber.Create(x.Stat.Runs),
-            Hits: NaturalNumber.Create(x.Stat.Hits),
-            Doubles: NaturalNumber.Create(x.Stat.Doubles),
-            Triples: NaturalNumber.Create(x.Stat.Triples),
-            HomeRuns: NaturalNumber.Create(x.Stat.HomeRuns),
-            RunsBattedIn: NaturalNumber.Create(x.Stat.Rbi),
-            BaseOnBalls: NaturalNumber.Create(x.Stat.BaseOnBalls),
-            IntentionalWalks: NaturalNumber.Create(x.Stat.IntentionalWalks),
-            Strikeouts: NaturalNumber.Create(x.Stat.StrikeOuts),
-            StolenBases: NaturalNumber.Create(x.Stat.StolenBases),
-            CaughtStealing: NaturalNumber.Create(x.Stat.CaughtStealing),
-            HitByPitch: NaturalNumber.Create(x.Stat.HitByPitch),
-            SacrificeBunts: NaturalNumber.Create(x.Stat.SacBunts),
-            SacrificeFlies: NaturalNumber.Create(x.Stat.SacFlies),
-            NumberOfPitchesSeen: NaturalNumber.Create(x.Stat.NumberOfPitches),
-            LeftOnBase: NaturalNumber.Create(x.Stat.LeftOnBase),
-            GroundOuts: NaturalNumber.Create(x.Stat.GroundOuts),
-            GroundIntoDoublePlays: NaturalNumber.Create(x.Stat.GroundIntoDoublePlay),
-            GroundIntoTriplePlays: NaturalNumber.Create(x.Stat.GroundIntoTriplePlay),
-            AirOuts: NaturalNumber.Create(x.Stat.AirOuts),
-            CatcherInterferences: NaturalNumber.Create(x.Stat.CatcherInterferences)
-        )).ToImmutableList();
+        return dto.GetHittingStats()
+            .Where(x => x.Stat.PlateAppearances > 0)
+            .Select(x => new PlayerGameBattingStats(
+                PlayerMlbId: MlbId.Create(dto.Id),
+                SeasonYear: SeasonYear.Create((ushort)dto.SeasonYear),
+                GameDate: x.Date,
+                GameMlbId: MlbId.Create(x.Game.GamePk),
+                TeamMlbId: MlbId.Create(x.Team.Id),
+                PlateAppearances: NaturalNumber.Create(x.Stat.PlateAppearances),
+                AtBats: NaturalNumber.Create(x.Stat.AtBats),
+                Runs: NaturalNumber.Create(x.Stat.Runs),
+                Hits: NaturalNumber.Create(x.Stat.Hits),
+                Doubles: NaturalNumber.Create(x.Stat.Doubles),
+                Triples: NaturalNumber.Create(x.Stat.Triples),
+                HomeRuns: NaturalNumber.Create(x.Stat.HomeRuns),
+                RunsBattedIn: NaturalNumber.Create(x.Stat.Rbi),
+                BaseOnBalls: NaturalNumber.Create(x.Stat.BaseOnBalls),
+                IntentionalWalks: NaturalNumber.Create(x.Stat.IntentionalWalks),
+                Strikeouts: NaturalNumber.Create(x.Stat.StrikeOuts),
+                StolenBases: NaturalNumber.Create(x.Stat.StolenBases),
+                CaughtStealing: NaturalNumber.Create(x.Stat.CaughtStealing),
+                HitByPitch: NaturalNumber.Create(x.Stat.HitByPitch),
+                SacrificeBunts: NaturalNumber.Create(x.Stat.SacBunts),
+                SacrificeFlies: NaturalNumber.Create(x.Stat.SacFlies),
+                NumberOfPitchesSeen: NaturalNumber.Create(x.Stat.NumberOfPitches),
+                LeftOnBase: NaturalNumber.Create(x.Stat.LeftOnBase),
+                GroundOuts: NaturalNumber.Create(x.Stat.GroundOuts),
+                GroundIntoDoublePlays: NaturalNumber.Create(x.Stat.GroundIntoDoublePlay),
+                GroundIntoTriplePlays: NaturalNumber.Create(x.Stat.GroundIntoTriplePlay),
+                AirOuts: NaturalNumber.Create(x.Stat.AirOuts),
+                CatcherInterferences: NaturalNumber.Create(x.Stat.CatcherInterferences)
+            )).ToImmutableList();
     }
 
     /// <summary>
