@@ -56,7 +56,7 @@ public sealed class MlbTheShowApiRosterUpdateFeed : IRosterUpdateFeed
     /// <param name="seasonYear">The season to check for roster updates</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>New roster updates</returns>
-    public async Task<IEnumerable<RosterUpdate>> GetNewRosterUpdates(SeasonYear seasonYear,
+    public async Task<AllRosterUpdates> GetNewRosterUpdates(SeasonYear seasonYear,
         CancellationToken cancellationToken = default)
     {
         // Get the client for the specified year
@@ -84,11 +84,11 @@ public sealed class MlbTheShowApiRosterUpdateFeed : IRosterUpdateFeed
             rosterUpdates.Add(_rosterUpdateMapper.Map(rosterUpdateId, externalRosterUpdate));
         }
 
-        return rosterUpdates.OrderBy(x => x.Date);
+        return new AllRosterUpdates(rosterUpdates);
     }
 
     /// <summary>
-    /// Marks a roster update as complete so it will no longer be considered a new roster update
+    /// Marks a roster update as complete, so it will no longer be considered a new roster update
     /// </summary>
     /// <param name="rosterUpdate">The roster update to mark as complete</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>

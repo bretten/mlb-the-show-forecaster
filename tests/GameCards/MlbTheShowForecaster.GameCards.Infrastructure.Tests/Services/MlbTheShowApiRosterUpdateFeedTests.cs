@@ -94,7 +94,7 @@ public class MlbTheShowApiRosterUpdateFeedTests
         // Data for Roster Update 3 should have been requested from MLB The Show
         stubMlbTheShowApi.Verify(x => x.GetRosterUpdate(new GetRosterUpdateRequest(3)), Times.Once);
         // There should be only two roster updates that need to be applied
-        var actualList = actual.ToList();
+        var actualList = actual.OldToNew.ToList();
         Assert.Equal(2, actualList.Count);
         Assert.Equal(new DateOnly(2024, 4, 14), actualList[0].Date);
         Assert.Equal(new DateOnly(2024, 4, 28), actualList[1].Date);

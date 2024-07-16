@@ -15,11 +15,10 @@ public interface IRosterUpdateFeed : IDisposable
     /// <param name="seasonYear">The season to check for roster updates</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>New roster updates</returns>
-    Task<IEnumerable<RosterUpdate>> GetNewRosterUpdates(SeasonYear seasonYear,
-        CancellationToken cancellationToken = default);
+    Task<AllRosterUpdates> GetNewRosterUpdates(SeasonYear seasonYear, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Should mark a roster update as complete so it will no longer be considered a new roster update
+    /// Should mark a roster update as complete, so it will no longer be considered a new roster update
     /// </summary>
     /// <param name="rosterUpdate">The roster update to mark as complete</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>

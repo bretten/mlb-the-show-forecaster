@@ -65,7 +65,7 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
 
         // Sync historical ratings for all player card rating changes in the roster updates
         var results = new List<PlayerCard>();
-        var tasks = SyncHistoryByPlayerCard(rosterUpdates, seasonYear, cancellationToken);
+        var tasks = SyncHistoryByPlayerCard(rosterUpdates.OldToNew, seasonYear, cancellationToken);
         foreach (var task in tasks)
         {
             try
