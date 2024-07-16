@@ -12,7 +12,10 @@ public class MlbApiPlayerStatsMapperTests
         // Arrange
         const int playerMlbApi = 1;
 
-        var hittingStats = StatsDto.HittingStats(Faker.FakeGameHittingStatsDto());
+        var hittingStats = StatsDto.HittingStats(
+            Faker.FakeGameHittingStatsDto(),
+            Faker.FakeGameHittingStatsDto(stat: Faker.FakeBattingStatsDto(plateAppearances: 0)) // No PAs, ignored
+        );
         var pitchingStats = StatsDto.PitchingStats(Faker.FakeGamePitchingStatsDto());
         var fieldingStats = StatsDto.FieldingStats(Faker.FakeGameFieldingStatsDto());
 
