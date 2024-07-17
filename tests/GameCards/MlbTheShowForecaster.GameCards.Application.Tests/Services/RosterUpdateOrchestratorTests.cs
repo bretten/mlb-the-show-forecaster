@@ -4,12 +4,14 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreateP
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services;
@@ -59,7 +61,7 @@ public class RosterUpdateOrchestratorTests
 
         // Orchestrator
         var orchestrator = new RosterUpdateOrchestrator(stubRosterUpdateFeed.Object, mockCardCatalog,
-            stubQuerySender.Object, mockCommandSender);
+            stubQuerySender.Object, mockCommandSender, Mock.Of<ILogger<IRosterUpdateOrchestrator>>());
 
         // Action
         var action = () => orchestrator.SyncRosterUpdates(seasonYear, cToken);
@@ -126,7 +128,7 @@ public class RosterUpdateOrchestratorTests
 
         // Orchestrator
         var orchestrator = new RosterUpdateOrchestrator(stubRosterUpdateFeed.Object, mockCardCatalog,
-            stubQuerySender.Object, mockCommandSender);
+            stubQuerySender.Object, mockCommandSender, Mock.Of<ILogger<IRosterUpdateOrchestrator>>());
 
         // Action
         var action = () => orchestrator.SyncRosterUpdates(seasonYear, cToken);
@@ -190,7 +192,7 @@ public class RosterUpdateOrchestratorTests
 
         // Orchestrator
         var orchestrator = new RosterUpdateOrchestrator(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
-            mockQuerySender, mockCommandSender);
+            mockQuerySender, mockCommandSender, Mock.Of<ILogger<IRosterUpdateOrchestrator>>());
 
         // Action
         var action = () => orchestrator.SyncRosterUpdates(seasonYear, cToken);
@@ -257,9 +259,12 @@ public class RosterUpdateOrchestratorTests
         stubCardCatalog.Setup(x => x.GetMlbPlayerCard(seasonYear, playerAddition2.CardExternalId, cToken))
             .ReturnsAsync(externalCard2);
 
+        // Logger
+        var stubLogger = new Mock<ILogger<RosterUpdateOrchestrator>>();
+
         // Orchestrator
         var orchestrator = new RosterUpdateOrchestrator(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
-            mockQuerySender.Object, stubCommandSender.Object);
+            mockQuerySender.Object, stubCommandSender.Object, stubLogger.Object);
 
         /*
          * Act
@@ -295,6 +300,14 @@ public class RosterUpdateOrchestratorTests
         stubCardCatalog.Verify(x => x.GetMlbPlayerCard(seasonYear, playerAddition2.CardExternalId, cToken), Times.Once);
         // A CreatePlayerCommand should have been sent for PlayerAddition2, but it threw an exception since it already exists
         stubCommandSender.Verify(x => x.Send(new CreatePlayerCardCommand(externalCard2), cToken), Times.Once);
+
+        // No exception was thrown for the empty card external ID, but it was logged
+        stubLogger.Verify(x => x.Log(LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => o.ToString()!.Contains("No card external ID for player addition")),
+                It.IsAny<EmptyPlayerAdditionCardExternalIdException>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
     [Fact]
@@ -376,7 +389,7 @@ public class RosterUpdateOrchestratorTests
 
         // Orchestrator
         var orchestrator = new RosterUpdateOrchestrator(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
-            stubQuerySender.Object, mockCommandSender);
+            stubQuerySender.Object, mockCommandSender, Mock.Of<ILogger<IRosterUpdateOrchestrator>>());
 
         /*
          * Act
@@ -439,9 +452,10 @@ public class RosterUpdateOrchestratorTests
         var mockCardCatalog = Mock.Of<ICardCatalog>();
         var mockQuerySender = Mock.Of<IQuerySender>();
         var mockCommandSender = Mock.Of<ICommandSender>();
+        var mockLogger = Mock.Of<ILogger<IRosterUpdateOrchestrator>>();
 
-        var orchestrator =
-            new RosterUpdateOrchestrator(mockRosterUpdateFeed, mockCardCatalog, mockQuerySender, mockCommandSender);
+        var orchestrator = new RosterUpdateOrchestrator(mockRosterUpdateFeed, mockCardCatalog, mockQuerySender,
+            mockCommandSender, mockLogger);
 
         // Act
         orchestrator.Dispose();
