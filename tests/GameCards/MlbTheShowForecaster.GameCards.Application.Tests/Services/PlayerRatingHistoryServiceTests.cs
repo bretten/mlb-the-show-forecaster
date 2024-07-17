@@ -4,10 +4,12 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateP
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services;
@@ -41,9 +43,12 @@ public class PlayerRatingHistoryServiceTests
         // Card catalog
         var mockCardCatalog = Mock.Of<ICardCatalog>();
 
+        // Logger
+        var stubLogger = new Mock<ILogger<IPlayerRatingHistoryService>>();
+
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog,
-            stubQuerySender.Object, mockCommandSender);
+            stubQuerySender.Object, mockCommandSender, stubLogger.Object);
 
         /*
          * Act
@@ -53,7 +58,15 @@ public class PlayerRatingHistoryServiceTests
         /*
          * Assert
          */
+        // No cards were processed
         Assert.Empty(actual.UpdatedPlayerCards);
+        // No exception was thrown, but it was logged
+        stubLogger.Verify(x => x.Log(LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => o.ToString()!.Contains("there is no corresponding PlayerCard")),
+                It.IsAny<NoPlayerCardFoundForRosterUpdateException>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
     }
 
     [Fact]
@@ -89,7 +102,7 @@ public class PlayerRatingHistoryServiceTests
 
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
-            stubQuerySender.Object, mockCommandSender.Object);
+            stubQuerySender.Object, mockCommandSender.Object, Mock.Of<ILogger<IPlayerRatingHistoryService>>());
 
         /*
          * Act
@@ -157,7 +170,7 @@ public class PlayerRatingHistoryServiceTests
 
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
-            stubQuerySender.Object, mockCommandSender.Object);
+            stubQuerySender.Object, mockCommandSender.Object, Mock.Of<ILogger<IPlayerRatingHistoryService>>());
 
         /*
          * Act
@@ -242,7 +255,7 @@ public class PlayerRatingHistoryServiceTests
 
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
-            stubQuerySender.Object, mockCommandSender.Object);
+            stubQuerySender.Object, mockCommandSender.Object, Mock.Of<ILogger<IPlayerRatingHistoryService>>());
 
         /*
          * Act
@@ -324,7 +337,7 @@ public class PlayerRatingHistoryServiceTests
 
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, stubCardCatalog.Object,
-            stubQuerySender.Object, mockCommandSender.Object);
+            stubQuerySender.Object, mockCommandSender.Object, Mock.Of<ILogger<IPlayerRatingHistoryService>>());
 
         /*
          * Act
@@ -384,7 +397,7 @@ public class PlayerRatingHistoryServiceTests
 
         // Service
         var service = new PlayerRatingHistoryService(stubRosterUpdateFeed.Object, mockCardCatalog,
-            stubQuerySender.Object, mockCommandSender.Object);
+            stubQuerySender.Object, mockCommandSender.Object, Mock.Of<ILogger<IPlayerRatingHistoryService>>());
 
         /*
          * Act

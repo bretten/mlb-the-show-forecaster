@@ -9,6 +9,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
+using Microsoft.Extensions.Logging;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 
@@ -39,19 +40,26 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
     private readonly ICommandSender _commandSender;
 
     /// <summary>
+    /// Logger
+    /// </summary>
+    private readonly ILogger<IPlayerRatingHistoryService> _logger;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="rosterUpdateFeed">Keeps tracks of roster updates that need to be applied</param>
     /// <param name="cardCatalog">The external source of player cards</param>
     /// <param name="querySender">Sends queries to retrieve state from the system</param>
     /// <param name="commandSender">Sends commands to mutate the system</param>
+    /// <param name="logger">Logger</param>
     public PlayerRatingHistoryService(IRosterUpdateFeed rosterUpdateFeed, ICardCatalog cardCatalog,
-        IQuerySender querySender, ICommandSender commandSender)
+        IQuerySender querySender, ICommandSender commandSender, ILogger<IPlayerRatingHistoryService> logger)
     {
         _rosterUpdateFeed = rosterUpdateFeed;
         _cardCatalog = cardCatalog;
         _querySender = querySender;
         _commandSender = commandSender;
+        _logger = logger;
     }
 
     /// <summary>
@@ -73,9 +81,9 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
                 var result = await task;
                 if (result != null) results.Add(result);
             }
-            catch (Exception)
+            catch (NoPlayerCardFoundForRosterUpdateException e)
             {
-                // Log in issue #171
+                _logger.LogWarning(e, e.Message);
             }
         }
 
