@@ -10,6 +10,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Excepti
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using Microsoft.Extensions.Logging;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 
@@ -39,19 +40,26 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
     private readonly ICommandSender _commandSender;
 
     /// <summary>
+    /// Logger
+    /// </summary>
+    private readonly ILogger<IRosterUpdateOrchestrator> _logger;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="rosterUpdateFeed">Keeps tracks of roster updates that need to be applied</param>
     /// <param name="cardCatalog">The external source of player cards</param>
     /// <param name="querySender">Sends queries to retrieve state from the system</param>
     /// <param name="commandSender">Sends commands to mutate the system</param>
+    /// <param name="logger">Logger</param>
     public RosterUpdateOrchestrator(IRosterUpdateFeed rosterUpdateFeed, ICardCatalog cardCatalog,
-        IQuerySender querySender, ICommandSender commandSender)
+        IQuerySender querySender, ICommandSender commandSender, ILogger<IRosterUpdateOrchestrator> logger)
     {
         _rosterUpdateFeed = rosterUpdateFeed;
         _cardCatalog = cardCatalog;
         _querySender = querySender;
         _commandSender = commandSender;
+        _logger = logger;
     }
 
     /// <summary>
@@ -252,10 +260,10 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
             throw new NoExternalPlayerCardFoundForRosterUpdateException(
                 $"Roster Update had a new player named {playerAddition.PlayerName} with ID {playerAddition.CardExternalId}, but no external data could be found");
         }
-        catch (EmptyPlayerAdditionCardExternalIdException)
+        catch (EmptyPlayerAdditionCardExternalIdException e)
         {
             // We can safely skip these as an external service doesn't have any further info on the player in this case
-            // This will be logged in issue #140
+            _logger.LogWarning(e, e.Message);
         }
         catch (PlayerCardAlreadyExistsException)
         {
