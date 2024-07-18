@@ -1,6 +1,8 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
@@ -25,12 +27,19 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
     private readonly IPlayerCardRepository _playerCardRepository;
 
     /// <summary>
+    /// Calendar to get the current date
+    /// </summary>
+    private readonly ICalendar _calendar;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="PlayerCard"/></param>
-    public UpdatePlayerCardCommandHandler(IUnitOfWork<ICardWork> unitOfWork)
+    /// <param name="calendar">Calendar to get the current date</param>
+    public UpdatePlayerCardCommandHandler(IUnitOfWork<ICardWork> unitOfWork, ICalendar calendar)
     {
         _unitOfWork = unitOfWork;
+        _calendar = calendar;
         _playerCardRepository = unitOfWork.GetContributor<IPlayerCardRepository>();
     }
 
@@ -57,14 +66,15 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
         }
 
         // The changes from the external source
+        var externalPlayerCard = command.ExternalPlayerCard;
         var ratingChange = command.RatingChange;
         var positionChange = command.PositionChange;
 
         // If there was a rating change, apply it
-        if (ratingChange != null && command.ExternalPlayerCard != null)
+        if (ratingChange != null && externalPlayerCard != null)
         {
             domainPlayerCard.ChangePlayerRating(ratingChange.Value.Date, ratingChange.Value.NewRating,
-                command.ExternalPlayerCard.Value.GetAttributes());
+                externalPlayerCard.Value.GetAttributes());
         }
 
         // If there was a position change, apply it
@@ -73,7 +83,53 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
             domainPlayerCard.ChangePosition(positionChange.Value.NewPosition);
         }
 
+        // Add or remove a card boost
+        if (externalPlayerCard != null && domainPlayerCard.IsBoosted != externalPlayerCard.Value.IsBoosted)
+        {
+            UpdateBoost(domainPlayerCard, externalPlayerCard.Value);
+        }
+        // Add or remove a temporary rating
+        else if (externalPlayerCard != null &&
+                 domainPlayerCard.HasTemporaryRating != externalPlayerCard.Value.HasTemporaryRating)
+        {
+            UpdateTemporaryRating(domainPlayerCard, externalPlayerCard.Value);
+        }
+
         await _playerCardRepository.Update(domainPlayerCard);
         await _unitOfWork.CommitAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Updates the boost state of the domain's <see cref="PlayerCard"/>
+    /// </summary>
+    /// <param name="domainPlayerCard">The domain's <see cref="PlayerCard"/></param>
+    /// <param name="externalPlayerCard">The player card data from the external source</param>
+    private void UpdateBoost(PlayerCard domainPlayerCard, MlbPlayerCard externalPlayerCard)
+    {
+        if (externalPlayerCard.IsBoosted)
+        {
+            domainPlayerCard.Boost(_calendar.Today(), externalPlayerCard.GetAttributes());
+        }
+        else
+        {
+            domainPlayerCard.RemoveBoost(_calendar.Today(), externalPlayerCard.GetAttributes());
+        }
+    }
+
+    /// <summary>
+    /// Updates the temporary rating of the domain's <see cref="PlayerCard"/>
+    /// </summary>
+    /// <param name="domainPlayerCard">The domain's <see cref="PlayerCard"/></param>
+    /// <param name="externalPlayerCard">The player card data from the external source</param>
+    private void UpdateTemporaryRating(PlayerCard domainPlayerCard, MlbPlayerCard externalPlayerCard)
+    {
+        if (externalPlayerCard.HasTemporaryRating)
+        {
+            domainPlayerCard.SetTemporaryRating(_calendar.Today(), externalPlayerCard.TemporaryOverallRating!);
+        }
+        else
+        {
+            domainPlayerCard.RemoveTemporaryRating(_calendar.Today());
+        }
     }
 }

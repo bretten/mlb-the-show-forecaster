@@ -42,7 +42,8 @@ public static class MarketplaceWatcherHostExtensions
                 var result = await tracker.TrackPlayerCards(SeasonYear.Create(season), ct);
                 logger.LogInformation($"{s} - Total catalog cards = {result.TotalCatalogCards}");
                 logger.LogInformation($"{s} - Total new catalog cards = {result.TotalNewCatalogCards}");
-                logger.LogInformation($"{s} - Total existing player cards = {result.TotalExistingPlayerCards}");
+                logger.LogInformation($"{s} - Total updated player cards = {result.TotalUpdatedPlayerCards}");
+                logger.LogInformation($"{s} - Total unchanged player cards = {result.TotalUnchangedPlayerCards}");
             }
         };
 

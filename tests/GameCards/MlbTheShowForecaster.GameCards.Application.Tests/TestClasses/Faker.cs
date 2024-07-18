@@ -27,9 +27,10 @@ public static class Faker
     public static PlayerCard FakePlayerCard(ushort year = 2024, Guid? cardExternalId = null,
         CardType type = CardType.MlbCard, string image = "img.jpg", string name = "cardA",
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
-        string teamShortName = "SEA", int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null)
+        string teamShortName = "SEA", int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null,
+        bool isBoosted = false, int? temporaryRating = null)
     {
-        return PlayerCard.Create(SeasonYear.Create(year),
+        var card = PlayerCard.Create(SeasonYear.Create(year),
             FakeCardExternalId(cardExternalId),
             type,
             CardImageLocation.Create(image),
@@ -40,6 +41,17 @@ public static class Faker
             TeamShortName.Create(teamShortName),
             OverallRating.Create(overallRating),
             playerCardAttributes ?? FakePlayerCardAttributes());
+
+        if (isBoosted)
+        {
+            card.Boost(new DateOnly(2024, 7, 17), FakePlayerCardAttributes());
+        }
+        else if (temporaryRating.HasValue)
+        {
+            card.SetTemporaryRating(new DateOnly(2024, 7, 17), FakeOverallRating(temporaryRating.Value));
+        }
+
+        return card;
     }
 
     public static PlayerCardHistoricalRating FakeBaselinePlayerCardHistoricalRating(DateOnly? startDate = null,

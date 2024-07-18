@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
@@ -62,6 +63,7 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
         }
 
         var newPlayerCards = 0;
+        var updatedPlayerCards = 0;
         foreach (var externalCard in externalCards.Where(x => x.IsSupported).OrderByDescending(x => x.Priority))
         {
             var existingPlayerCard =
@@ -70,6 +72,15 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
             // If the card already exists, no further action is needed
             if (existingPlayerCard != null)
             {
+                // Update the card if it had a boost/temp rating added or removed
+                if (existingPlayerCard.IsBoosted != externalCard.IsBoosted ||
+                    existingPlayerCard.HasTemporaryRating != externalCard.HasTemporaryRating)
+                {
+                    await _commandSender.Send(new UpdatePlayerCardCommand(existingPlayerCard, externalCard),
+                        cancellationToken);
+                    updatedPlayerCards++;
+                }
+
                 continue;
             }
 
@@ -79,7 +90,8 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
         }
 
         return new PlayerCardTrackerResult(TotalCatalogCards: externalCards.Count,
-            TotalNewCatalogCards: newPlayerCards
+            TotalNewCatalogCards: newPlayerCards,
+            TotalUpdatedPlayerCards: updatedPlayerCards
         );
     }
 

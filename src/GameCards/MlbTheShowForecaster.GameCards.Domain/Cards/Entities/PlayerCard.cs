@@ -56,6 +56,11 @@ public sealed class PlayerCard : Card
     public bool IsBoosted => _historicalRatings.Any(x => x.IsBoost && !x.EndDate.HasValue);
 
     /// <summary>
+    /// True if the player card has a temporary rating
+    /// </summary>
+    public bool HasTemporaryRating => TemporaryOverallRating != null;
+
+    /// <summary>
     /// The start of the season for this card
     /// </summary>
     private DateOnly StartOfSeason => new(Year.Value, 1, 1);
