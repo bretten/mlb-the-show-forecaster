@@ -13,7 +13,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.Upd
 /// <param name="PositionChange">The new position for the <see cref="PlayerCard"/></param>
 internal readonly record struct UpdatePlayerCardCommand(
     PlayerCard PlayerCard,
-    MlbPlayerCard? ExternalPlayerCard,
-    PlayerRatingChange? RatingChange,
-    PlayerPositionChange? PositionChange
+    MlbPlayerCard? ExternalPlayerCard = null,
+    PlayerRatingChange? RatingChange = null,
+    PlayerPositionChange? PositionChange = null
 ) : ICommand;

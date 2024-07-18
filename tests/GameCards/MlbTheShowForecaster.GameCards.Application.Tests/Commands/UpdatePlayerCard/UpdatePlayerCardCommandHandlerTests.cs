@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard.Exceptions;
@@ -31,7 +32,7 @@ public class UpdatePlayerCardCommandHandlerTests
 
         var cToken = CancellationToken.None;
         var command = new UpdatePlayerCardCommand(playerCard, externalPlayerCard, ratingChange, positionChange);
-        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object);
+        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object, Mock.Of<ICalendar>());
 
         var action = () => handler.Handle(command, cToken);
 
@@ -85,7 +86,7 @@ public class UpdatePlayerCardCommandHandlerTests
         var cToken = CancellationToken.None;
         var command =
             new UpdatePlayerCardCommand(playerCardInCommand, externalPlayerCard, ratingChange, positionChange);
-        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object);
+        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object, Mock.Of<ICalendar>());
 
         /*
          * Act
@@ -112,5 +113,97 @@ public class UpdatePlayerCardCommandHandlerTests
         var newRating = playerCard.HistoricalRatingsChronologically[2];
         Assert.Equal(new DateOnly(2024, 5, 29), newRating.StartDate);
         Assert.Null(newRating.EndDate);
+    }
+
+    [Fact]
+    public async Task Handle_BoostedExternalCard_BoostsPlayerCard()
+    {
+        // Arrange
+        var domainPlayerCard = Faker.FakePlayerCard();
+        var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard(boostReason: "Hit 5 HRs");
+
+        var (stubUnitOfWork, stubPlayerCardRepository) = GetStubUnitOfWorkForCard(domainPlayerCard);
+
+        var cToken = CancellationToken.None;
+        var command = new UpdatePlayerCardCommand(domainPlayerCard, externalPlayerCard);
+        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object, Mock.Of<ICalendar>());
+
+        // Act
+        await handler.Handle(command, cToken);
+
+        // Assert
+        stubPlayerCardRepository.Verify(x => x.Update(It.Is<PlayerCard>(c => c.IsBoosted)), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ExternalCardNoLongerBoosted_RemovesBoostFromPlayerCard()
+    {
+        // Arrange
+        var domainPlayerCard = Faker.FakePlayerCard(isBoosted: true);
+        var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard(boostReason: null);
+
+        var (stubUnitOfWork, stubPlayerCardRepository) = GetStubUnitOfWorkForCard(domainPlayerCard);
+
+        var cToken = CancellationToken.None;
+        var command = new UpdatePlayerCardCommand(domainPlayerCard, externalPlayerCard);
+        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object, Mock.Of<ICalendar>());
+
+        // Act
+        await handler.Handle(command, cToken);
+
+        // Assert
+        stubPlayerCardRepository.Verify(x => x.Update(It.Is<PlayerCard>(c => c.IsBoosted == false)), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_TempRatingExternalCard_AddsTempRatingToPlayerCard()
+    {
+        // Arrange
+        var domainPlayerCard = Faker.FakePlayerCard();
+        var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard(temporaryOverallRating: 50);
+
+        var (stubUnitOfWork, stubPlayerCardRepository) = GetStubUnitOfWorkForCard(domainPlayerCard);
+
+        var cToken = CancellationToken.None;
+        var command = new UpdatePlayerCardCommand(domainPlayerCard, externalPlayerCard);
+        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object, Mock.Of<ICalendar>());
+
+        // Act
+        await handler.Handle(command, cToken);
+
+        // Assert
+        stubPlayerCardRepository.Verify(x => x.Update(It.Is<PlayerCard>(c => c.HasTemporaryRating)), Times.Once);
+    }
+
+    [Fact]
+    public async Task Handle_ExternalCardNoLongerHasTempRating_RemovesTempRatingFromPlayerCard()
+    {
+        // Arrange
+        var domainPlayerCard = Faker.FakePlayerCard(temporaryRating: 70);
+        var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard();
+
+        var (stubUnitOfWork, stubPlayerCardRepository) = GetStubUnitOfWorkForCard(domainPlayerCard);
+
+        var cToken = CancellationToken.None;
+        var command = new UpdatePlayerCardCommand(domainPlayerCard, externalPlayerCard);
+        var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object, Mock.Of<ICalendar>());
+
+        // Act
+        await handler.Handle(command, cToken);
+
+        // Assert
+        stubPlayerCardRepository.Verify(x => x.Update(It.Is<PlayerCard>(c => c.HasTemporaryRating == false)),
+            Times.Once);
+    }
+
+    private (Mock<IUnitOfWork<ICardWork>>, Mock<IPlayerCardRepository>) GetStubUnitOfWorkForCard(PlayerCard card)
+    {
+        var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(card.ExternalId))
+            .ReturnsAsync(card);
+        var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())
+            .Returns(stubPlayerCardRepository.Object);
+        return (stubUnitOfWork, stubPlayerCardRepository);
     }
 }
