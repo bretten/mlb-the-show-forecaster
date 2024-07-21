@@ -91,8 +91,8 @@ public class PlayerSeasonScorekeeperTests
                 x is PlayerFieldedInGameEvent gameEvent && gameEvent.Date == new DateOnly(2024, 4, 1)));
 
         // Was the player's performance assessed?
-        stubPerformanceAssessor.Verify(x => x.AssessBatting(It.IsAny<BattingStats>()), Times.Once);
-        stubPerformanceAssessor.Verify(x => x.AssessPitching(It.IsAny<PitchingStats>()), Times.Once);
-        stubPerformanceAssessor.Verify(x => x.AssessFielding(It.IsAny<FieldingStats>()), Times.Once);
+        stubPerformanceAssessor.Verify(x => x.AssessBatting(It.IsAny<BattingStats>()), Times.Exactly(3));
+        stubPerformanceAssessor.Verify(x => x.AssessPitching(It.IsAny<PitchingStats>()), Times.Exactly(3));
+        stubPerformanceAssessor.Verify(x => x.AssessFielding(It.IsAny<FieldingStats>()), Times.Exactly(3));
     }
 }

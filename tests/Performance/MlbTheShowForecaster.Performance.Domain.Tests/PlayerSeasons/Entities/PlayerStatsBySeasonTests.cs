@@ -561,14 +561,17 @@ public class PlayerStatsBySeasonTests
     public void AssessBattingPerformance_ImprovedBattingStats_RaisesBattingImprovementDomainEvent()
     {
         // Arrange
-        var oldScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
-        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
-        var seasonStats = Faker.FakePlayerStatsBySeason(battingScore: oldScore.Value);
+        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.8m);
+        var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
+        var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
+        var seasonStats = Faker.FakePlayerStatsBySeason();
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
-        stubPerformanceAssessor.Setup(x => x.AssessBatting(It.IsAny<BattingStats>()))
-            .Returns(newScore);
-        stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
+        stubPerformanceAssessor.SetupSequence(x => x.AssessBatting(It.IsAny<BattingStats>()))
+            .Returns(newScore)
+            .Returns(firstHalfScore)
+            .Returns(secondHalfScore);
+        stubPerformanceAssessor.Setup(x => x.Compare(firstHalfScore, secondHalfScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonIncrease());
 
         // Act
@@ -577,21 +580,24 @@ public class PlayerStatsBySeasonTests
         // Assert
         Assert.Equal(1, seasonStats.DomainEvents.Count);
         Assert.IsType<BattingImprovementEvent>(seasonStats.DomainEvents[0]);
-        Assert.Equal(0.9m, seasonStats.BattingScore.Value);
+        Assert.Equal(0.8m, seasonStats.BattingScore.Value);
     }
 
     [Fact]
     public void AssessBattingPerformance_DecliningBattingStats_RaisesBattingDeclineDomainEvent()
     {
         // Arrange
-        var oldScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
-        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
-        var seasonStats = Faker.FakePlayerStatsBySeason(battingScore: oldScore.Value);
+        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.2m);
+        var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
+        var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
+        var seasonStats = Faker.FakePlayerStatsBySeason();
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
-        stubPerformanceAssessor.Setup(x => x.AssessBatting(It.IsAny<BattingStats>()))
-            .Returns(newScore);
-        stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
+        stubPerformanceAssessor.SetupSequence(x => x.AssessBatting(It.IsAny<BattingStats>()))
+            .Returns(newScore)
+            .Returns(firstHalfScore)
+            .Returns(secondHalfScore);
+        stubPerformanceAssessor.Setup(x => x.Compare(firstHalfScore, secondHalfScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonDecrease());
 
         // Act
@@ -600,21 +606,24 @@ public class PlayerStatsBySeasonTests
         // Assert
         Assert.Equal(1, seasonStats.DomainEvents.Count);
         Assert.IsType<BattingDeclineEvent>(seasonStats.DomainEvents[0]);
-        Assert.Equal(0.1m, seasonStats.BattingScore.Value);
+        Assert.Equal(0.2m, seasonStats.BattingScore.Value);
     }
 
     [Fact]
     public void AssessPitchingPerformance_ImprovedPitchingStats_RaisesPitchingImprovementDomainEvent()
     {
         // Arrange
-        var oldScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
-        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
-        var seasonStats = Faker.FakePlayerStatsBySeason(pitchingScore: oldScore.Value);
+        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.8m);
+        var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
+        var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
+        var seasonStats = Faker.FakePlayerStatsBySeason();
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
-        stubPerformanceAssessor.Setup(x => x.AssessPitching(It.IsAny<PitchingStats>()))
-            .Returns(newScore);
-        stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
+        stubPerformanceAssessor.SetupSequence(x => x.AssessPitching(It.IsAny<PitchingStats>()))
+            .Returns(newScore)
+            .Returns(firstHalfScore)
+            .Returns(secondHalfScore);
+        stubPerformanceAssessor.Setup(x => x.Compare(firstHalfScore, secondHalfScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonIncrease());
 
         // Act
@@ -623,21 +632,24 @@ public class PlayerStatsBySeasonTests
         // Assert
         Assert.Equal(1, seasonStats.DomainEvents.Count);
         Assert.IsType<PitchingImprovementEvent>(seasonStats.DomainEvents[0]);
-        Assert.Equal(0.9m, seasonStats.PitchingScore.Value);
+        Assert.Equal(0.8m, seasonStats.PitchingScore.Value);
     }
 
     [Fact]
     public void AssessPitchingPerformance_DecliningPitchingStats_RaisesPitchingDeclineDomainEvent()
     {
         // Arrange
-        var oldScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
-        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
-        var seasonStats = Faker.FakePlayerStatsBySeason(pitchingScore: oldScore.Value);
+        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.2m);
+        var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
+        var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
+        var seasonStats = Faker.FakePlayerStatsBySeason();
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
-        stubPerformanceAssessor.Setup(x => x.AssessPitching(It.IsAny<PitchingStats>()))
-            .Returns(newScore);
-        stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
+        stubPerformanceAssessor.SetupSequence(x => x.AssessPitching(It.IsAny<PitchingStats>()))
+            .Returns(newScore)
+            .Returns(firstHalfScore)
+            .Returns(secondHalfScore);
+        stubPerformanceAssessor.Setup(x => x.Compare(firstHalfScore, secondHalfScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonDecrease());
 
         // Act
@@ -646,21 +658,24 @@ public class PlayerStatsBySeasonTests
         // Assert
         Assert.Equal(1, seasonStats.DomainEvents.Count);
         Assert.IsType<PitchingDeclineEvent>(seasonStats.DomainEvents[0]);
-        Assert.Equal(0.1m, seasonStats.PitchingScore.Value);
+        Assert.Equal(0.2m, seasonStats.PitchingScore.Value);
     }
 
     [Fact]
     public void AssessFieldingPerformance_ImprovedFieldingStats_RaisesFieldingImprovementDomainEvent()
     {
         // Arrange
-        var oldScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
-        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
-        var seasonStats = Faker.FakePlayerStatsBySeason(fieldingScore: oldScore.Value);
+        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.8m);
+        var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
+        var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
+        var seasonStats = Faker.FakePlayerStatsBySeason();
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
-        stubPerformanceAssessor.Setup(x => x.AssessFielding(It.IsAny<FieldingStats>()))
-            .Returns(newScore);
-        stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
+        stubPerformanceAssessor.SetupSequence(x => x.AssessFielding(It.IsAny<FieldingStats>()))
+            .Returns(newScore)
+            .Returns(firstHalfScore)
+            .Returns(secondHalfScore);
+        stubPerformanceAssessor.Setup(x => x.Compare(firstHalfScore, secondHalfScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonIncrease());
 
         // Act
@@ -669,21 +684,24 @@ public class PlayerStatsBySeasonTests
         // Assert
         Assert.Equal(1, seasonStats.DomainEvents.Count);
         Assert.IsType<FieldingImprovementEvent>(seasonStats.DomainEvents[0]);
-        Assert.Equal(0.9m, seasonStats.FieldingScore.Value);
+        Assert.Equal(0.8m, seasonStats.FieldingScore.Value);
     }
 
     [Fact]
     public void AssessFieldingPerformance_DecliningFieldingStats_RaisesFieldingDeclineDomainEvent()
     {
         // Arrange
-        var oldScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
-        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
-        var seasonStats = Faker.FakePlayerStatsBySeason(fieldingScore: oldScore.Value);
+        var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.2m);
+        var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
+        var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
+        var seasonStats = Faker.FakePlayerStatsBySeason();
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
-        stubPerformanceAssessor.Setup(x => x.AssessFielding(It.IsAny<FieldingStats>()))
-            .Returns(newScore);
-        stubPerformanceAssessor.Setup(x => x.Compare(oldScore, newScore))
+        stubPerformanceAssessor.SetupSequence(x => x.AssessFielding(It.IsAny<FieldingStats>()))
+            .Returns(newScore)
+            .Returns(firstHalfScore)
+            .Returns(secondHalfScore);
+        stubPerformanceAssessor.Setup(x => x.Compare(firstHalfScore, secondHalfScore))
             .Returns(PerformanceAssessment.TestClasses.Faker.FakePerformanceScoreComparisonDecrease());
 
         // Act
@@ -692,7 +710,7 @@ public class PlayerStatsBySeasonTests
         // Assert
         Assert.Equal(1, seasonStats.DomainEvents.Count);
         Assert.IsType<FieldingDeclineEvent>(seasonStats.DomainEvents[0]);
-        Assert.Equal(0.1m, seasonStats.FieldingScore.Value);
+        Assert.Equal(0.2m, seasonStats.FieldingScore.Value);
     }
 
     [Fact]
