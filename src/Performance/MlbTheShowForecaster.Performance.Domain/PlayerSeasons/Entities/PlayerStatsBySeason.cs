@@ -223,9 +223,16 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     /// <param name="performanceAssessor">Service that assesses the player's batting performance</param>
     public void AssessBattingPerformance(IPerformanceAssessor performanceAssessor)
     {
-        // Assess and compare the player's to-date performance
+        // Assess the player's to-date performance
         var newScore = performanceAssessor.AssessBatting(SeasonBattingStats);
-        var comparison = performanceAssessor.Compare(BattingScore, newScore);
+
+        // Compare the performance of the first half of games with the second half
+        var numberOfGames = BattingStatsByGamesChronologically.Count;
+        var firstHalf = BattingStats.Create(BattingStatsByGamesChronologically.Take(numberOfGames / 2));
+        var secondHalf = BattingStats.Create(BattingStatsByGamesChronologically.Skip(numberOfGames / 2));
+        var firstHalfScore = performanceAssessor.AssessBatting(firstHalf);
+        var secondHalfScore = performanceAssessor.AssessBatting(secondHalf);
+        var comparison = performanceAssessor.Compare(firstHalfScore, secondHalfScore);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
@@ -249,7 +256,14 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     {
         // Assess and compare the player's to-date performance
         var newScore = performanceAssessor.AssessPitching(SeasonPitchingStats);
-        var comparison = performanceAssessor.Compare(PitchingScore, newScore);
+
+        // Compare the performance of the first half of games with the second half
+        var numberOfGames = PitchingStatsByGamesChronologically.Count;
+        var firstHalf = PitchingStats.Create(PitchingStatsByGamesChronologically.Take(numberOfGames / 2));
+        var secondHalf = PitchingStats.Create(PitchingStatsByGamesChronologically.Skip(numberOfGames / 2));
+        var firstHalfScore = performanceAssessor.AssessPitching(firstHalf);
+        var secondHalfScore = performanceAssessor.AssessPitching(secondHalf);
+        var comparison = performanceAssessor.Compare(firstHalfScore, secondHalfScore);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
@@ -273,7 +287,14 @@ public sealed class PlayerStatsBySeason : AggregateRoot
     {
         // Assess and compare the player's to-date performance
         var newScore = performanceAssessor.AssessFielding(SeasonFieldingStats);
-        var comparison = performanceAssessor.Compare(FieldingScore, newScore);
+
+        // Compare the performance of the first half of games with the second half
+        var numberOfGames = FieldingStatsByGamesChronologically.Count;
+        var firstHalf = FieldingStats.Create(FieldingStatsByGamesChronologically.Take(numberOfGames / 2));
+        var secondHalf = FieldingStats.Create(FieldingStatsByGamesChronologically.Skip(numberOfGames / 2));
+        var firstHalfScore = performanceAssessor.AssessFielding(firstHalf);
+        var secondHalfScore = performanceAssessor.AssessFielding(secondHalf);
+        var comparison = performanceAssessor.Compare(firstHalfScore, secondHalfScore);
 
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
