@@ -25,7 +25,7 @@ public static class Faker
         TeamShortName? teamShortName = null, int overallRating = 50,
         PlayerCardAttributes? playerCardAttributes = null)
     {
-        return PlayerCard.Create(year.HasValue ? SeasonYear.Create(year.Value) : SeasonYear.Create(2024),
+        var card = PlayerCard.Create(year.HasValue ? SeasonYear.Create(year.Value) : SeasonYear.Create(2024),
             FakeCardExternalId(externalId),
             type,
             image ?? FakeCardImage(),
@@ -36,6 +36,8 @@ public static class Faker
             teamShortName ?? FakeTeamShortName(),
             FakeOverallRating(overallRating),
             playerCardAttributes ?? FakePlayerCardAttributes());
+        card.ClearDomainEvents();
+        return card;
     }
 
     public static PlayerCardHistoricalRating FakeBaselinePlayerCardHistoricalRating(DateOnly? startDate = null,
