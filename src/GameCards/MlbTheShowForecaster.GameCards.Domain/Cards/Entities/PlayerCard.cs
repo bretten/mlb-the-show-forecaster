@@ -377,7 +377,9 @@ public sealed class PlayerCard : Card
         CardImageLocation imageLocation, CardName name, Rarity rarity, CardSeries series, Position position,
         TeamShortName teamShortName, OverallRating overallRating, PlayerCardAttributes playerCardAttributes)
     {
-        return new PlayerCard(year, cardExternalId, type, imageLocation, name, rarity, series, position, teamShortName,
+        var card = new PlayerCard(year, cardExternalId, type, imageLocation, name, rarity, series, position, teamShortName,
             overallRating, playerCardAttributes);
+        card.RaiseDomainEvent(new NewPlayerCardEvent(card));
+        return card;
     }
 }
