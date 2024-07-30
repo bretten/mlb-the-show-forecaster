@@ -10,11 +10,11 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos;
 public class MlbPlayerCardTests
 {
     [Theory]
-    [InlineData(Rarity.Common, 4)]
-    [InlineData(Rarity.Bronze, 3)]
+    [InlineData(Rarity.Common, 0)]
+    [InlineData(Rarity.Bronze, 1)]
     [InlineData(Rarity.Silver, 2)]
-    [InlineData(Rarity.Gold, 1)]
-    [InlineData(Rarity.Diamond, 0)]
+    [InlineData(Rarity.Gold, 3)]
+    [InlineData(Rarity.Diamond, 4)]
     public void Priority_RarityEnum_ReturnsRarityEnumInteger(Rarity rarity, int expected)
     {
         // Arrange
