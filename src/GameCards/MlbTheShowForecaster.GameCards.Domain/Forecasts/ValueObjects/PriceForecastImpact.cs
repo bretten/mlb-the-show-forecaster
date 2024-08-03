@@ -26,4 +26,10 @@ public sealed class PriceForecastImpact(NaturalNumber oldPrice, NaturalNumber ne
     /// The percentage change between the old and new price
     /// </summary>
     public PercentageChange PercentageChange => PercentageChange.Create(OldPrice, NewPrice);
+
+    /// <inheritdoc />
+    protected override int ImpactCoefficient => ImpactConstants.Coefficients.FreeAgency;
+
+    /// <inheritdoc />
+    protected override bool IsAdditive => false;
 }

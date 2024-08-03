@@ -14,20 +14,18 @@ public static class Faker
     public static DateOnly EndDate = new DateOnly(2024, 7, 29);
 
     public static PlayerCardForecast FakePlayerCardForecast(ushort year = 2024, Guid? externalId = null, int mlbId = 1,
-        Position position = Position.RightField, int overallRating = 50, BoostForecastImpact? boostImpact = null,
-        PositionChangeForecastImpact? positionChangeImpact = null, PriceForecastImpact? priceImpact = null,
-        BattingStatsForecastImpact? battingStatsImpact = null, PitchingStatsForecastImpact? pitchingStatsImpact = null,
-        FieldingStatsForecastImpact? fieldingStatsImpact = null,
-        PlayerActivationForecastImpact? activationImpact = null,
-        PlayerDeactivationForecastImpact? deactivationImpact = null,
-        PlayerFreeAgencyForecastImpact? freeAgencyImpact = null,
-        PlayerTeamSigningForecastImpact? teamSigningImpact = null)
+        Position position = Position.RightField, int overallRating = 50)
     {
         return PlayerCardForecast.Create(SeasonYear.Create(year),
             Cards.TestClasses.Faker.FakeCardExternalId(externalId), MlbId.Create(mlbId), position,
-            OverallRating.Create(overallRating), boostImpact, positionChangeImpact, priceImpact, battingStatsImpact,
-            pitchingStatsImpact, fieldingStatsImpact, activationImpact, deactivationImpact, freeAgencyImpact,
-            teamSigningImpact);
+            OverallRating.Create(overallRating));
+    }
+
+    public static OverallRatingChangeForecastImpact FakeOverallRatingChangeForecastImpact(int oldOverallRating = 50,
+        int newOverallRating = 50, DateOnly? endDate = null)
+    {
+        return new OverallRatingChangeForecastImpact(oldRating: OverallRating.Create(oldOverallRating),
+            newRating: OverallRating.Create(newOverallRating), endDate ?? EndDate);
     }
 
     public static BoostForecastImpact FakeBoostForecastImpact(string boostReason = "Hit 5 HRs",

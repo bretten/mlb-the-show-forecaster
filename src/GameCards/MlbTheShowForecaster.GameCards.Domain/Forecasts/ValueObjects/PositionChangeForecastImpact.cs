@@ -21,4 +21,25 @@ public sealed class PositionChangeForecastImpact(Position oldPosition, Position 
     /// The player's new position
     /// </summary>
     public Position NewPosition { get; } = newPosition;
+
+    /// <inheritdoc />
+    protected override int ImpactCoefficient => ImpactConstants.Coefficients.DesiredPositionChange;
+
+    /// <inheritdoc />
+    protected override bool IsAdditive => true;
+
+    /// <summary>
+    /// If the <see cref="NewPosition"/> is not a desired position, then the impact is minimal
+    /// </summary>
+    protected override bool IsNegligible => !IsDesiredPositionPlayer(NewPosition);
+
+    /// <summary>
+    /// True if the player card's position is sought after in the marketplace
+    /// </summary>
+    /// <param name="position">The player card's position</param>
+    /// <returns>True if the player card's position is sought after in the marketplace</returns>
+    private static bool IsDesiredPositionPlayer(Position position)
+    {
+        return position is Position.Catcher or Position.LeftField or Position.SecondBase;
+    }
 }
