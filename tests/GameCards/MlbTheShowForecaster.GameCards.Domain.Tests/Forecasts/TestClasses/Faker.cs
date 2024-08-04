@@ -41,13 +41,6 @@ public static class Faker
         return new PositionChangeForecastImpact(oldPosition, newPosition, endDate ?? EndDate);
     }
 
-    public static PriceForecastImpact FakePriceForecastImpact(int oldPrice = 1, int newPrice = 10,
-        DateOnly? endDate = null)
-    {
-        return new PriceForecastImpact(NaturalNumber.Create(oldPrice), NaturalNumber.Create(newPrice),
-            endDate ?? EndDate);
-    }
-
     public static BattingStatsForecastImpact FakeBattingStatsForecastImpact(decimal oldScore = 0.2m,
         decimal newScore = 0.5m, DateOnly? endDate = null)
     {

@@ -106,22 +106,6 @@ public class PlayerCardForecastTests
     }
 
     [Fact]
-    public void Reassess_PriceChange_RaisesDemandIncreasedEvent()
-    {
-        throw new Exception();
-        // Arrange
-        var forecast = Faker.FakePlayerCardForecast();
-        var impact = Faker.FakePositionChangeForecastImpact(newPosition: Position.Catcher);
-
-        // Act
-        forecast.Reassess(impact, Faker.EndDate);
-
-        // Assert
-        Assert.Single(forecast.DomainEvents);
-        Assert.IsType<CardDemandIncreasedEvent>(forecast.DomainEvents[0]);
-    }
-
-    [Fact]
     public void Reassess_BatterScoreIncreaseByNonBatter_NoEventsRaised()
     {
         // Arrange
