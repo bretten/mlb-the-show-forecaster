@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
 
@@ -40,9 +41,10 @@ public interface IForecastRepository
     Task<PlayerCardForecast?> GetBy(SeasonYear seasonYear, MlbId mlbId);
 
     /// <summary>
-    /// Gets any <see cref="PlayerCardForecast"/>s that are predicted to have demand changes due to external influences
+    /// Gets any <see cref="PlayerCardForecast"/>s that are predicted to have demand changes on the specified date
+    /// due to <see cref="ForecastImpact"/>s
     /// </summary>
-    /// <param name="date">Date that a forecast should remain influenced after by external factors in order to be considered impacted (inclusive)</param>
+    /// <param name="date">Date (inclusive) when any <see cref="PlayerCardForecast"/>s still remain influenced by <see cref="ForecastImpact"/>s</param>
     /// <returns>Impacted <see cref="PlayerCardForecast"/></returns>
     Task<IEnumerable<PlayerCardForecast>> GetImpactedForecasts(DateOnly date);
 }
