@@ -15,10 +15,7 @@ public sealed class BoostForecastImpact(string boostReason, DateOnly endDate) : 
     public string BoostReason { get; } = boostReason;
 
     /// <inheritdoc />
-    protected override int ImpactCoefficient => ImpactConstants.Coefficients.Boost;
-
-    /// <inheritdoc />
-    protected override bool IsAdditive => true;
+    public override Demand Demand => Demand.High();
 
     /// <summary>
     /// The demand during the peak of the boost is at the standard level, but when the boost is about to end,
@@ -26,16 +23,16 @@ public sealed class BoostForecastImpact(string boostReason, DateOnly endDate) : 
     /// </summary>
     /// <param name="date"><inheritdoc /></param>
     /// <returns><inheritdoc /></returns>
-    public override int DemandOn(DateOnly date)
+    public override Demand DemandOn(DateOnly date)
     {
         var daysUntilBoostEnds = EndDate.DayNumber - date.DayNumber;
 
         return daysUntilBoostEnds switch
         {
             // No days left
-            < 0 => 0,
+            < 0 => Demand.Stable(),
             // People try to sell off the boosted cards when the boost is about to end, so demand is diminished
-            <= 1 => Demand / 2,
+            <= 1 => Demand.Low(),
             // Boost is active
             _ => Demand
         };

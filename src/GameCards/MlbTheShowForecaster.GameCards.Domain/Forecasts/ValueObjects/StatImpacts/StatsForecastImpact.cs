@@ -39,13 +39,25 @@ public abstract class StatsForecastImpact(decimal oldScore, decimal newScore, Da
     public bool IsImprovement => PercentageChange.PercentageChangeValue > 0m;
 
     /// <inheritdoc />
-    protected override bool IsAdditive => IsImprovement;
+    public override Demand Demand
+    {
+        get
+        {
+            if (IsNegligible)
+            {
+                return Demand.Stable();
+            }
+
+            // If the stats improved there will be high demand, otherwise demand will slightly diminish
+            return IsImprovement ? Demand.High() : Demand.Loss();
+        }
+    }
 
     /// <summary>
     /// The demand only changes when the percentage change between the old and new score passes the
     /// <see cref="PerformanceScoreChangeThreshold"/>
     /// </summary>
-    protected override bool IsNegligible =>
+    private bool IsNegligible =>
         PercentageChange.PercentageChangeValue is > -PerformanceScoreChangeThreshold
             and < PerformanceScoreChangeThreshold;
 }

@@ -19,7 +19,7 @@ public class PositionChangeForecastImpactTests
         var actual = impact.Demand;
 
         // Assert
-        Assert.Equal(ImpactConstants.Coefficients.DesiredPositionChange, actual);
+        Assert.Equal(Demand.High(), actual);
     }
 
     [Theory]
@@ -37,6 +37,6 @@ public class PositionChangeForecastImpactTests
         var actual = impact.Demand;
 
         // Assert
-        Assert.Equal(0, actual);
+        Assert.Equal(Demand.Stable(), actual);
     }
 }

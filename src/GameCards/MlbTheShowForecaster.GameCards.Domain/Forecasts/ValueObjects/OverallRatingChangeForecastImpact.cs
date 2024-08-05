@@ -38,13 +38,22 @@ public sealed class OverallRatingChangeForecastImpact(
     public bool RarityDeclined => NewRating.Rarity.LessThan(OldRating.Rarity);
 
     /// <inheritdoc />
-    protected override int ImpactCoefficient => ImpactConstants.Coefficients.OverallRatingChange;
+    public override Demand Demand
+    {
+        get
+        {
+            if (IsNegligible)
+            {
+                return Demand.Stable();
+            }
 
-    /// <inheritdoc />
-    protected override bool IsAdditive => RarityImproved;
+            // A rarity upgrade means high demand, whereas a downgrade means people will try to get rid of the card
+            return RarityImproved ? Demand.High() : Demand.BigLoss();
+        }
+    }
 
     /// <summary>
     /// If the rating changed, but the <see cref="Rarity"/> did not change, then the impact is minimal
     /// </summary>
-    protected override bool IsNegligible => !RarityImproved && !RarityDeclined;
+    private bool IsNegligible => !RarityImproved && !RarityDeclined;
 }

@@ -9,8 +9,5 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 public sealed class PlayerActivationForecastImpact(DateOnly endDate) : ForecastImpact(endDate)
 {
     /// <inheritdoc />
-    protected override int ImpactCoefficient => ImpactConstants.Coefficients.Activation;
-
-    /// <inheritdoc />
-    protected override bool IsAdditive => true;
+    public override Demand Demand => Demand.Low();
 }

@@ -16,7 +16,7 @@ public class BoostForecastImpactTests
         var actual = impact.DemandOn(endDate.AddDays(1));
 
         // Assert
-        Assert.Equal(0, actual);
+        Assert.Equal(Demand.Stable(), actual);
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public class BoostForecastImpactTests
         var actual = impact.DemandOn(endDate.AddDays(-1));
 
         // Assert
-        Assert.Equal(ImpactConstants.Coefficients.Boost / 2, actual);
+        Assert.Equal(Demand.Low(), actual);
     }
 
     [Fact]
@@ -44,6 +44,6 @@ public class BoostForecastImpactTests
         var actual = impact.DemandOn(endDate.AddDays(-4));
 
         // Assert
-        Assert.Equal(ImpactConstants.Coefficients.Boost, actual);
+        Assert.Equal(Demand.High(), actual);
     }
 }

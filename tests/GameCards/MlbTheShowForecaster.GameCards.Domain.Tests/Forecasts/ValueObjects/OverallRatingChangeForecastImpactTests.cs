@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Forecasts.TestClasses;
+﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Forecasts.TestClasses;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Forecasts.ValueObjects;
 
@@ -40,6 +41,6 @@ public class OverallRatingChangeForecastImpactTests
         var actual = impact.Demand;
 
         // Assert
-        Assert.Equal(0, actual);
+        Assert.Equal(Demand.Stable(), actual);
     }
 }

@@ -9,8 +9,4 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 /// <param name="newScore"><inheritdoc cref="StatsForecastImpact.NewScore"/></param>
 /// <param name="endDate"><inheritdoc cref="StatsForecastImpact.EndDate"/></param>
 public sealed class BattingStatsForecastImpact(decimal oldScore, decimal newScore, DateOnly endDate)
-    : StatsForecastImpact(oldScore, newScore, endDate)
-{
-    /// <inheritdoc />
-    protected override int ImpactCoefficient => ImpactConstants.Coefficients.BattingStats;
-}
+    : StatsForecastImpact(oldScore, newScore, endDate);

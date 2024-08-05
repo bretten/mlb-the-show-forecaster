@@ -135,11 +135,12 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// </summary>
     /// <param name="date">Any <see cref="ForecastImpact"/> whose influence ended before this inclusive date is not used in calculating the demand</param>
     /// <returns>The demand for the forecast on the specified date</returns>
-    public int EstimateDemandFor(DateOnly date)
+    public Demand EstimateDemandFor(DateOnly date)
     {
         return _forecastImpacts
             .Where(x => x.EndDate >= date)
-            .Sum(x => x.DemandOn(date));
+            .Select(x => x.DemandOn(date))
+            .Aggregate(Demand.Stable(), (x, y) => x + y);
     }
 
     /// <summary>

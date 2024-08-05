@@ -9,8 +9,5 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 public sealed class PlayerTeamSigningForecastImpact(DateOnly endDate) : ForecastImpact(endDate)
 {
     /// <inheritdoc />
-    protected override int ImpactCoefficient => ImpactConstants.Coefficients.TeamSigning;
-
-    /// <inheritdoc />
-    protected override bool IsAdditive => true;
+    public override Demand Demand => Demand.Low();
 }
