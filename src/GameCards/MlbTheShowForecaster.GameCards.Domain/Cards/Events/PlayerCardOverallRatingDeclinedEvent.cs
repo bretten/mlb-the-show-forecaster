@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
