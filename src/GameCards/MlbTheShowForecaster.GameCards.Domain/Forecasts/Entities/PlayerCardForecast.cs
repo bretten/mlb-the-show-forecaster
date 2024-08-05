@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+﻿using System.Collections.Immutable;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
@@ -32,7 +33,7 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// <summary>
     /// The MLB ID of the Player
     /// </summary>
-    public MlbId MlbId { get; }
+    public MlbId? MlbId { get; }
 
     /// <summary>
     /// Player's primary position
@@ -45,6 +46,12 @@ public sealed class PlayerCardForecast : AggregateRoot
     public OverallRating OverallRating { get; private set; }
 
     /// <summary>
+    /// All <see cref="ForecastImpact"/>s in chronological order of <see cref="ForecastImpact.EndDate"/>
+    /// </summary>
+    public IReadOnlyList<ForecastImpact> ForecastImpactsChronologically =>
+        _forecastImpacts.OrderBy(x => x.EndDate).ToImmutableList();
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="year">The year of MLB The Show</param>
@@ -52,7 +59,7 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// <param name="mlbId">The MLB ID of the Player</param>
     /// <param name="primaryPosition">Player's primary position</param>
     /// <param name="overallRating">The overall rating of the card</param>
-    private PlayerCardForecast(SeasonYear year, CardExternalId cardExternalId, MlbId mlbId, Position primaryPosition,
+    private PlayerCardForecast(SeasonYear year, CardExternalId cardExternalId, MlbId? mlbId, Position primaryPosition,
         OverallRating overallRating) : base(Guid.NewGuid())
     {
         Year = year;
@@ -185,7 +192,7 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// <param name="primaryPosition">Player's primary position</param>
     /// <param name="overallRating">The overall rating of the card</param>
     /// <returns><see cref="PlayerCardForecast"/></returns>
-    public static PlayerCardForecast Create(SeasonYear year, CardExternalId cardExternalId, MlbId mlbId,
+    public static PlayerCardForecast Create(SeasonYear year, CardExternalId cardExternalId, MlbId? mlbId,
         Position primaryPosition, OverallRating overallRating)
     {
         return new PlayerCardForecast(year, cardExternalId, mlbId, primaryPosition, overallRating);

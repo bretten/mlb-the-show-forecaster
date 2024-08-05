@@ -10,6 +10,24 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Forecasts.E
 public class PlayerCardForecastTests
 {
     [Fact]
+    public void ForecastImpactsChronologically_Forecast_ReturnsForecastInOrder()
+    {
+        // Arrange
+        var forecast = Faker.FakePlayerCardForecast();
+        var boostImpact = Faker.FakeBoostForecastImpact(endDate: new DateOnly(2024, 8, 5));
+        var activationImpact = Faker.FakePlayerActivationForecastImpact(endDate: new DateOnly(2024, 8, 1));
+        forecast.Reassess(boostImpact, new DateOnly(2024, 8, 5));
+        forecast.Reassess(activationImpact, new DateOnly(2024, 8, 5));
+
+        // Act
+        var actual = forecast.ForecastImpactsChronologically;
+
+        // Assert
+        Assert.Equal(activationImpact, actual[0]);
+        Assert.Equal(boostImpact, actual[1]);
+    }
+
+    [Fact]
     public void Reassess_BetterOverallRatingRarity_RaisesDemandIncreasedEvent()
     {
         // Arrange

@@ -29,7 +29,7 @@ public interface IForecastRepository
     /// <param name="seasonYear">The <see cref="SeasonYear"/> of the <see cref="PlayerCardForecast"/></param>
     /// <param name="cardExternalId">The <see cref="CardExternalId"/> of the <see cref="PlayerCardForecast"/></param>
     /// <returns>The corresponding <see cref="PlayerCardForecast"/></returns>
-    Task<PlayerCardForecast> GetBy(SeasonYear seasonYear, CardExternalId cardExternalId);
+    Task<PlayerCardForecast?> GetBy(SeasonYear seasonYear, CardExternalId cardExternalId);
 
     /// <summary>
     /// Should return a <see cref="PlayerCardForecast"/> for the specified <see cref="SeasonYear"/> and <see cref="MlbId"/>
@@ -37,7 +37,7 @@ public interface IForecastRepository
     /// <param name="seasonYear">The <see cref="SeasonYear"/> of the <see cref="PlayerCardForecast"/></param>
     /// <param name="mlbId">The <see cref="MlbId"/> of the <see cref="PlayerCardForecast"/></param>
     /// <returns>The corresponding <see cref="PlayerCardForecast"/></returns>
-    Task<PlayerCardForecast> GetBy(SeasonYear seasonYear, MlbId mlbId);
+    Task<PlayerCardForecast?> GetBy(SeasonYear seasonYear, MlbId mlbId);
 
     /// <summary>
     /// Gets any <see cref="PlayerCardForecast"/>s that are predicted to have demand changes due to external influences
