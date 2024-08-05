@@ -4,7 +4,6 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.CreatePlayer;
 
@@ -27,11 +26,6 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     private readonly IPlayerMapper _playerMapper;
 
     /// <summary>
-    /// Provides information on teams
-    /// </summary>
-    private readonly ITeamProvider _teamProvider;
-
-    /// <summary>
     /// The <see cref="Player"/> repository
     /// </summary>
     private readonly IPlayerRepository _playerRepository;
@@ -41,13 +35,10 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     /// </summary>
     /// <param name="unitOfWork">The unit of work that defines all actions for creating a <see cref="Player"/></param>
     /// <param name="playerMapper">Mapper that maps the player's status to a <see cref="Player"/></param>
-    /// <param name="teamProvider">Provides information on teams</param>
-    public CreatePlayerCommandHandler(IUnitOfWork<IPlayerWork> unitOfWork, IPlayerMapper playerMapper,
-        ITeamProvider teamProvider)
+    public CreatePlayerCommandHandler(IUnitOfWork<IPlayerWork> unitOfWork, IPlayerMapper playerMapper)
     {
         _unitOfWork = unitOfWork;
         _playerMapper = playerMapper;
-        _teamProvider = teamProvider;
         _playerRepository = unitOfWork.GetContributor<IPlayerRepository>();
     }
 
@@ -60,10 +51,6 @@ internal sealed class CreatePlayerCommandHandler : ICommandHandler<CreatePlayerC
     public async Task Handle(CreatePlayerCommand command, CancellationToken cancellationToken = default)
     {
         var player = _playerMapper.Map(command.RosterEntry);
-
-        // The player is new, so they are being activated and signing with a team
-        player.Activate();
-        player.SignContractWithTeam(_teamProvider.GetBy(command.RosterEntry.CurrentTeamMlbId));
 
         await _playerRepository.Add(player);
 

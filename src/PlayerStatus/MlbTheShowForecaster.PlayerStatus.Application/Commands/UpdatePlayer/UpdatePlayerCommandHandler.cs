@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
@@ -45,11 +46,12 @@ internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerC
     /// <returns>The completed task</returns>
     public async Task Handle(UpdatePlayerCommand command, CancellationToken cancellationToken = default)
     {
+        var year = command.Year;
         var player = command.Player;
         var playerStatusChanges = command.PlayerStatusChanges;
 
-        UpdateActiveStatus(ref player, playerStatusChanges);
-        UpdateTeamStatus(ref player, playerStatusChanges);
+        UpdateActiveStatus(ref player, year, playerStatusChanges);
+        UpdateTeamStatus(ref player, year, playerStatusChanges);
 
         await _playerRepository.Update(player);
 
@@ -60,16 +62,17 @@ internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerC
     /// Checks if a <see cref="Player"/>'s active status has changed and if so, mutates the Player
     /// </summary>
     /// <param name="player">The <see cref="Player"/></param>
+    /// <param name="year">The year the player is being updated for</param>
     /// <param name="statusChanges">The status changes</param>
-    private void UpdateActiveStatus(ref Player player, PlayerStatusChanges statusChanges)
+    private void UpdateActiveStatus(ref Player player, SeasonYear year, PlayerStatusChanges statusChanges)
     {
         if (statusChanges.Activated)
         {
-            player.Activate();
+            player.Activate(year);
         }
         else if (statusChanges.Inactivated)
         {
-            player.Inactivate();
+            player.Inactivate(year);
         }
     }
 
@@ -77,19 +80,20 @@ internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerC
     /// Checks if a <see cref="Player"/>'s team has changed. If so, the <see cref="Player"/> will be mutated
     /// </summary>
     /// <param name="player">The <see cref="Player"/></param>
+    /// <param name="year">The year the player is being updated for</param>
     /// <param name="statusChanges">The status changes</param>
     /// <exception cref="MissingTeamContractSigningException">Thrown when there is no <see cref="Team"/> when signing a contract</exception>
-    private void UpdateTeamStatus(ref Player player, PlayerStatusChanges statusChanges)
+    private void UpdateTeamStatus(ref Player player, SeasonYear year, PlayerStatusChanges statusChanges)
     {
         if (statusChanges.EnteredFreeAgency)
         {
-            player.EnterFreeAgency();
+            player.EnterFreeAgency(year);
         }
         else if (statusChanges.SignedContractWithTeam)
         {
-            player.SignContractWithTeam(statusChanges.NewTeam ??
-                                        throw new MissingTeamContractSigningException(
-                                            $"No team specified when signing contract for {player.MlbId.Value} {player.FirstName} {player.LastName}"));
+            player.SignContractWithTeam(year, statusChanges.NewTeam ??
+                                              throw new MissingTeamContractSigningException(
+                                                  $"No team specified when signing contract for {player.MlbId.Value} {player.FirstName} {player.LastName}"));
         }
     }
 }

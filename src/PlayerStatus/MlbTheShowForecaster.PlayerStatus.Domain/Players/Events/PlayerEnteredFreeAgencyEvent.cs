@@ -6,5 +6,6 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events
 /// <summary>
 /// Published when a Player enters free agency
 /// </summary>
+/// <param name="Year">The year the player entered free agency</param>
 /// <param name="PlayerMlbId">The MLB ID of the player</param>
-public record PlayerEnteredFreeAgencyEvent(MlbId PlayerMlbId) : IDomainEvent;
+public sealed record PlayerEnteredFreeAgencyEvent(SeasonYear Year, MlbId PlayerMlbId) : IDomainEvent;

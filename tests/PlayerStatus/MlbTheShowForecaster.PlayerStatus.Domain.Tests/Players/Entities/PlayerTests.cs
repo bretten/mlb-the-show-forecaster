@@ -49,82 +49,87 @@ public class PlayerTests
     public void SignContractWithTeam_NoPreviousTeam_SignsWithNewTeam()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         Team? currentTeam = null;
         var newTeam = TeamFaker.Fake();
         var player = PlayerFaker.Fake(team: currentTeam);
 
         // Act
-        player.SignContractWithTeam(newTeam);
+        player.SignContractWithTeam(year, newTeam);
 
         // Assert
         Assert.NotNull(player.Team);
         Assert.Equal(newTeam, player.Team);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerSignedContractWithTeamEvent(player.MlbId, newTeam.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerSignedContractWithTeamEvent(year, player.MlbId, newTeam.MlbId), player.DomainEvents[0]);
     }
 
     [Fact]
     public void SignContractWithTeam_PlayerOnAnotherTeam_LeavesCurrentTeamAndSignsWithNewTeam()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var currentTeam = TeamFaker.Fake();
         var newTeam = TeamFaker.Fake(1000, "New Team", "NEW");
         var player = PlayerFaker.Fake(team: currentTeam);
 
         // Act
-        player.SignContractWithTeam(newTeam);
+        player.SignContractWithTeam(year, newTeam);
 
         // Assert
         Assert.NotNull(player.Team);
         Assert.Equal(newTeam, player.Team);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerSignedContractWithTeamEvent(player.MlbId, newTeam.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerSignedContractWithTeamEvent(year, player.MlbId, newTeam.MlbId), player.DomainEvents[0]);
     }
 
     [Fact]
     public void EnterFreeAgency_PlayerOnATeam_LeavesTeam()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var currentTeam = TeamFaker.Fake();
         var player = PlayerFaker.Fake(team: currentTeam);
 
         // Act
-        player.EnterFreeAgency();
+        player.EnterFreeAgency(year);
 
         // Assert
         Assert.Null(player.Team);
         Assert.NotEqual(currentTeam, player.Team);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerEnteredFreeAgencyEvent(player.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerEnteredFreeAgencyEvent(year, player.MlbId), player.DomainEvents[0]);
     }
 
     [Fact]
     public void Activate_InactivePlayer_NowActive()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var player = PlayerFaker.Fake(active: false);
 
         // Act
-        player.Activate();
+        player.Activate(year);
 
         // Assert
         Assert.True(player.Active);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerActivatedEvent(player.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerActivatedEvent(year, player.MlbId), player.DomainEvents[0]);
     }
 
     [Fact]
     public void Inactivate_ActivePlayer_NowInactive()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var player = PlayerFaker.Fake(active: true);
 
         // Act
-        player.Inactivate();
+        player.Inactivate(year);
 
         // Assert
         Assert.False(player.Active);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerInactivatedEvent(player.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerInactivatedEvent(year, player.MlbId), player.DomainEvents[0]);
     }
 }

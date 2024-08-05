@@ -1,6 +1,7 @@
 ﻿using System.Data.Common;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -83,6 +84,10 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await using var dbContext = GetDbContext(connection, new TeamProvider());
         await CreateSchema(connection);
         await dbContext.Database.MigrateAsync();
+        // Add an existing player so it can be activated (first player alphabetically in the 2024 season)
+        var player = Faker.FakePlayer(mlbId: 671096, team: Faker.FakeTeam(), active: false);
+        await dbContext.Players.AddAsync(player);
+        await dbContext.SaveChangesAsync();
 
         /*
          * Act
