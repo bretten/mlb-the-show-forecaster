@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
@@ -11,6 +12,11 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 /// </summary>
 public interface IPlayerCardOverallRatingChangedEvent : IDomainEvent
 {
+    /// <summary>
+    /// The year of MLB The Show
+    /// </summary>
+    public SeasonYear Year { get; }
+
     /// <summary>
     /// The card ID from MLB The Show
     /// </summary>

@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
@@ -16,6 +17,7 @@ public class UpdatePlayerCommandHandlerTests
     public async Task Handle_InactiveFreeAgentUpdatePlayerCommand_UpdatesPlayer()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var fakeTeam = Faker.FakeTeam();
         var fakePlayer = Faker.FakePlayer(active: true, team: fakeTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
@@ -30,7 +32,7 @@ public class UpdatePlayerCommandHandlerTests
             .Returns(mockPlayerRepository);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCommand(fakePlayer, fakePlayerStatusChange);
+        var command = new UpdatePlayerCommand(year, fakePlayer, fakePlayerStatusChange);
         var handler = new UpdatePlayerCommandHandler(stubUnitOfWork.Object);
 
         // Act
@@ -48,6 +50,7 @@ public class UpdatePlayerCommandHandlerTests
     public async Task Handle_ActiveNewTeamUpdatePlayerCommand_UpdatesPlayer()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var fakeTeam = Faker.FakeTeam();
         var fakePlayer = Faker.FakePlayer(active: false, team: Faker.NoTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
@@ -62,7 +65,7 @@ public class UpdatePlayerCommandHandlerTests
             .Returns(mockPlayerRepository);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCommand(fakePlayer, fakePlayerStatusChange);
+        var command = new UpdatePlayerCommand(year, fakePlayer, fakePlayerStatusChange);
         var handler = new UpdatePlayerCommandHandler(stubUnitOfWork.Object);
 
         // Act
@@ -81,6 +84,7 @@ public class UpdatePlayerCommandHandlerTests
     public async Task Handle_NoTeamForSigningUpdatePlayerCommand_ThrowsException()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var fakePlayer = Faker.FakePlayer(active: false, team: Faker.NoTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
         {
@@ -94,7 +98,7 @@ public class UpdatePlayerCommandHandlerTests
             .Returns(mockPlayerRepository);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCommand(fakePlayer, fakePlayerStatusChange);
+        var command = new UpdatePlayerCommand(year, fakePlayer, fakePlayerStatusChange);
         var handler = new UpdatePlayerCommandHandler(stubUnitOfWork.Object);
         var action = async () => await handler.Handle(command, cToken);
 

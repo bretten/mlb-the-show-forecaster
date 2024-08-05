@@ -191,7 +191,7 @@ public sealed class PlayerCard : Card
         AddBoostedHistoricalRating(date, null, boostedRating, boostedAttributes);
 
         // Raise a domain event that this card has a significant rating boost
-        RaiseDomainEvent(new PlayerCardBoostedEvent(ExternalId, boostedRating, boostedAttributes));
+        RaiseDomainEvent(new PlayerCardBoostedEvent(Year, ExternalId, boostedRating, boostedAttributes));
     }
 
     /// <summary>
@@ -231,7 +231,7 @@ public sealed class PlayerCard : Card
     public void ChangePosition(Position newPosition)
     {
         RaiseDomainEvent(
-            new PlayerCardPositionChangedEvent(ExternalId, OldPosition: Position, NewPosition: newPosition));
+            new PlayerCardPositionChangedEvent(Year, ExternalId, OldPosition: Position, NewPosition: newPosition));
         Position = newPosition;
     }
 
@@ -277,7 +277,7 @@ public sealed class PlayerCard : Card
         // Raise domain events based on whether the rating increased or decreased
         if (OverallRating.Value < newRating.Value)
         {
-            RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(ExternalId,
+            RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(Year, ExternalId,
                 PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes,
                 NewOverallRating: newRating,
@@ -286,7 +286,7 @@ public sealed class PlayerCard : Card
         }
         else if (OverallRating.Value > newRating.Value)
         {
-            RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(ExternalId,
+            RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(Year, ExternalId,
                 PreviousOverallRating: OverallRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes,
                 NewOverallRating: newRating,
@@ -377,8 +377,8 @@ public sealed class PlayerCard : Card
         CardImageLocation imageLocation, CardName name, Rarity rarity, CardSeries series, Position position,
         TeamShortName teamShortName, OverallRating overallRating, PlayerCardAttributes playerCardAttributes)
     {
-        var card = new PlayerCard(year, cardExternalId, type, imageLocation, name, rarity, series, position, teamShortName,
-            overallRating, playerCardAttributes);
+        var card = new PlayerCard(year, cardExternalId, type, imageLocation, name, rarity, series, position,
+            teamShortName, overallRating, playerCardAttributes);
         card.RaiseDomainEvent(new NewPlayerCardEvent(card));
         return card;
     }

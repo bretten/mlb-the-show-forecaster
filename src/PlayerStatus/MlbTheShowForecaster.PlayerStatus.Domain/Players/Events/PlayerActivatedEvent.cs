@@ -6,5 +6,6 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events
 /// <summary>
 /// Published when a Player is activated
 /// </summary>
+/// <param name="Year">The year the player was activated</param>
 /// <param name="PlayerMlbId">The MLB ID of the player</param>
-public record PlayerActivatedEvent(MlbId PlayerMlbId) : IDomainEvent;
+public sealed record PlayerActivatedEvent(SeasonYear Year, MlbId PlayerMlbId) : IDomainEvent;

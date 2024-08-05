@@ -100,8 +100,9 @@ public sealed class Player : AggregateRoot
     /// <summary>
     /// Signs the Player with the specified Team
     /// </summary>
+    /// <param name="year">The year the player signed with the team</param>
     /// <param name="team">The Team to sign with</param>
-    public void SignContractWithTeam(Team team)
+    public void SignContractWithTeam(SeasonYear year, Team team)
     {
         if (!IsFreeAgent())
         {
@@ -109,37 +110,40 @@ public sealed class Player : AggregateRoot
         }
 
         Team = team;
-        RaiseDomainEvent(new PlayerSignedContractWithTeamEvent(MlbId, team.MlbId));
+        RaiseDomainEvent(new PlayerSignedContractWithTeamEvent(year, MlbId, team.MlbId));
     }
 
     /// <summary>
     /// Enters the Player into free agency
     /// </summary>
-    public void EnterFreeAgency()
+    /// <param name="year">The year the player entered free agency</param>
+    public void EnterFreeAgency(SeasonYear year)
     {
         EndCurrentTeamContract();
 
-        RaiseDomainEvent(new PlayerEnteredFreeAgencyEvent(MlbId));
+        RaiseDomainEvent(new PlayerEnteredFreeAgencyEvent(year, MlbId));
     }
 
     /// <summary>
     /// Activates the Player
     /// </summary>
-    public void Activate()
+    /// <param name="year">The year the player was activated</param>
+    public void Activate(SeasonYear year)
     {
         Active = true;
 
-        RaiseDomainEvent(new PlayerActivatedEvent(MlbId));
+        RaiseDomainEvent(new PlayerActivatedEvent(year, MlbId));
     }
 
     /// <summary>
     /// Inactivates a Player
     /// </summary>
-    public void Inactivate()
+    /// <param name="year">The year the player was inactivated</param>
+    public void Inactivate(SeasonYear year)
     {
         Active = false;
 
-        RaiseDomainEvent(new PlayerInactivatedEvent(MlbId));
+        RaiseDomainEvent(new PlayerInactivatedEvent(year, MlbId));
     }
 
     /// <summary>

@@ -4,7 +4,6 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Commands.CreatePlayer;
@@ -17,7 +16,7 @@ public class CreatePlayerCommandHandlerTests
         // Arrange
         var fakeTeam = Faker.FakeTeam();
         var fakeRosterEntry = Faker.FakeRosterEntry(teamMlbId: fakeTeam.MlbId.Value);
-        var fakePlayer = Faker.FakePlayer(active: false, team: null);
+        var fakePlayer = Faker.FakePlayer(active: true, team: fakeTeam);
 
         var mockPlayerRepository = Mock.Of<IPlayerRepository>();
         var stubUnitOfWork = new Mock<IUnitOfWork<IPlayerWork>>();
@@ -26,13 +25,9 @@ public class CreatePlayerCommandHandlerTests
 
         var stubPlayerMapper = Mock.Of<IPlayerMapper>(x => x.Map(fakeRosterEntry) == fakePlayer);
 
-        var stubTeamProvider = new Mock<ITeamProvider>();
-        stubTeamProvider.Setup(x => x.GetBy(fakeTeam.MlbId))
-            .Returns(fakeTeam);
-
         var cToken = CancellationToken.None;
         var command = new CreatePlayerCommand(fakeRosterEntry);
-        var handler = new CreatePlayerCommandHandler(stubUnitOfWork.Object, stubPlayerMapper, stubTeamProvider.Object);
+        var handler = new CreatePlayerCommandHandler(stubUnitOfWork.Object, stubPlayerMapper);
 
         // Act
         await handler.Handle(command, cToken);

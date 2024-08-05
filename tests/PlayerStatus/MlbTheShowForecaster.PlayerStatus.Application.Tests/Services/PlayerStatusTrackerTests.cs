@@ -275,7 +275,7 @@ public class PlayerStatusTrackerTests
         {
             MockCommandSender = new Mock<ICommandSender>();
             CreatePlayer2Command = new CreatePlayerCommand(rosterEntry2);
-            UpdatePlayer3Command = new UpdatePlayerCommand(player3, player3Changes);
+            UpdatePlayer3Command = new UpdatePlayerCommand(SeasonYear, player3, player3Changes);
         }
     }
 }

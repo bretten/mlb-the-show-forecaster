@@ -359,7 +359,7 @@ public class PlayerCardForecastTests
         // Assert
         Assert.Equal(2024, actual.Year.Value);
         Assert.Equal("00000000-0000-0000-0000-000000000001", actual.CardExternalId.Value.ToString("D"));
-        Assert.Equal(1, actual.MlbId.Value);
+        Assert.Equal(1, actual.MlbId!.Value);
         Assert.Equal(Position.CenterField, actual.PrimaryPosition);
         Assert.Equal(80, actual.OverallRating.Value);
     }

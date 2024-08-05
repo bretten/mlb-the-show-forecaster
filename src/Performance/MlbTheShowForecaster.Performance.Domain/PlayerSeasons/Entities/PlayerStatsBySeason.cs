@@ -8,7 +8,6 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessme
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Pitching;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects.PerformanceChanges;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
@@ -237,11 +236,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
         {
-            RaiseDomainEvent(new BattingImprovementEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
+            RaiseDomainEvent(new BattingImprovementEvent(SeasonYear, PlayerMlbId, comparison));
         }
         else if (comparison.IsSignificantDecrease)
         {
-            RaiseDomainEvent(new BattingDeclineEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
+            RaiseDomainEvent(new BattingDeclineEvent(SeasonYear, PlayerMlbId, comparison));
         }
 
         // Set the new score
@@ -268,11 +267,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
         {
-            RaiseDomainEvent(new PitchingImprovementEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
+            RaiseDomainEvent(new PitchingImprovementEvent(SeasonYear, PlayerMlbId, comparison));
         }
         else if (comparison.IsSignificantDecrease)
         {
-            RaiseDomainEvent(new PitchingDeclineEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
+            RaiseDomainEvent(new PitchingDeclineEvent(SeasonYear, PlayerMlbId, comparison));
         }
 
         // Set the new score
@@ -299,11 +298,11 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
         {
-            RaiseDomainEvent(new FieldingImprovementEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
+            RaiseDomainEvent(new FieldingImprovementEvent(SeasonYear, PlayerMlbId, comparison));
         }
         else if (comparison.IsSignificantDecrease)
         {
-            RaiseDomainEvent(new FieldingDeclineEvent(PlayerPerformanceChange.Create(comparison, PlayerMlbId)));
+            RaiseDomainEvent(new FieldingDeclineEvent(SeasonYear, PlayerMlbId, comparison));
         }
 
         // Set the new score

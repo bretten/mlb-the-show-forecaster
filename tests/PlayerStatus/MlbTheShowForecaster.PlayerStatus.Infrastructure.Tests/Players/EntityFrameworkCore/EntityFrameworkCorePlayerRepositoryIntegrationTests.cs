@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
@@ -75,6 +76,7 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
     public async Task Update_ExistingPlayer_UpdatesPlayerInDbContextSet()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var fakeTeam = Faker.FakeTeam();
         var fakePlayer = Faker.FakePlayer(active: false, team: fakeTeam);
         var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.Abbreviation) == fakeTeam);
@@ -89,7 +91,7 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
         var repo = new EntityFrameworkCorePlayerRepository(dbContext);
 
         // Act
-        fakePlayer.Activate();
+        fakePlayer.Activate(year);
         await repo.Update(fakePlayer);
         await dbContext.SaveChangesAsync();
 

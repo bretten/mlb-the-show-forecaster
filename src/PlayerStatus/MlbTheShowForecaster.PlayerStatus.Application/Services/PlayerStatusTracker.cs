@@ -101,7 +101,8 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
                 _teamProvider.GetBy(rosterEntry.CurrentTeamMlbId));
             if (detectedChanges.Any())
             {
-                await _commandSender.Send(new UpdatePlayerCommand(existingPlayer, detectedChanges), cancellationToken);
+                await _commandSender.Send(new UpdatePlayerCommand(seasonYear, existingPlayer, detectedChanges),
+                    cancellationToken);
                 updatedPlayers++;
             }
         }
