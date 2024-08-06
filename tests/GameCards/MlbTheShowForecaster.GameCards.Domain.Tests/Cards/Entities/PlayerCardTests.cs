@@ -46,7 +46,7 @@ public class PlayerCardTests
     {
         // Arrange
         var card = Faker.FakePlayerCard(overallRating: 50);
-        card.Boost(new DateOnly(2024, 5, 28), Faker.FakePlayerCardAttributes());
+        card.Boost(new DateOnly(2024, 5, 28), new DateOnly(2024, 5, 30), "Hit 5 HRs", Faker.FakePlayerCardAttributes());
 
         // Act
         var actual = card.TemporaryOverallRating;
@@ -75,7 +75,7 @@ public class PlayerCardTests
     {
         // Arrange
         var card = Faker.FakePlayerCard(overallRating: 50);
-        card.Boost(new DateOnly(2024, 5, 28), Faker.FakePlayerCardAttributes());
+        card.Boost(new DateOnly(2024, 5, 28), new DateOnly(2024, 5, 30), "Hit 5 HRs", Faker.FakePlayerCardAttributes());
 
         // Act
         var actual = card.IsBoosted;
@@ -89,7 +89,7 @@ public class PlayerCardTests
     {
         // Arrange
         var card = Faker.FakePlayerCard(overallRating: 50);
-        card.Boost(new DateOnly(2024, 5, 28), Faker.FakePlayerCardAttributes());
+        card.Boost(new DateOnly(2024, 5, 28), new DateOnly(2024, 5, 29), "Hit 5 HRs", Faker.FakePlayerCardAttributes());
         card.RemoveBoost(new DateOnly(2024, 5, 29), Faker.FakePlayerCardAttributes());
 
         // Act
@@ -332,7 +332,7 @@ public class PlayerCardTests
         var date = new DateOnly(2024, 5, 24);
 
         // Act
-        card.Boost(date, boostedAttributes);
+        card.Boost(date, date.AddDays(2), "Hit 5 HRs", boostedAttributes);
 
         /*
          * Assert
@@ -357,6 +357,8 @@ public class PlayerCardTests
         Assert.Equal(card.ExternalId, e!.CardExternalId);
         Assert.Equal(99, e.NewOverallRating.Value);
         Assert.Equal(boostedAttributes, e.NewPlayerCardAttributes);
+        Assert.Equal("Hit 5 HRs", e.BoostReason);
+        Assert.Equal(new DateOnly(2024, 5, 26), e.BoostEndDate);
     }
 
     [Fact]
@@ -369,7 +371,7 @@ public class PlayerCardTests
         var boostedAttributes = Faker.FakePlayerCardAttributes(scalar: 4);
         var startDate = new DateOnly(2024, 5, 23);
         var endDate = new DateOnly(2024, 5, 29);
-        card.Boost(startDate, boostedAttributes);
+        card.Boost(startDate, endDate, "Hit 5 HRs", boostedAttributes);
 
         // Act
         card.RemoveBoost(endDate, normalAttributes);

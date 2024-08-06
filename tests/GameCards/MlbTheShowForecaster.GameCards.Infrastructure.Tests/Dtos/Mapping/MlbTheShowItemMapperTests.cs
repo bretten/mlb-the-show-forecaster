@@ -123,6 +123,7 @@ public class MlbTheShowItemMapperTests
         Assert.Equal(27, actual.BaseRunningAbility.Value);
         Assert.Equal(28, actual.BaseRunningAggression.Value);
         Assert.Equal("Hit 5 HRs", actual.BoostReason);
+        Assert.Equal(new DateTime(2024, 5, 23, 1, 2, 3), actual.BoostEndDate);
         Assert.NotNull(actual.TemporaryOverallRating);
         Assert.Equal(95, actual.TemporaryOverallRating.Value);
     }

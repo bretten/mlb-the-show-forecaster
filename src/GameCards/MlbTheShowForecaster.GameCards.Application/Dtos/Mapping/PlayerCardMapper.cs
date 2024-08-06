@@ -35,7 +35,8 @@ public sealed class PlayerCardMapper : IPlayerCardMapper
         // A boost is also a temporary rating, so don't apply both
         if (card.IsBoosted)
         {
-            mappedCard.Boost(_calendar.Today(), mappedCard.PlayerCardAttributes);
+            mappedCard.Boost(_calendar.Today(), DateOnly.FromDateTime(card.BoostEndDate!.Value), card.BoostReason!,
+                mappedCard.PlayerCardAttributes);
         }
         else if (card.HasTemporaryRating)
         {

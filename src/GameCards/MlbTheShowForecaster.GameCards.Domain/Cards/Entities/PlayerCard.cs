@@ -181,17 +181,20 @@ public sealed class PlayerCard : Card
     /// Significantly increases the rating and attributes of the card
     /// </summary>
     /// <param name="date">The date of the boost</param>
+    /// <param name="endDate">The end date of the boost</param>
+    /// <param name="boostReason">The reason why the card is being boosted</param>
     /// <param name="boostedAttributes">The boosted <see cref="PlayerCardAttributes"/></param>
-    public void Boost(DateOnly date, PlayerCardAttributes boostedAttributes)
+    public void Boost(DateOnly date, DateOnly endDate, string boostReason, PlayerCardAttributes boostedAttributes)
     {
         var boostedRating = OverallRating.Max();
         PlayerCardAttributes = boostedAttributes;
 
-        // Add the boosted rating to the history
+        // Add the boosted rating to the history (the end date will be set when the boost is removed)
         AddBoostedHistoricalRating(date, null, boostedRating, boostedAttributes);
 
         // Raise a domain event that this card has a significant rating boost
-        RaiseDomainEvent(new PlayerCardBoostedEvent(Year, ExternalId, boostedRating, boostedAttributes));
+        RaiseDomainEvent(new PlayerCardBoostedEvent(Year, ExternalId, boostedRating, boostedAttributes, boostReason,
+            endDate));
     }
 
     /// <summary>
