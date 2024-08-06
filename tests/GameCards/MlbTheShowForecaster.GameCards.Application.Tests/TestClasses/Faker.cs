@@ -44,7 +44,7 @@ public static class Faker
 
         if (isBoosted)
         {
-            card.Boost(new DateOnly(2024, 7, 17), FakePlayerCardAttributes());
+            card.Boost(new DateOnly(2024, 7, 17), new DateOnly(2024, 7, 19), "Hit 5 HRs", FakePlayerCardAttributes());
         }
         else if (temporaryRating.HasValue)
         {

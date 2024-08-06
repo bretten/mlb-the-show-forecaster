@@ -374,7 +374,7 @@ public class PlayerRatingHistoryServiceTests
         var playerCard = Faker.FakePlayerCard(cardExternalId: CardExternalId.Value);
         // Boost the card
         var boostDate = new DateOnly(2024, 5, 1);
-        playerCard.Boost(boostDate, Faker.FakePlayerCardAttributes(scalar: 2));
+        playerCard.Boost(boostDate, boostDate.AddDays(2), "Hit 5 HRs", Faker.FakePlayerCardAttributes(scalar: 2));
 
         // Query for PlayerCard
         var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);

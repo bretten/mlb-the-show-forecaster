@@ -72,6 +72,7 @@ public sealed class MlbTheShowItemMapper : IMlbTheShowItemMapper
             BaseRunningAbility: AbilityAttribute.Create(dto.BaseRunningAbility),
             BaseRunningAggression: AbilityAttribute.Create(dto.BaseRunningAggression),
             BoostReason: dto.HasAugment ? dto.AugmentText : null,
+            BoostEndDate: dto.HasAugment && dto.AugmentEndDate.HasValue ? dto.AugmentEndDate.Value : null,
             TemporaryOverallRating: dto.HasRankChange ? OverallRating.Create(dto.NewRank) : null
         );
     }

@@ -108,7 +108,8 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
     {
         if (externalPlayerCard.IsBoosted)
         {
-            domainPlayerCard.Boost(_calendar.Today(), externalPlayerCard.GetAttributes());
+            domainPlayerCard.Boost(_calendar.Today(), DateOnly.FromDateTime(externalPlayerCard.BoostEndDate!.Value),
+                externalPlayerCard.BoostReason!, externalPlayerCard.GetAttributes());
         }
         else
         {

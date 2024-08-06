@@ -118,6 +118,7 @@ public class MlbPlayerCardTests
             BaseRunningAbility: AbilityAttribute.Create(27),
             BaseRunningAggression: AbilityAttribute.Create(28),
             BoostReason: "Hit 5 HRs",
+            BoostEndDate: new DateTime(2024, 8, 6),
             TemporaryOverallRating: OverallRating.Create(95)
         );
 

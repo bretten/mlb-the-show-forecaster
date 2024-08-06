@@ -57,6 +57,7 @@ public class PlayerCardMapperTests
             BaseRunningAbility: AbilityAttribute.Create(27),
             BaseRunningAggression: AbilityAttribute.Create(28),
             BoostReason: null,
+            BoostEndDate: null,
             TemporaryOverallRating: null
         );
 
