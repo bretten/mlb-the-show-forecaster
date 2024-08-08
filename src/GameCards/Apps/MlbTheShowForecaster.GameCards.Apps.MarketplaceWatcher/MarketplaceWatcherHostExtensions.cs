@@ -5,6 +5,16 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.BattingStatsChange;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.FieldingStatsChange;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.OverallRatingChange;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PitchingStatsChange;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerActivation;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerCardBoosted;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerDeactivation;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerFreeAgency;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerTeamSigning;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PositionChange;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Events;
@@ -118,6 +128,7 @@ public static class MarketplaceWatcherHostExtensions
     /// </summary>
     private static readonly Dictionary<Type, string> DomainEventPublisherTypes = new()
     {
+        { typeof(NewPlayerCardEvent), "NewPlayerCard" },
         { typeof(PlayerCardOverallRatingDeclinedEvent), "PlayerCardOverallRatingDeclined" },
         { typeof(PlayerCardOverallRatingImprovedEvent), "PlayerCardOverallRatingImproved" },
         { typeof(PlayerCardBoostedEvent), "PlayerCardBoostedEvent" },
@@ -134,6 +145,24 @@ public static class MarketplaceWatcherHostExtensions
     /// </summary>
     private static readonly Dictionary<Type, string> DomainEventConsumerTypes = new()
     {
+        { typeof(NewPlayerCardEvent), "NewPlayerCard" },
+
+        { typeof(BattingStatsImprovementEvent), "BattingImprovement" },
+        { typeof(BattingStatsDeclineEvent), "BattingDecline" },
+        { typeof(PitchingStatsImprovementEvent), "PitchingImprovement" },
+        { typeof(PitchingStatsDeclineEvent), "PitchingDecline" },
+        { typeof(FieldingStatsImprovementEvent), "FieldingImprovement" },
+        { typeof(FieldingStatsDeclineEvent), "FieldingDecline" },
+
+        { typeof(OverallRatingImprovementEvent), "PlayerCardOverallRatingImproved" },
+        { typeof(OverallRatingDeclineEvent), "PlayerCardOverallRatingDeclined" },
+        { typeof(PositionChangeEvent), "PlayerCardPositionChanged" },
+
+        { typeof(PlayerCardBoostEvent), "PlayerCardBoostedEvent" },
+        { typeof(PlayerActivationEvent), "PlayerActivated" },
+        { typeof(PlayerFreeAgencyEvent), "PlayerEnteredFreeAgency" },
+        { typeof(PlayerDeactivationEvent), "PlayerInactivated" },
+        { typeof(PlayerTeamSigningEvent), "PlayerSignedContractWithTeam" },
     };
 
     /// <summary>
