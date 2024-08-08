@@ -6,10 +6,10 @@ using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Events.PitchingStatsChange;
 
-public class PitchingStatsChangeEventConsumerTests : BaseForecastImpactEventConsumerTests
+public class PitchingStatsImprovementEventConsumerTests : BaseForecastImpactEventConsumerTests
 {
     [Fact]
-    public async Task Handle_PitchingStatsChangeEvent_AppliesForecastImpact()
+    public async Task Handle_PitchingStatsImprovementEvent_AppliesForecastImpact()
     {
         // Arrange
         var cToken = CancellationToken.None;
@@ -18,9 +18,10 @@ public class PitchingStatsChangeEventConsumerTests : BaseForecastImpactEventCons
         var stubImpactDuration = StubImpactDuration();
 
         var consumer =
-            new PitchingStatsChangeEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+            new PitchingStatsImprovementEventConsumer(mockCommandSender.Object, stubCalendar.Object,
+                stubImpactDuration);
 
-        var e = new PitchingStatsChangeEvent(Year, MlbId, PercentageChange.Create(0.5m, 0.7m));
+        var e = new PitchingStatsImprovementEvent(Year, MlbId, PercentageChange.Create(0.5m, 0.7m));
 
         // Act
         await consumer.Handle(e, cToken);

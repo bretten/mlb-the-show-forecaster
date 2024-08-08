@@ -4,17 +4,18 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.StatImpacts;
 
-namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PitchingStatsChange;
+namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.FieldingStatsChange;
 
 /// <summary>
-/// Consumes a <see cref="PitchingStatsChangeEvent"/>
+/// Consumes a <see cref="FieldingStatsImprovementEvent"/>
 ///
 /// <para>Applies a <see cref="StatsForecastImpact"/> to the specified <see cref="PlayerCardForecast"/></para>
 /// </summary>
-public sealed class PitchingStatsChangeEventConsumer : BaseForecastImpactEventConsumer<PitchingStatsChangeEvent>
+public sealed class
+    FieldingStatsImprovementEventConsumer : BaseForecastImpactEventConsumer<FieldingStatsImprovementEvent>
 {
     /// <inheritdoc />
-    public PitchingStatsChangeEventConsumer(ICommandSender commandSender, ICalendar calendar,
+    public FieldingStatsImprovementEventConsumer(ICommandSender commandSender, ICalendar calendar,
         ForecastImpactDuration duration) : base(commandSender, calendar, duration)
     {
     }
@@ -22,8 +23,8 @@ public sealed class PitchingStatsChangeEventConsumer : BaseForecastImpactEventCo
     /// <inheritdoc />
     protected override ForecastImpact CreateImpact(IForecastImpactEvent ev)
     {
-        var e = (PitchingStatsChangeEvent)ev;
-        return new PitchingStatsForecastImpact(e.Comparison.ReferenceValue, e.Comparison.NewValue,
-            Calendar.Today().AddDays(Duration.PitchingStatsChange));
+        var e = (FieldingStatsImprovementEvent)ev;
+        return new FieldingStatsForecastImpact(e.Comparison.ReferenceValue, e.Comparison.NewValue,
+            Calendar.Today().AddDays(Duration.FieldingStatsChange));
     }
 }

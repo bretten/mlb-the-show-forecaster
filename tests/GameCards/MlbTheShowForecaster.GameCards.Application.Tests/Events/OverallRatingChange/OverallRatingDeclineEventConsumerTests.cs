@@ -6,10 +6,10 @@ using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Events.OverallRatingChange;
 
-public class OverallRatingChangeEventConsumerTests : BaseForecastImpactEventConsumerTests
+public sealed class OverallRatingDeclineEventConsumerTests : BaseForecastImpactEventConsumerTests
 {
     [Fact]
-    public async Task Handle_OverallRatingChangeEvent_AppliesForecastImpact()
+    public async Task Handle_OverallRatingDeclineEvent_AppliesForecastImpact()
     {
         // Arrange
         var cToken = CancellationToken.None;
@@ -18,11 +18,11 @@ public class OverallRatingChangeEventConsumerTests : BaseForecastImpactEventCons
         var stubImpactDuration = StubImpactDuration();
 
         var consumer =
-            new OverallRatingChangeEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+            new OverallRatingDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
 
         var oldRating = Faker.FakeOverallRating(70);
         var newRating = Faker.FakeOverallRating(90);
-        var e = new OverallRatingChangeEvent(Year, CardExternalId, NewOverallRating: newRating, oldRating);
+        var e = new OverallRatingDeclineEvent(Year, CardExternalId, NewOverallRating: newRating, oldRating);
 
         // Act
         await consumer.Handle(e, cToken);

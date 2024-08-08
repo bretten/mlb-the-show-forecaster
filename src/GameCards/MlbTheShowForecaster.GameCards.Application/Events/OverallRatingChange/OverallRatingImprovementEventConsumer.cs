@@ -6,14 +6,15 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObject
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.OverallRatingChange;
 
 /// <summary>
-/// Consumes a <see cref="OverallRatingChangeEvent"/>
+/// Consumes a <see cref="OverallRatingImprovementEvent"/>
 ///
 /// <para>Applies a <see cref="OverallRatingChangeForecastImpact"/> to the specified <see cref="PlayerCardForecast"/></para>
 /// </summary>
-public sealed class OverallRatingChangeEventConsumer : BaseForecastImpactEventConsumer<OverallRatingChangeEvent>
+public sealed class
+    OverallRatingImprovementEventConsumer : BaseForecastImpactEventConsumer<OverallRatingImprovementEvent>
 {
     /// <inheritdoc />
-    public OverallRatingChangeEventConsumer(ICommandSender commandSender, ICalendar calendar,
+    public OverallRatingImprovementEventConsumer(ICommandSender commandSender, ICalendar calendar,
         ForecastImpactDuration duration) : base(commandSender, calendar, duration)
     {
     }
@@ -21,7 +22,7 @@ public sealed class OverallRatingChangeEventConsumer : BaseForecastImpactEventCo
     /// <inheritdoc />
     protected override ForecastImpact CreateImpact(IForecastImpactEvent ev)
     {
-        var e = (OverallRatingChangeEvent)ev;
+        var e = (OverallRatingImprovementEvent)ev;
         return new OverallRatingChangeForecastImpact(oldRating: e.PreviousOverallRating, newRating: e.NewOverallRating,
             Calendar.Today().AddDays(Duration.OverallRatingChange));
     }

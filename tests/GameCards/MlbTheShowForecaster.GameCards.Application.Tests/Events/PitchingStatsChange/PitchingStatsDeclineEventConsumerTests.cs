@@ -1,15 +1,15 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCardForecastImpacts;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.BattingStatsChange;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PitchingStatsChange;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.StatImpacts;
 using Moq;
 
-namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Events.BattingStatsChange;
+namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Events.PitchingStatsChange;
 
-public class BattingStatsChangeEventConsumerTests : BaseForecastImpactEventConsumerTests
+public class PitchingStatsDeclineEventConsumerTests : BaseForecastImpactEventConsumerTests
 {
     [Fact]
-    public async Task Handle_BattingStatsChangeEvent_AppliesForecastImpact()
+    public async Task Handle_PitchingStatsDeclineEvent_AppliesForecastImpact()
     {
         // Arrange
         var cToken = CancellationToken.None;
@@ -18,16 +18,16 @@ public class BattingStatsChangeEventConsumerTests : BaseForecastImpactEventConsu
         var stubImpactDuration = StubImpactDuration();
 
         var consumer =
-            new BattingStatsChangeEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+            new PitchingStatsDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
 
-        var e = new BattingStatsChangeEvent(Year, MlbId, PercentageChange.Create(0.5m, 0.7m));
+        var e = new PitchingStatsDeclineEvent(Year, MlbId, PercentageChange.Create(0.7m, 0.5m));
 
         // Act
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new BattingStatsForecastImpact(0.5m, 0.7m,
-            stubCalendar.Object.Today().AddDays(stubImpactDuration.BattingStatsChange));
+        var expectedImpact = new PitchingStatsForecastImpact(0.7m, 0.5m,
+            stubCalendar.Object.Today().AddDays(stubImpactDuration.PitchingStatsChange));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
