@@ -8,6 +8,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Excepti
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 using Microsoft.Extensions.Logging;
 
@@ -138,7 +139,8 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         if (playerCard.IsBoosted)
         {
             // The service runs regularly, so let it build the history later
-            // Can be logged #171
+            _logger.LogWarning(
+                $"{nameof(PlayerRatingHistoryService)} halted for {playerCard.ExternalId.Value} due to the card being boosted");
             return null;
         }
 
@@ -160,9 +162,19 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         var lastRatingChangeIndex = changes.Count - 1;
         for (var i = 0; i < changes.Count; i++)
         {
-            // Start with the current, recent state of the card and subtract each rating change in newest to oldest order
-            // This gives the attribute state before each rating change
-            currentState = changes[i].AttributeChanges.SubtractFrom(currentState);
+            try
+            {
+                // Start with the current, recent state of the card and subtract each rating change in newest to oldest order
+                // This gives the attribute state before each rating change
+                currentState = changes[i].AttributeChanges.SubtractFrom(currentState);
+            }
+            catch (AbilityAttributeOutOfRangeException e)
+            {
+                _logger.LogWarning(e,
+                    $"{nameof(PlayerRatingHistoryService)} halted for {playerCard.ExternalId.Value} due to erroneous roster update attribute changes");
+                return null;
+            }
+
 
             // A historical rating is being created for the state of the card BEFORE the current PlayerRatingChange (changes[i])
             // The last item is the oldest/first rating change. Its start date is considered to be the beginning of the year
