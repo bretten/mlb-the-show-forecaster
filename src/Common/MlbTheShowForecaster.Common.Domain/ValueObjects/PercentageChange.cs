@@ -27,14 +27,14 @@ public class PercentageChange : ValueObject
     public decimal NewValue { get; }
 
     /// <summary>
+    /// True if a <see cref="ReferenceValue"/> of zero should be treated as one to prevent <see cref="DivideByZeroException"/>
+    /// </summary>
+    public virtual bool TreatZeroReferenceValueAsOne { get; }
+
+    /// <summary>
     /// The number of fractional digits to round the decimal value to
     /// </summary>
     protected virtual int FractionalDigitCount => 2;
-
-    /// <summary>
-    /// True if a <see cref="ReferenceValue"/> of zero should be treated as one to prevent <see cref="DivideByZeroException"/>
-    /// </summary>
-    protected virtual bool TreatZeroReferenceValueAsOne { get; }
 
     /// <summary>
     /// The percentage change from the <see cref="ReferenceValue"/> to the <see cref="NewValue"/> on the 100% scale

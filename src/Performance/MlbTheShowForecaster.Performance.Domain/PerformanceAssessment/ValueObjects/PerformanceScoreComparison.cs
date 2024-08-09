@@ -9,9 +9,9 @@ public class PerformanceScoreComparison : PercentageChange
 {
     /// <summary>
     /// If there is a reference value of 0, we want to treat that as a non-infinite increase. For example, a score
-    /// changing from 0 to 0.01 is different than it changing from 0 to 0.1. This difference needs to be measured
+    /// changing from 0 to 0.01 is different from it changing from 0 to 0.1. This difference needs to be measured
     /// </summary>
-    protected override bool TreatZeroReferenceValueAsOne => true;
+    public override bool TreatZeroReferenceValueAsOne => true;
 
     /// <summary>
     /// The required amount (as a percentage) for a performance score to change by for it to be considered significant.
