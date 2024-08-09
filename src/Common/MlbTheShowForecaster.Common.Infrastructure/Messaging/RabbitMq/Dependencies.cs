@@ -3,6 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
@@ -67,10 +68,13 @@ public static class Dependencies
                 // Register a RabbitMqDomainEventConsumer as a wrapper for the current domain event type's consumer
                 var rabbitMqConsumerWrapperType =
                     typeof(RabbitMqDomainEventConsumer<>).MakeGenericType(domainEventType);
+                var rabbitMqConsumerWrapperLoggerType =
+                    typeof(ILogger<>).MakeGenericType(rabbitMqConsumerWrapperType);
                 services.AddTransient(rabbitMqConsumerWrapperType, sp =>
                 {
+                    var logger = sp.GetRequiredService(rabbitMqConsumerWrapperLoggerType);
                     object[] parameters =
-                        [sp.GetRequiredService(handlerInterfaceType), sp.GetRequiredService<IModel>(), queue];
+                        [sp.GetRequiredService(handlerInterfaceType), sp.GetRequiredService<IModel>(), queue, logger];
                     return Activator.CreateInstance(rabbitMqConsumerWrapperType, parameters)!;
                 });
                 // Register the underlying domain event consumer for the current domain event type

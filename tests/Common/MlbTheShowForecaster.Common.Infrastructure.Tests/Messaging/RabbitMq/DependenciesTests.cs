@@ -130,6 +130,7 @@ public class DependenciesTests
          */
         // Service collection
         var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
         // Assemblies that will be scanned for implementations of domain event consumers
         var assembliesToScan = new List<Assembly>() { GetType().Assembly };
         // Publisher's mapping of domain event types to their RabbitMQ exchanges
