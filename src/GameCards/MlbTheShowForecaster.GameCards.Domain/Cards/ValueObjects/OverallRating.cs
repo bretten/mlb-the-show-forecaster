@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.Exceptions;
 
@@ -78,6 +79,7 @@ public sealed class OverallRating : ValueObject
     /// Constructor
     /// </summary>
     /// <param name="value">The rating</param>
+    [JsonConstructor]
     private OverallRating(int value)
     {
         Value = value;
