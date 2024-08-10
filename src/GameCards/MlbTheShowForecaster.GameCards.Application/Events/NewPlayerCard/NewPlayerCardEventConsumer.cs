@@ -43,10 +43,10 @@ public sealed class NewPlayerCardEventConsumer : IDomainEventConsumer<NewPlayerC
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     public async Task Handle(NewPlayerCardEvent e, CancellationToken cancellationToken = default)
     {
-        var mlbId = await _playerMatcher.GetPlayerByName(e.PlayerCard.Name);
+        var mlbId = await _playerMatcher.GetPlayerByName(e.CardName);
 
         await _commandSender.Send(
-            new CreatePlayerCardForecastCommand(e.PlayerCard.Year, e.PlayerCard.ExternalId, e.PlayerCard.Position,
-                e.PlayerCard.OverallRating, mlbId), cancellationToken);
+            new CreatePlayerCardForecastCommand(e.Year, e.CardExternalId, e.PrimaryPosition, e.OverallRating, mlbId),
+            cancellationToken);
     }
 }

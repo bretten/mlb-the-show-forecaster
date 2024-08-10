@@ -25,7 +25,8 @@ public class NewPlayerCardEventConsumerTests
 
         var consumer = new NewPlayerCardEventConsumer(mockCommandSender.Object, stubPlayerMatcher.Object);
 
-        var e = new NewPlayerCardEvent(fakePlayerCard);
+        var e = new NewPlayerCardEvent(fakePlayerCard.Year, fakePlayerCard.ExternalId, fakePlayerCard.Name,
+            fakePlayerCard.Position, fakePlayerCard.OverallRating);
 
         // Act
         await consumer.Handle(e, cToken);
