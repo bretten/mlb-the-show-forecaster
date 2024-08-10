@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
@@ -22,6 +23,7 @@ public sealed class CardExternalId : ValueObject
     /// Constructor
     /// </summary>
     /// <param name="value">The card external ID</param>
+    [JsonConstructor]
     private CardExternalId(Guid value)
     {
         Value = value;

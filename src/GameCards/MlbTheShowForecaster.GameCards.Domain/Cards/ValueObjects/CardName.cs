@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.Exceptions;
 
@@ -18,6 +19,7 @@ public sealed class CardName : ValueObject
     /// Constructor
     /// </summary>
     /// <param name="value">The card name</param>
+    [JsonConstructor]
     private CardName(string value)
     {
         Value = value;

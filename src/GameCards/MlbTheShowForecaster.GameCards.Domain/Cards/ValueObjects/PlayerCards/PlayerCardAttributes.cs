@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
@@ -178,6 +179,7 @@ public sealed class PlayerCardAttributes : ValueObject
     /// <param name="speed">The speed of the player</param>
     /// <param name="baseRunningAbility">How well the player can run around the bases</param>
     /// <param name="baseRunningAggression">How likely it is the player can steal a base</param>
+    [JsonConstructor]
     private PlayerCardAttributes(AbilityAttribute stamina, AbilityAttribute pitchingClutch,
         AbilityAttribute hitsPerNine, AbilityAttribute strikeoutsPerNine, AbilityAttribute baseOnBallsPerNine,
         AbilityAttribute homeRunsPerNine, AbilityAttribute pitchVelocity, AbilityAttribute pitchControl,
