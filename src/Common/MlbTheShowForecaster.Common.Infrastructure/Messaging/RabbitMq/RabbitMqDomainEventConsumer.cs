@@ -2,6 +2,7 @@
 using System.Text.Json;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq.Exceptions;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -36,16 +37,24 @@ public sealed class RabbitMqDomainEventConsumer<T> : IDisposable
     private readonly AsyncEventingBasicConsumer _consumer;
 
     /// <summary>
+    /// Logger
+    /// </summary>
+    private readonly ILogger<RabbitMqDomainEventConsumer<T>> _logger;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="domainEventConsumer">The underlying domain event consumer that handles the RabbitMQ messages</param>
     /// <param name="channel">The RabbitMQ channel</param>
     /// <param name="queue">The queue to consume</param>
-    public RabbitMqDomainEventConsumer(IDomainEventConsumer<T> domainEventConsumer, IModel channel, string queue)
+    /// <param name="logger">Logger</param>
+    public RabbitMqDomainEventConsumer(IDomainEventConsumer<T> domainEventConsumer, IModel channel, string queue,
+        ILogger<RabbitMqDomainEventConsumer<T>> logger)
     {
         _domainEventConsumer = domainEventConsumer;
         _channel = channel;
         Queue = queue;
+        _logger = logger;
         _consumer = new AsyncEventingBasicConsumer(channel);
         _consumer.Received += ReceivedEventHandler;
         _channel.BasicConsume(queue: Queue,
@@ -62,19 +71,25 @@ public sealed class RabbitMqDomainEventConsumer<T> : IDisposable
     /// <exception cref="RabbitMqEventBodyCouldNotBeParsedException">Thrown if the domain event body could not be properly parsed</exception>
     public async Task ReceivedEventHandler(object? sender, BasicDeliverEventArgs args)
     {
+        var messageType = typeof(T).Name;
         var bodyString = Encoding.UTF8.GetString(args.Body.ToArray());
         if (string.IsNullOrWhiteSpace(bodyString))
         {
-            throw new RabbitMqEventBodyEmptyException($"Event body is empty for {nameof(T)}");
+            var e = new RabbitMqEventBodyEmptyException($"Event body is empty for {messageType}");
+            _logger.LogError(e, e.Message);
+            throw e;
         }
 
         try
         {
+            _logger.LogInformation($"Consuming message {messageType}: {bodyString}");
             await _domainEventConsumer.Handle(JsonSerializer.Deserialize<T>(bodyString)!);
         }
-        catch (JsonException e)
+        catch (Exception e)
         {
-            throw new RabbitMqEventBodyCouldNotBeParsedException($"Could not parse event of type {nameof(T)}", e);
+            var ex = new RabbitMqEventBodyCouldNotBeParsedException($"Could not parse event of type {messageType}", e);
+            _logger.LogError(ex, ex.Message);
+            throw ex;
         }
     }
 

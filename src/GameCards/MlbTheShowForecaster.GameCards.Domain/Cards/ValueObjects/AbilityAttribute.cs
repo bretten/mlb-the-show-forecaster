@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+﻿using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
@@ -28,6 +29,7 @@ public sealed class AbilityAttribute : ValueObject
     /// Constructor
     /// </summary>
     /// <param name="value">The ability rating</param>
+    [JsonConstructor]
     private AbilityAttribute(int value)
     {
         Value = value;
