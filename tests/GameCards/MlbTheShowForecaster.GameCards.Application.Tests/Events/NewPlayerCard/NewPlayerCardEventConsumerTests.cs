@@ -20,13 +20,13 @@ public class NewPlayerCardEventConsumerTests
         var fakePlayerCard = Faker.FakePlayerCard();
         var mockCommandSender = new Mock<ICommandSender>();
         var stubPlayerMatcher = new Mock<IPlayerMatcher>();
-        stubPlayerMatcher.Setup(x => x.GetPlayerByName(fakePlayerCard.Name))
+        stubPlayerMatcher.Setup(x => x.GetPlayerByName(fakePlayerCard.Name, fakePlayerCard.TeamShortName))
             .ReturnsAsync(mlbId);
 
         var consumer = new NewPlayerCardEventConsumer(mockCommandSender.Object, stubPlayerMatcher.Object);
 
         var e = new NewPlayerCardEvent(fakePlayerCard.Year, fakePlayerCard.ExternalId, fakePlayerCard.Name,
-            fakePlayerCard.Position, fakePlayerCard.OverallRating);
+            fakePlayerCard.Position, fakePlayerCard.OverallRating, fakePlayerCard.TeamShortName);
 
         // Act
         await consumer.Handle(e, cToken);
