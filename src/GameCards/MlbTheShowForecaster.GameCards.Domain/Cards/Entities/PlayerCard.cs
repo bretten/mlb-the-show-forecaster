@@ -382,7 +382,8 @@ public sealed class PlayerCard : Card
     {
         var card = new PlayerCard(year, cardExternalId, type, imageLocation, name, rarity, series, position,
             teamShortName, overallRating, playerCardAttributes);
-        card.RaiseDomainEvent(new NewPlayerCardEvent(year, cardExternalId, name, position, overallRating));
+        card.RaiseDomainEvent(
+            new NewPlayerCardEvent(year, cardExternalId, name, position, overallRating, teamShortName));
         return card;
     }
 }
