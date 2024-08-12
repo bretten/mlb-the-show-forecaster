@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.CreatePlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Queries.GetAllPlayerStatsBySeason;
@@ -48,19 +49,20 @@ public class PerformanceTrackerTests
         // There will be a player with and without changes
         var player1Id = MlbId.Create(1); // Player1 has changes
         var player2Id = MlbId.Create(2); // Player2 has NO changes
+        var player3Id = MlbId.Create(3); // Player3 is being created
 
-        // Stats by season that exist in the system currently
+        // Stats by season that exist in the domain currently
         var player1StatsBySeason = Faker.FakePlayerStatsBySeason(playerMlbId: player1Id.Value);
         var player2StatsBySeason = Faker.FakePlayerStatsBySeason(playerMlbId: player2Id.Value);
-        var statsBySeasonInSystem = new List<PlayerStatsBySeason>()
+        var statsBySeasonInDomain = new List<PlayerStatsBySeason>()
         {
             player1StatsBySeason, player2StatsBySeason
         };
 
-        // The query that returns what's currently in the system
+        // The query that returns what's currently in the domain
         var getAllPlayerStatsBySeasonQuery = new GetAllPlayerStatsBySeasonQuery(seasonYear);
         var stubQuerySender = Mock.Of<IQuerySender>(x =>
-            x.Send(getAllPlayerStatsBySeasonQuery, cToken) == Task.FromResult(statsBySeasonInSystem.AsEnumerable()));
+            x.Send(getAllPlayerStatsBySeasonQuery, cToken) == Task.FromResult(statsBySeasonInDomain.AsEnumerable()));
 
         // Live MLB stats
         var stubPlayerStats = new Mock<IPlayerStats>();
@@ -70,21 +72,25 @@ public class PerformanceTrackerTests
                 { Dtos.TestClasses.Faker.FakePlayerGameBattingStats() });
         // Player2 has no changes
         var player2Season = Dtos.TestClasses.Faker.FakePlayerSeason(playerMlbId: player2Id.Value);
+        // Player3 stats do not yet exist in the domain, so they will be created
+        var player3Season = Dtos.TestClasses.Faker.FakePlayerSeason(playerMlbId: player3Id.Value,
+            playerGamePitchingStats: new List<PlayerGamePitchingStats>()
+                { Dtos.TestClasses.Faker.FakePlayerGamePitchingStats() });
         // Live MLB stats returns the corresponding live stats per each player
-        stubPlayerStats.Setup(x => x.GetPlayerSeason(player1Id, seasonYear))
-            .ReturnsAsync(player1Season);
-        stubPlayerStats.Setup(x => x.GetPlayerSeason(player2Id, seasonYear))
-            .ReturnsAsync(player2Season);
+        stubPlayerStats.Setup(x => x.GetAllPlayerStatsFor(seasonYear))
+            .ReturnsAsync(new List<PlayerSeason>() { player1Season, player2Season, player3Season });
 
         // Mock command sender
-        var mockCommandSender = Mock.Of<ICommandSender>();
+        var mockCommandSender = new Mock<ICommandSender>();
         // Player1 expects an update
         var expectedPlayer1UpdateCommand = new UpdatePlayerStatsBySeasonCommand(player1StatsBySeason, player1Season);
         // Player2 does NOT expect an update
         var notExpectedPlayer2UpdateCommand = new UpdatePlayerStatsBySeasonCommand(player2StatsBySeason, player2Season);
+        // Player3 expects a create command
+        var expectedPlayer3CreateCommand = new CreatePlayerStatsBySeasonCommand(player3Season);
 
         // The service under test
-        var tracker = new PerformanceTracker(stubQuerySender, mockCommandSender, stubPlayerStats.Object);
+        var tracker = new PerformanceTracker(stubQuerySender, mockCommandSender.Object, stubPlayerStats.Object);
 
         /*
          * Act
@@ -95,22 +101,26 @@ public class PerformanceTrackerTests
          * Assert
          */
         // There were 2 player seasons in the domain
-        Assert.Equal(2, actual.TotalPlayerSeasons);
+        Assert.Equal(3, actual.TotalPlayerSeasons);
+        // Player3's season stats were created in the domain
+        Assert.Equal(1, actual.TotalNewPlayerSeasons);
         // Player1 had a season performance update
         Assert.Equal(1, actual.TotalPlayerSeasonUpdates);
         // Player2 had no changes
         Assert.Equal(1, actual.TotalUpToDatePlayerSeasons);
 
-        // Was the system queried for player season stats?
+        // Was the domain queried for player season stats?
         Mock.Get(stubQuerySender).Verify(x => x.Send(getAllPlayerStatsBySeasonQuery, cToken), Times.Once);
-        // Was the live MLB data queried for each player?
-        stubPlayerStats.Verify(x => x.GetPlayerSeason(player1Id, seasonYear), Times.Once);
-        stubPlayerStats.Verify(x => x.GetPlayerSeason(player2Id, seasonYear), Times.Once);
+        // Was the live MLB data queried?
+        stubPlayerStats.Verify(x => x.GetAllPlayerStatsFor(seasonYear), Times.Once);
 
         // Was an update command sent for player 1?
-        Mock.Get(mockCommandSender).Verify(x => x.Send(expectedPlayer1UpdateCommand, cToken), Times.Once);
+        mockCommandSender.Verify(x => x.Send(expectedPlayer1UpdateCommand, cToken), Times.Once);
 
         // No update command should have been sent for player 2
-        Mock.Get(mockCommandSender).Verify(x => x.Send(notExpectedPlayer2UpdateCommand, cToken), Times.Never);
+        mockCommandSender.Verify(x => x.Send(notExpectedPlayer2UpdateCommand, cToken), Times.Never);
+
+        // Was a create command sent for player 3?
+        mockCommandSender.Verify(x => x.Send(expectedPlayer3CreateCommand, cToken), Times.Once);
     }
 }

@@ -9,10 +9,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 public interface IPlayerStats : IDisposable
 {
     /// <summary>
-    /// Gets a player's season stats
+    /// Should get season stats for all players in the specified year
     /// </summary>
-    /// <param name="playerMlbId">The MLB ID of the player</param>
-    /// <param name="seasonYear">The season year</param>
-    /// <returns>The player's season stats</returns>
-    Task<PlayerSeason> GetPlayerSeason(MlbId playerMlbId, SeasonYear seasonYear);
+    /// <param name="seasonYear">The season to get stats for</param>
+    /// <returns>Stats for all players in the specified year</returns>
+    Task<IEnumerable<PlayerSeason>> GetAllPlayerStatsFor(SeasonYear seasonYear);
 }
