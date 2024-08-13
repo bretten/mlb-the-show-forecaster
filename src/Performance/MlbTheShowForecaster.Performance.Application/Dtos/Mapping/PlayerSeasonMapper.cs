@@ -1,9 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Batting;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Fielding;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Statistics.ValueObjects.Pitching;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 
@@ -13,37 +10,15 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mappi
 public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
 {
     /// <summary>
-    /// Service that assesses the performance of the player's season
-    /// </summary>
-    private readonly IPerformanceAssessor _performanceAssessor;
-
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="performanceAssessor">Service that assesses the performance of the player's season</param>
-    public PlayerSeasonMapper(IPerformanceAssessor performanceAssessor)
-    {
-        _performanceAssessor = performanceAssessor;
-    }
-
-    /// <summary>
     /// Maps <see cref="PlayerSeason"/> to <see cref="PlayerStatsBySeason"/>
     /// </summary>
     /// <param name="playerSeason">The <see cref="PlayerSeason"/> to map</param>
     /// <returns>The mapped <see cref="PlayerStatsBySeason"/></returns>
     public PlayerStatsBySeason Map(PlayerSeason playerSeason)
     {
-        var battingStatsByGame = MapBattingGames(playerSeason.GameBattingStats).ToList();
-        var pitchingStatsByGame = MapPitchingGames(playerSeason.GamePitchingStats).ToList();
-        var fieldingStatsByGame = MapFieldingGames(playerSeason.GameFieldingStats).ToList();
-
-        var battingScore = _performanceAssessor.AssessBatting(BattingStats.Create(battingStatsByGame));
-        var pitchingScore = _performanceAssessor.AssessPitching(PitchingStats.Create(pitchingStatsByGame));
-        var fieldingScore = _performanceAssessor.AssessFielding(FieldingStats.Create(fieldingStatsByGame));
-
-        return PlayerStatsBySeason.Create(playerSeason.PlayerMlbId, playerSeason.SeasonYear, battingScore: battingScore,
-            pitchingScore: pitchingScore, fieldingScore: fieldingScore, battingStatsByGame, pitchingStatsByGame,
-            fieldingStatsByGame);
+        return PlayerStatsBySeason.Create(playerSeason.PlayerMlbId, playerSeason.SeasonYear, PerformanceScore.Zero(),
+            PerformanceScore.Zero(), PerformanceScore.Zero(), new List<PlayerBattingStatsByGame>(),
+            new List<PlayerPitchingStatsByGame>(), new List<PlayerFieldingStatsByGame>());
     }
 
     /// <summary>

@@ -83,10 +83,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await CreateSchema(connection);
         await dbContext.Database.MigrateAsync();
 
-        // Add a player season to get stats for
-        dbContext.PlayerStatsBySeasons.Add(Faker.FakePlayerStatsBySeason(660271, 2023));
-        await dbContext.SaveChangesAsync();
-
         /*
          * Act
          */
@@ -105,13 +101,16 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // The player season should have performance stats
         await using var assertConnection = await GetDbConnection();
         await using var assertDbContext = GetDbContext(connection);
-        var playerSeason = assertDbContext.PlayerStatsBySeasonsWithGames().First();
-        Assert.True(playerSeason.BattingStatsByGamesChronologically.Count > 0);
-        Assert.True(playerSeason.PitchingStatsByGamesChronologically.Count > 0);
-        Assert.True(playerSeason.FieldingStatsByGamesChronologically.Count > 0);
+        var playerSeasons = assertDbContext.PlayerStatsBySeasonsWithGames().ToList();
+        var playerSeason = playerSeasons.FirstOrDefault(x =>
+            x.BattingStatsByGamesChronologically.Count > 0 || x.PitchingStatsByGamesChronologically.Count > 0 ||
+            x.FieldingStatsByGamesChronologically.Count > 0);
+        Assert.NotNull(playerSeason);
         // Domain events should have been published
         using var rabbitMqChannel = host.Services.GetRequiredService<IModel>();
-        var messageCount = rabbitMqChannel.MessageCount("PlayerBattedInGame");
+        var messageCount = rabbitMqChannel.MessageCount("PlayerBattedInGame")
+                           + rabbitMqChannel.MessageCount("PlayerPitchedInGame")
+                           + rabbitMqChannel.MessageCount("PlayerFieldedInGame");
         Assert.True(messageCount > 0);
     }
 

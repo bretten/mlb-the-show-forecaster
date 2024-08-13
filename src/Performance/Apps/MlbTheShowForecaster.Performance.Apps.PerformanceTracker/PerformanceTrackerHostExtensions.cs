@@ -6,7 +6,6 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
-using com.brettnamba.MlbTheShowForecaster.Performance.Application.Events.NewPlayerSeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Batting;
@@ -48,6 +47,7 @@ public static class PerformanceTrackerHostExtensions
                 logger.LogInformation($"{s} - {season}");
                 var result = await tracker.TrackPlayerPerformance(SeasonYear.Create(season), ct);
                 logger.LogInformation($"{s} - Total player seasons = {result.TotalPlayerSeasons}");
+                logger.LogInformation($"{s} - Total new player seasons = {result.TotalNewPlayerSeasons}");
                 logger.LogInformation($"{s} - Total player season updates = {result.TotalPlayerSeasonUpdates}");
                 logger.LogInformation(
                     $"{s} - Total up-to-date player seasons = {result.TotalUpToDatePlayerSeasons}");
@@ -77,7 +77,6 @@ public static class PerformanceTrackerHostExtensions
     /// </summary>
     private static readonly Dictionary<Type, string> DomainEventConsumerTypes = new()
     {
-        { typeof(NewPlayerSeasonEvent), "PlayerActivated" },
     };
 
     /// <summary>
@@ -103,8 +102,7 @@ public static class PerformanceTrackerHostExtensions
             };
             services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
             {
-                typeof(PlayerBattedInGameEvent).Assembly,
-                typeof(NewPlayerSeasonEvent).Assembly
+                typeof(PlayerBattedInGameEvent).Assembly
             });
 
             // Player performance tracking dependencies
@@ -114,9 +112,6 @@ public static class PerformanceTrackerHostExtensions
             services.AddPerformancePlayerSeasonScorekeeper();
             services.AddPerformanceTracker(context.Configuration);
             services.AddPerformanceEntityFrameworkCoreRepositories(context.Configuration);
-
-            // Consumer for NewPlayerSeason events
-            services.AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<NewPlayerSeasonEvent>>>();
 
             // Background service for tracking player performance
             services.AddHostedService<ScheduledBackgroundService<IPerformanceTracker>>(sp =>

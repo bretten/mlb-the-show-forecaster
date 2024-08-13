@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.CreatePlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Commands.UpdatePlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Queries.GetAllPlayerStatsBySeason;
@@ -58,32 +59,49 @@ public sealed class PerformanceTracker : IPerformanceTracker
             (await _querySender.Send(new GetAllPlayerStatsBySeasonQuery(seasonYear), cancellationToken) ??
              Array.Empty<PlayerStatsBySeason>()).ToImmutableList();
 
-        // There should always be PlayerSeasons in the domain, or else the system has not been properly populated
-        if (playerStatsBySeasons.IsEmpty)
+        // Get all player season stats from the external source so that they can be used to update the domain
+        var externalPlayerStatsBySeasons = _playerStats.GetAllPlayerStatsFor(seasonYear, cancellationToken);
+
+        // The performance tracker should only be running for active seasons. If there are no stats, something is wrong
+        if (externalPlayerStatsBySeasons == null)
         {
             throw new PerformanceTrackerFoundNoPlayerSeasonsException($"No PlayerSeasons found for {seasonYear.Value}");
         }
 
         // Make sure each player's stats by season is up-to-date with the most recent stats
+        var totalSeasons = 0;
+        var newPlayerSeasons = 0;
         var playerSeasonUpdates = 0;
-        foreach (var playerStatsBySeason in playerStatsBySeasons)
+        await foreach (var externalSeasonStats in externalPlayerStatsBySeasons)
         {
-            // Get the most recent season stats
-            var seasonToDate = await _playerStats.GetPlayerSeason(playerStatsBySeason.PlayerMlbId, seasonYear);
-            // Are the stats in this system up-to-date?
-            if (IsSeasonUpToDate(playerStatsBySeason, seasonToDate))
+            totalSeasons++;
+            // Get the player season stats from the domain that corresponds to the external one
+            var playerStatsBySeason =
+                playerStatsBySeasons.FirstOrDefault(x => x.PlayerMlbId == externalSeasonStats.PlayerMlbId);
+
+            // It doesn't exist in the domain, so create it
+            if (playerStatsBySeason == null)
+            {
+                await _commandSender.Send(new CreatePlayerStatsBySeasonCommand(externalSeasonStats), cancellationToken);
+                newPlayerSeasons++;
+                continue;
+            }
+
+            // Are the stats in the domain up-to-date?
+            if (IsSeasonUpToDate(playerStatsBySeason, externalSeasonStats))
             {
                 // No action or domain event needed
                 continue;
             }
 
             // The player's season stats are not up-to-date, so update it with the new live stats
-            await _commandSender.Send(new UpdatePlayerStatsBySeasonCommand(playerStatsBySeason, seasonToDate),
+            await _commandSender.Send(new UpdatePlayerStatsBySeasonCommand(playerStatsBySeason, externalSeasonStats),
                 cancellationToken);
             playerSeasonUpdates++;
         }
 
-        return new PerformanceTrackerResult(TotalPlayerSeasons: playerStatsBySeasons.Count,
+        return new PerformanceTrackerResult(TotalPlayerSeasons: totalSeasons,
+            TotalNewPlayerSeasons: newPlayerSeasons,
             TotalPlayerSeasonUpdates: playerSeasonUpdates
         );
     }

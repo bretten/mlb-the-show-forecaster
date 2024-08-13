@@ -1,11 +1,37 @@
-﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Games;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Tests.Dtos.TestClasses;
 
 public static class Faker
 {
+    public const int DefaultMlbId = 1;
+    public const int DefaultTeamMlbId = 136;
+    public const string DefaultFirstName = "First";
+    public const string DefaultLastName = "Last";
+
+    public static PlayerDto FakePlayerDto(int? mlbId = null, string? firstName = null, string? lastName = null,
+        DateOnly birthdate = default, PositionDto? position = null, DateOnly mlbDebutDate = default,
+        ArmSideDto? batSide = null, ArmSideDto? throwArm = null, CurrentTeamDto? team = null, bool active = false)
+    {
+        return new PlayerDto()
+        {
+            Id = mlbId ?? DefaultMlbId,
+            FirstName = firstName ?? DefaultFirstName,
+            LastName = lastName ?? DefaultLastName,
+            Birthdate = birthdate == default ? new DateOnly(1990, 1, 1) : birthdate,
+            Position = position ?? new PositionDto("Catcher", "C"),
+            MlbDebutDate = mlbDebutDate == default ? new DateOnly(2010, 1, 1) : mlbDebutDate,
+            BatSide = batSide ?? new ArmSideDto("L", "Left"),
+            ThrowArm = throwArm ?? new ArmSideDto("L", "Left"),
+            CurrentTeam = team ?? new CurrentTeamDto(DefaultTeamMlbId),
+            Active = active
+        };
+    }
+
     public static TeamDto FakeTeamDto(int id = 10, string name = "Mariners")
     {
         return new TeamDto(id, name);
@@ -330,6 +356,18 @@ public static class Faker
             WildPitches: scalar * wildPitches,
             ThrowingErrors: scalar * throwingErrors,
             Pickoffs: scalar * pickoffs
+        );
+    }
+
+    public static PlayerSeason FakePlayerSeason(int playerMlbId = 1, ushort seasonYear = 2024,
+        List<PlayerGameBattingStats>? playerGameBattingStats = null,
+        List<PlayerGamePitchingStats>? playerGamePitchingStats = null,
+        List<PlayerGameFieldingStats>? playerGameFieldingStats = null)
+    {
+        return new PlayerSeason(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
+            playerGameBattingStats ?? new List<PlayerGameBattingStats>(),
+            playerGamePitchingStats ?? new List<PlayerGamePitchingStats>(),
+            playerGameFieldingStats ?? new List<PlayerGameFieldingStats>()
         );
     }
 }
