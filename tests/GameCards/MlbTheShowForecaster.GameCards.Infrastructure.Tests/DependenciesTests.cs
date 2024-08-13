@@ -12,6 +12,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositor
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using Microsoft.Extensions.Caching.Memory;
@@ -182,6 +183,8 @@ public class DependenciesTests
         Assert.IsType<DbAtomicDatabaseOperation>(actual.GetRequiredService<IAtomicDatabaseOperation>());
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IUnitOfWork<ICardWork>)).Lifetime);
         Assert.IsType<UnitOfWork<CardsDbContext>>(actual.GetRequiredService<IUnitOfWork<ICardWork>>());
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IUnitOfWork<IForecastWork>)).Lifetime);
+        Assert.IsType<UnitOfWork<ForecastsDbContext>>(actual.GetRequiredService<IUnitOfWork<IForecastWork>>());
         Assert.Equal(ServiceLifetime.Transient,
             s.First(x => x.ServiceType == typeof(IUnitOfWork<IMarketplaceWork>)).Lifetime);
         Assert.IsType<DbUnitOfWork<MarketplaceDbContext>>(actual.GetRequiredService<IUnitOfWork<IMarketplaceWork>>());

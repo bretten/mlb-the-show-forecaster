@@ -14,6 +14,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositor
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -149,6 +150,7 @@ public static class Dependencies
             return new DbAtomicDatabaseOperation(dataSource);
         });
         services.AddTransient<IUnitOfWork<ICardWork>, UnitOfWork<CardsDbContext>>();
+        services.AddTransient<IUnitOfWork<IForecastWork>, UnitOfWork<ForecastsDbContext>>();
         services.AddTransient<IUnitOfWork<IMarketplaceWork>, DbUnitOfWork<MarketplaceDbContext>>();
     }
 }
