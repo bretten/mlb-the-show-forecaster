@@ -1,10 +1,12 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using System.Collections.Concurrent;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Enums;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Requests;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Services.Exceptions;
@@ -31,7 +33,12 @@ public class MlbApiPlayerStatsTests
 
         var service = new MlbApiPlayerStats(stubMlbApi.Object, mockMapper);
 
-        var action = async () => await service.GetAllPlayerStatsFor(season);
+        var action = async () =>
+        {
+            await foreach (var p in service.GetAllPlayerStatsFor(season, CancellationToken.None))
+            {
+            }
+        };
 
         // Act
         var actual = await Record.ExceptionAsync(action);
@@ -63,7 +70,12 @@ public class MlbApiPlayerStatsTests
         var mockMapper = Mock.Of<IMlbApiPlayerStatsMapper>();
 
         var service = new MlbApiPlayerStats(stubMlbApi.Object, mockMapper);
-        var action = async () => await service.GetAllPlayerStatsFor(season);
+        var action = async () =>
+        {
+            await foreach (var p in service.GetAllPlayerStatsFor(season, CancellationToken.None))
+            {
+            }
+        };
 
         // Act
         var actual = await Record.ExceptionAsync(action);
@@ -124,12 +136,15 @@ public class MlbApiPlayerStatsTests
         var service = new MlbApiPlayerStats(stubMlbApi.Object, stubMapper.Object);
 
         // Act
-        var actual = await service.GetAllPlayerStatsFor(season);
+        var actual = new ConcurrentBag<PlayerSeason>();
+        await foreach (var p in service.GetAllPlayerStatsFor(season, CancellationToken.None))
+        {
+            actual.Add(p);
+        }
 
         // Assert
-        var actualList = actual.ToList();
-        Assert.Contains(fakePlayer1Season, actualList);
-        Assert.Contains(fakePlayer2Season, actualList);
-        Assert.Contains(fakePlayer3Season, actualList);
+        Assert.Contains(fakePlayer1Season, actual);
+        Assert.Contains(fakePlayer2Season, actual);
+        Assert.Contains(fakePlayer3Season, actual);
     }
 }

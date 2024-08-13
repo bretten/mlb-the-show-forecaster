@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Runtime.CompilerServices;
+using System.Threading.Channels;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Enums;
@@ -42,8 +43,10 @@ public sealed class MlbApiPlayerStats : IPlayerStats
     /// Gets season stats for all players in the specified year
     /// </summary>
     /// <param name="seasonYear">The season to get stats for</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>Stats for all players in the specified year</returns>
-    public async Task<IEnumerable<PlayerSeason>> GetAllPlayerStatsFor(SeasonYear seasonYear)
+    public async IAsyncEnumerable<PlayerSeason> GetAllPlayerStatsFor(SeasonYear seasonYear,
+        [EnumeratorCancellation] CancellationToken cancellationToken)
     {
         var playersResponse =
             await _mlbApi.GetPlayersBySeason(new GetPlayersBySeasonRequest(seasonYear.Value, GameType.RegularSeason));
@@ -53,16 +56,20 @@ public sealed class MlbApiPlayerStats : IPlayerStats
             throw new NoPlayerSeasonsFoundException($"No players found for {seasonYear.Value}");
         }
 
-        var playerSeasons = new ConcurrentBag<PlayerSeason>();
-        var tasks = playersResponse.Players.Select(x => GetPlayerSeason(MlbId.Create(x.Id), seasonYear));
-        await Parallel.ForEachAsync(tasks, async (task, token) =>
+        // Make requests across multiple threads with a producer/consumer pattern
+        var channel = Channel.CreateUnbounded<PlayerSeason>();
+
+        await Parallel.ForEachAsync(playersResponse.Players, cancellationToken, async (player, token) =>
         {
-            var playerSeason = await task;
-
-            playerSeasons.Add(playerSeason);
+            var playerSeason = await GetPlayerSeason(MlbId.Create(player.Id), seasonYear);
+            await channel.Writer.WriteAsync(playerSeason, cancellationToken);
         });
+        channel.Writer.Complete();
 
-        return playerSeasons;
+        await foreach (var playerSeason in channel.Reader.ReadAllAsync(cancellationToken))
+        {
+            yield return playerSeason;
+        }
     }
 
     /// <summary>

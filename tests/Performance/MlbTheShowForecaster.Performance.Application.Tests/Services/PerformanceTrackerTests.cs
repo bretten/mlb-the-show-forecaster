@@ -77,8 +77,8 @@ public class PerformanceTrackerTests
             playerGamePitchingStats: new List<PlayerGamePitchingStats>()
                 { Dtos.TestClasses.Faker.FakePlayerGamePitchingStats() });
         // Live MLB stats returns the corresponding live stats per each player
-        stubPlayerStats.Setup(x => x.GetAllPlayerStatsFor(seasonYear))
-            .ReturnsAsync(new List<PlayerSeason>() { player1Season, player2Season, player3Season });
+        stubPlayerStats.Setup(x => x.GetAllPlayerStatsFor(seasonYear, cToken))
+            .Returns(ToAsyncEnumerable(new List<PlayerSeason>() { player1Season, player2Season, player3Season }));
 
         // Mock command sender
         var mockCommandSender = new Mock<ICommandSender>();
@@ -112,7 +112,7 @@ public class PerformanceTrackerTests
         // Was the domain queried for player season stats?
         Mock.Get(stubQuerySender).Verify(x => x.Send(getAllPlayerStatsBySeasonQuery, cToken), Times.Once);
         // Was the live MLB data queried?
-        stubPlayerStats.Verify(x => x.GetAllPlayerStatsFor(seasonYear), Times.Once);
+        stubPlayerStats.Verify(x => x.GetAllPlayerStatsFor(seasonYear, cToken), Times.Once);
 
         // Was an update command sent for player 1?
         mockCommandSender.Verify(x => x.Send(expectedPlayer1UpdateCommand, cToken), Times.Once);
@@ -122,5 +122,15 @@ public class PerformanceTrackerTests
 
         // Was a create command sent for player 3?
         mockCommandSender.Verify(x => x.Send(expectedPlayer3CreateCommand, cToken), Times.Once);
+    }
+
+    private static async IAsyncEnumerable<PlayerSeason> ToAsyncEnumerable(List<PlayerSeason> playerSeasons)
+    {
+        foreach (var playerSeason in playerSeasons)
+        {
+            yield return playerSeason;
+        }
+
+        await Task.CompletedTask;
     }
 }

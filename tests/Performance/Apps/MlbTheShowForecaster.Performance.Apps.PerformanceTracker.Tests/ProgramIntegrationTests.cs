@@ -87,11 +87,11 @@ public class ProgramIntegrationTests : IAsyncLifetime
          * Act
          */
         // Cancellation token to stop the program
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(55));
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         // Start the host
         await host.StartAsync(cts.Token);
         // Let it do some work
-        await Task.Delay(TimeSpan.FromSeconds(60), cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(15), cts.Token);
         // Stop the host
         await host.StopAsync(cts.Token);
 
@@ -101,7 +101,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // The player season should have performance stats
         await using var assertConnection = await GetDbConnection();
         await using var assertDbContext = GetDbContext(connection);
-        var playerSeasons = await assertDbContext.PlayerStatsBySeasonsWithGames().ToListAsync(cts.Token);
+        var playerSeasons = assertDbContext.PlayerStatsBySeasonsWithGames().ToList();
         var playerSeason = playerSeasons.FirstOrDefault(x =>
             x.BattingStatsByGamesChronologically.Count > 0 || x.PitchingStatsByGamesChronologically.Count > 0 ||
             x.FieldingStatsByGamesChronologically.Count > 0);

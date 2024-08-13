@@ -12,6 +12,7 @@ public interface IPlayerStats : IDisposable
     /// Should get season stats for all players in the specified year
     /// </summary>
     /// <param name="seasonYear">The season to get stats for</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>Stats for all players in the specified year</returns>
-    Task<IEnumerable<PlayerSeason>> GetAllPlayerStatsFor(SeasonYear seasonYear);
+    IAsyncEnumerable<PlayerSeason> GetAllPlayerStatsFor(SeasonYear seasonYear, CancellationToken cancellationToken);
 }

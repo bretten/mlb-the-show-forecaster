@@ -60,19 +60,21 @@ public sealed class PerformanceTracker : IPerformanceTracker
              Array.Empty<PlayerStatsBySeason>()).ToImmutableList();
 
         // Get all player season stats from the external source so that they can be used to update the domain
-        var externalPlayerStatsBySeasons = (await _playerStats.GetAllPlayerStatsFor(seasonYear)).ToImmutableList();
+        var externalPlayerStatsBySeasons = _playerStats.GetAllPlayerStatsFor(seasonYear, cancellationToken);
 
         // The performance tracker should only be running for active seasons. If there are no stats, something is wrong
-        if (externalPlayerStatsBySeasons.IsEmpty)
+        if (externalPlayerStatsBySeasons == null)
         {
             throw new PerformanceTrackerFoundNoPlayerSeasonsException($"No PlayerSeasons found for {seasonYear.Value}");
         }
 
         // Make sure each player's stats by season is up-to-date with the most recent stats
+        var totalSeasons = 0;
         var newPlayerSeasons = 0;
         var playerSeasonUpdates = 0;
-        foreach (var externalSeasonStats in externalPlayerStatsBySeasons)
+        await foreach (var externalSeasonStats in externalPlayerStatsBySeasons)
         {
+            totalSeasons++;
             // Get the player season stats from the domain that corresponds to the external one
             var playerStatsBySeason =
                 playerStatsBySeasons.FirstOrDefault(x => x.PlayerMlbId == externalSeasonStats.PlayerMlbId);
@@ -98,7 +100,7 @@ public sealed class PerformanceTracker : IPerformanceTracker
             playerSeasonUpdates++;
         }
 
-        return new PerformanceTrackerResult(TotalPlayerSeasons: externalPlayerStatsBySeasons.Count,
+        return new PerformanceTrackerResult(TotalPlayerSeasons: totalSeasons,
             TotalNewPlayerSeasons: newPlayerSeasons,
             TotalPlayerSeasonUpdates: playerSeasonUpdates
         );
