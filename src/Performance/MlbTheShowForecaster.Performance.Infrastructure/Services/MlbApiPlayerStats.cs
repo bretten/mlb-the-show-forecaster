@@ -1,7 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
-using System.Threading.Channels;
+using System.Threading.Tasks.Dataflow;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Enums;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Requests;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
@@ -56,20 +57,33 @@ public sealed class MlbApiPlayerStats : IPlayerStats
             throw new NoPlayerSeasonsFoundException($"No players found for {seasonYear.Value}");
         }
 
-        // Make requests across multiple threads with a producer/consumer pattern
-        var channel = Channel.CreateUnbounded<PlayerSeason>();
+        // Yield results as they become available with transform block
+        var block = new TransformBlock<PlayerDto, PlayerSeason>(
+            async player => await GetPlayerSeason(MlbId.Create(player.Id), seasonYear),
+            new ExecutionDataflowBlockOptions()
+            {
+                CancellationToken = cancellationToken,
+                MaxDegreeOfParallelism = Environment.ProcessorCount
+            });
 
-        await Parallel.ForEachAsync(playersResponse.Players, cancellationToken, async (player, token) =>
+        // Pass the input to be used in the block
+        foreach (var player in playersResponse.Players)
         {
-            var playerSeason = await GetPlayerSeason(MlbId.Create(player.Id), seasonYear);
-            await channel.Writer.WriteAsync(playerSeason, cancellationToken);
-        });
-        channel.Writer.Complete();
-
-        await foreach (var playerSeason in channel.Reader.ReadAllAsync(cancellationToken))
-        {
-            yield return playerSeason;
+            block.Post(player);
         }
+
+        block.Complete();
+
+        // Yield results as they are available
+        while (await block.OutputAvailableAsync(cancellationToken))
+        {
+            while (block.TryReceive(out var playerSeason))
+            {
+                yield return playerSeason;
+            }
+        }
+
+        await block.Completion;
     }
 
     /// <summary>

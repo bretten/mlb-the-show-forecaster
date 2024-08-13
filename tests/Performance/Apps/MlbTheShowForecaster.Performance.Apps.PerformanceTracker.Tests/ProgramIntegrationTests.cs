@@ -87,11 +87,11 @@ public class ProgramIntegrationTests : IAsyncLifetime
          * Act
          */
         // Cancellation token to stop the program
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(30));
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         // Start the host
         await host.StartAsync(cts.Token);
         // Let it do some work
-        await Task.Delay(TimeSpan.FromSeconds(15), cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
         // Stop the host
         await host.StopAsync(cts.Token);
 
