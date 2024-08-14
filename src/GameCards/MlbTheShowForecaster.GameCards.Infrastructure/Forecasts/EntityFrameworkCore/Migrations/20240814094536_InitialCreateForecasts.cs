@@ -24,7 +24,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     year = table.Column<short>(type: "smallint", nullable: false),
                     card_external_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    player_mlb_id = table.Column<int>(type: "integer", nullable: false),
+                    player_mlb_id = table.Column<int>(type: "integer", nullable: true),
                     position = table.Column<string>(type: "varchar(4)", nullable: false),
                     overall_rating = table.Column<short>(type: "smallint", nullable: false)
                 },

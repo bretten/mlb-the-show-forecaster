@@ -57,12 +57,11 @@ public sealed class PlayerCardForecastEntityTypeConfiguration : IEntityTypeConfi
                 v => CardExternalId.Create(v));
 
         builder.Property(e => e.MlbId)
-            .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.PlayerCardForecasts.PlayerMlbId)
             .HasColumnOrder(columnOrder++)
-            .HasConversion(v => v.Value,
-                v => MlbId.Create(v));
+            .HasConversion(v => v != null ? v.Value : new int?(),
+                v => v != null ? MlbId.Create(v.Value) : null);
 
         builder.Property(e => e.PrimaryPosition)
             .IsRequired()

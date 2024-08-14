@@ -38,7 +38,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
                         .HasColumnName("card_external_id")
                         .HasColumnOrder(2);
 
-                    b.Property<int>("MlbId")
+                    b.Property<int?>("MlbId")
                         .HasColumnType("integer")
                         .HasColumnName("player_mlb_id")
                         .HasColumnOrder(3);
