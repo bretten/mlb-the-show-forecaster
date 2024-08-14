@@ -10,6 +10,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
@@ -40,6 +41,11 @@ public static class Dependencies
         /// Cards connection string key
         /// </summary>
         public const string CardsConnection = "Cards";
+
+        /// <summary>
+        /// Forecasts connection string key
+        /// </summary>
+        public const string ForecastsConnection = "Forecasts";
 
         /// <summary>
         /// Marketplace connection string key
@@ -134,12 +140,17 @@ public static class Dependencies
         {
             optionsBuilder.UseNpgsql(config.GetRequiredConnectionString(ConfigKeys.CardsConnection));
         });
+        services.AddDbContext<ForecastsDbContext>(optionsBuilder =>
+        {
+            optionsBuilder.UseNpgsql(config.GetRequiredConnectionString(ConfigKeys.ForecastsConnection));
+        });
         services.AddDbContext<MarketplaceDbContext>(optionsBuilder =>
         {
             optionsBuilder.UseNpgsql(config.GetRequiredConnectionString(ConfigKeys.MarketplaceConnection));
         });
         // Add repositories
         services.AddTransient<IPlayerCardRepository, EntityFrameworkCorePlayerCardRepository>();
+        services.AddTransient<IForecastRepository, EntityFrameworkCoreForecastRepository>();
         services.AddTransient<IListingRepository, HybridNpgsqlEntityFrameworkCoreListingRepository>();
         // UnitOfWork
         services.AddScoped<IAtomicDatabaseOperation, DbAtomicDatabaseOperation>(sp =>

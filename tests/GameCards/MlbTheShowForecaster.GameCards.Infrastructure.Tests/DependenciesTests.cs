@@ -156,6 +156,7 @@ public class DependenciesTests
         var settings = new Dictionary<string, string?>
         {
             { $"ConnectionStrings:{Dependencies.ConfigKeys.CardsConnection}", cs },
+            { $"ConnectionStrings:{Dependencies.ConfigKeys.ForecastsConnection}", cs },
             { $"ConnectionStrings:{Dependencies.ConfigKeys.MarketplaceConnection}", cs },
         };
         var config = GetConfig(settings);
@@ -183,7 +184,8 @@ public class DependenciesTests
         Assert.IsType<DbAtomicDatabaseOperation>(actual.GetRequiredService<IAtomicDatabaseOperation>());
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IUnitOfWork<ICardWork>)).Lifetime);
         Assert.IsType<UnitOfWork<CardsDbContext>>(actual.GetRequiredService<IUnitOfWork<ICardWork>>());
-        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IUnitOfWork<IForecastWork>)).Lifetime);
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IUnitOfWork<IForecastWork>)).Lifetime);
         Assert.IsType<UnitOfWork<ForecastsDbContext>>(actual.GetRequiredService<IUnitOfWork<IForecastWork>>());
         Assert.Equal(ServiceLifetime.Transient,
             s.First(x => x.ServiceType == typeof(IUnitOfWork<IMarketplaceWork>)).Lifetime);
