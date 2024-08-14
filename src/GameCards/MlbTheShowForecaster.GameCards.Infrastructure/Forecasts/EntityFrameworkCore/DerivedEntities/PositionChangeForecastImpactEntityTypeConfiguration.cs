@@ -22,14 +22,14 @@ public sealed class
         builder.Property(e => e.OldPosition)
             .IsRequired()
             .HasColumnType("varchar(4)")
-            .HasColumnName(Constants.PlayerCardForecasts.Position)
+            .HasColumnName(Constants.ForecastImpacts.PositionChange.OldRating)
             .HasConversion(v => v.GetDisplayName(),
                 v => (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(v)!);
 
         builder.Property(e => e.NewPosition)
             .IsRequired()
             .HasColumnType("varchar(4)")
-            .HasColumnName(Constants.PlayerCardForecasts.Position)
+            .HasColumnName(Constants.ForecastImpacts.PositionChange.NewRating)
             .HasConversion(v => v.GetDisplayName(),
                 v => (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(v)!);
     }

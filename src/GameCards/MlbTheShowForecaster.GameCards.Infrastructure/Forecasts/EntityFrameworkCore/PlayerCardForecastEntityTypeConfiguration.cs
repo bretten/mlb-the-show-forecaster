@@ -79,8 +79,5 @@ public sealed class PlayerCardForecastEntityTypeConfiguration : IEntityTypeConfi
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => OverallRating.Create(v));
-
-        // Ignore these properties. They are not relationships/navigation properties, but just convenience methods for other members of the class
-        builder.Ignore(x => x.ForecastImpactsChronologically);
     }
 }

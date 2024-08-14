@@ -21,7 +21,7 @@ public sealed class ForecastImpactEntityTypeConfiguration : IEntityTypeConfigura
         builder.ToTable(Constants.ForecastImpacts.TableName, Constants.Schema);
 
         builder.HasOne<PlayerCardForecast>()
-            .WithMany(Constants.PlayerCardForecasts.Relationships.ForecastImpactsField)
+            .WithMany(x => x.ForecastImpactsChronologically)
             .HasForeignKey(Constants.ForecastImpacts.PlayerCardForecastId)
             .HasConstraintName(Constants.ForecastImpacts.Keys.PlayerCardForecastsForeignKeyConstraint);
 
@@ -50,14 +50,6 @@ public sealed class ForecastImpactEntityTypeConfiguration : IEntityTypeConfigura
             .HasColumnType("date")
             .HasColumnName(Constants.ForecastImpacts.EndDate)
             .HasColumnOrder(columnOrder++);
-
-        builder.Property(e => e.Demand)
-            .IsRequired()
-            .HasColumnType("smallint")
-            .HasColumnName(Constants.ForecastImpacts.Demand)
-            .HasColumnOrder(columnOrder++)
-            .HasConversion(v => v.Value,
-                v => Demand.Create(v));
     }
 
     private static string DiscriminatorValue(Type type)

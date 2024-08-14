@@ -21,14 +21,14 @@ public sealed class
         builder.Property(e => e.OldRating)
             .IsRequired()
             .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCardForecasts.OverallRating)
+            .HasColumnName(Constants.ForecastImpacts.OverallRatingChange.OldRating)
             .HasConversion(v => v.Value,
                 v => OverallRating.Create(v));
 
         builder.Property(e => e.NewRating)
             .IsRequired()
             .HasColumnType("smallint")
-            .HasColumnName(Constants.PlayerCardForecasts.OverallRating)
+            .HasColumnName(Constants.ForecastImpacts.OverallRatingChange.NewRating)
             .HasConversion(v => v.Value,
                 v => OverallRating.Create(v));
     }

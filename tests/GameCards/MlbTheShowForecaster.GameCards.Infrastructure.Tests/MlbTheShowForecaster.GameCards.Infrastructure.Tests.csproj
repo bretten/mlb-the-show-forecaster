@@ -28,6 +28,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\..\src\GameCards\MlbTheShowForecaster.GameCards.Infrastructure\MlbTheShowForecaster.GameCards.Infrastructure.csproj" />
+      <ProjectReference Include="..\MlbTheShowForecaster.GameCards.Application.Tests\MlbTheShowForecaster.GameCards.Application.Tests.csproj" />
     </ItemGroup>
 
 </Project>

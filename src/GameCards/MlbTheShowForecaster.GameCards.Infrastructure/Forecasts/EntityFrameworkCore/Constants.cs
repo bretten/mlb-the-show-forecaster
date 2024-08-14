@@ -120,11 +120,6 @@ public static class Constants
         public const string EndDate = "end_date";
 
         /// <summary>
-        /// The amount of demand
-        /// </summary>
-        public const string Demand = "demand";
-
-        /// <summary>
         /// Column names for <see cref="StatsForecastImpact"/>
         /// </summary>
         public static class Stats
@@ -149,6 +144,38 @@ public static class Constants
             /// The boost reason
             /// </summary>
             public const string BoostReason = "boost_reason";
+        }
+
+        /// <summary>
+        /// Column names for <see cref="OverallRatingChangeForecastImpact"/>
+        /// </summary>
+        public static class OverallRatingChange
+        {
+            /// <summary>
+            /// Old rating
+            /// </summary>
+            public const string OldRating = "old_overall_rating";
+
+            /// <summary>
+            /// New rating
+            /// </summary>
+            public const string NewRating = "new_overall_rating";
+        }
+
+        /// <summary>
+        /// Column names for <see cref="PositionChangeForecastImpact"/>
+        /// </summary>
+        public static class PositionChange
+        {
+            /// <summary>
+            /// Old position
+            /// </summary>
+            public const string OldRating = "old_position";
+
+            /// <summary>
+            /// New position
+            /// </summary>
+            public const string NewRating = "new_position";
         }
 
         /// <summary>
