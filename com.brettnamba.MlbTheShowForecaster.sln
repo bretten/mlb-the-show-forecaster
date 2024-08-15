@@ -3,6 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{FC3388A5-780A-43D2-B29D-FCBBDF014891}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{E3F53CBA-3CBA-4892-8055-E0AE5B9D8C9D}"
+	ProjectSection(SolutionItems) = preProject
+		tests\coverage.runsettings = tests\coverage.runsettings
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{986AA833-D26D-49CA-8A4B-DA2D90080988}"
 EndProject
