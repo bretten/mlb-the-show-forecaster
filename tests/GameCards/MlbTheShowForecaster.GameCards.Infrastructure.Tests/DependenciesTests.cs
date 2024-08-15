@@ -3,8 +3,10 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
@@ -147,6 +149,54 @@ public class DependenciesTests
         Assert.Equal(ServiceLifetime.Transient,
             s.First(x => x.ServiceType == typeof(IPlayerRatingHistoryService)).Lifetime);
         Assert.IsType<PlayerRatingHistoryService>(actual.GetRequiredService<IPlayerRatingHistoryService>());
+    }
+
+    [Fact]
+    public void AddForecasting_ServiceCollection_RegistersDependencies()
+    {
+        // Arrange
+        var settings = new Dictionary<string, string?>
+        {
+            { Dependencies.ConfigKeys.PlayerStatusApiBaseAddress, "http://localhost" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:Boost", "1" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:BattingStatsChange", "2" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PitchingStatsChange", "3" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:FieldingStatsChange", "4" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:OverallRatingChange", "5" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PositionChange", "6" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerActivation", "7" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerDeactivation", "8" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerFreeAgency", "9" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerTeamSigning", "10" }
+        };
+        var config = GetConfig(settings);
+        var s = new ServiceCollection();
+
+        // Act
+        s.AddLogging();
+        s.AddForecasting(config);
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPlayerStatusApi)).Lifetime);
+        Assert.IsAssignableFrom<IPlayerStatusApi>(actual.GetRequiredService<IPlayerStatusApi>());
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IPlayerMatcher)).Lifetime);
+        Assert.IsType<PlayerMatcher>(actual.GetRequiredService<IPlayerMatcher>());
+
+        var durations = actual.GetRequiredService<ForecastImpactDuration>();
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(ForecastImpactDuration)).Lifetime);
+        Assert.IsType<ForecastImpactDuration>(durations);
+        Assert.Equal(1, durations.Boost);
+        Assert.Equal(2, durations.BattingStatsChange);
+        Assert.Equal(3, durations.PitchingStatsChange);
+        Assert.Equal(4, durations.FieldingStatsChange);
+        Assert.Equal(5, durations.OverallRatingChange);
+        Assert.Equal(6, durations.PositionChange);
+        Assert.Equal(7, durations.PlayerActivation);
+        Assert.Equal(8, durations.PlayerDeactivation);
+        Assert.Equal(9, durations.PlayerFreeAgency);
+        Assert.Equal(10, durations.PlayerTeamSigning);
     }
 
     [Fact]

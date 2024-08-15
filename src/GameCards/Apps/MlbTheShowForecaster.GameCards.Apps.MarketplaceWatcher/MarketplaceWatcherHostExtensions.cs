@@ -17,6 +17,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerTea
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PositionChange;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure;
 using Microsoft.Extensions.Configuration;
@@ -133,6 +134,8 @@ public static class MarketplaceWatcherHostExtensions
         { typeof(PlayerCardOverallRatingImprovedEvent), "PlayerCardOverallRatingImproved" },
         { typeof(PlayerCardBoostedEvent), "PlayerCardBoostedEvent" },
         { typeof(PlayerCardPositionChangedEvent), "PlayerCardPositionChanged" },
+        { typeof(CardDemandIncreasedEvent), "CardDemandIncreasedEvent" },
+        { typeof(CardDemandDecreasedEvent), "CardDemandDecreasedEvent" },
         { typeof(ListingBuyPriceDecreasedEvent), "ListingBuyPriceDecreased" },
         { typeof(ListingBuyPriceIncreasedEvent), "ListingBuyPriceIncreased" },
         { typeof(ListingSellPriceDecreasedEvent), "ListingSellPriceDecreased" },
@@ -188,7 +191,8 @@ public static class MarketplaceWatcherHostExtensions
             };
             services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
             {
-                typeof(PlayerCardOverallRatingDeclinedEvent).Assembly
+                typeof(PlayerCardOverallRatingDeclinedEvent).Assembly,
+                typeof(BattingStatsImprovementEvent).Assembly
             });
 
             // MLB The Show cards and marketplace dependencies
@@ -196,7 +200,39 @@ public static class MarketplaceWatcherHostExtensions
             services.AddGameCardsPlayerCardTracker();
             services.AddGameCardsPriceTracker(context.Configuration);
             services.AddGameCardsRosterUpdates();
+            services.AddForecasting(context.Configuration);
             services.AddGameCardsEntityFrameworkCoreRepositories(context.Configuration);
+
+            // Register the domain event consumers
+            services.AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<NewPlayerCardEvent>>>();
+            services
+                .AddHostedService<
+                    KeepAliveBackgroundService<RabbitMqDomainEventConsumer<BattingStatsImprovementEvent>>>();
+            services
+                .AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<BattingStatsDeclineEvent>>>();
+            services
+                .AddHostedService<
+                    KeepAliveBackgroundService<RabbitMqDomainEventConsumer<PitchingStatsImprovementEvent>>>();
+            services
+                .AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<PitchingStatsDeclineEvent>>>();
+            services
+                .AddHostedService<
+                    KeepAliveBackgroundService<RabbitMqDomainEventConsumer<FieldingStatsImprovementEvent>>>();
+            services
+                .AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<FieldingStatsDeclineEvent>>>();
+            services
+                .AddHostedService<
+                    KeepAliveBackgroundService<RabbitMqDomainEventConsumer<OverallRatingImprovementEvent>>>();
+            services
+                .AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<OverallRatingDeclineEvent>>>();
+            services.AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<PositionChangeEvent>>>();
+            services.AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<PlayerCardBoostEvent>>>();
+            services.AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<PlayerActivationEvent>>>();
+            services.AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<PlayerFreeAgencyEvent>>>();
+            services
+                .AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<PlayerDeactivationEvent>>>();
+            services
+                .AddHostedService<KeepAliveBackgroundService<RabbitMqDomainEventConsumer<PlayerTeamSigningEvent>>>();
 
             // Background service for tracking player cards
             services.AddHostedService<ScheduledBackgroundService<IPlayerCardTracker>>(sp =>
