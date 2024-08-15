@@ -56,7 +56,7 @@ public sealed class EntityFrameworkCoreForecastRepository : IForecastRepository
     public async Task<PlayerCardForecast?> GetBy(SeasonYear seasonYear, CardExternalId cardExternalId)
     {
         return await _dbContext.PlayerCardForecastsWithImpacts()
-            .FirstOrDefaultAsync(x => x.CardExternalId == cardExternalId);
+            .FirstOrDefaultAsync(x => x.Year == seasonYear && x.CardExternalId == cardExternalId);
     }
 
     /// <summary>
@@ -68,11 +68,11 @@ public sealed class EntityFrameworkCoreForecastRepository : IForecastRepository
     public async Task<PlayerCardForecast?> GetBy(SeasonYear seasonYear, MlbId mlbId)
     {
         return await _dbContext.PlayerCardForecastsWithImpacts()
-            .FirstOrDefaultAsync(x => x.MlbId == mlbId);
+            .FirstOrDefaultAsync(x => x.Year == seasonYear && x.MlbId == mlbId);
     }
 
     /// <summary>
-    /// Gets any <see cref="PlayerCardForecast"/>sethat are predicted to have demand changes on the specified date
+    /// Gets any <see cref="PlayerCardForecast"/>s that are predicted to have demand changes on the specified date
     /// due to <see cref="ForecastImpact"/>s
     /// </summary>
     /// <param name="date">Date (inclusive) when any <see cref="PlayerCardForecast"/>s still remain influenced by <see cref="ForecastImpact"/>s</param>

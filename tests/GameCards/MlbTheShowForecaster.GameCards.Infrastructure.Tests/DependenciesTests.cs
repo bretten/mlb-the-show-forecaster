@@ -8,6 +8,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
@@ -171,11 +172,15 @@ public class DependenciesTests
         // Assert
         Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(CardsDbContext)).Lifetime);
         Assert.IsType<CardsDbContext>(actual.GetRequiredService<CardsDbContext>());
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(ForecastsDbContext)).Lifetime);
+        Assert.IsType<ForecastsDbContext>(actual.GetRequiredService<ForecastsDbContext>());
         Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(MarketplaceDbContext)).Lifetime);
         Assert.IsType<MarketplaceDbContext>(actual.GetRequiredService<MarketplaceDbContext>());
 
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPlayerCardRepository)).Lifetime);
         Assert.IsType<EntityFrameworkCorePlayerCardRepository>(actual.GetRequiredService<IPlayerCardRepository>());
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IForecastRepository)).Lifetime);
+        Assert.IsType<EntityFrameworkCoreForecastRepository>(actual.GetRequiredService<IForecastRepository>());
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IListingRepository)).Lifetime);
         Assert.IsType<HybridNpgsqlEntityFrameworkCoreListingRepository>(
             actual.GetRequiredService<IListingRepository>());
