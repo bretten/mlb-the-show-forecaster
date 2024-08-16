@@ -17,10 +17,12 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerTea
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PositionChange;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -133,6 +135,8 @@ public static class MarketplaceWatcherHostExtensions
         { typeof(PlayerCardOverallRatingImprovedEvent), "PlayerCardOverallRatingImproved" },
         { typeof(PlayerCardBoostedEvent), "PlayerCardBoostedEvent" },
         { typeof(PlayerCardPositionChangedEvent), "PlayerCardPositionChanged" },
+        { typeof(CardDemandIncreasedEvent), "CardDemandIncreasedEvent" },
+        { typeof(CardDemandDecreasedEvent), "CardDemandDecreasedEvent" },
         { typeof(ListingBuyPriceDecreasedEvent), "ListingBuyPriceDecreased" },
         { typeof(ListingBuyPriceIncreasedEvent), "ListingBuyPriceIncreased" },
         { typeof(ListingSellPriceDecreasedEvent), "ListingSellPriceDecreased" },
@@ -188,7 +192,8 @@ public static class MarketplaceWatcherHostExtensions
             };
             services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
             {
-                typeof(PlayerCardOverallRatingDeclinedEvent).Assembly
+                typeof(PlayerCardOverallRatingDeclinedEvent).Assembly,
+                typeof(BattingStatsImprovementEvent).Assembly
             });
 
             // MLB The Show cards and marketplace dependencies
@@ -196,7 +201,22 @@ public static class MarketplaceWatcherHostExtensions
             services.AddGameCardsPlayerCardTracker();
             services.AddGameCardsPriceTracker(context.Configuration);
             services.AddGameCardsRosterUpdates();
+            services.AddForecasting(context.Configuration);
             services.AddGameCardsEntityFrameworkCoreRepositories(context.Configuration);
+
+            // Register the domain event consumers
+            foreach (var consumerEvent in DomainEventConsumerTypes)
+            {
+                var rabbitMqConsumerWrapperType =
+                    typeof(RabbitMqDomainEventConsumer<>).MakeGenericType(consumerEvent.Key);
+                var keepAliveServiceType =
+                    typeof(KeepAliveBackgroundService<>).MakeGenericType(rabbitMqConsumerWrapperType);
+
+                // The following mimics services.AddHostedService()
+                var descriptor = ServiceDescriptor.DescribeKeyed(typeof(IHostedService), null, keepAliveServiceType,
+                    ServiceLifetime.Singleton);
+                services.TryAddEnumerable(descriptor);
+            }
 
             // Background service for tracking player cards
             services.AddHostedService<ScheduledBackgroundService<IPlayerCardTracker>>(sp =>

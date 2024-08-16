@@ -5,14 +5,22 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 /// <summary>
 /// Represents the impact of a card attribute boost on a <see cref="PlayerCardForecast"/>
 /// </summary>
-/// <param name="boostReason">The reason the card's attributes are being boosted</param>
-/// <param name="endDate"><inheritdoc /></param>
-public sealed class BoostForecastImpact(string boostReason, DateOnly endDate) : ForecastImpact(endDate)
+public sealed class BoostForecastImpact : ForecastImpact
 {
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="boostReason">The reason the card's attributes are being boosted</param>
+    /// <param name="endDate"><inheritdoc /></param>
+    public BoostForecastImpact(string boostReason, DateOnly endDate) : base(endDate)
+    {
+        BoostReason = boostReason;
+    }
+
     /// <summary>
     /// The reason the card's attributes are being boosted
     /// </summary>
-    public string BoostReason { get; } = boostReason;
+    public string BoostReason { get; }
 
     /// <inheritdoc />
     public override Demand Demand => Demand.High();

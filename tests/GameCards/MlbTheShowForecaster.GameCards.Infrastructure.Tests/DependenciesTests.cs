@@ -3,15 +3,19 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using Microsoft.Extensions.Caching.Memory;
@@ -148,6 +152,54 @@ public class DependenciesTests
     }
 
     [Fact]
+    public void AddForecasting_ServiceCollection_RegistersDependencies()
+    {
+        // Arrange
+        var settings = new Dictionary<string, string?>
+        {
+            { Dependencies.ConfigKeys.PlayerStatusApiBaseAddress, "http://localhost" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:Boost", "1" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:BattingStatsChange", "2" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PitchingStatsChange", "3" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:FieldingStatsChange", "4" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:OverallRatingChange", "5" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PositionChange", "6" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerActivation", "7" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerDeactivation", "8" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerFreeAgency", "9" },
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerTeamSigning", "10" }
+        };
+        var config = GetConfig(settings);
+        var s = new ServiceCollection();
+
+        // Act
+        s.AddLogging();
+        s.AddForecasting(config);
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPlayerStatusApi)).Lifetime);
+        Assert.IsAssignableFrom<IPlayerStatusApi>(actual.GetRequiredService<IPlayerStatusApi>());
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IPlayerMatcher)).Lifetime);
+        Assert.IsType<PlayerMatcher>(actual.GetRequiredService<IPlayerMatcher>());
+
+        var durations = actual.GetRequiredService<ForecastImpactDuration>();
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(ForecastImpactDuration)).Lifetime);
+        Assert.IsType<ForecastImpactDuration>(durations);
+        Assert.Equal(1, durations.Boost);
+        Assert.Equal(2, durations.BattingStatsChange);
+        Assert.Equal(3, durations.PitchingStatsChange);
+        Assert.Equal(4, durations.FieldingStatsChange);
+        Assert.Equal(5, durations.OverallRatingChange);
+        Assert.Equal(6, durations.PositionChange);
+        Assert.Equal(7, durations.PlayerActivation);
+        Assert.Equal(8, durations.PlayerDeactivation);
+        Assert.Equal(9, durations.PlayerFreeAgency);
+        Assert.Equal(10, durations.PlayerTeamSigning);
+    }
+
+    [Fact]
     public void AddGameCardsEntityFrameworkCoreRepositories_ServiceCollection_RegistersDependencies()
     {
         // Arrange
@@ -155,6 +207,7 @@ public class DependenciesTests
         var settings = new Dictionary<string, string?>
         {
             { $"ConnectionStrings:{Dependencies.ConfigKeys.CardsConnection}", cs },
+            { $"ConnectionStrings:{Dependencies.ConfigKeys.ForecastsConnection}", cs },
             { $"ConnectionStrings:{Dependencies.ConfigKeys.MarketplaceConnection}", cs },
         };
         var config = GetConfig(settings);
@@ -169,11 +222,15 @@ public class DependenciesTests
         // Assert
         Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(CardsDbContext)).Lifetime);
         Assert.IsType<CardsDbContext>(actual.GetRequiredService<CardsDbContext>());
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(ForecastsDbContext)).Lifetime);
+        Assert.IsType<ForecastsDbContext>(actual.GetRequiredService<ForecastsDbContext>());
         Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(MarketplaceDbContext)).Lifetime);
         Assert.IsType<MarketplaceDbContext>(actual.GetRequiredService<MarketplaceDbContext>());
 
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPlayerCardRepository)).Lifetime);
         Assert.IsType<EntityFrameworkCorePlayerCardRepository>(actual.GetRequiredService<IPlayerCardRepository>());
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IForecastRepository)).Lifetime);
+        Assert.IsType<EntityFrameworkCoreForecastRepository>(actual.GetRequiredService<IForecastRepository>());
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IListingRepository)).Lifetime);
         Assert.IsType<HybridNpgsqlEntityFrameworkCoreListingRepository>(
             actual.GetRequiredService<IListingRepository>());
@@ -182,6 +239,9 @@ public class DependenciesTests
         Assert.IsType<DbAtomicDatabaseOperation>(actual.GetRequiredService<IAtomicDatabaseOperation>());
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IUnitOfWork<ICardWork>)).Lifetime);
         Assert.IsType<UnitOfWork<CardsDbContext>>(actual.GetRequiredService<IUnitOfWork<ICardWork>>());
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IUnitOfWork<IForecastWork>)).Lifetime);
+        Assert.IsType<UnitOfWork<ForecastsDbContext>>(actual.GetRequiredService<IUnitOfWork<IForecastWork>>());
         Assert.Equal(ServiceLifetime.Transient,
             s.First(x => x.ServiceType == typeof(IUnitOfWork<IMarketplaceWork>)).Lifetime);
         Assert.IsType<DbUnitOfWork<MarketplaceDbContext>>(actual.GetRequiredService<IUnitOfWork<IMarketplaceWork>>());

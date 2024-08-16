@@ -1,19 +1,25 @@
 ﻿using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +28,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
+using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure;
 
@@ -41,6 +48,11 @@ public static class Dependencies
         public const string CardsConnection = "Cards";
 
         /// <summary>
+        /// Forecasts connection string key
+        /// </summary>
+        public const string ForecastsConnection = "Forecasts";
+
+        /// <summary>
         /// Marketplace connection string key
         /// </summary>
         public const string MarketplaceConnection = "Marketplace";
@@ -54,6 +66,16 @@ public static class Dependencies
         /// <see cref="ListingPriceSignificantChangeThreshold.SellPricePercentageChangeThreshold"/> conig key
         /// </summary>
         public const string SellPricePercentageChangeThreshold = "CardPriceTracker:SellPricePercentageChangeThreshold";
+
+        /// <summary>
+        /// PlayerStatus API base address config key
+        /// </summary>
+        public const string PlayerStatusApiBaseAddress = "Forecasting:PlayerMatcher:BaseAddress";
+
+        /// <summary>
+        /// Forecast impact durations config key
+        /// </summary>
+        public const string ImpactDurations = "Forecasting:ImpactDurations";
     }
 
     /// <summary>
@@ -121,6 +143,26 @@ public static class Dependencies
     }
 
     /// <summary>
+    /// Registers Forecasting services
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
+    /// <param name="config">Config for forecasting</param>
+    public static void AddForecasting(this IServiceCollection services, IConfiguration config)
+    {
+        services.AddRefitClient<IPlayerStatusApi>(new RefitSettings()
+        {
+            ContentSerializer = new SystemTextJsonContentSerializer(
+                new JsonSerializerOptions()
+                {
+                    Converters = { new JsonStringEnumConverter() }
+                }
+            )
+        }).ConfigureHttpClient(c => c.BaseAddress = new Uri(config[ConfigKeys.PlayerStatusApiBaseAddress]!));
+        services.TryAddSingleton<IPlayerMatcher, PlayerMatcher>();
+        services.TryAddSingleton(config.GetRequiredSection(ConfigKeys.ImpactDurations).Get<ForecastImpactDuration>()!);
+    }
+
+    /// <summary>
     /// Registers GameCards EntityFrameworkCore dependencies
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
@@ -133,12 +175,17 @@ public static class Dependencies
         {
             optionsBuilder.UseNpgsql(config.GetRequiredConnectionString(ConfigKeys.CardsConnection));
         });
+        services.AddDbContext<ForecastsDbContext>(optionsBuilder =>
+        {
+            optionsBuilder.UseNpgsql(config.GetRequiredConnectionString(ConfigKeys.ForecastsConnection));
+        });
         services.AddDbContext<MarketplaceDbContext>(optionsBuilder =>
         {
             optionsBuilder.UseNpgsql(config.GetRequiredConnectionString(ConfigKeys.MarketplaceConnection));
         });
         // Add repositories
         services.AddTransient<IPlayerCardRepository, EntityFrameworkCorePlayerCardRepository>();
+        services.AddTransient<IForecastRepository, EntityFrameworkCoreForecastRepository>();
         services.AddTransient<IListingRepository, HybridNpgsqlEntityFrameworkCoreListingRepository>();
         // UnitOfWork
         services.AddScoped<IAtomicDatabaseOperation, DbAtomicDatabaseOperation>(sp =>
@@ -149,6 +196,7 @@ public static class Dependencies
             return new DbAtomicDatabaseOperation(dataSource);
         });
         services.AddTransient<IUnitOfWork<ICardWork>, UnitOfWork<CardsDbContext>>();
+        services.AddTransient<IUnitOfWork<IForecastWork>, UnitOfWork<ForecastsDbContext>>();
         services.AddTransient<IUnitOfWork<IMarketplaceWork>, DbUnitOfWork<MarketplaceDbContext>>();
     }
 }
