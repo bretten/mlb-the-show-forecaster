@@ -104,6 +104,7 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
         // Arrange
         var year = SeasonYear.Create(2024);
         var fakePlayerCardForecast = Faker.FakePlayerCardForecast(year: year.Value, externalId: Faker.FakeGuid1);
+        fakePlayerCardForecast.Reassess(Faker.FakePlayerActivationForecastImpact(), Faker.EndDate.AddDays(-3));
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);
@@ -124,6 +125,7 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
         // Assert
         Assert.NotNull(actual);
         Assert.Equal(fakePlayerCardForecast, actual);
+        Assert.Single(actual.ForecastImpactsChronologically);
     }
 
     [Fact]
@@ -154,6 +156,7 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
         // Assert
         Assert.NotNull(actual);
         Assert.Equal(fakePlayerCardForecast, actual);
+        Assert.Single(actual.ForecastImpactsChronologically);
     }
 
     [Fact]
