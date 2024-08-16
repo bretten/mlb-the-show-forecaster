@@ -38,8 +38,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
                 schema: "game_cards",
                 columns: table => new
                 {
-                    end_date = table.Column<DateOnly>(type: "date", nullable: false),
                     player_card_forecast_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    end_date = table.Column<DateOnly>(type: "date", nullable: false),
                     type = table.Column<string>(type: "text", nullable: false),
                     boost_reason = table.Column<string>(type: "text", nullable: true),
                     old_overall_rating = table.Column<short>(type: "smallint", nullable: true),

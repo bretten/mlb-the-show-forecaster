@@ -87,6 +87,11 @@ public static class Constants
         public static class Relationships
         {
             /// <summary>
+            /// Name of the field that stores the <see cref="ForecastImpact"/>s
+            /// </summary>
+            public const string ForecastImpactsField = "_forecastImpacts";
+
+            /// <summary>
             /// Name for the <see cref="ForecastImpact"/> discriminator
             /// https://learn.microsoft.com/en-us/ef/core/modeling/inheritance#table-per-hierarchy-and-discriminator-configuration
             /// </summary>

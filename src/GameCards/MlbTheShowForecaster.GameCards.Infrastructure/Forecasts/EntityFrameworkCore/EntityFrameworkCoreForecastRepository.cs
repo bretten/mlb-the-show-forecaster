@@ -79,8 +79,8 @@ public sealed class EntityFrameworkCoreForecastRepository : IForecastRepository
     /// <returns>Impacted <see cref="PlayerCardForecast"/></returns>
     public async Task<IEnumerable<PlayerCardForecast>> GetImpactedForecasts(DateOnly date)
     {
-        return await _dbContext.PlayerCardForecasts
-            .Where(x => x.ForecastImpactsChronologically.Any(i => i.EndDate >= date))
+        return await _dbContext.PlayerCardForecastsWithImpacts()
+            .Where(x => EF.Property<IEnumerable<ForecastImpact>>(x, Constants.PlayerCardForecasts.Relationships.ForecastImpactsField).Any(y => y.EndDate >= date))
             .ToListAsync();
     }
 }

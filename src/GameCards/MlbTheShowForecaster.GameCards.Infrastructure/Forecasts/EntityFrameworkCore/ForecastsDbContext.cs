@@ -31,7 +31,7 @@ public sealed class ForecastsDbContext : DbContext, IForecastWork
     public IQueryable<PlayerCardForecast> PlayerCardForecastsWithImpacts()
     {
         return PlayerCardForecasts
-            .Include(x => x.ForecastImpactsChronologically);
+            .Include(Constants.PlayerCardForecasts.Relationships.ForecastImpactsField);
     }
 
 

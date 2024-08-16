@@ -1,5 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.AdministrativeImpacts;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.StatImpacts;
 using Microsoft.EntityFrameworkCore;
@@ -20,11 +19,6 @@ public sealed class ForecastImpactEntityTypeConfiguration : IEntityTypeConfigura
     {
         builder.ToTable(Constants.ForecastImpacts.TableName, Constants.Schema);
 
-        builder.HasOne<PlayerCardForecast>()
-            .WithMany(x => x.ForecastImpactsChronologically)
-            .HasForeignKey(Constants.ForecastImpacts.PlayerCardForecastId)
-            .HasConstraintName(Constants.ForecastImpacts.Keys.PlayerCardForecastsForeignKeyConstraint);
-
         // Table-per-hierarchy configuration
         builder.HasDiscriminator<string>(Constants.PlayerCardForecasts.Relationships.DiscriminatorName)
             .HasValue<PlayerActivationForecastImpact>(DiscriminatorValue(typeof(PlayerActivationForecastImpact)))
@@ -44,6 +38,9 @@ public sealed class ForecastImpactEntityTypeConfiguration : IEntityTypeConfigura
         ]).HasName(Constants.ForecastImpacts.Keys.PrimaryKey);
 
         var columnOrder = 0;
+
+        builder.Property(Constants.ForecastImpacts.PlayerCardForecastId)
+            .HasColumnOrder(columnOrder++);
 
         builder.Property(e => e.EndDate)
             .IsRequired()

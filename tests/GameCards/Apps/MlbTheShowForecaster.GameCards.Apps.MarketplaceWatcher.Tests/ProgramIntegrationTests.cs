@@ -68,6 +68,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
             { "CardPriceTracker:Seasons:0", "2024" },
             { "CardPriceTracker:BuyPricePercentageChangeThreshold", "0.01" },
             { "CardPriceTracker:SellPricePercentageChangeThreshold", "0.01" },
+            { "Forecasting:PlayerMatcher:BaseAddress", "http://localhost" },
             { "Messaging:RabbitMq:HostName", "localhost" },
             { "Messaging:RabbitMq:UserName", "rabbitmq" },
             { "Messaging:RabbitMq:Password", "rabbitmq" },

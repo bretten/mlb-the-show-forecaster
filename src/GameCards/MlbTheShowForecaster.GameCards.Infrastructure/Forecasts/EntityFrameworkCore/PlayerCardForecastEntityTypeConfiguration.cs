@@ -4,6 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -78,5 +79,15 @@ public sealed class PlayerCardForecastEntityTypeConfiguration : IEntityTypeConfi
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => OverallRating.Create(v));
+
+        // Ignore these properties. They are not relationships/navigation properties, but just convenience methods for other members of the class
+        builder.Ignore(x => x.ForecastImpactsChronologically);
+
+        // Has many ForecastImpacts
+        builder.HasMany<ForecastImpact>(Constants.PlayerCardForecasts.Relationships.ForecastImpactsField)
+            .WithOne()
+            .HasForeignKey(Constants.ForecastImpacts.PlayerCardForecastId)
+            .HasConstraintName(Constants.ForecastImpacts.Keys.PlayerCardForecastsForeignKeyConstraint)
+            .IsRequired();
     }
 }

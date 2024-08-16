@@ -9,7 +9,7 @@ using Testcontainers.PostgreSql;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Forecasts.EntityFrameworkCore;
 
-public sealed class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifetime
+public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _container;
 
@@ -133,6 +133,7 @@ public sealed class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsy
         // Arrange
         var year = SeasonYear.Create(2024);
         var fakePlayerCardForecast = Faker.FakePlayerCardForecast(year: year.Value, mlbId: 1);
+        fakePlayerCardForecast.Reassess(Faker.FakePlayerActivationForecastImpact(), Faker.EndDate.AddDays(-3));
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);

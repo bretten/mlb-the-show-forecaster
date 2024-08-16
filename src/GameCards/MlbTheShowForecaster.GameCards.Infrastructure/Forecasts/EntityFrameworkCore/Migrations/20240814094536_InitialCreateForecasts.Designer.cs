@@ -77,7 +77,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.ForecastImpact", b =>
                 {
                     b.Property<Guid>("player_card_forecast_id")
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(0);
 
                     b.Property<string>("type")
                         .HasColumnType("text");
@@ -85,7 +86,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date")
                         .HasColumnName("end_date")
-                        .HasColumnOrder(0);
+                        .HasColumnOrder(1);
 
                     b.HasKey("player_card_forecast_id", "type", "EndDate")
                         .HasName("player_card_forecast_impacts_pkey");
@@ -223,7 +224,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.ForecastImpact", b =>
                 {
                     b.HasOne("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities.PlayerCardForecast", null)
-                        .WithMany("ForecastImpactsChronologically")
+                        .WithMany("_forecastImpacts")
                         .HasForeignKey("player_card_forecast_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -232,7 +233,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities.PlayerCardForecast", b =>
                 {
-                    b.Navigation("ForecastImpactsChronologically");
+                    b.Navigation("_forecastImpacts");
                 });
 #pragma warning restore 612, 618
         }
