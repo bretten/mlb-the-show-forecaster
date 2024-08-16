@@ -62,7 +62,7 @@ public class PlayerCardForecastTests
     }
 
     [Fact]
-    public void Reassess_DifferentOverallRatingSameRarity_RaisesDemandDecreasedEvent()
+    public void Reassess_DifferentOverallRatingSameRarity_NoEventsRaised()
     {
         // Arrange
         var forecast = Faker.FakePlayerCardForecast();

@@ -138,6 +138,23 @@ public sealed class PlayerCardForecast : AggregateRoot
     }
 
     /// <summary>
+    /// Reassesses the effect of an overall rating change
+    /// </summary>
+    /// <param name="impact"><see cref="OverallRatingChangeForecastImpact"/></param>
+    /// <param name="date">The date that the demand should be estimated for: <see cref="EstimateDemandFor"/></param>
+    public void Reassess(OverallRatingChangeForecastImpact impact, DateOnly date)
+    {
+        if (!impact.RarityImproved && !impact.RarityDeclined)
+        {
+            // No domain events triggered for negligible changes
+            return;
+        }
+
+        Reassess(impact as ForecastImpact, date);
+    }
+
+
+    /// <summary>
     /// Estimates the demand on the specified date
     /// </summary>
     /// <param name="date">Any <see cref="ForecastImpact"/> whose influence ended before this inclusive date is not used in calculating the demand</param>
