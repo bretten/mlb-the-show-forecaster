@@ -31,4 +31,10 @@
       <ProjectReference Include="..\MlbTheShowForecaster.GameCards.Application.Tests\MlbTheShowForecaster.GameCards.Application.Tests.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Services\Reports\TestFiles\StringReplacementForecastPublisher_Expected.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

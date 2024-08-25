@@ -20,7 +20,7 @@ public static class Faker
     }
 
     public static PlayerCard FakePlayerCard(ushort? year = null, Guid? externalId = null,
-        CardType type = CardType.MlbCard, CardImageLocation? image = null, CardName? name = null,
+        CardType type = CardType.MlbCard, CardImageLocation? image = null, string? name = null,
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
         TeamShortName? teamShortName = null, int overallRating = 50,
         PlayerCardAttributes? playerCardAttributes = null)
@@ -29,7 +29,7 @@ public static class Faker
             FakeCardExternalId(externalId),
             type,
             image ?? FakeCardImage(),
-            name ?? FakeCardName(),
+            FakeCardName(name ?? "cardA"),
             rarity,
             series,
             position,

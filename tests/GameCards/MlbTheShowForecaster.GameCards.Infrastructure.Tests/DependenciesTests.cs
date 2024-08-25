@@ -8,6 +8,7 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
@@ -18,6 +19,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -171,6 +173,7 @@ public class DependenciesTests
         };
         var config = GetConfig(settings);
         var s = new ServiceCollection();
+        s.AddSingleton(Mock.Of<IPlayerCardRepository>());
 
         // Act
         s.AddLogging();
@@ -197,6 +200,13 @@ public class DependenciesTests
         Assert.Equal(8, durations.PlayerDeactivation);
         Assert.Equal(9, durations.PlayerFreeAgency);
         Assert.Equal(10, durations.PlayerTeamSigning);
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(ForecastReportOptions)).Lifetime);
+        Assert.IsType<ForecastReportOptions>(actual.GetRequiredService<ForecastReportOptions>());
+
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IForecastReportGenerator)).Lifetime);
+        Assert.IsType<StringReplacementForecastReportGenerator>(actual.GetRequiredService<IForecastReportGenerator>());
     }
 
     [Fact]

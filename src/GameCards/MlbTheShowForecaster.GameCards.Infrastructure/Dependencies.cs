@@ -12,6 +12,7 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
@@ -22,6 +23,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -160,6 +162,24 @@ public static class Dependencies
         }).ConfigureHttpClient(c => c.BaseAddress = new Uri(config[ConfigKeys.PlayerStatusApiBaseAddress]!));
         services.TryAddSingleton<IPlayerMatcher, PlayerMatcher>();
         services.TryAddSingleton(config.GetRequiredSection(ConfigKeys.ImpactDurations).Get<ForecastImpactDuration>()!);
+
+        services.TryAddSingleton<ForecastReportOptions>(sp => new ForecastReportOptions(new Dictionary<string, string>()
+        {
+            // Report templates are included with the build files
+            {
+                "Layout",
+                $"Services{Path.DirectorySeparatorChar}Reports{Path.DirectorySeparatorChar}Templates{Path.DirectorySeparatorChar}Layout.template.html"
+            },
+            {
+                "PlayerCardForecast",
+                $"Services{Path.DirectorySeparatorChar}Reports{Path.DirectorySeparatorChar}Templates{Path.DirectorySeparatorChar}PlayerCardForecast.template.html"
+            },
+            {
+                "ForecastImpact",
+                $"Services{Path.DirectorySeparatorChar}Reports{Path.DirectorySeparatorChar}Templates{Path.DirectorySeparatorChar}ForecastImpact.template.html"
+            }
+        }));
+        services.TryAddTransient<IForecastReportGenerator, StringReplacementForecastReportGenerator>();
     }
 
     /// <summary>

@@ -12,6 +12,8 @@ public static class Faker
 {
     public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
     public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
+    public static Guid FakeGuid3 = new("00000000-0000-0000-0000-000000000003");
+    public static Guid FakeGuid4 = new("00000000-0000-0000-0000-000000000004");
     public static DateOnly EndDate = new DateOnly(2024, 7, 29);
 
     public static PlayerCardForecast FakePlayerCardForecast(ushort year = 2024, Guid? externalId = null, int mlbId = 1,
