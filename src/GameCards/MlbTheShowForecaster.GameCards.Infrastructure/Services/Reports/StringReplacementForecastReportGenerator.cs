@@ -3,15 +3,15 @@ using System.Globalization;
 using System.Text;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Publishing;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.StatImpacts;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Publishing.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports.Exceptions;
 
-namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Publishing;
+namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 
 /// <summary>
 /// Simple string replacement report generator that only has native .NET dependencies

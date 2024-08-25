@@ -45,7 +45,7 @@ public partial class StringReplacementForecastReportGeneratorTests
     }
 
     [Fact]
-    public async Task Publish_MissingForecast_ThrowsException()
+    public async Task Generate_MissingForecast_ThrowsException()
     {
         // Arrange
         var date = Faker.EndDate.AddDays(-5); // All the forecast impacts will default to an end date after this date
@@ -62,10 +62,10 @@ public partial class StringReplacementForecastReportGeneratorTests
             { "PlayerCardForecast", PlayerCardForecastTemplatePath },
             { "ForecastImpact", ForecastImpactTemplatePath },
         });
-        var publisher = new StringReplacementForecastReportGenerator(options, stubPlayerCardRepo.Object);
+        var generator = new StringReplacementForecastReportGenerator(options, stubPlayerCardRepo.Object);
 
         var action = async () =>
-            await publisher.Generate(SeasonYear.Create(2024), new List<PlayerCardForecast>() { forecast }, date);
+            await generator.Generate(SeasonYear.Create(2024), new List<PlayerCardForecast>() { forecast }, date);
 
         // Act
         var actual = await Record.ExceptionAsync(action);
@@ -76,7 +76,7 @@ public partial class StringReplacementForecastReportGeneratorTests
     }
 
     [Fact]
-    public async Task Publish_PlayerCardForecasts_PublishesHtml()
+    public async Task Generate_PlayerCardForecasts_CreatesReport()
     {
         /*
          * Arrange
@@ -135,19 +135,19 @@ public partial class StringReplacementForecastReportGeneratorTests
         stubPlayerCardRepo.Setup(x => x.GetByExternalId(loserForecast2.CardExternalId))
             .ReturnsAsync(playerCard4);
 
-        // Publisher
+        // Generator
         var options = new ForecastReportOptions(templates: new Dictionary<string, string>()
         {
             { "Layout", LayoutTemplatePath },
             { "PlayerCardForecast", PlayerCardForecastTemplatePath },
             { "ForecastImpact", ForecastImpactTemplatePath },
         });
-        var publisher = new StringReplacementForecastReportGenerator(options, stubPlayerCardRepo.Object);
+        var generator = new StringReplacementForecastReportGenerator(options, stubPlayerCardRepo.Object);
 
         /*
          * Act
          */
-        var actual = await publisher.Generate(SeasonYear.Create(2024), forecasts, date);
+        var actual = await generator.Generate(SeasonYear.Create(2024), forecasts, date);
 
         /*
          * Assert
@@ -155,7 +155,7 @@ public partial class StringReplacementForecastReportGeneratorTests
         var expectedHtml = Whitespace()
             .Replace(
                 (await File.ReadAllTextAsync(
-                    @"Services\Reports\TestFiles\StringReplacementForecastPublisher_Expected.html")).Trim(), " ");
+                    @"Services\Reports\TestFiles\StringReplacementForecastGenerator_Expected.html")).Trim(), " ");
         var actualHtml = Whitespace().Replace(actual.Html.Trim(), " ");
         Assert.Equal(expectedHtml, actualHtml);
     }

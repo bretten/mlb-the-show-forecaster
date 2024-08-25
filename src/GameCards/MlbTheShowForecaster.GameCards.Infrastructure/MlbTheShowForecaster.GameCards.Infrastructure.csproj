@@ -22,4 +22,16 @@
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="Services\Reports\Templates\ForecastImpact.template.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Services\Reports\Templates\Layout.template.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Services\Reports\Templates\PlayerCardForecast.template.html">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

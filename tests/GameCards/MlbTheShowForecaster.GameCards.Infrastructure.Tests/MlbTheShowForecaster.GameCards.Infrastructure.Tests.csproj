@@ -32,7 +32,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="Services\Reports\TestFiles\StringReplacementForecastPublisher_Expected.html">
+      <None Update="Services\Reports\TestFiles\StringReplacementForecastGenerator_Expected.html">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
     </ItemGroup>

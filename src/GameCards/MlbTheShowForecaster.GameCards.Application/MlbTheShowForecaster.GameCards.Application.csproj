@@ -16,16 +16,4 @@
       <InternalsVisibleTo Include="MlbTheShowForecaster.GameCards.Application.Tests" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Update="Services\Reports\Templates\ForecastImpact.template.html">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Services\Reports\Templates\Layout.template.html">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="Services\Reports\Templates\PlayerCardForecast.template.html">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
 </Project>
