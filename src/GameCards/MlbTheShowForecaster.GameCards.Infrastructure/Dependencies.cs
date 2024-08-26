@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.FileSystems;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
@@ -12,6 +13,7 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
@@ -22,11 +24,13 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using Refit;
 
@@ -76,6 +80,11 @@ public static class Dependencies
         /// Forecast impact durations config key
         /// </summary>
         public const string ImpactDurations = "Forecasting:ImpactDurations";
+
+        /// <summary>
+        /// Forecast report output path
+        /// </summary>
+        public const string ForecastReportOutputPath = "Forecasting:ReportOutputPath";
     }
 
     /// <summary>
@@ -160,6 +169,31 @@ public static class Dependencies
         }).ConfigureHttpClient(c => c.BaseAddress = new Uri(config[ConfigKeys.PlayerStatusApiBaseAddress]!));
         services.TryAddSingleton<IPlayerMatcher, PlayerMatcher>();
         services.TryAddSingleton(config.GetRequiredSection(ConfigKeys.ImpactDurations).Get<ForecastImpactDuration>()!);
+
+        services.TryAddSingleton<ForecastReportOptions>(sp => new ForecastReportOptions(new Dictionary<string, string>()
+        {
+            // Report templates are included with the build files
+            {
+                "Layout",
+                $"Services{Path.DirectorySeparatorChar}Reports{Path.DirectorySeparatorChar}Templates{Path.DirectorySeparatorChar}Layout.template.html"
+            },
+            {
+                "PlayerCardForecast",
+                $"Services{Path.DirectorySeparatorChar}Reports{Path.DirectorySeparatorChar}Templates{Path.DirectorySeparatorChar}PlayerCardForecast.template.html"
+            },
+            {
+                "ForecastImpact",
+                $"Services{Path.DirectorySeparatorChar}Reports{Path.DirectorySeparatorChar}Templates{Path.DirectorySeparatorChar}ForecastImpact.template.html"
+            }
+        }));
+        services.TryAddTransient<IForecastReportGenerator, StringReplacementForecastReportGenerator>();
+        services.TryAddTransient<IForecastReportPublisher>(sp =>
+        {
+            var outputPath = config.GetRequiredValue<string>(ConfigKeys.ForecastReportOutputPath);
+            return new ForecastReportPublisher(sp.GetRequiredService<IForecastRepository>(),
+                sp.GetRequiredService<IForecastReportGenerator>(), sp.GetRequiredService<IFileSystem>(), outputPath,
+                sp.GetRequiredService<ILogger<ForecastReportPublisher>>());
+        });
     }
 
     /// <summary>

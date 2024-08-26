@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCardForecastImpacts;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 
@@ -30,17 +31,24 @@ public abstract class BaseForecastImpactEventConsumer<T> : IDomainEventConsumer<
     protected readonly ForecastImpactDuration Duration;
 
     /// <summary>
+    /// Publishes forecast reports
+    /// </summary>
+    private readonly IForecastReportPublisher _forecastReportPublisher;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="commandSender">Sends commands to mutate the system</param>
     /// <param name="calendar">Gets today's date</param>
     /// <param name="duration">Determines how long the forecast impact will last</param>
+    /// <param name="forecastReportPublisher">Publishes forecast reports</param>
     protected BaseForecastImpactEventConsumer(ICommandSender commandSender, ICalendar calendar,
-        ForecastImpactDuration duration)
+        ForecastImpactDuration duration, IForecastReportPublisher forecastReportPublisher)
     {
         CommandSender = commandSender;
         Calendar = calendar;
         Duration = duration;
+        _forecastReportPublisher = forecastReportPublisher;
     }
 
     /// <summary>
@@ -53,6 +61,8 @@ public abstract class BaseForecastImpactEventConsumer<T> : IDomainEventConsumer<
         await CommandSender.Send(
             new UpdatePlayerCardForecastImpactsCommand(e.Year, e.CardExternalId, e.MlbId, CreateImpact(e)),
             cancellationToken);
+
+        await _forecastReportPublisher.Publish(e.Year, Calendar.Today());
     }
 
     /// <summary>

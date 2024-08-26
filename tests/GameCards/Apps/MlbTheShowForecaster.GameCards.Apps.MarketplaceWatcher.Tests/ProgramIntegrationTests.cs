@@ -61,6 +61,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var inMemoryConfig = new Dictionary<string, string>()
         {
             { "ConnectionStrings:Cards", _dbContainer.GetConnectionString() + ";Pooling=false;" },
+            { "ConnectionStrings:Forecasts", _dbContainer.GetConnectionString() + ";Pooling=false;" },
             { "ConnectionStrings:Marketplace", _dbContainer.GetConnectionString() + ";Pooling=false;" },
             { "PlayerCardTracker:Interval", "01:00:00:00" },
             { "PlayerCardTracker:Seasons:0", "2024" },
@@ -69,6 +70,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
             { "CardPriceTracker:BuyPricePercentageChangeThreshold", "0.01" },
             { "CardPriceTracker:SellPricePercentageChangeThreshold", "0.01" },
             { "Forecasting:PlayerMatcher:BaseAddress", "http://localhost" },
+            { "Forecasting:ReportOutputPath", "file" },
             { "Messaging:RabbitMq:HostName", "localhost" },
             { "Messaging:RabbitMq:UserName", "rabbitmq" },
             { "Messaging:RabbitMq:Password", "rabbitmq" },

@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.FileSystems;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
@@ -8,6 +9,7 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
@@ -18,6 +20,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -167,10 +170,14 @@ public class DependenciesTests
             { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerActivation", "7" },
             { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerDeactivation", "8" },
             { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerFreeAgency", "9" },
-            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerTeamSigning", "10" }
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerTeamSigning", "10" },
+            { $"{Dependencies.ConfigKeys.ForecastReportOutputPath}", "ReportPath" }
         };
         var config = GetConfig(settings);
         var s = new ServiceCollection();
+        s.AddSingleton(Mock.Of<IPlayerCardRepository>());
+        s.AddSingleton(Mock.Of<IForecastRepository>());
+        s.AddSingleton(Mock.Of<IFileSystem>());
 
         // Act
         s.AddLogging();
@@ -197,6 +204,17 @@ public class DependenciesTests
         Assert.Equal(8, durations.PlayerDeactivation);
         Assert.Equal(9, durations.PlayerFreeAgency);
         Assert.Equal(10, durations.PlayerTeamSigning);
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(ForecastReportOptions)).Lifetime);
+        Assert.IsType<ForecastReportOptions>(actual.GetRequiredService<ForecastReportOptions>());
+
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IForecastReportGenerator)).Lifetime);
+        Assert.IsType<StringReplacementForecastReportGenerator>(actual.GetRequiredService<IForecastReportGenerator>());
+
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IForecastReportPublisher)).Lifetime);
+        Assert.IsType<ForecastReportPublisher>(actual.GetRequiredService<IForecastReportPublisher>());
     }
 
     [Fact]

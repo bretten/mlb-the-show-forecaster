@@ -15,9 +15,10 @@ public class PlayerDeactivationEventConsumerTests : BaseForecastImpactEventConsu
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
         var stubImpactDuration = StubImpactDuration();
+        var mockPublisher = MockForecastReportPublisher();
 
-        var consumer =
-            new PlayerDeactivationEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+        var consumer = new PlayerDeactivationEventConsumer(mockCommandSender.Object, stubCalendar.Object,
+            stubImpactDuration, mockPublisher.Object);
 
         var e = new PlayerDeactivationEvent(Year, MlbId);
 
@@ -32,5 +33,6 @@ public class PlayerDeactivationEventConsumerTests : BaseForecastImpactEventConsu
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
                     y.Year == Year && y.MlbId == MlbId && y.Impacts[0] == expectedImpact), cToken), Times.Once);
+        mockPublisher.Verify(x => x.Publish(Year, stubCalendar.Object.Today()), Times.Once);
     }
 }

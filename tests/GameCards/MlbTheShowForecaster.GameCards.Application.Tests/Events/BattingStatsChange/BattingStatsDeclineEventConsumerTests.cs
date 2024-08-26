@@ -16,9 +16,10 @@ public class BattingStatsDeclineEventConsumerTests : BaseForecastImpactEventCons
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
         var stubImpactDuration = StubImpactDuration();
+        var mockPublisher = MockForecastReportPublisher();
 
-        var consumer =
-            new BattingStatsDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+        var consumer = new BattingStatsDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object,
+            stubImpactDuration, mockPublisher.Object);
 
         var e = new BattingStatsDeclineEvent(Year, MlbId, PercentageChange.Create(0.7m, 0.5m));
 
@@ -32,5 +33,6 @@ public class BattingStatsDeclineEventConsumerTests : BaseForecastImpactEventCons
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
                     y.Year == Year && y.MlbId == MlbId && y.Impacts[0] == expectedImpact), cToken), Times.Once);
+        mockPublisher.Verify(x => x.Publish(Year, stubCalendar.Object.Today()), Times.Once);
     }
 }

@@ -16,9 +16,10 @@ public sealed class OverallRatingDeclineEventConsumerTests : BaseForecastImpactE
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
         var stubImpactDuration = StubImpactDuration();
+        var mockPublisher = MockForecastReportPublisher();
 
-        var consumer =
-            new OverallRatingDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+        var consumer = new OverallRatingDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object,
+            stubImpactDuration, mockPublisher.Object);
 
         var oldRating = Faker.FakeOverallRating(70);
         var newRating = Faker.FakeOverallRating(90);
@@ -35,5 +36,6 @@ public sealed class OverallRatingDeclineEventConsumerTests : BaseForecastImpactE
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
                     y.Year == Year && y.CardExternalId == CardExternalId && y.Impacts[0] == expectedImpact), cToken),
             Times.Once);
+        mockPublisher.Verify(x => x.Publish(Year, stubCalendar.Object.Today()), Times.Once);
     }
 }
