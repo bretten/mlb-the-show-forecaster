@@ -20,24 +20,18 @@ public sealed class LocalFileSystem : IFileSystem
     }
 
     /// <inheritdoc />
-    public Task StoreFile(string sourcePath, string destinationPath, bool overwrite = false)
+    public Task StoreFile(Stream stream, string destinationPath, bool overwrite = false)
     {
         if (!overwrite && File.Exists(destinationPath))
         {
             throw new FileExistsAtDestinationException($"File already exists at {destinationPath}");
         }
 
-        if (!File.Exists(sourcePath))
-        {
-            throw new NoFileFoundException($"Source file not found at: {sourcePath}");
-        }
-
-        var sourceFile = new FileInfo(sourcePath);
-
         // Create the directories if they don't exist
         new FileInfo(destinationPath).Directory?.Create();
 
-        File.Copy(sourceFile.FullName, destinationPath, overwrite: overwrite);
+        using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write);
+        stream.CopyTo(fileStream);
         return Task.CompletedTask;
     }
 }

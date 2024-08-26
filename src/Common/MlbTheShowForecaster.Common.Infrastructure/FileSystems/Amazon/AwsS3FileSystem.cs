@@ -55,23 +55,18 @@ public sealed class AwsS3FileSystem : IFileSystem
     }
 
     /// <inheritdoc />
-    public async Task StoreFile(string sourcePath, string destinationPath, bool overwrite = false)
+    public async Task StoreFile(Stream stream, string destinationPath, bool overwrite = false)
     {
         if (!overwrite && !await ObjectExists(destinationPath))
         {
             throw new FileExistsAtDestinationException($"S3 object exists at key: {destinationPath}");
         }
 
-        if (!File.Exists(sourcePath))
-        {
-            throw new NoFileFoundException($"Source file not found at: {sourcePath}");
-        }
-
         var request = new PutObjectRequest
         {
             BucketName = _bucketName,
             Key = destinationPath,
-            FilePath = sourcePath,
+            InputStream = stream,
             ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
         };
 

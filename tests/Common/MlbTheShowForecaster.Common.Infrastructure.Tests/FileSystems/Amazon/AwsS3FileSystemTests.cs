@@ -10,15 +10,12 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.FileSy
 
 public class AwsS3FileSystemTests
 {
-    private static readonly string SourceFile =
-        $"FileSystems{Path.DirectorySeparatorChar}TestFiles{Path.DirectorySeparatorChar}sourceFile.txt";
-
     [Fact]
     public async Task RetrieveFile_FileDoesNotExist_ThrowsException()
     {
         // Arrange
         const string bucket = "bucket";
-        const string path = "source";
+        const string path = "path";
 
         var stubS3 = new Mock<IAmazonS3>();
         stubS3.Setup(x => x.GetObjectAsync(It.Is<GetObjectRequest>(y => y.BucketName == bucket && y.Key == path),
@@ -45,7 +42,7 @@ public class AwsS3FileSystemTests
     {
         // Arrange
         const string bucket = "bucket";
-        const string path = "source";
+        const string path = "path";
 
         var stubS3 = new Mock<IAmazonS3>();
         stubS3.Setup(x => x.GetObjectAsync(It.Is<GetObjectRequest>(y => y.BucketName == bucket && y.Key == path),
@@ -71,7 +68,6 @@ public class AwsS3FileSystemTests
     {
         // Arrange
         const string bucket = "bucket";
-        const string sourcePath = "source.txt";
         const string destinationPath = "dest.txt";
         const bool overwrite = false;
 
@@ -87,7 +83,7 @@ public class AwsS3FileSystemTests
 
         var fs = new AwsS3FileSystem(stubS3.Object, bucket);
 
-        var action = async () => await fs.StoreFile(sourcePath, destinationPath, overwrite);
+        var action = async () => await fs.StoreFile(new MemoryStream(), destinationPath, overwrite);
 
         // Act
         var actual = await Record.ExceptionAsync(action);
@@ -98,42 +94,11 @@ public class AwsS3FileSystemTests
     }
 
     [Fact]
-    public async Task StoreFile_SourceFileDoesNotExist_ThrowsException()
+    public async Task StoreFile_Stream_OverwritesFile()
     {
         // Arrange
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes("file content"));
         const string bucket = "bucket";
-        const string sourcePath = "doesNotExist.txt";
-        const string destinationPath = "dest.txt";
-        const bool overwrite = false;
-
-        var stubS3 = new Mock<IAmazonS3>();
-        stubS3.Setup(x =>
-                x.GetObjectMetadataAsync(
-                    It.Is<GetObjectMetadataRequest>(y => y.BucketName == bucket && y.Key == destinationPath),
-                    It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new GetObjectMetadataResponse()
-            {
-                HttpStatusCode = HttpStatusCode.OK
-            });
-
-        var fs = new AwsS3FileSystem(stubS3.Object, bucket);
-
-        var action = async () => await fs.StoreFile(sourcePath, destinationPath, overwrite);
-
-        // Act
-        var actual = await Record.ExceptionAsync(action);
-
-        // Assert
-        Assert.NotNull(actual);
-        Assert.IsType<NoFileFoundException>(actual);
-    }
-
-    [Fact]
-    public async Task StoreFile_ValidSourceFile_OverwritesFile()
-    {
-        // Arrange
-        const string bucket = "bucket";
-        var sourcePath = SourceFile;
         const string destinationPath = "dest.txt";
         const bool overwrite = true;
 
@@ -150,13 +115,13 @@ public class AwsS3FileSystemTests
         var fs = new AwsS3FileSystem(stubS3.Object, bucket);
 
         // Act
-        await fs.StoreFile(sourcePath, destinationPath, overwrite);
+        await fs.StoreFile(stream, destinationPath, overwrite);
 
         // Assert
         stubS3.Verify(
             x => x.PutObjectAsync(
                 It.Is<PutObjectRequest>(y =>
-                    y.BucketName == bucket && y.Key == destinationPath && y.FilePath == sourcePath),
+                    y.BucketName == bucket && y.Key == destinationPath && y.InputStream == stream),
                 It.IsAny<CancellationToken>()), Times.Once);
     }
 }

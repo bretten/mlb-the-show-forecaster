@@ -6,21 +6,15 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.FileSy
 
 public class LocalFileSystemTests
 {
-    private static readonly string SourceFile =
-        $"FileSystems{Path.DirectorySeparatorChar}TestFiles{Path.DirectorySeparatorChar}sourceFile.txt";
-
-    private static readonly string DestinationFile =
-        $"FileSystems{Path.DirectorySeparatorChar}TestFiles{Path.DirectorySeparatorChar}destinationFile.txt";
-
     [Fact]
     public async Task RetrieveFile_FileDoesNotExist_ThrowsException()
     {
         // Arrange
-        const string source = "source.txt";
+        const string path = "path.txt";
 
         var fs = new LocalFileSystem();
 
-        var action = async () => await fs.RetrieveFile(source);
+        var action = async () => await fs.RetrieveFile(path);
 
         // Act
         var actual = await Record.ExceptionAsync(action);
@@ -34,30 +28,31 @@ public class LocalFileSystemTests
     public async Task RetrieveFile_FileExists_ReturnsFile()
     {
         // Arrange
-        var source = SourceFile;
+        var path = Path.GetTempFileName();
+        await File.WriteAllTextAsync(path, "file content");
 
         var fs = new LocalFileSystem();
 
         // Act
-        var actual = await fs.RetrieveFile(source);
+        var actual = await fs.RetrieveFile(path);
 
         // Assert
         Assert.NotNull(actual);
-        Assert.Equal(SourceFile, actual.Path);
-        Assert.Equal("source", Encoding.UTF8.GetString(actual.Content));
+        Assert.Equal(path, actual.Path);
+        Assert.Equal("file content", Encoding.UTF8.GetString(actual.Content));
     }
 
     [Fact]
     public async Task StoreFile_DestinationFileExists_ThrowsException()
     {
         // Arrange
-        var source = SourceFile;
-        var destination = DestinationFile;
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes("file content"));
+        var destination = Path.GetTempFileName();
         const bool overwrite = false;
 
         var fs = new LocalFileSystem();
 
-        var action = async () => await fs.StoreFile(source, destination, overwrite);
+        var action = async () => await fs.StoreFile(stream, destination, overwrite);
 
         // Act
         var actual = await Record.ExceptionAsync(action);
@@ -68,41 +63,21 @@ public class LocalFileSystemTests
     }
 
     [Fact]
-    public async Task StoreFile_SourceFileDoesNotExist_ThrowsException()
+    public async Task StoreFile_Stream_OverwritesFile()
     {
         // Arrange
-        const string source = "doesNotExist.txt";
-        var destination = DestinationFile;
-        const bool overwrite = true;
-
-        var fs = new LocalFileSystem();
-
-        var action = async () => await fs.StoreFile(source, destination, overwrite);
-
-        // Act
-        var actual = await Record.ExceptionAsync(action);
-
-        // Assert
-        Assert.NotNull(actual);
-        Assert.IsType<NoFileFoundException>(actual);
-    }
-
-    [Fact]
-    public async Task StoreFile_ValidSourceFile_OverwritesFile()
-    {
-        // Arrange
-        var source = SourceFile;
-        var destination = DestinationFile;
+        var stream = new MemoryStream(Encoding.UTF8.GetBytes("file content"));
+        var destination = Path.GetTempFileName();
         const bool overwrite = true;
 
         var fs = new LocalFileSystem();
 
         // Act
-        await fs.StoreFile(source, destination, overwrite);
+        await fs.StoreFile(stream, destination, overwrite);
 
         // Assert
-        var file = new FileInfo(DestinationFile);
+        var file = new FileInfo(destination);
         Assert.True(file.Exists);
-        Assert.Equal(await File.ReadAllTextAsync(source), await File.ReadAllTextAsync(destination));
+        Assert.Equal("file content", await File.ReadAllTextAsync(destination));
     }
 }

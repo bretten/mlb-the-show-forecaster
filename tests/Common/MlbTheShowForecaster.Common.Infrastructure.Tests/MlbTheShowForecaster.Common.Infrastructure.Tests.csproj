@@ -31,13 +31,4 @@
       <ProjectReference Include="..\..\..\src\Common\MlbTheShowForecaster.Common.Infrastructure\MlbTheShowForecaster.Common.Infrastructure.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Update="FileSystems\TestFiles\destinationFile.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="FileSystems\TestFiles\sourceFile.txt">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
 </Project>
