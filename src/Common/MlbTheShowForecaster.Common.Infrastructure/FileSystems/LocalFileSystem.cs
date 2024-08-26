@@ -20,7 +20,7 @@ public sealed class LocalFileSystem : IFileSystem
     }
 
     /// <inheritdoc />
-    public Task StoreFile(Stream stream, string destinationPath, bool overwrite = false)
+    public async Task StoreFile(Stream stream, string destinationPath, bool overwrite = false)
     {
         if (!overwrite && File.Exists(destinationPath))
         {
@@ -30,8 +30,7 @@ public sealed class LocalFileSystem : IFileSystem
         // Create the directories if they don't exist
         new FileInfo(destinationPath).Directory?.Create();
 
-        using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write);
-        stream.CopyTo(fileStream);
-        return Task.CompletedTask;
+        await using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write);
+        await stream.CopyToAsync(fileStream);
     }
 }
