@@ -15,9 +15,10 @@ public class PlayerFreeAgencyEventConsumerTests : BaseForecastImpactEventConsume
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
         var stubImpactDuration = StubImpactDuration();
+        var mockPublisher = MockForecastReportPublisher();
 
-        var consumer =
-            new PlayerFreeAgencyEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+        var consumer = new PlayerFreeAgencyEventConsumer(mockCommandSender.Object, stubCalendar.Object,
+            stubImpactDuration, mockPublisher.Object);
 
         var e = new PlayerFreeAgencyEvent(Year, MlbId);
 
@@ -32,5 +33,6 @@ public class PlayerFreeAgencyEventConsumerTests : BaseForecastImpactEventConsume
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
                     y.Year == Year && y.MlbId == MlbId && y.Impacts[0] == expectedImpact), cToken), Times.Once);
+        mockPublisher.Verify(x => x.Publish(Year, stubCalendar.Object.Today()), Times.Once);
     }
 }

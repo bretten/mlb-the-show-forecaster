@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.FileSystems;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
@@ -29,6 +30,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using Refit;
 
@@ -78,6 +80,11 @@ public static class Dependencies
         /// Forecast impact durations config key
         /// </summary>
         public const string ImpactDurations = "Forecasting:ImpactDurations";
+
+        /// <summary>
+        /// Forecast report output path
+        /// </summary>
+        public const string ForecastReportOutputPath = "Forecasting:ReportOutputPath";
     }
 
     /// <summary>
@@ -180,6 +187,13 @@ public static class Dependencies
             }
         }));
         services.TryAddTransient<IForecastReportGenerator, StringReplacementForecastReportGenerator>();
+        services.TryAddTransient<IForecastReportPublisher>(sp =>
+        {
+            var outputPath = config.GetRequiredValue<string>(ConfigKeys.ForecastReportOutputPath);
+            return new ForecastReportPublisher(sp.GetRequiredService<IForecastRepository>(),
+                sp.GetRequiredService<IForecastReportGenerator>(), sp.GetRequiredService<IFileSystem>(), outputPath,
+                sp.GetRequiredService<ILogger<ForecastReportPublisher>>());
+        });
     }
 
     /// <summary>

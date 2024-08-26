@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 using Moq;
@@ -30,6 +31,11 @@ public class BaseForecastImpactEventConsumerTests
     protected static ForecastImpactDuration StubImpactDuration(int d = 3)
     {
         return new ForecastImpactDuration(d, d, d, d, d, d, d, d, d, d);
+    }
+
+    protected static Mock<IForecastReportPublisher> MockForecastReportPublisher()
+    {
+        return new Mock<IForecastReportPublisher>();
     }
 
     protected static ForecastImpact[] ItIs(ForecastImpact i)

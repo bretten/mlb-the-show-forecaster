@@ -16,9 +16,10 @@ public class FieldingStatsDeclineEventConsumerTests : BaseForecastImpactEventCon
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
         var stubImpactDuration = StubImpactDuration();
+        var mockPublisher = MockForecastReportPublisher();
 
-        var consumer =
-            new FieldingStatsDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+        var consumer = new FieldingStatsDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object,
+            stubImpactDuration, mockPublisher.Object);
 
         var e = new FieldingStatsDeclineEvent(Year, MlbId, PercentageChange.Create(0.7m, 0.5m));
 
@@ -32,5 +33,6 @@ public class FieldingStatsDeclineEventConsumerTests : BaseForecastImpactEventCon
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
                     y.Year == Year && y.MlbId == MlbId && y.Impacts[0] == expectedImpact), cToken), Times.Once);
+        mockPublisher.Verify(x => x.Publish(Year, stubCalendar.Object.Today()), Times.Once);
     }
 }

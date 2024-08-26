@@ -16,9 +16,10 @@ public class PositionChangeEventConsumerTests : BaseForecastImpactEventConsumerT
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
         var stubImpactDuration = StubImpactDuration();
+        var mockPublisher = MockForecastReportPublisher();
 
-        var consumer =
-            new PositionChangeEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+        var consumer = new PositionChangeEventConsumer(mockCommandSender.Object, stubCalendar.Object,
+            stubImpactDuration, mockPublisher.Object);
 
         const Position oldPosition = Position.CenterField;
         const Position newPosition = Position.LeftField;
@@ -35,5 +36,6 @@ public class PositionChangeEventConsumerTests : BaseForecastImpactEventConsumerT
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
                     y.Year == Year && y.CardExternalId == CardExternalId && y.Impacts[0] == expectedImpact), cToken),
             Times.Once);
+        mockPublisher.Verify(x => x.Publish(Year, stubCalendar.Object.Today()), Times.Once);
     }
 }

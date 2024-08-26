@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.FileSystems;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
@@ -169,11 +170,14 @@ public class DependenciesTests
             { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerActivation", "7" },
             { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerDeactivation", "8" },
             { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerFreeAgency", "9" },
-            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerTeamSigning", "10" }
+            { $"{Dependencies.ConfigKeys.ImpactDurations}:PlayerTeamSigning", "10" },
+            { $"{Dependencies.ConfigKeys.ForecastReportOutputPath}", "ReportPath" }
         };
         var config = GetConfig(settings);
         var s = new ServiceCollection();
         s.AddSingleton(Mock.Of<IPlayerCardRepository>());
+        s.AddSingleton(Mock.Of<IForecastRepository>());
+        s.AddSingleton(Mock.Of<IFileSystem>());
 
         // Act
         s.AddLogging();
@@ -207,6 +211,10 @@ public class DependenciesTests
         Assert.Equal(ServiceLifetime.Transient,
             s.First(x => x.ServiceType == typeof(IForecastReportGenerator)).Lifetime);
         Assert.IsType<StringReplacementForecastReportGenerator>(actual.GetRequiredService<IForecastReportGenerator>());
+
+        Assert.Equal(ServiceLifetime.Transient,
+            s.First(x => x.ServiceType == typeof(IForecastReportPublisher)).Lifetime);
+        Assert.IsType<ForecastReportPublisher>(actual.GetRequiredService<IForecastReportPublisher>());
     }
 
     [Fact]
