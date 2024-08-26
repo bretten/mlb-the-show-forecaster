@@ -23,6 +23,9 @@ public partial class StringReplacementForecastReportGeneratorTests
     private static readonly string ForecastImpactTemplatePath =
         $"Services{Path.DirectorySeparatorChar}Reports{Path.DirectorySeparatorChar}Templates{Path.DirectorySeparatorChar}ForecastImpact.template.html";
 
+    private static readonly string ExpectedHtmlPath =
+        $"Services{Path.DirectorySeparatorChar}Reports{Path.DirectorySeparatorChar}TestFiles{Path.DirectorySeparatorChar}StringReplacementForecastGenerator_Expected.html";
+
     [Fact]
     public void Constructor_MissingTemplate_ThrowsException()
     {
@@ -152,10 +155,7 @@ public partial class StringReplacementForecastReportGeneratorTests
         /*
          * Assert
          */
-        var expectedHtml = Whitespace()
-            .Replace(
-                (await File.ReadAllTextAsync(
-                    @"Services\Reports\TestFiles\StringReplacementForecastGenerator_Expected.html")).Trim(), " ");
+        var expectedHtml = Whitespace().Replace((await File.ReadAllTextAsync(ExpectedHtmlPath)).Trim(), " ");
         var actualHtml = Whitespace().Replace(actual.Html.Trim(), " ");
         Assert.Equal(expectedHtml, actualHtml);
     }
