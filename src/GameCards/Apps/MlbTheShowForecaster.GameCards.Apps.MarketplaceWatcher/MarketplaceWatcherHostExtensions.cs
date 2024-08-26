@@ -4,6 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.FileSystems;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.BattingStatsChange;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.FieldingStatsChange;
@@ -197,6 +198,7 @@ public static class MarketplaceWatcherHostExtensions
             });
 
             // MLB The Show cards and marketplace dependencies
+            services.AddFileSystems(context.Configuration);
             services.AddGameCardsMapping();
             services.AddGameCardsPlayerCardTracker();
             services.AddGameCardsPriceTracker(context.Configuration);
