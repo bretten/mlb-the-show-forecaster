@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.ValueObjects;
 
@@ -9,6 +10,27 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mappi
 /// </summary>
 public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
 {
+    /// <summary>
+    /// Assesses performance
+    /// </summary>
+    private readonly IPerformanceAssessor _performanceAssessor;
+
+    /// <summary>
+    /// Assesses participation
+    /// </summary>
+    private readonly IParticipationAssessor _participationAssessor;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="performanceAssessor">Assesses performance</param>
+    /// <param name="participationAssessor">Assesses participation</param>
+    public PlayerSeasonMapper(IPerformanceAssessor performanceAssessor, IParticipationAssessor participationAssessor)
+    {
+        _performanceAssessor = performanceAssessor;
+        _participationAssessor = participationAssessor;
+    }
+
     /// <summary>
     /// Maps <see cref="PlayerSeason"/> to <see cref="PlayerStatsBySeason"/>
     /// </summary>
@@ -138,5 +160,55 @@ public sealed class PlayerSeasonMapper : IPlayerSeasonMapper
                     pickoffs: x.Pickoffs.Value
                 )
             ).ToList();
+    }
+
+    /// <summary>
+    /// Maps a <see cref="PlayerStatsBySeason"/> to <see cref="PlayerSeasonPerformanceMetrics"/> using
+    /// stats from the specified time period
+    /// </summary>
+    /// <param name="playerStatsBySeason"><see cref="PlayerStatsBySeason"/></param>
+    /// <param name="start">The start date of the time period</param>
+    /// <param name="end">The end date of the time period</param>
+    /// <returns><see cref="PlayerSeasonPerformanceMetrics"/></returns>
+    public PlayerSeasonPerformanceMetrics MapToPlayerSeasonPerformanceMetrics(PlayerStatsBySeason playerStatsBySeason,
+        DateOnly start, DateOnly end)
+    {
+        var metricsByDate = new List<PerformanceMetricsByDate>();
+
+        // Calculate cumulative stats for each date in the time period
+        var i = start;
+        while (i <= end)
+        {
+            var battingStats = playerStatsBySeason.BattingStatsFor(start, i);
+            var battingScore = _performanceAssessor.AssessBatting(battingStats);
+            var significantBattingParticipation = _participationAssessor.AssessBatting(start, i, battingStats);
+
+            var pitchingStats = playerStatsBySeason.PitchingStatsFor(start, i);
+            var pitchingScore = _performanceAssessor.AssessPitching(pitchingStats);
+            var significantPitchingParticipation = _participationAssessor.AssessPitching(start, i, pitchingStats);
+
+            var fieldingStats = playerStatsBySeason.FieldingStatsFor(start, i);
+            var fieldingScore = _performanceAssessor.AssessFielding(fieldingStats);
+            var significantFieldingParticipation = _participationAssessor.AssessFielding(start, i, fieldingStats);
+
+            metricsByDate.Add(new PerformanceMetricsByDate(
+                i, BattingScore: battingScore.Value, SignificantBattingParticipation: significantBattingParticipation,
+                PitchingScore: pitchingScore.Value, SignificantPitchingParticipation: significantPitchingParticipation,
+                FieldingScore: fieldingScore.Value, SignificantFieldingParticipation: significantFieldingParticipation,
+                BattingAverage: battingStats.BattingAverage.Value,
+                OnBasePercentage: battingStats.OnBasePercentage.Value,
+                Slugging: battingStats.Slugging.Value,
+                EarnedRunAverage: pitchingStats.EarnedRunAverage.Value,
+                OpponentsBattingAverage: pitchingStats.OpponentsBattingAverage.Value,
+                StrikeoutsPer9: pitchingStats.StrikeoutsPer9.Value,
+                BaseOnBallsPer9: pitchingStats.BaseOnBallsPer9.Value,
+                HomeRunsPer9: pitchingStats.HomeRunsPer9.Value,
+                FieldingPercentage: fieldingStats.FieldingPercentage.Value));
+
+            i = i.AddDays(1);
+        }
+
+        return new PlayerSeasonPerformanceMetrics(playerStatsBySeason.SeasonYear, playerStatsBySeason.PlayerMlbId,
+            metricsByDate);
     }
 }

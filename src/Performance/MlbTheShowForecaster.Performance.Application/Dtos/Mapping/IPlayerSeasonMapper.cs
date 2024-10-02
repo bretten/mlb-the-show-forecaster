@@ -35,4 +35,15 @@ public interface IPlayerSeasonMapper
     /// <param name="stats">The collection of <see cref="PlayerGameFieldingStats"/> to map</param>
     /// <returns>The mapped collection of <see cref="PlayerFieldingStatsByGame"/></returns>
     IEnumerable<PlayerFieldingStatsByGame> MapFieldingGames(IEnumerable<PlayerGameFieldingStats> stats);
+
+    /// <summary>
+    /// Should map a <see cref="PlayerStatsBySeason"/> to <see cref="PlayerSeasonPerformanceMetrics"/> using
+    /// stats from the specified time period
+    /// </summary>
+    /// <param name="playerStatsBySeason"><see cref="PlayerStatsBySeason"/></param>
+    /// <param name="start">The start date of the time period</param>
+    /// <param name="end">The end date of the time period</param>
+    /// <returns><see cref="PlayerSeasonPerformanceMetrics"/></returns>
+    PlayerSeasonPerformanceMetrics MapToPlayerSeasonPerformanceMetrics(PlayerStatsBySeason playerStatsBySeason,
+        DateOnly start, DateOnly end);
 }
