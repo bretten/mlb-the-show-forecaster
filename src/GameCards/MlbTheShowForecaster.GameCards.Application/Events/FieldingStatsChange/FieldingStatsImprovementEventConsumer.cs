@@ -25,6 +25,6 @@ public sealed class
     {
         var e = (FieldingStatsImprovementEvent)ev;
         return new FieldingStatsForecastImpact(e.Comparison.ReferenceValue, e.Comparison.NewValue,
-            Calendar.Today().AddDays(Duration.FieldingStatsChange));
+            Calendar.Today(), Calendar.Today().AddDays(Duration.FieldingStatsChange));
     }
 }

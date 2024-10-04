@@ -6,7 +6,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 /// Represents the impact a player signing with a team has on a <see cref="PlayerCardForecast"/>
 /// </summary>
 /// <param name="endDate"><inheritdoc /></param>
-public sealed class PlayerTeamSigningForecastImpact(DateOnly endDate) : ForecastImpact(endDate)
+public sealed class PlayerTeamSigningForecastImpact(DateOnly startDate, DateOnly endDate) : ForecastImpact(startDate, endDate)
 {
     /// <inheritdoc />
     public override Demand Demand => Demand.Low();

@@ -25,6 +25,6 @@ public sealed class
     {
         var e = (PitchingStatsImprovementEvent)ev;
         return new PitchingStatsForecastImpact(e.Comparison.ReferenceValue, e.Comparison.NewValue,
-            Calendar.Today().AddDays(Duration.PitchingStatsChange));
+            Calendar.Today(), Calendar.Today().AddDays(Duration.PitchingStatsChange));
     }
 }

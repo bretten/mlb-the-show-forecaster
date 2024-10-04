@@ -49,7 +49,7 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// All <see cref="ForecastImpact"/>s in chronological order of <see cref="ForecastImpact.EndDate"/>
     /// </summary>
     public IReadOnlyList<ForecastImpact> ForecastImpactsChronologically =>
-        _forecastImpacts.OrderBy(x => x.EndDate).ToImmutableList();
+        _forecastImpacts.OrderBy(x => x.StartDate).ToImmutableList();
 
     /// <summary>
     /// Constructor
@@ -162,7 +162,7 @@ public sealed class PlayerCardForecast : AggregateRoot
     public Demand EstimateDemandFor(DateOnly date)
     {
         return _forecastImpacts
-            .Where(x => x.EndDate >= date)
+            .Where(x => x.StartDate <= date && x.EndDate >= date)
             .Select(x => x.DemandOn(date))
             .Aggregate(Demand.Stable(), (x, y) => x + y);
     }

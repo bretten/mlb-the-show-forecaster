@@ -25,9 +25,8 @@ public class PlayerFreeAgencyEventConsumerTests : BaseForecastImpactEventConsume
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact =
-            new PlayerFreeAgencyForecastImpact(stubCalendar.Object.Today()
-                .AddDays(stubImpactDuration.PlayerFreeAgency));
+        var expectedImpact = new PlayerFreeAgencyForecastImpact(stubCalendar.Object.Today(),
+            stubCalendar.Object.Today().AddDays(stubImpactDuration.PlayerFreeAgency));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

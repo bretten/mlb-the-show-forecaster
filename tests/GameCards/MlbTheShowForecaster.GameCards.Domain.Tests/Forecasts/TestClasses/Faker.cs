@@ -12,6 +12,8 @@ public static class Faker
 {
     public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
     public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
+    public static Guid FakeGuid3 = new("00000000-0000-0000-0000-000000000003");
+    public static DateOnly StartDate = new DateOnly(2024, 7, 25);
     public static DateOnly EndDate = new DateOnly(2024, 7, 29);
 
     public static PlayerCardForecast FakePlayerCardForecast(ushort year = 2024, Guid? externalId = null, int mlbId = 1,
@@ -23,60 +25,64 @@ public static class Faker
     }
 
     public static OverallRatingChangeForecastImpact FakeOverallRatingChangeForecastImpact(int oldOverallRating = 50,
-        int newOverallRating = 50, DateOnly? endDate = null)
+        int newOverallRating = 50, DateOnly? startDate = null, DateOnly? endDate = null)
     {
         return new OverallRatingChangeForecastImpact(oldRating: OverallRating.Create(oldOverallRating),
-            newRating: OverallRating.Create(newOverallRating), endDate ?? EndDate);
+            newRating: OverallRating.Create(newOverallRating), startDate ?? StartDate, endDate ?? EndDate);
     }
 
     public static BoostForecastImpact FakeBoostForecastImpact(string boostReason = "Hit 5 HRs",
-        DateOnly? endDate = null)
+        DateOnly? startDate = null, DateOnly? endDate = null)
     {
-        return new BoostForecastImpact(boostReason, endDate ?? EndDate);
+        return new BoostForecastImpact(boostReason, startDate ?? StartDate, endDate ?? EndDate);
     }
 
     public static PositionChangeForecastImpact FakePositionChangeForecastImpact(
         Position oldPosition = Position.RightField, Position newPosition = Position.CenterField,
-        DateOnly? endDate = null)
+        DateOnly? startDate = null, DateOnly? endDate = null)
     {
-        return new PositionChangeForecastImpact(oldPosition, newPosition, endDate ?? EndDate);
+        return new PositionChangeForecastImpact(oldPosition, newPosition, startDate ?? StartDate, endDate ?? EndDate);
     }
 
     public static BattingStatsForecastImpact FakeBattingStatsForecastImpact(decimal oldScore = 0.2m,
-        decimal newScore = 0.5m, DateOnly? endDate = null)
+        decimal newScore = 0.5m, DateOnly? startDate = null, DateOnly? endDate = null)
     {
-        return new BattingStatsForecastImpact(oldScore, newScore, endDate ?? EndDate);
+        return new BattingStatsForecastImpact(oldScore, newScore, startDate ?? StartDate, endDate ?? EndDate);
     }
 
     public static PitchingStatsForecastImpact FakePitchingStatsForecastImpact(decimal oldScore = 0.2m,
-        decimal newScore = 0.5m, DateOnly? endDate = null)
+        decimal newScore = 0.5m, DateOnly? startDate = null, DateOnly? endDate = null)
     {
-        return new PitchingStatsForecastImpact(oldScore, newScore, endDate ?? EndDate);
+        return new PitchingStatsForecastImpact(oldScore, newScore, startDate ?? StartDate, endDate ?? EndDate);
     }
 
     public static FieldingStatsForecastImpact FakeFieldingStatsForecastImpact(decimal oldScore = 0.2m,
-        decimal newScore = 0.5m, DateOnly? endDate = null)
+        decimal newScore = 0.5m, DateOnly? startDate = null, DateOnly? endDate = null)
     {
-        return new FieldingStatsForecastImpact(oldScore, newScore, endDate ?? EndDate);
+        return new FieldingStatsForecastImpact(oldScore, newScore, startDate ?? StartDate, endDate ?? EndDate);
     }
 
-    public static PlayerActivationForecastImpact FakePlayerActivationForecastImpact(DateOnly? endDate = null)
+    public static PlayerActivationForecastImpact FakePlayerActivationForecastImpact(DateOnly? startDate = null,
+        DateOnly? endDate = null)
     {
-        return new PlayerActivationForecastImpact(endDate ?? EndDate);
+        return new PlayerActivationForecastImpact(startDate ?? StartDate, endDate ?? EndDate);
     }
 
-    public static PlayerDeactivationForecastImpact FakePlayerDeactivationForecastImpact(DateOnly? endDate = null)
+    public static PlayerDeactivationForecastImpact FakePlayerDeactivationForecastImpact(DateOnly? startDate = null,
+        DateOnly? endDate = null)
     {
-        return new PlayerDeactivationForecastImpact(endDate ?? EndDate);
+        return new PlayerDeactivationForecastImpact(startDate ?? StartDate, endDate ?? EndDate);
     }
 
-    public static PlayerFreeAgencyForecastImpact FakePlayerFreeAgencyForecastImpact(DateOnly? endDate = null)
+    public static PlayerFreeAgencyForecastImpact FakePlayerFreeAgencyForecastImpact(DateOnly? startDate = null,
+        DateOnly? endDate = null)
     {
-        return new PlayerFreeAgencyForecastImpact(endDate ?? EndDate);
+        return new PlayerFreeAgencyForecastImpact(startDate ?? StartDate, endDate ?? EndDate);
     }
 
-    public static PlayerTeamSigningForecastImpact FakePlayerTeamSigningForecastImpact(DateOnly? endDate = null)
+    public static PlayerTeamSigningForecastImpact FakePlayerTeamSigningForecastImpact(DateOnly? startDate = null,
+        DateOnly? endDate = null)
     {
-        return new PlayerTeamSigningForecastImpact(endDate ?? EndDate);
+        return new PlayerTeamSigningForecastImpact(startDate ?? StartDate, endDate ?? EndDate);
     }
 }

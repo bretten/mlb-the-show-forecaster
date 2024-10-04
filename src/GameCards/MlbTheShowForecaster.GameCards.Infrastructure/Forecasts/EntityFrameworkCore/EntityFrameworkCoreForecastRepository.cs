@@ -81,7 +81,8 @@ public sealed class EntityFrameworkCoreForecastRepository : IForecastRepository
     {
         return await _dbContext.PlayerCardForecastsWithImpacts()
             .Where(x => EF.Property<IEnumerable<ForecastImpact>>(x,
-                Constants.PlayerCardForecasts.Relationships.ForecastImpactsField).Any(y => y.EndDate >= date))
+                    Constants.PlayerCardForecasts.Relationships.ForecastImpactsField)
+                .Any(y => y.StartDate <= date && y.EndDate >= date))
             .ToListAsync();
     }
 }

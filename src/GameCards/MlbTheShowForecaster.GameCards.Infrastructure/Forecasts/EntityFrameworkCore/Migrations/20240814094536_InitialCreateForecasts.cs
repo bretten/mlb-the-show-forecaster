@@ -39,6 +39,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
                 columns: table => new
                 {
                     player_card_forecast_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    start_date = table.Column<DateOnly>(type: "date", nullable: false),
                     end_date = table.Column<DateOnly>(type: "date", nullable: false),
                     type = table.Column<string>(type: "text", nullable: false),
                     boost_reason = table.Column<string>(type: "text", nullable: true),
@@ -51,7 +52,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("player_card_forecast_impacts_pkey", x => new { x.player_card_forecast_id, x.type, x.end_date });
+                    table.PrimaryKey("player_card_forecast_impacts_pkey", x => new { x.player_card_forecast_id, x.type, x.start_date, x.end_date });
                     table.ForeignKey(
                         name: "player_card_forecast_impacts_player_card_forecasts_id_fkey",
                         column: x => x.player_card_forecast_id,
@@ -60,6 +61,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "player_card_forecast_impacts_start_date_end_date_idx",
+                schema: "game_cards",
+                table: "player_card_forecast_impacts",
+                columns: new[] { "start_date", "end_date" })
+                .Annotation("Npgsql:IndexMethod", "btree");
 
             migrationBuilder.CreateIndex(
                 name: "player_card_forecasts_year_card_external_id_idx",

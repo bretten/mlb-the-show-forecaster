@@ -10,12 +10,14 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 /// </summary>
 /// <param name="oldRating">The player's old rating</param>
 /// <param name="newRating">The player's new rating</param>
+/// <param name="startDate"><inheritdoc /></param>
 /// <param name="endDate"><inheritdoc /></param>
 public sealed class OverallRatingChangeForecastImpact(
     OverallRating oldRating,
     OverallRating newRating,
+    DateOnly startDate,
     DateOnly endDate)
-    : ForecastImpact(endDate)
+    : ForecastImpact(startDate, endDate)
 {
     /// <summary>
     /// The player's old rating

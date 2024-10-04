@@ -22,6 +22,6 @@ public sealed class PlayerTeamSigningEventConsumer : BaseForecastImpactEventCons
     /// <inheritdoc />
     protected override ForecastImpact CreateImpact(IForecastImpactEvent ev)
     {
-        return new PlayerTeamSigningForecastImpact(Calendar.Today().AddDays(Duration.PlayerTeamSigning));
+        return new PlayerTeamSigningForecastImpact(Calendar.Today(), Calendar.Today().AddDays(Duration.PlayerTeamSigning));
     }
 }

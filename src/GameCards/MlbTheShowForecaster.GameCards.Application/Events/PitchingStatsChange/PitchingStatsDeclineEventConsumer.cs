@@ -24,6 +24,6 @@ public sealed class PitchingStatsDeclineEventConsumer : BaseForecastImpactEventC
     {
         var e = (PitchingStatsDeclineEvent)ev;
         return new PitchingStatsForecastImpact(e.Comparison.ReferenceValue, e.Comparison.NewValue,
-            Calendar.Today().AddDays(Duration.PitchingStatsChange));
+            Calendar.Today(), Calendar.Today().AddDays(Duration.PitchingStatsChange));
     }
 }

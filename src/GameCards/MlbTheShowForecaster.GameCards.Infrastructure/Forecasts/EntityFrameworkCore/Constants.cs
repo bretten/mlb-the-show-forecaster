@@ -115,6 +115,11 @@ public static class Constants
         public const string PlayerCardForecastId = "player_card_forecast_id";
 
         /// <summary>
+        /// Start date
+        /// </summary>
+        public const string StartDate = "start_date";
+
+        /// <summary>
         /// End date
         /// </summary>
         public const string EndDate = "end_date";
@@ -193,6 +198,17 @@ public static class Constants
             /// </summary>
             public const string PlayerCardForecastsForeignKeyConstraint =
                 $"{TableName}_{PlayerCardForecasts.TableName}_{PlayerCardForecasts.Id}_fkey";
+        }
+
+        /// <summary>
+        /// Index names for <see cref="ForecastImpact"/>
+        /// </summary>
+        public static class Indexes
+        {
+            /// <summary>
+            /// For querying by the start and end dates
+            /// </summary>
+            public const string StartAndEndDates = $"{TableName}_{StartDate}_{EndDate}_idx";
         }
     }
 }

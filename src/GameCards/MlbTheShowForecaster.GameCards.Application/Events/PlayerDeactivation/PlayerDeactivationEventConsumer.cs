@@ -22,6 +22,7 @@ public sealed class PlayerDeactivationEventConsumer : BaseForecastImpactEventCon
     /// <inheritdoc />
     protected override ForecastImpact CreateImpact(IForecastImpactEvent ev)
     {
-        return new PlayerDeactivationForecastImpact(Calendar.Today().AddDays(Duration.PlayerDeactivation));
+        return new PlayerDeactivationForecastImpact(Calendar.Today(),
+            Calendar.Today().AddDays(Duration.PlayerDeactivation));
     }
 }

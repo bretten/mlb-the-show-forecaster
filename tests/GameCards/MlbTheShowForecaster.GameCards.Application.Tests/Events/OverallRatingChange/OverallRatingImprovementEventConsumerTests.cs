@@ -29,7 +29,7 @@ public class OverallRatingImprovementEventConsumerTests : BaseForecastImpactEven
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new OverallRatingChangeForecastImpact(oldRating, newRating,
+        var expectedImpact = new OverallRatingChangeForecastImpact(oldRating, newRating, stubCalendar.Object.Today(),
             stubCalendar.Object.Today().AddDays(stubImpactDuration.OverallRatingChange));
         mockCommandSender.Verify(
             x => x.Send(
