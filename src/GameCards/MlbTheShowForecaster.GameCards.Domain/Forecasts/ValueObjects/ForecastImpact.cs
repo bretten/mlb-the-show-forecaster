@@ -6,9 +6,15 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 /// <summary>
 /// Should define some external event that has an effect on a <see cref="PlayerCardForecast"/>
 /// </summary>
+/// <param name="startDate">When this impact began influencing the forecast</param>
 /// <param name="endDate">When this impact no longer has influence over the forecast</param>
-public abstract class ForecastImpact(DateOnly endDate) : ValueObject
+public abstract class ForecastImpact(DateOnly startDate, DateOnly endDate) : ValueObject
 {
+    /// <summary>
+    /// When this impact began influencing the forecast
+    /// </summary>
+    public DateOnly StartDate { get; } = startDate;
+
     /// <summary>
     /// When this impact no longer has influence over the forecast (inclusive -- still active on the end date)
     /// </summary>
@@ -29,6 +35,6 @@ public abstract class ForecastImpact(DateOnly endDate) : ValueObject
     /// <returns><see cref="Demand"/></returns>
     public virtual Demand DemandOn(DateOnly date)
     {
-        return date <= EndDate ? Demand : Demand.Stable();
+        return StartDate <= date && date <= EndDate ? Demand : Demand.Stable();
     }
 }

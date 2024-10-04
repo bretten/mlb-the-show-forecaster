@@ -8,9 +8,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 /// </summary>
 /// <param name="oldPosition">The player's old position</param>
 /// <param name="newPosition">The player's new position</param>
+/// <param name="startDate"><inheritdoc /></param>
 /// <param name="endDate"><inheritdoc /></param>
-public sealed class PositionChangeForecastImpact(Position oldPosition, Position newPosition, DateOnly endDate)
-    : ForecastImpact(endDate)
+public sealed class PositionChangeForecastImpact(
+    Position oldPosition,
+    Position newPosition,
+    DateOnly startDate,
+    DateOnly endDate) : ForecastImpact(startDate, endDate)
 {
     /// <summary>
     /// The player's old position

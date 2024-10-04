@@ -24,6 +24,6 @@ public sealed class
     {
         var e = (OverallRatingImprovementEvent)ev;
         return new OverallRatingChangeForecastImpact(oldRating: e.PreviousOverallRating, newRating: e.NewOverallRating,
-            Calendar.Today().AddDays(Duration.OverallRatingChange));
+            Calendar.Today(), Calendar.Today().AddDays(Duration.OverallRatingChange));
     }
 }

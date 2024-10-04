@@ -11,8 +11,9 @@ public sealed class BoostForecastImpact : ForecastImpact
     /// Constructor
     /// </summary>
     /// <param name="boostReason">The reason the card's attributes are being boosted</param>
+    /// <param name="startDate"><inheritdoc /></param>
     /// <param name="endDate"><inheritdoc /></param>
-    public BoostForecastImpact(string boostReason, DateOnly endDate) : base(endDate)
+    public BoostForecastImpact(string boostReason, DateOnly startDate, DateOnly endDate) : base(startDate, endDate)
     {
         BoostReason = boostReason;
     }

@@ -83,13 +83,22 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
                     b.Property<string>("type")
                         .HasColumnType("text");
 
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("start_date")
+                        .HasColumnOrder(1);
+
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date")
                         .HasColumnName("end_date")
-                        .HasColumnOrder(1);
+                        .HasColumnOrder(2);
 
-                    b.HasKey("player_card_forecast_id", "type", "EndDate")
+                    b.HasKey("player_card_forecast_id", "type", "StartDate", "EndDate")
                         .HasName("player_card_forecast_impacts_pkey");
+
+                    b.HasIndex(new[] { "StartDate", "EndDate" }, "player_card_forecast_impacts_start_date_end_date_idx");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "StartDate", "EndDate" }, "player_card_forecast_impacts_start_date_end_date_idx"), "btree");
 
                     b.ToTable("player_card_forecast_impacts", "game_cards");
 
