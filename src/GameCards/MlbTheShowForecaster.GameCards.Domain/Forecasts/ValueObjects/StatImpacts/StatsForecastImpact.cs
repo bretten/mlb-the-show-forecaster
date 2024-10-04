@@ -8,9 +8,10 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 /// </summary>
 /// <param name="oldScore">The old performance score</param>
 /// <param name="newScore">The new performance score</param>
+/// <param name="startDate"><inheritdoc /></param>
 /// <param name="endDate"><inheritdoc /></param>
-public abstract class StatsForecastImpact(decimal oldScore, decimal newScore, DateOnly endDate)
-    : ForecastImpact(endDate)
+public abstract class StatsForecastImpact(decimal oldScore, decimal newScore, DateOnly startDate, DateOnly endDate)
+    : ForecastImpact(startDate, endDate)
 {
     /// <summary>
     /// Determines the threshold that a performance score must change by in order to be considered significant

@@ -27,7 +27,7 @@ public class PitchingStatsImprovementEventConsumerTests : BaseForecastImpactEven
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new PitchingStatsForecastImpact(0.5m, 0.7m,
+        var expectedImpact = new PitchingStatsForecastImpact(0.5m, 0.7m,stubCalendar.Object.Today(),
             stubCalendar.Object.Today().AddDays(stubImpactDuration.PitchingStatsChange));
         mockCommandSender.Verify(
             x => x.Send(

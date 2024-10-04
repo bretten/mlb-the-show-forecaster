@@ -14,8 +14,10 @@ public class PlayerCardForecastTests
     {
         // Arrange
         var forecast = Faker.FakePlayerCardForecast();
-        var boostImpact = Faker.FakeBoostForecastImpact(endDate: new DateOnly(2024, 8, 5));
-        var activationImpact = Faker.FakePlayerActivationForecastImpact(endDate: new DateOnly(2024, 8, 1));
+        var boostImpact =
+            Faker.FakeBoostForecastImpact(startDate: new DateOnly(2024, 8, 1), endDate: new DateOnly(2024, 8, 5));
+        var activationImpact = Faker.FakePlayerActivationForecastImpact(startDate: new DateOnly(2024, 7, 29),
+            endDate: new DateOnly(2024, 8, 1));
         forecast.Reassess(boostImpact, new DateOnly(2024, 8, 5));
         forecast.Reassess(activationImpact, new DateOnly(2024, 8, 5));
 

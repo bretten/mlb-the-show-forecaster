@@ -29,7 +29,7 @@ public class PositionChangeEventConsumerTests : BaseForecastImpactEventConsumerT
 
         // Assert
         var expectedImpact = new PositionChangeForecastImpact(oldPosition: oldPosition, newPosition,
-            stubCalendar.Object.Today().AddDays(stubImpactDuration.PlayerTeamSigning));
+            stubCalendar.Object.Today(), stubCalendar.Object.Today().AddDays(stubImpactDuration.PlayerTeamSigning));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

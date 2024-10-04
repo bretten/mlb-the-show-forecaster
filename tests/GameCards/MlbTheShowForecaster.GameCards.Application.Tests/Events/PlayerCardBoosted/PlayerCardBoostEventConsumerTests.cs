@@ -29,7 +29,8 @@ public class PlayerCardBoostEventConsumerTests : BaseForecastImpactEventConsumer
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new BoostForecastImpact(boostReason, boostEndDate);
+        var expectedImpact =
+            new BoostForecastImpact(boostReason, stubCalendar.Object.Today(), boostEndDate);
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

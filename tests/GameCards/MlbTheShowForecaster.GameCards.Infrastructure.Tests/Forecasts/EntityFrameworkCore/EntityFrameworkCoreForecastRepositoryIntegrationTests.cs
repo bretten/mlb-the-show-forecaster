@@ -94,6 +94,7 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
         Assert.Equal(fakePlayerCardForecast, actual);
         Assert.Equal(1, actual.ForecastImpactsChronologically.Count);
         Assert.IsType<PlayerActivationForecastImpact>(actual.ForecastImpactsChronologically[0]);
+        Assert.Equal(Faker.StartDate, actual.ForecastImpactsChronologically[0].StartDate);
         Assert.Equal(Faker.EndDate, actual.ForecastImpactsChronologically[0].EndDate);
     }
 
@@ -169,15 +170,20 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
         var seasonYear = SeasonYear.Create(2024);
         var fakePlayerCardForecast1 = Faker.FakePlayerCardForecast(year: seasonYear.Value, externalId: Faker.FakeGuid1);
         var fakePlayerCardForecast2 = Faker.FakePlayerCardForecast(year: seasonYear.Value, externalId: Faker.FakeGuid2);
+        var fakePlayerCardForecast3 = Faker.FakePlayerCardForecast(year: seasonYear.Value, externalId: Faker.FakeGuid3);
 
         var today = new DateOnly(2024, 8, 13);
         var dateHasPassed = new DateOnly(2024, 4, 1);
         var futureDate = new DateOnly(2024, 10, 1);
 
         // Forecast 1 is no longer impacted because its impact has already ended
-        fakePlayerCardForecast1.Reassess(Faker.FakePlayerActivationForecastImpact(dateHasPassed), today);
+        fakePlayerCardForecast1.Reassess(
+            Faker.FakePlayerActivationForecastImpact(dateHasPassed.AddDays(-1), dateHasPassed), today);
         // Forecast 2 is still being influenced by its impact because its end date is in the future
-        fakePlayerCardForecast1.Reassess(Faker.FakePlayerActivationForecastImpact(futureDate), today);
+        fakePlayerCardForecast2.Reassess(Faker.FakePlayerActivationForecastImpact(dateHasPassed, futureDate), today);
+        // Forecast 3 has not yet been influenced
+        fakePlayerCardForecast3.Reassess(
+            Faker.FakePlayerActivationForecastImpact(futureDate, futureDate.AddDays(1)), today);
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);
@@ -185,6 +191,7 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
 
         await dbContext.AddAsync(fakePlayerCardForecast1);
         await dbContext.AddAsync(fakePlayerCardForecast2);
+        await dbContext.AddAsync(fakePlayerCardForecast3);
         await dbContext.SaveChangesAsync();
 
         await using var assertConnection =
@@ -204,8 +211,9 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
         Assert.NotNull(actual);
         var actualList = actual.ToList();
         Assert.Single(actualList);
-        Assert.Equal(fakePlayerCardForecast1, actualList[0]);
-        Assert.DoesNotContain(fakePlayerCardForecast2, actualList);
+        Assert.Equal(fakePlayerCardForecast2, actualList[0]);
+        Assert.DoesNotContain(fakePlayerCardForecast1, actualList);
+        Assert.DoesNotContain(fakePlayerCardForecast3, actualList);
     }
 
     public async Task InitializeAsync() => await _container.StartAsync();

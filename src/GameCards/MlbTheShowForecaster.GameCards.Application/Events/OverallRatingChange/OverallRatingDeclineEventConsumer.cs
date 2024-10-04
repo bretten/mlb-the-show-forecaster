@@ -23,6 +23,6 @@ public sealed class OverallRatingDeclineEventConsumer : BaseForecastImpactEventC
     {
         var e = (OverallRatingDeclineEvent)ev;
         return new OverallRatingChangeForecastImpact(oldRating: e.PreviousOverallRating, newRating: e.NewOverallRating,
-            Calendar.Today().AddDays(Duration.OverallRatingChange));
+            Calendar.Today(), Calendar.Today().AddDays(Duration.OverallRatingChange));
     }
 }

@@ -34,12 +34,23 @@ public sealed class ForecastImpactEntityTypeConfiguration : IEntityTypeConfigura
 
         builder.HasKey([
             Constants.ForecastImpacts.PlayerCardForecastId,
-            Constants.PlayerCardForecasts.Relationships.DiscriminatorName, nameof(ForecastImpact.EndDate)
+            Constants.PlayerCardForecasts.Relationships.DiscriminatorName,
+            nameof(ForecastImpact.StartDate), nameof(ForecastImpact.EndDate)
         ]).HasName(Constants.ForecastImpacts.Keys.PrimaryKey);
+
+        // Index for querying by the start and end dates
+        builder.HasIndex(e => new { e.StartDate, e.EndDate }, Constants.ForecastImpacts.Indexes.StartAndEndDates)
+            .HasMethod("btree");
 
         var columnOrder = 0;
 
         builder.Property(Constants.ForecastImpacts.PlayerCardForecastId)
+            .HasColumnOrder(columnOrder++);
+
+        builder.Property(e => e.StartDate)
+            .IsRequired()
+            .HasColumnType("date")
+            .HasColumnName(Constants.ForecastImpacts.StartDate)
             .HasColumnOrder(columnOrder++);
 
         builder.Property(e => e.EndDate)

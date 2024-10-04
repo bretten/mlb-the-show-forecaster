@@ -27,7 +27,7 @@ public class FieldingStatsImprovementEventConsumerTests : BaseForecastImpactEven
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new FieldingStatsForecastImpact(0.5m, 0.7m,
+        var expectedImpact = new FieldingStatsForecastImpact(0.5m, 0.7m,stubCalendar.Object.Today(),
             stubCalendar.Object.Today().AddDays(stubImpactDuration.FieldingStatsChange));
         mockCommandSender.Verify(
             x => x.Send(

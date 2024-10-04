@@ -25,9 +25,8 @@ public class PlayerTeamSigningEventConsumerTests : BaseForecastImpactEventConsum
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact =
-            new PlayerTeamSigningForecastImpact(stubCalendar.Object.Today()
-                .AddDays(stubImpactDuration.PlayerTeamSigning));
+        var expectedImpact = new PlayerTeamSigningForecastImpact(stubCalendar.Object.Today(),
+            stubCalendar.Object.Today().AddDays(stubImpactDuration.PlayerTeamSigning));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

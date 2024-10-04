@@ -24,6 +24,6 @@ public sealed class PositionChangeEventConsumer : BaseForecastImpactEventConsume
     {
         var e = (PositionChangeEvent)ev;
         return new PositionChangeForecastImpact(oldPosition: e.OldPosition, newPosition: e.NewPosition,
-            Calendar.Today().AddDays(Duration.PositionChange));
+            startDate: Calendar.Today(), Calendar.Today().AddDays(Duration.PositionChange));
     }
 }

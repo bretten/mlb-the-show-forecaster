@@ -25,9 +25,8 @@ public class PlayerDeactivationEventConsumerTests : BaseForecastImpactEventConsu
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact =
-            new PlayerDeactivationForecastImpact(stubCalendar.Object.Today()
-                .AddDays(stubImpactDuration.PlayerDeactivation));
+        var expectedImpact = new PlayerDeactivationForecastImpact(stubCalendar.Object.Today(),
+            stubCalendar.Object.Today().AddDays(stubImpactDuration.PlayerDeactivation));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
