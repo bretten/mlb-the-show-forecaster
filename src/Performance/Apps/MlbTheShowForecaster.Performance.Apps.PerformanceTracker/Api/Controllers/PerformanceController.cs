@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Api.Responses;
-using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,27 +19,20 @@ public sealed class PerformanceController : Controller
     private readonly IPlayerStatsBySeasonRepository _playerStatsBySeasonRepository;
 
     /// <summary>
-    /// Assesses performance
+    /// Maps <see cref="PlayerStatsBySeason"/> to a DTO
     /// </summary>
-    private readonly IPerformanceAssessor _performanceAssessor;
-
-    /// <summary>
-    /// Assesses participation
-    /// </summary>
-    private readonly IParticipationAssessor _participationAssessor;
+    private readonly IPlayerSeasonMapper _playerSeasonMapper;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="playerStatsBySeasonRepository">Repo for player stats</param>
-    /// <param name="performanceAssessor">Assesses performance</param>
-    /// <param name="participationAssessor">Assesses participation</param>
+    /// <param name="playerSeasonMapper">Maps <see cref="PlayerStatsBySeason"/> to a DTO</param>
     public PerformanceController(IPlayerStatsBySeasonRepository playerStatsBySeasonRepository,
-        IPerformanceAssessor performanceAssessor, IParticipationAssessor participationAssessor)
+        IPlayerSeasonMapper playerSeasonMapper)
     {
         _playerStatsBySeasonRepository = playerStatsBySeasonRepository;
-        _performanceAssessor = performanceAssessor;
-        _participationAssessor = participationAssessor;
+        _playerSeasonMapper = playerSeasonMapper;
     }
 
     /// <summary>
@@ -62,26 +56,13 @@ public sealed class PerformanceController : Controller
             return new NotFoundResult();
         }
 
-        var battingStats = playerStatsBySeason.BattingStatsFor(start, end);
-        var battingScore = _performanceAssessor.AssessBatting(battingStats);
-        var significantBattingParticipation = _participationAssessor.AssessBatting(start, end, battingStats);
+        var playerSeasonPerformanceMetrics =
+            _playerSeasonMapper.MapToPlayerSeasonPerformanceMetrics(playerStatsBySeason, start, end);
 
-        var pitchingStats = playerStatsBySeason.PitchingStatsFor(start, end);
-        var pitchingScore = _performanceAssessor.AssessPitching(pitchingStats);
-        var significantPitchingParticipation = _participationAssessor.AssessPitching(start, end, pitchingStats);
-
-        var fieldingStats = playerStatsBySeason.FieldingStatsFor(start, end);
-        var fieldingScore = _performanceAssessor.AssessFielding(fieldingStats);
-        var significantFieldingParticipation = _participationAssessor.AssessFielding(start, end, fieldingStats);
-
-        return new JsonResult(new PlayerSeasonPerformanceResponse(playerStatsBySeason.SeasonYear.Value,
-            playerStatsBySeason.PlayerMlbId.Value,
-            BattingScore: battingScore.Value,
-            HadSignificantBattingParticipation: significantBattingParticipation,
-            PitchingScore: pitchingScore.Value,
-            HadSignificantPitchingParticipation: significantPitchingParticipation,
-            FieldingScore: fieldingScore.Value,
-            HadSignificantFieldingParticipation: significantFieldingParticipation
+        return new JsonResult(new PlayerSeasonPerformanceResponse(
+            Season: season,
+            MlbId: playerMlbId,
+            MetricsByDate: playerSeasonPerformanceMetrics.MetricsByDate
         ));
     }
 }

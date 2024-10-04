@@ -148,6 +148,7 @@ public class DependenciesTests
         // Arrange
         var s = new ServiceCollection();
         s.AddSingleton(Mock.Of<IPerformanceAssessor>());
+        s.AddSingleton(Mock.Of<IParticipationAssessor>());
 
         // Act
         s.AddPerformanceMapping();

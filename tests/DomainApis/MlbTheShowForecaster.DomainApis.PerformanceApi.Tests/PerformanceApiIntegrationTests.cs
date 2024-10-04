@@ -45,8 +45,8 @@ public class PerformanceApiIntegrationTests : IAsyncLifetime
         await MockEndpoint(ReturnsPlayerSeasonEndpoint);
         const ushort seasonQuery = 2024;
         const int playerMlbIdQuery = 20;
-        var startQuery = new DateOnly(2024, 7, 1).ToString("yyyy-MM-dd");
-        var endQuery = new DateOnly(2024, 7, 8).ToString("yyyy-MM-dd");
+        var startQuery = new DateOnly(2024, 10, 1).ToString("yyyy-MM-dd");
+        var endQuery = new DateOnly(2024, 10, 2).ToString("yyyy-MM-dd");
         var client = GetClient();
 
         // Act
@@ -56,12 +56,40 @@ public class PerformanceApiIntegrationTests : IAsyncLifetime
         Assert.True(actual.IsSuccessStatusCode);
         Assert.Equal(2024, actual.Content.Season);
         Assert.Equal(20, actual.Content.MlbId);
-        Assert.Equal(0.5600m, actual.Content.BattingScore);
-        Assert.True(actual.Content.HadSignificantBattingParticipation);
-        Assert.Equal(0m, actual.Content.PitchingScore);
-        Assert.False(actual.Content.HadSignificantPitchingParticipation);
-        Assert.Equal(0.97m, actual.Content.FieldingScore);
-        Assert.True(actual.Content.HadSignificantFieldingParticipation);
+
+        Assert.Equal(new DateOnly(2024, 10, 1), actual.Content.MetricsByDate[0].Date);
+        Assert.Equal(0.1m, actual.Content.MetricsByDate[0].BattingScore);
+        Assert.False(actual.Content.MetricsByDate[0].SignificantBattingParticipation);
+        Assert.Equal(0.2m, actual.Content.MetricsByDate[0].PitchingScore);
+        Assert.False(actual.Content.MetricsByDate[0].SignificantPitchingParticipation);
+        Assert.Equal(0.3m, actual.Content.MetricsByDate[0].FieldingScore);
+        Assert.False(actual.Content.MetricsByDate[0].SignificantFieldingParticipation);
+        Assert.Equal(1.1m, actual.Content.MetricsByDate[0].BattingAverage);
+        Assert.Equal(1.2m, actual.Content.MetricsByDate[0].OnBasePercentage);
+        Assert.Equal(1.3m, actual.Content.MetricsByDate[0].Slugging);
+        Assert.Equal(1.4m, actual.Content.MetricsByDate[0].EarnedRunAverage);
+        Assert.Equal(1.5m, actual.Content.MetricsByDate[0].OpponentsBattingAverage);
+        Assert.Equal(1.6m, actual.Content.MetricsByDate[0].StrikeoutsPer9);
+        Assert.Equal(1.7m, actual.Content.MetricsByDate[0].BaseOnBallsPer9);
+        Assert.Equal(1.8m, actual.Content.MetricsByDate[0].HomeRunsPer9);
+        Assert.Equal(1.9m, actual.Content.MetricsByDate[0].FieldingPercentage);
+
+        Assert.Equal(new DateOnly(2024, 10, 2), actual.Content.MetricsByDate[1].Date);
+        Assert.Equal(0.4m, actual.Content.MetricsByDate[1].BattingScore);
+        Assert.True(actual.Content.MetricsByDate[1].SignificantBattingParticipation);
+        Assert.Equal(0.5m, actual.Content.MetricsByDate[1].PitchingScore);
+        Assert.True(actual.Content.MetricsByDate[1].SignificantPitchingParticipation);
+        Assert.Equal(0.6m, actual.Content.MetricsByDate[1].FieldingScore);
+        Assert.True(actual.Content.MetricsByDate[1].SignificantFieldingParticipation);
+        Assert.Equal(2.1m, actual.Content.MetricsByDate[1].BattingAverage);
+        Assert.Equal(2.2m, actual.Content.MetricsByDate[1].OnBasePercentage);
+        Assert.Equal(2.3m, actual.Content.MetricsByDate[1].Slugging);
+        Assert.Equal(2.4m, actual.Content.MetricsByDate[1].EarnedRunAverage);
+        Assert.Equal(2.5m, actual.Content.MetricsByDate[1].OpponentsBattingAverage);
+        Assert.Equal(2.6m, actual.Content.MetricsByDate[1].StrikeoutsPer9);
+        Assert.Equal(2.7m, actual.Content.MetricsByDate[1].BaseOnBallsPer9);
+        Assert.Equal(2.8m, actual.Content.MetricsByDate[1].HomeRunsPer9);
+        Assert.Equal(2.9m, actual.Content.MetricsByDate[1].FieldingPercentage);
     }
 
     private static async Task MockEndpoint(string endpoint)
@@ -84,10 +112,10 @@ public class PerformanceApiIntegrationTests : IAsyncLifetime
                         ""20""
                     ],
                     ""start"": [
-                        ""2024-07-01""
+                        ""2024-10-01""
                     ],
                     ""end"": [
-                        ""2024-07-08""
+                        ""2024-10-02""
                     ]
                 }
             },
@@ -95,12 +123,44 @@ public class PerformanceApiIntegrationTests : IAsyncLifetime
                 ""body"": {
                     ""season"": 2024,
                     ""mlbId"": 20,
-                    ""battingScore"": 0.5600,
-                    ""hadSignificantBattingParticipation"": true,
-                    ""pitchingScore"": 0,
-                    ""hadSignificantPitchingParticipation"": false,
-                    ""fieldingScore"": 0.97,
-                    ""hadSignificantFieldingParticipation"": true
+                    ""metricsByDate"": [
+                        {
+                            ""date"": ""2024-10-01"",
+                            ""battingScore"": 0.1,
+                            ""significantBattingParticipation"": false,
+                            ""pitchingScore"": 0.2,
+                            ""significantPitchingParticipation"": false,
+                            ""fieldingScore"": 0.3,
+                            ""significantFieldingParticipation"": false,
+                            ""battingAverage"": 1.1,
+                            ""onBasePercentage"": 1.2,
+                            ""slugging"": 1.3,
+                            ""earnedRunAverage"": 1.4,
+                            ""opponentsBattingAverage"": 1.5,
+                            ""strikeoutsPer9"": 1.6,
+                            ""baseOnBallsPer9"": 1.7,
+                            ""homeRunsPer9"": 1.8,
+                            ""fieldingPercentage"": 1.9
+                        },
+                        {
+                            ""date"": ""2024-10-02"",
+                            ""battingScore"": 0.4,
+                            ""significantBattingParticipation"": true,
+                            ""pitchingScore"": 0.5,
+                            ""significantPitchingParticipation"": true,
+                            ""fieldingScore"": 0.6,
+                            ""significantFieldingParticipation"": true,
+                            ""battingAverage"": 2.1,
+                            ""onBasePercentage"": 2.2,
+                            ""slugging"": 2.3,
+                            ""earnedRunAverage"": 2.4,
+                            ""opponentsBattingAverage"": 2.5,
+                            ""strikeoutsPer9"": 2.6,
+                            ""baseOnBallsPer9"": 2.7,
+                            ""homeRunsPer9"": 2.8,
+                            ""fieldingPercentage"": 2.9
+                        }
+                    ]
                 }
             }
         }
