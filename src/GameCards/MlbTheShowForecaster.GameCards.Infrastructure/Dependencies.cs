@@ -7,11 +7,13 @@ using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
@@ -22,11 +24,13 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using MongoDB.Driver;
 using Npgsql;
 using Refit;
 
@@ -58,6 +62,11 @@ public static class Dependencies
         public const string MarketplaceConnection = "Marketplace";
 
         /// <summary>
+        /// Trends MongoDB connection string key
+        /// </summary>
+        public const string TrendsMongoDbConnection = "TrendsMongoDb";
+
+        /// <summary>
         /// <see cref="ListingPriceSignificantChangeThreshold.BuyPricePercentageChangeThreshold"/> config key
         /// </summary>
         public const string BuyPricePercentageChangeThreshold = "CardPriceTracker:BuyPricePercentageChangeThreshold";
@@ -76,6 +85,16 @@ public static class Dependencies
         /// Forecast impact durations config key
         /// </summary>
         public const string ImpactDurations = "Forecasting:ImpactDurations";
+
+        /// <summary>
+        /// Performance API base address config key
+        /// </summary>
+        public const string PerformanceApiBaseAddress = "PerformanceApi:BaseAddress";
+
+        /// <summary>
+        /// Trend report Mongo DB config
+        /// </summary>
+        public const string MongoDbTrendReportConfig = "Trends:MongoDb:Config";
     }
 
     /// <summary>
@@ -160,6 +179,36 @@ public static class Dependencies
         }).ConfigureHttpClient(c => c.BaseAddress = new Uri(config[ConfigKeys.PlayerStatusApiBaseAddress]!));
         services.TryAddSingleton<IPlayerMatcher, PlayerMatcher>();
         services.TryAddSingleton(config.GetRequiredSection(ConfigKeys.ImpactDurations).Get<ForecastImpactDuration>()!);
+    }
+
+    /// <summary>
+    /// Registers TrendReport services
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
+    /// <param name="config">Config</param>
+    public static void AddTrendReporting(this IServiceCollection services, IConfiguration config)
+    {
+        services.AddRefitClient<IPerformanceApi>(new RefitSettings()
+        {
+            ContentSerializer = new SystemTextJsonContentSerializer(
+                new JsonSerializerOptions()
+                {
+                    Converters = { new JsonStringEnumConverter() }
+                }
+            )
+        }).ConfigureHttpClient(c => c.BaseAddress = new Uri(config[ConfigKeys.PerformanceApiBaseAddress]!));
+
+        services.TryAddSingleton<ITrendReportFactory, TrendReportFactory>();
+
+        services.TryAddSingleton<IMongoClient>(sp =>
+            new MongoClient(config.GetRequiredConnectionString(ConfigKeys.TrendsMongoDbConnection)));
+
+        services.TryAddSingleton<MongoDbTrendReporter.MongoDbTrendReporterConfig>(sp =>
+        {
+            const string configKey = ConfigKeys.MongoDbTrendReportConfig;
+            return config.GetRequiredValue<MongoDbTrendReporter.MongoDbTrendReporterConfig>(configKey);
+        });
+        services.TryAddSingleton<ITrendReporter, MongoDbTrendReporter>();
     }
 
     /// <summary>

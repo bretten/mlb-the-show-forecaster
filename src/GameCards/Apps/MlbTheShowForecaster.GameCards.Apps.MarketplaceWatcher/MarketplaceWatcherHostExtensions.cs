@@ -204,6 +204,7 @@ public static class MarketplaceWatcherHostExtensions
             services.AddGameCardsPriceTracker(context.Configuration);
             services.AddGameCardsRosterUpdates();
             services.AddForecasting(context.Configuration);
+            services.AddTrendReporting(context.Configuration);
             services.AddGameCardsEntityFrameworkCoreRepositories(context.Configuration);
 
             // Register the domain event consumers

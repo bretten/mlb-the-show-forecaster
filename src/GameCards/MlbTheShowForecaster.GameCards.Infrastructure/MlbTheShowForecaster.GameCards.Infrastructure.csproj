@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Common\MlbTheShowForecaster.Common.Infrastructure\MlbTheShowForecaster.Common.Infrastructure.csproj" />
+      <ProjectReference Include="..\..\DomainApis\MlbTheShowForecaster.DomainApis.PerformanceApi\MlbTheShowForecaster.DomainApis.PerformanceApi.csproj" />
       <ProjectReference Include="..\..\DomainApis\MlbTheShowForecaster.DomainApis.PlayerStatusApi\MlbTheShowForecaster.DomainApis.PlayerStatusApi.csproj" />
       <ProjectReference Include="..\..\ExternalApis\MlbTheShowForecaster.ExternalApis.MlbTheShowApi\MlbTheShowForecaster.ExternalApis.MlbTheShowApi.csproj" />
       <ProjectReference Include="..\MlbTheShowForecaster.GameCards.Application\MlbTheShowForecaster.GameCards.Application.csproj" />
@@ -19,6 +20,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
+      <PackageReference Include="MongoDB.Driver" Version="2.29.0" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
     </ItemGroup>
 

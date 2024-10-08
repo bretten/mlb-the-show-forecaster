@@ -3,11 +3,13 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
@@ -18,9 +20,12 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using MongoDB.Driver;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests;
@@ -197,6 +202,56 @@ public class DependenciesTests
         Assert.Equal(8, durations.PlayerDeactivation);
         Assert.Equal(9, durations.PlayerFreeAgency);
         Assert.Equal(10, durations.PlayerTeamSigning);
+    }
+
+    [Fact]
+    public void AddTrendReporting_ServiceCollection_RegistersDependencies()
+    {
+        // Arrange
+        const string cs = "Server=localhost;Port=5432;Database=test;Uid=postgres;Pwd=postgres;";
+        var settings = new Dictionary<string, string?>
+        {
+            { $"ConnectionStrings:{Dependencies.ConfigKeys.CardsConnection}", cs },
+            { $"ConnectionStrings:{Dependencies.ConfigKeys.ForecastsConnection}", cs },
+            { $"ConnectionStrings:{Dependencies.ConfigKeys.MarketplaceConnection}", cs },
+            { Dependencies.ConfigKeys.PerformanceApiBaseAddress, "http://localhost" },
+            {
+                $"ConnectionStrings:{Dependencies.ConfigKeys.TrendsMongoDbConnection}",
+                "mongodb://u:p@localhost:27017/?authSource=admin"
+            },
+            { $"{Dependencies.ConfigKeys.MongoDbTrendReportConfig}:Database", "local" },
+            { $"{Dependencies.ConfigKeys.MongoDbTrendReportConfig}:Collection", "trends" }
+        };
+        var config = GetConfig(settings);
+        var s = new ServiceCollection();
+
+        // Act
+        s.AddLogging();
+        s.TryAddSingleton<ICalendar, Calendar>();
+        s.AddGameCardsEntityFrameworkCoreRepositories(config);
+        s.AddTrendReporting(config);
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPerformanceApi)).Lifetime);
+        Assert.IsAssignableFrom<IPerformanceApi>(actual.GetRequiredService<IPerformanceApi>());
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(ITrendReportFactory)).Lifetime);
+        Assert.IsType<TrendReportFactory>(actual.GetRequiredService<ITrendReportFactory>());
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMongoClient)).Lifetime);
+        Assert.IsType<MongoClient>(actual.GetRequiredService<IMongoClient>());
+
+        Assert.Equal(ServiceLifetime.Singleton,
+            s.First(x => x.ServiceType == typeof(MongoDbTrendReporter.MongoDbTrendReporterConfig)).Lifetime);
+        Assert.IsType<MongoDbTrendReporter.MongoDbTrendReporterConfig>(
+            actual.GetRequiredService<MongoDbTrendReporter.MongoDbTrendReporterConfig>());
+        var mongoConfig = actual.GetRequiredService<MongoDbTrendReporter.MongoDbTrendReporterConfig>();
+        Assert.Equal("local", mongoConfig.Database);
+        Assert.Equal("trends", mongoConfig.Collection);
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(ITrendReporter)).Lifetime);
+        Assert.IsType<MongoDbTrendReporter>(actual.GetRequiredService<ITrendReporter>());
     }
 
     [Fact]

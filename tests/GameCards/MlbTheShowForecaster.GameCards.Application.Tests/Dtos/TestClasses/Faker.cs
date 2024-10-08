@@ -1,6 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Enums;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
@@ -11,6 +12,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.T
 /// </summary>
 public static class Faker
 {
+    public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+
     public static MlbPlayerCard FakeMlbPlayerCard(ushort year = 2024, Guid? cardExternalId = null,
         CardType type = CardType.MlbCard, string image = "img.png", string name = "name1",
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
@@ -175,5 +178,68 @@ public static class Faker
             PositionChanges: positionChanges ?? new List<PlayerPositionChange>(),
             NewPlayers: newPlayers ?? new List<PlayerAddition>()
         );
+    }
+
+    public static TrendReport FakeTrendReport(ushort year = 2024, Guid? externalId = null, int mlbId = 1,
+        Position position = Position.RightField, int overallRating = 50, string cardName = "cardA",
+        List<TrendMetricsByDate>? metricsByDate = null, List<TrendImpact>? impacts = null)
+    {
+        return new TrendReport(
+            Year: SeasonYear.Create(year),
+            CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(externalId),
+            MlbId: MlbId.Create(mlbId),
+            PrimaryPosition: position,
+            OverallRating: Domain.Tests.Cards.TestClasses.Faker.FakeOverallRating(overallRating),
+            CardName: Domain.Tests.Cards.TestClasses.Faker.FakeCardName(cardName),
+            MetricsByDate: metricsByDate ?? new List<TrendMetricsByDate>(),
+            Impacts: impacts ?? new List<TrendImpact>()
+        );
+    }
+
+    public static TrendMetricsByDate FakeTrendMetricsByDate(DateOnly? date = null,
+        int buyPrice = 100,
+        int sellPrice = 200,
+        decimal battingScore = 0.1m,
+        bool significantBattingParticipation = false,
+        decimal pitchingScore = 0.2m,
+        bool significantPitchingParticipation = false,
+        decimal fieldingScore = 0.3m,
+        bool significantFieldingParticipation = false,
+        decimal battingAverage = 0.111m,
+        decimal onBasePercentage = 0.112m,
+        decimal slugging = 0.113m,
+        decimal earnedRunAverage = 0.114m,
+        decimal opponentsBattingAverage = 0.115m,
+        decimal strikeoutsPer9 = 0.116m,
+        decimal baseOnBallsPer9 = 0.117m,
+        decimal homeRunsPer9 = 0.118m,
+        decimal fieldingPercentage = 0.119m)
+    {
+        return new TrendMetricsByDate(date ?? new DateOnly(2024, 10, 5),
+            BuyPrice: buyPrice,
+            SellPrice: sellPrice,
+            BattingScore: battingScore,
+            SignificantBattingParticipation: significantBattingParticipation,
+            PitchingScore: pitchingScore,
+            SignificantPitchingParticipation: significantPitchingParticipation,
+            FieldingScore: fieldingScore,
+            SignificantFieldingParticipation: significantFieldingParticipation,
+            BattingAverage: battingAverage,
+            OnBasePercentage: onBasePercentage,
+            Slugging: slugging,
+            EarnedRunAverage: earnedRunAverage,
+            OpponentsBattingAverage: opponentsBattingAverage,
+            StrikeoutsPer9: strikeoutsPer9,
+            BaseOnBallsPer9: baseOnBallsPer9,
+            HomeRunsPer9: homeRunsPer9,
+            FieldingPercentage: fieldingPercentage);
+    }
+
+    public static TrendImpact FakeTrendImpact(DateOnly? startDate = null, DateOnly? endDate = null,
+        string? description = null)
+    {
+        return new TrendImpact(Start: startDate ?? new DateOnly(2024, 10, 8),
+            End: endDate ?? new DateOnly(2024, 10, 8),
+            Description: description ?? "Trend impact description");
     }
 }
