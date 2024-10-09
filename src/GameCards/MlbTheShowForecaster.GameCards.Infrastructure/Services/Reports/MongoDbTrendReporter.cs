@@ -1,11 +1,14 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Text.Json;
+﻿using System.ComponentModel;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
@@ -146,7 +149,9 @@ public sealed class MongoDbTrendReporter : ITrendReporter
     /// </summary>
     private static void RegisterSerializers()
     {
-        BsonSerializer.RegisterSerializer(typeof(TrendReport), new TrendReportSerializer());
+        BsonSerializer.TryRegisterSerializer(typeof(TrendReport), new TrendReportSerializer());
+        BsonSerializer.TryRegisterSerializer(typeof(TrendMetricsByDate), new TrendMetricsByDateSerializer());
+        BsonSerializer.TryRegisterSerializer(typeof(TrendImpact), new TrendImpactSerializer());
     }
 
     /// <summary>
@@ -156,69 +161,469 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
     /// <summary>
     /// BSON serializer for <see cref="TrendReport"/>
-    ///
-    /// Delegates serialization to <see cref="TrendReportJsonConverter"/> by:
-    /// - Serializing from <see cref="TrendReport"/> to JSON, then to BSON on MongoDB writes
-    /// - Deserializing as BSON, converting to JSON, and then <see cref="TrendReport"/> on MongoDB reads
     /// </summary>
-    private sealed class TrendReportSerializer : IBsonSerializer<TrendReport>, IBsonDocumentSerializer
+    private sealed class TrendReportSerializer : SerializerBase<TrendReport>
     {
-        /// <summary>
-        /// Standard BSON serializer that will be used as the intermediary between BSON and JSON
-        /// </summary>
-        private static readonly IBsonSerializer Serializer = BsonSerializer.LookupSerializer(typeof(BsonDocument));
-
         /// <inheritdoc />
-        public Type ValueType => typeof(TrendReport);
-
-        /// <inheritdoc />
-        public TrendReport Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+        public override TrendReport Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
         {
-            // Deserialize document to BSON and remove the _id as it is not on the target object nor is it needed
-            var document = Serializer.Deserialize(context, args);
-            var bsonDocument = document.ToBsonDocument();
-            bsonDocument.Remove("_id");
+            var trendMetricsByDateSerializer = BsonSerializer.LookupSerializer<TrendMetricsByDate>();
+            var trendImpactSerializer = BsonSerializer.LookupSerializer<TrendImpact>();
 
-            // BSON to JSON
-            var result = BsonExtensionMethods.ToJson(bsonDocument)!;
-            // JSON to target object
-            return JsonSerializer.Deserialize<TrendReport>(result, new JsonSerializerOptions()
+            // The field names may not be in a specific order, so have placeholders for the values
+            int? year = null;
+            string? cardExternalId = null;
+            int? mlbId = null;
+            string? cardName = null;
+            string? position = null;
+            int? overallRating = null;
+            List<TrendMetricsByDate>? metrics = null;
+            List<TrendImpact>? impacts = null;
+
+            var r = context.Reader;
+            r.ReadStartDocument();
+            while (r.ReadBsonType() != BsonType.EndOfDocument)
             {
-                Converters = { new TrendReportJsonConverter() }
-            })!;
+                var fieldName = r.ReadName();
+                switch (fieldName)
+                {
+                    case nameof(TrendReport.Year):
+                        year = r.ReadInt32();
+                        break;
+                    case nameof(TrendReport.CardExternalId):
+                        cardExternalId = r.ReadString();
+                        break;
+                    case nameof(TrendReport.MlbId):
+                        mlbId = r.ReadInt32();
+                        break;
+                    case nameof(TrendReport.CardName):
+                        cardName = r.ReadString();
+                        break;
+                    case nameof(TrendReport.PrimaryPosition):
+                        position = r.ReadString();
+                        break;
+                    case nameof(TrendReport.OverallRating):
+                        overallRating = r.ReadInt32();
+                        break;
+                    case nameof(TrendReport.MetricsByDate):
+                        metrics = new List<TrendMetricsByDate>();
+                        r.ReadStartArray();
+                        while (r.ReadBsonType() != BsonType.EndOfDocument)
+                        {
+                            metrics.Add(trendMetricsByDateSerializer.Deserialize(context, args));
+                        }
+
+                        r.ReadEndArray();
+                        break;
+                    case nameof(TrendReport.Impacts):
+                        impacts = new List<TrendImpact>();
+                        r.ReadStartArray();
+                        while (r.ReadBsonType() != BsonType.EndOfDocument)
+                        {
+                            impacts.Add(trendImpactSerializer.Deserialize(context, args));
+                        }
+
+                        r.ReadEndArray();
+                        break;
+                    default:
+                        r.SkipValue(); // This will be the MongoDB ID
+                        break;
+                }
+            }
+
+            r.ReadEndDocument();
+
+            return new TrendReport(
+                Year: SeasonYear.Create((ushort)year!),
+                CardExternalId: CardExternalId.Create(new Guid(cardExternalId!)),
+                MlbId: MlbId.Create(mlbId!.Value),
+                CardName: CardName.Create(cardName!),
+                PrimaryPosition: (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(position!)!,
+                OverallRating: OverallRating.Create(overallRating!.Value),
+                MetricsByDate: metrics!,
+                Impacts: impacts!
+            );
         }
 
         /// <inheritdoc />
-        public void Serialize(BsonSerializationContext context, BsonSerializationArgs args, TrendReport value)
+        public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, TrendReport value)
         {
-            // Value to JSON
-            var jsonDocument = JsonSerializer.Serialize(value, new JsonSerializerOptions()
+            var trendMetricsByDateSerializer = BsonSerializer.LookupSerializer<TrendMetricsByDate>();
+            var trendImpactSerializer = BsonSerializer.LookupSerializer<TrendImpact>();
+
+            var w = context.Writer;
+            w.WriteStartDocument();
+
+            w.WriteName(nameof(TrendReport.Year));
+            w.WriteInt32(value.Year.Value);
+
+            w.WriteName(nameof(TrendReport.CardExternalId));
+            w.WriteString(value.CardExternalId.Value.ToString());
+
+            w.WriteName(nameof(TrendReport.MlbId));
+            w.WriteInt32(value.MlbId.Value);
+
+            w.WriteName(nameof(TrendReport.CardName));
+            w.WriteString(value.CardName.Value);
+
+            w.WriteName(nameof(TrendReport.PrimaryPosition));
+            w.WriteString(value.PrimaryPosition.GetDisplayName());
+
+            w.WriteName(nameof(TrendReport.OverallRating));
+            w.WriteInt32(value.OverallRating.Value);
+
+            w.WriteName(nameof(TrendReport.MetricsByDate));
+            w.WriteStartArray();
+            foreach (var metric in value.MetricsByDate)
             {
-                Converters = { new TrendReportJsonConverter() }
-            });
-            // JSON to BSON
-            var bsonDocument = BsonSerializer.Deserialize<BsonDocument>(jsonDocument);
-            Serializer.Serialize(context, bsonDocument.AsBsonValue);
+                trendMetricsByDateSerializer.Serialize(context, args, metric);
+            }
+
+            w.WriteEndArray();
+
+            w.WriteName(nameof(TrendReport.Impacts));
+            w.WriteStartArray();
+            foreach (var metric in value.Impacts)
+            {
+                trendImpactSerializer.Serialize(context, args, metric);
+            }
+
+            w.WriteEndArray();
+
+            w.WriteEndDocument();
+        }
+    }
+
+    /// <summary>
+    /// BSON serializer for <see cref="TrendMetricsByDate"/>
+    /// </summary>
+    private sealed class TrendMetricsByDateSerializer : SerializerBase<TrendMetricsByDate>
+    {
+        /// <inheritdoc />
+        public override TrendMetricsByDate Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+        {
+            var r = context.Reader;
+
+            // The field names may not be in a specific order, so have placeholders for the values
+            string? date = null;
+            int? buyPrice = null;
+            int? sellPrice = null;
+            decimal? battingScore = null;
+            var significantBattingParticipation = false;
+            decimal? pitchingScore = null;
+            var significantPitchingParticipation = false;
+            decimal? fieldingScore = null;
+            var significantFieldingParticipation = false;
+            decimal? battingAverage = null;
+            decimal? onBasePercentage = null;
+            decimal? slugging = null;
+            decimal? earnedRunAverage = null;
+            decimal? opponentsBattingAverage = null;
+            decimal? strikeoutsPer9 = null;
+            decimal? baseOnBallsPer9 = null;
+            decimal? homeRunsPer9 = null;
+            decimal? fieldingPercentage = null;
+
+            r.ReadStartDocument();
+            while (r.ReadBsonType() != BsonType.EndOfDocument)
+            {
+                var fieldName = r.ReadName();
+                var type = r.CurrentBsonType;
+
+                switch (fieldName)
+                {
+                    case nameof(TrendMetricsByDate.Date):
+                        date = r.ReadString();
+                        break;
+                    case nameof(TrendMetricsByDate.BuyPrice):
+                        buyPrice = r.ReadInt32();
+                        break;
+                    case nameof(TrendMetricsByDate.SellPrice):
+                        sellPrice = r.ReadInt32();
+                        break;
+                    case nameof(TrendMetricsByDate.BattingScore):
+                        Action(ref battingScore, type);
+                        break;
+                    case nameof(TrendMetricsByDate.SignificantBattingParticipation):
+                        significantBattingParticipation = r.ReadBoolean();
+                        break;
+                    case nameof(TrendMetricsByDate.PitchingScore):
+                        Action(ref pitchingScore, type);
+                        break;
+                    case nameof(TrendMetricsByDate.SignificantPitchingParticipation):
+                        significantPitchingParticipation = r.ReadBoolean();
+                        break;
+                    case nameof(TrendMetricsByDate.FieldingScore):
+                        Action(ref fieldingScore, type);
+                        break;
+                    case nameof(TrendMetricsByDate.SignificantFieldingParticipation):
+                        significantFieldingParticipation = r.ReadBoolean();
+                        break;
+                    case nameof(TrendMetricsByDate.BattingAverage):
+                        Action(ref battingAverage, type);
+                        break;
+                    case nameof(TrendMetricsByDate.OnBasePercentage):
+                        Action(ref onBasePercentage, type);
+                        break;
+                    case nameof(TrendMetricsByDate.Slugging):
+                        Action(ref slugging, type);
+                        break;
+                    case nameof(TrendMetricsByDate.EarnedRunAverage):
+                        Action(ref earnedRunAverage, type);
+                        break;
+                    case nameof(TrendMetricsByDate.OpponentsBattingAverage):
+                        Action(ref opponentsBattingAverage, type);
+                        break;
+                    case nameof(TrendMetricsByDate.StrikeoutsPer9):
+                        Action(ref strikeoutsPer9, type);
+                        break;
+                    case nameof(TrendMetricsByDate.BaseOnBallsPer9):
+                        Action(ref baseOnBallsPer9, type);
+                        break;
+                    case nameof(TrendMetricsByDate.HomeRunsPer9):
+                        Action(ref homeRunsPer9, type);
+                        break;
+                    case nameof(TrendMetricsByDate.FieldingPercentage):
+                        Action(ref fieldingPercentage, type);
+                        break;
+                }
+            }
+
+            r.ReadEndDocument();
+
+            return new TrendMetricsByDate(Date: DateOnly.Parse(date!),
+                BuyPrice: buyPrice!.Value,
+                SellPrice: sellPrice!.Value,
+                BattingScore: battingScore,
+                SignificantBattingParticipation: significantBattingParticipation,
+                PitchingScore: pitchingScore,
+                SignificantPitchingParticipation: significantPitchingParticipation,
+                FieldingScore: fieldingScore,
+                SignificantFieldingParticipation: significantFieldingParticipation,
+                BattingAverage: battingAverage,
+                OnBasePercentage: onBasePercentage,
+                Slugging: slugging,
+                EarnedRunAverage: earnedRunAverage,
+                OpponentsBattingAverage: opponentsBattingAverage,
+                StrikeoutsPer9: strikeoutsPer9,
+                BaseOnBallsPer9: baseOnBallsPer9,
+                HomeRunsPer9: homeRunsPer9,
+                FieldingPercentage: fieldingPercentage
+            );
+
+            void Action(ref decimal? value, BsonType type)
+            {
+                if (type != BsonType.Null)
+                    value = new BsonDecimal128(r.ReadDecimal128()).AsDecimal;
+                else
+                    r.ReadNull();
+            }
         }
 
         /// <inheritdoc />
-        object IBsonSerializer.Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+        public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args,
+            TrendMetricsByDate value)
         {
-            return Deserialize(context, args);
+            var w = context.Writer;
+            w.WriteStartDocument();
+
+            w.WriteName(nameof(TrendMetricsByDate.Date));
+            w.WriteString(value.Date.ToString("O"));
+
+            w.WriteName(nameof(TrendMetricsByDate.BuyPrice));
+            w.WriteInt32(value.BuyPrice);
+
+            w.WriteName(nameof(TrendMetricsByDate.SellPrice));
+            w.WriteInt32(value.SellPrice);
+
+            w.WriteName(nameof(TrendMetricsByDate.BattingScore));
+            if (value.BattingScore.HasValue)
+            {
+                w.WriteDecimal128(value.BattingScore.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.SignificantBattingParticipation));
+            w.WriteBoolean(value.SignificantBattingParticipation);
+
+            w.WriteName(nameof(TrendMetricsByDate.PitchingScore));
+            if (value.PitchingScore.HasValue)
+            {
+                w.WriteDecimal128(value.PitchingScore.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.SignificantPitchingParticipation));
+            w.WriteBoolean(value.SignificantPitchingParticipation);
+
+            w.WriteName(nameof(TrendMetricsByDate.FieldingScore));
+            if (value.FieldingScore.HasValue)
+            {
+                w.WriteDecimal128(value.FieldingScore.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.SignificantFieldingParticipation));
+            w.WriteBoolean(value.SignificantFieldingParticipation);
+
+            w.WriteName(nameof(TrendMetricsByDate.BattingAverage));
+            if (value.BattingAverage.HasValue)
+            {
+                w.WriteDecimal128(value.BattingAverage.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.OnBasePercentage));
+            if (value.OnBasePercentage.HasValue)
+            {
+                w.WriteDecimal128(value.OnBasePercentage.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.Slugging));
+            if (value.Slugging.HasValue)
+            {
+                w.WriteDecimal128(value.Slugging.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.EarnedRunAverage));
+            if (value.EarnedRunAverage.HasValue)
+            {
+                w.WriteDecimal128(value.EarnedRunAverage.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.OpponentsBattingAverage));
+            if (value.OpponentsBattingAverage.HasValue)
+            {
+                w.WriteDecimal128(value.OpponentsBattingAverage.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.StrikeoutsPer9));
+            if (value.StrikeoutsPer9.HasValue)
+            {
+                w.WriteDecimal128(value.StrikeoutsPer9.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.BaseOnBallsPer9));
+            if (value.BaseOnBallsPer9.HasValue)
+            {
+                w.WriteDecimal128(value.BaseOnBallsPer9.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.HomeRunsPer9));
+            if (value.HomeRunsPer9.HasValue)
+            {
+                w.WriteDecimal128(value.HomeRunsPer9.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteName(nameof(TrendMetricsByDate.FieldingPercentage));
+            if (value.FieldingPercentage.HasValue)
+            {
+                w.WriteDecimal128(value.FieldingPercentage.Value);
+            }
+            else
+            {
+                w.WriteNull();
+            }
+
+            w.WriteEndDocument();
+        }
+    }
+
+    /// <summary>
+    /// BSON serializer for <see cref="TrendImpact"/>
+    /// </summary>
+    private sealed class TrendImpactSerializer : SerializerBase<TrendImpact>
+    {
+        /// <inheritdoc />
+        public override TrendImpact Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
+        {
+            var r = context.Reader;
+
+            // The field names may not be in a specific order, so have placeholders for the values
+            string? start = null;
+            string? end = null;
+            string? desc = null;
+
+            r.ReadStartDocument();
+            while (r.ReadBsonType() != BsonType.EndOfDocument)
+            {
+                var fieldName = r.ReadName();
+
+                switch (fieldName)
+                {
+                    case nameof(TrendImpact.Start):
+                        start = r.ReadString();
+                        break;
+                    case nameof(TrendImpact.End):
+                        end = r.ReadString();
+                        break;
+                    case nameof(TrendImpact.Description):
+                        desc = r.ReadString();
+                        break;
+                }
+            }
+
+            r.ReadEndDocument();
+
+            return new TrendImpact(Start: DateOnly.Parse(start!), End: DateOnly.Parse(end!), Description: desc!);
         }
 
         /// <inheritdoc />
-        public void Serialize(BsonSerializationContext context, BsonSerializationArgs args, object value)
+        public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, TrendImpact value)
         {
-            Serialize(context, args, (TrendReport)value);
-        }
+            var w = context.Writer;
+            w.WriteStartDocument();
 
-        /// <inheritdoc />
-        public bool TryGetMemberSerializationInfo(string memberName,
-            [UnscopedRef] out BsonSerializationInfo? serializationInfo)
-        {
-            serializationInfo = null;
-            return false;
+            w.WriteName(nameof(TrendImpact.Start));
+            w.WriteString(value.Start.ToString("O"));
+
+            w.WriteName(nameof(TrendImpact.End));
+            w.WriteString(value.End.ToString("O"));
+
+            w.WriteName(nameof(TrendImpact.Description));
+            w.WriteString(value.Description);
+
+            w.WriteEndDocument();
         }
     }
 }

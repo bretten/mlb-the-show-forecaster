@@ -2,6 +2,9 @@
 
 /// <summary>
 /// Represents performance metrics for a specified date
+///
+/// Stat metrics may be zero if the player has a card on the marketplace, but has not yet played a game before the
+/// specified date
 /// </summary>
 /// <param name="Date">The date</param>
 /// <param name="BattingScore">The player's batting performance score</param>

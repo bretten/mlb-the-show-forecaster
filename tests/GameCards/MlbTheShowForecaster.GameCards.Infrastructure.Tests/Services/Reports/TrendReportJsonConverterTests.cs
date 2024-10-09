@@ -104,7 +104,7 @@ public class TrendReportJsonConverterTests
           ""EarnedRunAverage"": 0.114,
           ""OpponentsBattingAverage"": 0.115,
           ""StrikeoutsPer9"": 0.116,
-          ""BaseOnBallsPer9"": 117,
+          ""BaseOnBallsPer9"": 0.117,
           ""HomeRunsPer9"": 0.118,
           ""FieldingPercentage"": 0.119
         },
@@ -124,7 +124,7 @@ public class TrendReportJsonConverterTests
           ""EarnedRunAverage"": 0.114,
           ""OpponentsBattingAverage"": 0.115,
           ""StrikeoutsPer9"": 0.116,
-          ""BaseOnBallsPer9"": 117,
+          ""BaseOnBallsPer9"": 0.117,
           ""HomeRunsPer9"": 0.118,
           ""FieldingPercentage"": 0.119
         }

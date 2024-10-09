@@ -13,6 +13,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.T
 public static class Faker
 {
     public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+    public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
+    public static Guid FakeGuid3 = new("00000000-0000-0000-0000-000000000003");
 
     public static MlbPlayerCard FakeMlbPlayerCard(ushort year = 2024, Guid? cardExternalId = null,
         CardType type = CardType.MlbCard, string image = "img.png", string name = "name1",
@@ -199,21 +201,21 @@ public static class Faker
     public static TrendMetricsByDate FakeTrendMetricsByDate(DateOnly? date = null,
         int buyPrice = 100,
         int sellPrice = 200,
-        decimal battingScore = 0.1m,
+        decimal? battingScore = 0.1m,
         bool significantBattingParticipation = false,
-        decimal pitchingScore = 0.2m,
+        decimal? pitchingScore = 0.2m,
         bool significantPitchingParticipation = false,
-        decimal fieldingScore = 0.3m,
+        decimal? fieldingScore = 0.3m,
         bool significantFieldingParticipation = false,
-        decimal battingAverage = 0.111m,
-        decimal onBasePercentage = 0.112m,
-        decimal slugging = 0.113m,
-        decimal earnedRunAverage = 0.114m,
-        decimal opponentsBattingAverage = 0.115m,
-        decimal strikeoutsPer9 = 0.116m,
-        decimal baseOnBallsPer9 = 0.117m,
-        decimal homeRunsPer9 = 0.118m,
-        decimal fieldingPercentage = 0.119m)
+        decimal? battingAverage = 0.111m,
+        decimal? onBasePercentage = 0.112m,
+        decimal? slugging = 0.113m,
+        decimal? earnedRunAverage = 0.114m,
+        decimal? opponentsBattingAverage = 0.115m,
+        decimal? strikeoutsPer9 = 0.116m,
+        decimal? baseOnBallsPer9 = 0.117m,
+        decimal? homeRunsPer9 = 0.118m,
+        decimal? fieldingPercentage = 0.119m)
     {
         return new TrendMetricsByDate(date ?? new DateOnly(2024, 10, 5),
             BuyPrice: buyPrice,
