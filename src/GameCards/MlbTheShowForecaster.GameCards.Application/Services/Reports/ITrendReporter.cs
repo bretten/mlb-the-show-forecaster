@@ -36,7 +36,7 @@ public interface ITrendReporter
     /// <param name="sortField">The field to sort on</param>
     /// <param name="sortOrder">The sort direction</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    /// <returns></returns>
+    /// <returns><see cref="TrendReport"/> collection</returns>
     Task<IEnumerable<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize, SortField? sortField,
         SortOrder? sortOrder, CancellationToken cancellationToken);
 
