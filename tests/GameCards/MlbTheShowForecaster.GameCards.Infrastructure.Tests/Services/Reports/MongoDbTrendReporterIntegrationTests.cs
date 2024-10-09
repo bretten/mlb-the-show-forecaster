@@ -1,10 +1,11 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.TestClasses;
 using MongoDB.Driver;
 using Moq;
 using Testcontainers.MongoDb;
+using Faker = com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.TestClasses.Faker;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Services.Reports;
 
@@ -74,7 +75,7 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
 
         // Assert
         var actual = collection.Find(FilterDefinition<TrendReport>.Empty).First();
-        Assert.True(Equal(expected: trendReport, actual));
+        Asserter.Equal(expected: trendReport, actual);
     }
 
     [Fact]
@@ -110,7 +111,7 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
 
         // Assert
         var actual = collection.Find(FilterDefinition<TrendReport>.Empty).First();
-        Assert.True(Equal(expected: trendReport, actual));
+        Asserter.Equal(expected: trendReport, actual);
     }
 
     [Fact]
@@ -165,7 +166,7 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
 
         // Assert
         var actual = collection.Find(FilterDefinition<TrendReport>.Empty).First();
-        Assert.True(Equal(expected: trendReport2, actual));
+        Asserter.Equal(expected: trendReport2, actual);
     }
 
     [Theory]
@@ -177,11 +178,11 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
     [InlineData(1, 2, ITrendReporter.SortField.Name, ITrendReporter.SortOrder.Desc, new[] { "èrnie", "Dot" })]
     [InlineData(2, 2, ITrendReporter.SortField.Name, ITrendReporter.SortOrder.Desc, new[] { "Alan" })]
     // OVR, Asc
-    [InlineData(1, 2, ITrendReporter.SortField.OverallRating, ITrendReporter.SortOrder.Asc, new[] { "Alan", "èrnie" })]
-    [InlineData(2, 2, ITrendReporter.SortField.OverallRating, ITrendReporter.SortOrder.Asc, new[] { "Dot" })]
+    [InlineData(1, 2, ITrendReporter.SortField.Ovr, ITrendReporter.SortOrder.Asc, new[] { "Alan", "èrnie" })]
+    [InlineData(2, 2, ITrendReporter.SortField.Ovr, ITrendReporter.SortOrder.Asc, new[] { "Dot" })]
     // OVR, Desc
-    [InlineData(1, 2, ITrendReporter.SortField.OverallRating, ITrendReporter.SortOrder.Desc, new[] { "Dot", "èrnie" })]
-    [InlineData(2, 2, ITrendReporter.SortField.OverallRating, ITrendReporter.SortOrder.Desc, new[] { "Alan" })]
+    [InlineData(1, 2, ITrendReporter.SortField.Ovr, ITrendReporter.SortOrder.Desc, new[] { "Dot", "èrnie" })]
+    [InlineData(2, 2, ITrendReporter.SortField.Ovr, ITrendReporter.SortOrder.Desc, new[] { "Alan" })]
     public async Task GetTrendReports_YearAndCardExternalId_InsertsReport(int page, int pageSize,
         ITrendReporter.SortField sortField, ITrendReporter.SortOrder sortOrder, string[] expectedCardNames)
     {
@@ -226,29 +227,16 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
             switch (correspondingItem.CardName.Value)
             {
                 case "Alan":
-                    Assert.True(Equal(trendReport1, correspondingItem));
+                    Asserter.Equal(trendReport1, correspondingItem);
                     break;
                 case "Dot":
-                    Assert.True(Equal(trendReport2, correspondingItem));
+                    Asserter.Equal(trendReport2, correspondingItem);
                     break;
                 case "èrnie":
-                    Assert.True(Equal(trendReport3, correspondingItem));
+                    Asserter.Equal(trendReport3, correspondingItem);
                     break;
             }
         }
-    }
-
-    private static bool Equal(TrendReport expected, TrendReport actual)
-    {
-        Assert.Equal(expected.Year, actual.Year);
-        Assert.Equal(expected.CardExternalId, actual.CardExternalId);
-        Assert.Equal(expected.MlbId, actual.MlbId);
-        Assert.Equal(expected.PrimaryPosition, actual.PrimaryPosition);
-        Assert.Equal(expected.OverallRating, actual.OverallRating);
-        Assert.Equal(expected.CardName, actual.CardName);
-        Assert.Equal(expected.MetricsByDate, actual.MetricsByDate);
-        Assert.Equal(expected.Impacts, actual.Impacts);
-        return true;
     }
 
     public async Task InitializeAsync() => await _container.StartAsync();

@@ -55,6 +55,6 @@ public interface ITrendReporter
     public enum SortField
     {
         Name,
-        OverallRating
+        Ovr
     }
 }

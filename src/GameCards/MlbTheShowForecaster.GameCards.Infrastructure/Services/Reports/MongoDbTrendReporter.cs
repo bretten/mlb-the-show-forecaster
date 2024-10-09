@@ -83,7 +83,7 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
         var sortFieldDef = sortField switch
         {
-            ITrendReporter.SortField.OverallRating => nameof(TrendReport.OverallRating),
+            ITrendReporter.SortField.Ovr => nameof(TrendReport.OverallRating),
             _ => nameof(TrendReport.CardName),
         };
 
