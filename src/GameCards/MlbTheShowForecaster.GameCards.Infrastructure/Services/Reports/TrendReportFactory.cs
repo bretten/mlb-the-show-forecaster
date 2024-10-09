@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi.Responses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Reports;
@@ -223,10 +224,10 @@ public sealed class TrendReportFactory : ITrendReportFactory
             PlayerTeamSigningForecastImpact => "Player signed a new team contract",
             PlayerFreeAgencyForecastImpact => "Player entered free agency",
             PositionChangeForecastImpact impact =>
-                $"Player's position changed from {impact.OldPosition} to {impact.NewPosition}",
+                $"Player's position changed from {impact.OldPosition.GetDisplayName()} to {impact.NewPosition.GetDisplayName()}",
             BoostForecastImpact impact => $"Player's card was boosted for: {impact.BoostReason}",
             OverallRatingChangeForecastImpact impact =>
-                $"Player's rating changed from {impact.OldRating} to {impact.NewRating}",
+                $"Player's rating changed from {impact.OldRating.Value} to {impact.NewRating.Value}",
             BattingStatsForecastImpact impact => impact.IsImprovement
                 ? $"Player's batting score improved from {impact.OldScore} to {impact.NewScore} (+{impact.PercentageChange.PercentageChangeValue})"
                 : $"Player's batting score declined from {impact.OldScore} to {impact.NewScore} (-{impact.PercentageChange.PercentageChangeValue})",
@@ -236,7 +237,7 @@ public sealed class TrendReportFactory : ITrendReportFactory
             FieldingStatsForecastImpact impact => impact.IsImprovement
                 ? $"Player's fielding score improved from {impact.OldScore} to {impact.NewScore} (+{impact.PercentageChange.PercentageChangeValue})"
                 : $"Player's fielding score declined from {impact.OldScore} to {impact.NewScore} (-{impact.PercentageChange.PercentageChangeValue})",
-            _ => $"Player's demand changed by {forecastImpact.Demand}"
+            _ => $"Player's demand changed by {forecastImpact.Demand.Value}"
         };
 
         return new TrendImpact(forecastImpact.StartDate, forecastImpact.EndDate, description);

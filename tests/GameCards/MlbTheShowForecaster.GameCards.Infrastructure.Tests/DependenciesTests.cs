@@ -236,13 +236,13 @@ public class DependenciesTests
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IPerformanceApi)).Lifetime);
         Assert.IsAssignableFrom<IPerformanceApi>(actual.GetRequiredService<IPerformanceApi>());
 
-        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(ITrendReportFactory)).Lifetime);
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(ITrendReportFactory)).Lifetime);
         Assert.IsType<TrendReportFactory>(actual.GetRequiredService<ITrendReportFactory>());
 
-        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMongoClient)).Lifetime);
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(IMongoClient)).Lifetime);
         Assert.IsType<MongoClient>(actual.GetRequiredService<IMongoClient>());
 
-        Assert.Equal(ServiceLifetime.Singleton,
+        Assert.Equal(ServiceLifetime.Scoped,
             s.First(x => x.ServiceType == typeof(MongoDbTrendReporter.MongoDbTrendReporterConfig)).Lifetime);
         Assert.IsType<MongoDbTrendReporter.MongoDbTrendReporterConfig>(
             actual.GetRequiredService<MongoDbTrendReporter.MongoDbTrendReporterConfig>());
@@ -250,7 +250,7 @@ public class DependenciesTests
         Assert.Equal("local", mongoConfig.Database);
         Assert.Equal("trends", mongoConfig.Collection);
 
-        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(ITrendReporter)).Lifetime);
+        Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(ITrendReporter)).Lifetime);
         Assert.IsType<MongoDbTrendReporter>(actual.GetRequiredService<ITrendReporter>());
     }
 

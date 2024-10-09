@@ -198,17 +198,17 @@ public static class Dependencies
             )
         }).ConfigureHttpClient(c => c.BaseAddress = new Uri(config[ConfigKeys.PerformanceApiBaseAddress]!));
 
-        services.TryAddSingleton<ITrendReportFactory, TrendReportFactory>();
+        services.TryAddScoped<ITrendReportFactory, TrendReportFactory>();
 
-        services.TryAddSingleton<IMongoClient>(sp =>
+        services.TryAddScoped<IMongoClient>(sp =>
             new MongoClient(config.GetRequiredConnectionString(ConfigKeys.TrendsMongoDbConnection)));
 
-        services.TryAddSingleton<MongoDbTrendReporter.MongoDbTrendReporterConfig>(sp =>
+        services.TryAddScoped<MongoDbTrendReporter.MongoDbTrendReporterConfig>(sp =>
         {
             const string configKey = ConfigKeys.MongoDbTrendReportConfig;
             return config.GetRequiredValue<MongoDbTrendReporter.MongoDbTrendReporterConfig>(configKey);
         });
-        services.TryAddSingleton<ITrendReporter, MongoDbTrendReporter>();
+        services.TryAddScoped<ITrendReporter, MongoDbTrendReporter>();
     }
 
     /// <summary>
