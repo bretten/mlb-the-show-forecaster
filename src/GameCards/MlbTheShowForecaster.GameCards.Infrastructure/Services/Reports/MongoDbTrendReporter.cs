@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Pagination;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
@@ -75,7 +76,7 @@ public sealed class MongoDbTrendReporter : ITrendReporter
     }
 
     /// <inheritdoc />
-    public async Task<IEnumerable<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize,
+    public async Task<PaginationResult<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize,
         ITrendReporter.SortField? sortField, ITrendReporter.SortOrder? sortOrder, CancellationToken cancellationToken)
     {
         var collection = await GetCollection();
@@ -93,11 +94,15 @@ public sealed class MongoDbTrendReporter : ITrendReporter
             _ => Builders<TrendReport>.Sort.Ascending(sortFieldDef)
         };
 
-        return collection.Find(filter)
+        var totalItems = await collection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+
+        var items = collection.Find(filter)
             .Sort(sortOrderDef)
             .Skip((page - 1) * pageSize)
             .Limit(pageSize)
             .ToList(cancellationToken: cancellationToken);
+
+        return PaginationResult<TrendReport>.Create(page: page, pageSize: pageSize, totalItems: totalItems, items);
     }
 
     /// <summary>

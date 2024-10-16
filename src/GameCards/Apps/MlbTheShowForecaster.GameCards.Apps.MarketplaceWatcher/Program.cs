@@ -1,17 +1,32 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-var builder = Host.CreateDefaultBuilder(args)
-    .ConfigureAppConfiguration((context, configurationBuilder) =>
-    {
-        configurationBuilder.AddJsonFile("appsettings.json");
-        configurationBuilder.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json");
-    })
-    .ConfigureMarketplaceWatcher(args);
+var builder = WebApplication.CreateBuilder(args);
 
-var host = builder.Build();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-await host.StartAsync();
+builder.Services.AddControllers();
+
+builder.Configuration.AddJsonFile("appsettings.json");
+builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
+
+builder.Host.ConfigureMarketplaceWatcher(args);
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.MapControllers()
+    .WithOpenApi();
+
+await app.RunAsync();
 
 Console.ReadLine();

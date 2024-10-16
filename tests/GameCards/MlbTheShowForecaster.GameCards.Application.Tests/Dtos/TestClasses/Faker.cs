@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Pagination;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Reports;
@@ -243,5 +244,11 @@ public static class Faker
         return new TrendImpact(Start: startDate ?? new DateOnly(2024, 10, 8),
             End: endDate ?? new DateOnly(2024, 10, 8),
             Description: description ?? "Trend impact description");
+    }
+
+    public static PaginationResult<TrendReport> FakeTrendReportPaginationResult(int page = 1, int pageSize = 1,
+        IEnumerable<TrendReport>? items = null, long totalItems = 0)
+    {
+        return PaginationResult<TrendReport>.Create(page, pageSize, totalItems, items ?? Array.Empty<TrendReport>());
     }
 }

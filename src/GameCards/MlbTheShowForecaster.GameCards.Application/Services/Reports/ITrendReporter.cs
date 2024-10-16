@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Pagination;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
@@ -37,7 +38,7 @@ public interface ITrendReporter
     /// <param name="sortOrder">The sort direction</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="TrendReport"/> collection</returns>
-    Task<IEnumerable<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize, SortField? sortField,
+    Task<PaginationResult<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize, SortField? sortField,
         SortOrder? sortOrder, CancellationToken cancellationToken);
 
     /// <summary>
