@@ -215,7 +215,8 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
         var year = trendReport1.Year;
 
         // Act
-        var actual = (await reporter.GetTrendReports(year, page, pageSize, sortField, sortOrder, cToken)).ToList();
+        var paginatedResult = await reporter.GetTrendReports(year, page, pageSize, sortField, sortOrder, cToken);
+        var actual = paginatedResult.Items.ToList();
 
         // Assert
         for (var i = 0; i < expectedCardNames.Length; i++)

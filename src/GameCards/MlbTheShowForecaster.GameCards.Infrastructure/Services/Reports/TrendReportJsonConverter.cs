@@ -39,31 +39,31 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
 
             switch (propertyName)
             {
-                case nameof(TrendReport.Year):
+                case var _ when GetPropertyName(nameof(TrendReport.Year), options) == propertyName:
                     reader.Read();
                     year = reader.GetInt32();
                     break;
-                case nameof(TrendReport.CardExternalId):
+                case var _ when GetPropertyName(nameof(TrendReport.CardExternalId), options) == propertyName:
                     reader.Read();
                     cardExternalId = reader.GetString();
                     break;
-                case nameof(TrendReport.MlbId):
+                case var _ when GetPropertyName(nameof(TrendReport.MlbId), options) == propertyName:
                     reader.Read();
                     mlbId = reader.GetInt32();
                     break;
-                case nameof(TrendReport.CardName):
+                case var _ when GetPropertyName(nameof(TrendReport.CardName), options) == propertyName:
                     reader.Read();
                     cardName = reader.GetString();
                     break;
-                case nameof(TrendReport.PrimaryPosition):
+                case var _ when GetPropertyName(nameof(TrendReport.PrimaryPosition), options) == propertyName:
                     reader.Read();
                     position = reader.GetString();
                     break;
-                case nameof(TrendReport.OverallRating):
+                case var _ when GetPropertyName(nameof(TrendReport.OverallRating), options) == propertyName:
                     reader.Read();
                     overallRating = reader.GetInt32();
                     break;
-                case nameof(TrendReport.MetricsByDate):
+                case var _ when GetPropertyName(nameof(TrendReport.MetricsByDate), options) == propertyName:
                     reader.Read();
 
                     if (reader.TokenType != JsonTokenType.StartArray)
@@ -74,10 +74,10 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
                     // Extract the array JSON element
                     var metricsArray = JsonDocument.ParseValue(ref reader).RootElement;
                     // Use default deserialization
-                    metrics = metricsArray.Deserialize<List<TrendMetricsByDate>>();
+                    metrics = metricsArray.Deserialize<List<TrendMetricsByDate>>(options);
 
                     break;
-                case nameof(TrendReport.Impacts):
+                case var _ when GetPropertyName(nameof(TrendReport.Impacts), options) == propertyName:
                     reader.Read();
 
                     if (reader.TokenType != JsonTokenType.StartArray)
@@ -88,7 +88,7 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
                     // Extract the array JSON element
                     var impactsArray = JsonDocument.ParseValue(ref reader).RootElement;
                     // Use default deserialization
-                    impacts = impactsArray.Deserialize<List<TrendImpact>>();
+                    impacts = impactsArray.Deserialize<List<TrendImpact>>(options);
 
                     break;
             }
@@ -120,19 +120,22 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
         writer.WriteStartObject();
 
         // Top-level properties
-        writer.WriteNumber(Constants.Year, value.Year.Value);
-        writer.WriteString(Constants.CardExternalId, value.CardExternalId.Value.ToString());
-        writer.WriteNumber(Constants.MlbId, value.MlbId.Value);
-        writer.WriteString(Constants.CardName, value.CardName.Value);
-        writer.WriteString(Constants.PrimaryPosition, value.PrimaryPosition.GetDisplayName());
-        writer.WriteNumber(Constants.OverallRating, value.OverallRating.Value);
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.Year), options), value.Year.Value);
+        writer.WriteString(GetEncodedPropertyName(nameof(TrendReport.CardExternalId), options),
+            value.CardExternalId.Value.ToString());
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.MlbId), options), value.MlbId.Value);
+        writer.WriteString(GetEncodedPropertyName(nameof(TrendReport.CardName), options), value.CardName.Value);
+        writer.WriteString(GetEncodedPropertyName(nameof(TrendReport.PrimaryPosition), options),
+            value.PrimaryPosition.GetDisplayName());
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.OverallRating), options),
+            value.OverallRating.Value);
 
         // Metrics by date
-        writer.WritePropertyName(nameof(Constants.MetricsByDate));
+        writer.WritePropertyName(GetEncodedPropertyName(nameof(TrendReport.MetricsByDate), options));
         writer.WriteRawValue(JsonSerializer.Serialize(value.MetricsByDate, options));
 
         // Trend impacts
-        writer.WritePropertyName(nameof(Constants.Impacts));
+        writer.WritePropertyName(GetEncodedPropertyName(nameof(TrendReport.Impacts), options));
         writer.WriteRawValue(JsonSerializer.Serialize(value.Impacts, options));
 
         // End the whole JSON object
@@ -140,27 +143,26 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
     }
 
     /// <summary>
-    /// Constants for writing JSON property names
+    /// Gets the property name converted using <see cref="JsonNamingPolicy"/>
     /// </summary>
-    private static class Constants
+    /// <param name="propertyName">The property name</param>
+    /// <param name="options"><see cref="JsonSerializerOptions"/></param>
+    /// <returns>The converted name</returns>
+    private static string GetPropertyName(string propertyName, JsonSerializerOptions options)
     {
-        public static readonly JsonEncodedText Year = JsonEncodedText.Encode(nameof(TrendReport.Year));
+        var namingPolicy = options.PropertyNamingPolicy ?? JsonNamingPolicy.CamelCase;
 
-        public static readonly JsonEncodedText CardExternalId =
-            JsonEncodedText.Encode(nameof(TrendReport.CardExternalId));
+        return namingPolicy.ConvertName(propertyName);
+    }
 
-        public static readonly JsonEncodedText MlbId = JsonEncodedText.Encode(nameof(TrendReport.MlbId));
-        public static readonly JsonEncodedText CardName = JsonEncodedText.Encode(nameof(TrendReport.CardName));
-
-        public static readonly JsonEncodedText PrimaryPosition =
-            JsonEncodedText.Encode(nameof(TrendReport.PrimaryPosition));
-
-        public static readonly JsonEncodedText
-            OverallRating = JsonEncodedText.Encode(nameof(TrendReport.OverallRating));
-
-        public static readonly JsonEncodedText
-            MetricsByDate = JsonEncodedText.Encode(nameof(TrendReport.MetricsByDate));
-
-        public static readonly JsonEncodedText Impacts = JsonEncodedText.Encode(nameof(TrendReport.Impacts));
+    /// <summary>
+    /// Gets the property name converted using <see cref="JsonNamingPolicy"/> and then encoded using <see cref="JsonEncodedText"/>
+    /// </summary>
+    /// <param name="propertyName">The property name</param>
+    /// <param name="options"><see cref="JsonSerializerOptions"/></param>
+    /// <returns>The converted name</returns>
+    private static JsonEncodedText GetEncodedPropertyName(string propertyName, JsonSerializerOptions options)
+    {
+        return JsonEncodedText.Encode(GetPropertyName(propertyName, options));
     }
 }

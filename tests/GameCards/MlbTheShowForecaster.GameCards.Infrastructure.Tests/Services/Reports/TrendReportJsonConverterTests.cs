@@ -18,6 +18,7 @@ public class TrendReportJsonConverterTests
         var json = JsonMissingProperty;
         Action action = () => JsonSerializer.Deserialize<TrendReport>(json, new JsonSerializerOptions()
         {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             Converters = { new TrendReportJsonConverter() }
         });
 
@@ -39,6 +40,7 @@ public class TrendReportJsonConverterTests
         // Act
         var actual = JsonSerializer.Deserialize<TrendReport>(json, new JsonSerializerOptions()
         {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             Converters = { new TrendReportJsonConverter() }
         });
 
@@ -63,6 +65,7 @@ public class TrendReportJsonConverterTests
         // Act
         var actual = JsonSerializer.Serialize(trendReport, new JsonSerializerOptions()
         {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             Converters = { new TrendReportJsonConverter() }
         });
 
@@ -71,69 +74,69 @@ public class TrendReportJsonConverterTests
     }
 
     private const string JsonMissingProperty = @"{
-      ""Year"": 2024,
-      ""CardExternalId"": ""00000000-0000-0000-0000-000000000001"",
-      ""MlbId"": 1,
-      ""PrimaryPosition"": ""CF"",
-      ""OverallRating"": 99,
-      ""MetricsByDate"": [],
-      ""Impacts"": []
+      ""year"": 2024,
+      ""cardExternalId"": ""00000000-0000-0000-0000-000000000001"",
+      ""mlbId"": 1,
+      ""primaryPosition"": ""CF"",
+      ""overallRating"": 99,
+      ""metricsByDate"": [],
+      ""impacts"": []
     }";
 
     private const string Json = @"{
-      ""Year"": 2024,
-      ""CardExternalId"": ""00000000-0000-0000-0000-000000000001"",
-      ""MlbId"": 1,
-      ""CardName"": ""Dottie"",
-      ""PrimaryPosition"": ""CF"",
-      ""OverallRating"": 99,
-      ""MetricsByDate"": [
+      ""year"": 2024,
+      ""cardExternalId"": ""00000000-0000-0000-0000-000000000001"",
+      ""mlbId"": 1,
+      ""cardName"": ""Dottie"",
+      ""primaryPosition"": ""CF"",
+      ""overallRating"": 99,
+      ""metricsByDate"": [
         {
-          ""Date"": ""2024-10-05"",
-          ""BuyPrice"": 100,
-          ""SellPrice"": 200,
-          ""BattingScore"": 0.1,
-          ""SignificantBattingParticipation"": false,
-          ""PitchingScore"": 0.2,
-          ""SignificantPitchingParticipation"": false,
-          ""FieldingScore"": 0.3,
-          ""SignificantFieldingParticipation"": false,
-          ""BattingAverage"": 0.111,
-          ""OnBasePercentage"": 0.112,
-          ""Slugging"": 0.113,
-          ""EarnedRunAverage"": 0.114,
-          ""OpponentsBattingAverage"": 0.115,
-          ""StrikeoutsPer9"": 0.116,
-          ""BaseOnBallsPer9"": 0.117,
-          ""HomeRunsPer9"": 0.118,
-          ""FieldingPercentage"": 0.119
+          ""date"": ""2024-10-05"",
+          ""buyPrice"": 100,
+          ""sellPrice"": 200,
+          ""battingScore"": 0.1,
+          ""significantBattingParticipation"": false,
+          ""pitchingScore"": 0.2,
+          ""significantPitchingParticipation"": false,
+          ""fieldingScore"": 0.3,
+          ""significantFieldingParticipation"": false,
+          ""battingAverage"": 0.111,
+          ""onBasePercentage"": 0.112,
+          ""slugging"": 0.113,
+          ""earnedRunAverage"": 0.114,
+          ""opponentsBattingAverage"": 0.115,
+          ""strikeoutsPer9"": 0.116,
+          ""baseOnBallsPer9"": 0.117,
+          ""homeRunsPer9"": 0.118,
+          ""fieldingPercentage"": 0.119
         },
         {
-          ""Date"": ""2024-10-06"",
-          ""BuyPrice"": 100,
-          ""SellPrice"": 200,
-          ""BattingScore"": 0.1,
-          ""SignificantBattingParticipation"": false,
-          ""PitchingScore"": 0.2,
-          ""SignificantPitchingParticipation"": false,
-          ""FieldingScore"": 0.3,
-          ""SignificantFieldingParticipation"": false,
-          ""BattingAverage"": 0.111,
-          ""OnBasePercentage"": 0.112,
-          ""Slugging"": 0.113,
-          ""EarnedRunAverage"": 0.114,
-          ""OpponentsBattingAverage"": 0.115,
-          ""StrikeoutsPer9"": 0.116,
-          ""BaseOnBallsPer9"": 0.117,
-          ""HomeRunsPer9"": 0.118,
-          ""FieldingPercentage"": 0.119
+          ""date"": ""2024-10-06"",
+          ""buyPrice"": 100,
+          ""sellPrice"": 200,
+          ""battingScore"": 0.1,
+          ""significantBattingParticipation"": false,
+          ""pitchingScore"": 0.2,
+          ""significantPitchingParticipation"": false,
+          ""fieldingScore"": 0.3,
+          ""significantFieldingParticipation"": false,
+          ""battingAverage"": 0.111,
+          ""onBasePercentage"": 0.112,
+          ""slugging"": 0.113,
+          ""earnedRunAverage"": 0.114,
+          ""opponentsBattingAverage"": 0.115,
+          ""strikeoutsPer9"": 0.116,
+          ""baseOnBallsPer9"": 0.117,
+          ""homeRunsPer9"": 0.118,
+          ""fieldingPercentage"": 0.119
         }
       ],
-      ""Impacts"": [
+      ""impacts"": [
         {
-          ""Start"": ""2024-10-08"",
-          ""End"": ""2024-10-09"",
-          ""Description"": ""Trend impact description""
+          ""start"": ""2024-10-08"",
+          ""end"": ""2024-10-09"",
+          ""description"": ""Trend impact description""
         }
       ]
     }";
