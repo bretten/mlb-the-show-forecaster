@@ -1,15 +1,18 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.RealTime;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -98,6 +101,7 @@ public static class PlayerTrackerHostExtensions
             services.AddPlayerStatusTracker(context.Configuration);
             services.AddPlayerStatusEntityFrameworkCoreRepositories(context.Configuration);
             services.AddPlayerSearchService(context.Configuration);
+            services.TryAddScoped<IRealTimeCommService, SignalRCommService>();
 
             // Background service for tracking player statuses
             services.AddHostedService<ScheduledBackgroundService<IPlayerStatusTracker>>(sp =>

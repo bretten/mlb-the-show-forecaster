@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.RealTime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
 builder.Configuration.AddJsonFile("appsettings.json");
 builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
@@ -26,6 +28,7 @@ if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local
 
 app.MapControllers()
     .WithOpenApi();
+app.MapHub<JobHub>("/job-hub");
 
 await app.RunAsync();
 
