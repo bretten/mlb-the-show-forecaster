@@ -2,7 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
 using Microsoft.AspNetCore.SignalR;
 
-namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.RealTime;
+namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.RealTime;
 
 /// <summary>
 /// Broadcasts updates in real time to clients

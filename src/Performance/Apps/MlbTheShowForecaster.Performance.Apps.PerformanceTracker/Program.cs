@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker;
+using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.RealTime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,23 +11,25 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers();
+builder.Services.AddSignalR();
 
 builder.Configuration.AddJsonFile("appsettings.json");
 builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
 
 builder.Host.ConfigurePerformanceTracker(args);
 
-var host = builder.Build();
+var app = builder.Build();
 
-if (host.Environment.IsDevelopment() || host.Environment.EnvironmentName == "Local")
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
 {
-    host.UseSwagger();
-    host.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-host.MapControllers()
+app.MapControllers()
     .WithOpenApi();
+app.MapHub<JobHub>("/job-hub");
 
-await host.RunAsync();
+await app.RunAsync();
 
 Console.ReadLine();
