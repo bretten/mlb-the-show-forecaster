@@ -3,9 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Test
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Npgsql;
 using RabbitMQ.Client;
 using Testcontainers.PostgreSql;
@@ -18,6 +16,9 @@ public class ProgramIntegrationTests : IAsyncLifetime
     private readonly PostgreSqlContainer _dbContainer;
     private readonly RabbitMqContainer _rabbitMqContainer;
 
+    private const int PostgreSqlPort = 54327;
+    private const int RabbitMqPort = 56723;
+
     public ProgramIntegrationTests()
     {
         try
@@ -26,12 +27,12 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
                 .WithPassword("password99")
-                .WithPortBinding(54327, 5432)
+                .WithPortBinding(PostgreSqlPort, 5432)
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
                 .WithName(GetType().Name + Guid.NewGuid())
-                .WithPortBinding(56723, 5672)
+                .WithPortBinding(RabbitMqPort, 5672)
                 .WithPortBinding(15676, 15672)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
                 .Build();
@@ -57,32 +58,14 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Command line arguments when running the program
         var args = Array.Empty<string>();
 
-        // Key-value pairs for IConfiguration
-        var inMemoryConfig = new Dictionary<string, string>()
-        {
-            { "ConnectionStrings:Cards", _dbContainer.GetConnectionString() + ";Pooling=false;" },
-            { "ConnectionStrings:Marketplace", _dbContainer.GetConnectionString() + ";Pooling=false;" },
-            { "PlayerCardTracker:Interval", "01:00:00:00" },
-            { "PlayerCardTracker:Seasons:0", "2024" },
-            { "CardPriceTracker:Interval", "01:00:00:00" },
-            { "CardPriceTracker:Seasons:0", "2024" },
-            { "CardPriceTracker:BuyPricePercentageChangeThreshold", "0.01" },
-            { "CardPriceTracker:SellPricePercentageChangeThreshold", "0.01" },
-            { "Forecasting:PlayerMatcher:BaseAddress", "http://localhost" },
-            { "Messaging:RabbitMq:HostName", "localhost" },
-            { "Messaging:RabbitMq:UserName", "rabbitmq" },
-            { "Messaging:RabbitMq:Password", "rabbitmq" },
-            { "Messaging:RabbitMq:Port", "56723" },
-        };
-
-        // Build the host
-        var builder = Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((context, configurationBuilder) =>
-            {
-                configurationBuilder.AddInMemoryCollection(inMemoryConfig!);
-            })
-            .ConfigureMarketplaceWatcher(args); // Configure MarketplaceWatcher
-        var host = builder.Build();
+        // Builder
+        var builder = AppBuilder.CreateBuilder(args);
+        // Config overrides
+        builder.Configuration["ConnectionStrings:Cards"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
+        builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
+        builder.Configuration["Messaging:RabbitMq:Port"] = RabbitMqPort.ToString();
+        // Build the app
+        var app = AppBuilder.BuildApp(args, builder);
 
         // Setup the cards database
         await using var connection = await GetDbConnection();
@@ -110,11 +93,11 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Cancellation token to stop the program
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(25));
         // Start the host
-        await host.StartAsync(cts.Token);
+        await app.StartAsync(cts.Token);
         // Let it do some work
         await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
         // Stop the host
-        await host.StopAsync(cts.Token);
+        await app.StopAsync(cts.Token);
 
         /*
          * Assert
@@ -131,7 +114,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var listings = assertMarketplaceDbContext.Listings.Count();
         Assert.True(listings > 1); // One was already inserted by the setup of this test
         // Domain events should have been published
-        using var rabbitMqChannel = host.Services.GetRequiredService<IModel>();
+        using var rabbitMqChannel = app.Services.GetRequiredService<IModel>();
         var messageCount = rabbitMqChannel.MessageCount("ListingBuyPriceDecreased") +
                            rabbitMqChannel.MessageCount("ListingBuyPriceIncreased");
         Assert.True(messageCount > 0);
