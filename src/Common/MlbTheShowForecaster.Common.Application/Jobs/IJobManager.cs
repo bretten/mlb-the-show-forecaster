@@ -16,4 +16,11 @@ public interface IJobManager
     Task<TOut> Run<T, TOut>(IJobInput input, CancellationToken cancellationToken = default)
         where T : IJob
         where TOut : IJobOutput;
+
+    /// <summary>
+    /// Runs any scheduled <see cref="IJob"/>s
+    /// </summary>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <returns>The completed task</returns>
+    Task RunScheduled(CancellationToken cancellationToken = default);
 }
