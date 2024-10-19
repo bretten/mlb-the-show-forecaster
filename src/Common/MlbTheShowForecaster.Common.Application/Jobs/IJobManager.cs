@@ -3,7 +3,7 @@
 /// <summary>
 /// Defines a service that manages <see cref="IJob"/>s
 /// </summary>
-public interface IJobManager
+public interface IJobManager : IDisposable
 {
     /// <summary>
     /// Runs a <see cref="IJob"/> with the specified <see cref="IJobInput"/>

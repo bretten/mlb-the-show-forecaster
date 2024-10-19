@@ -1,4 +1,6 @@
 ﻿using System.Collections.Concurrent;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
@@ -10,14 +12,19 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 public sealed class SingleInstanceJobManager : IJobManager
 {
     /// <summary>
-    /// The available jobs
+    /// <see cref="IServiceScopeFactory"/> that will resolve jobs within their own scope
     /// </summary>
-    private readonly IReadOnlyDictionary<Type, IJob> _availableJobs;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
 
     /// <summary>
     /// Schedules for the available jobs
     /// </summary>
     private readonly IReadOnlyList<JobSchedule> _jobSchedules;
+
+    /// <summary>
+    /// Provides real time job status updates to clients
+    /// </summary>
+    private readonly IRealTimeCommService _commService;
 
     /// <summary>
     /// Logger
@@ -36,14 +43,16 @@ public sealed class SingleInstanceJobManager : IJobManager
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="availableJobs">The available jobs</param>
+    /// <param name="serviceScopeFactory"><see cref="IServiceScopeFactory"/> that will resolve jobs within their own scope</param>
     /// <param name="schedules">Schedules for the available jobs</param>
+    /// <param name="commService">Provides real time job status updates to clients</param>
     /// <param name="logger">Logger</param>
-    public SingleInstanceJobManager(IEnumerable<IJob> availableJobs, IEnumerable<JobSchedule> schedules,
-        ILogger<SingleInstanceJobManager> logger)
+    public SingleInstanceJobManager(IServiceScopeFactory serviceScopeFactory, IEnumerable<JobSchedule> schedules,
+        IRealTimeCommService commService, ILogger<SingleInstanceJobManager> logger)
     {
-        _availableJobs = availableJobs.ToDictionary(job => job.GetType());
+        _serviceScopeFactory = serviceScopeFactory;
         _jobSchedules = schedules.ToList().AsReadOnly();
+        _commService = commService;
         _logger = logger;
     }
 
@@ -80,25 +89,29 @@ public sealed class SingleInstanceJobManager : IJobManager
 
         try
         {
-            // await _commService.Broadcast(jobName, "Start");
-            // await _commService.Broadcast(jobName, "In Progress");
-
             _logger.LogInformation($"Starting job {jobName}");
-            var job = _availableJobs[jobType];
-            var result = await job.Execute(input, cancellationToken);
+            await _commService.Broadcast(jobName, "Start", cancellationToken);
+
+            // Resolve the job
+            var scope = _serviceScopeFactory.CreateScope();
+            var job = scope.ServiceProvider.GetRequiredService(jobType) as IJob;
+
+            // Run the job
+            var result = await job!.Execute(input, cancellationToken);
+            await BroadcastProgress(jobExecution, cancellationToken);
 
             // When the job has finished, update the TaskCompletionSource result
             tcs.SetResult(result);
             UpdateLastRun(jobExecution);
 
-            // await _commService.Broadcast(jobName, "Finished");
-            // await _commService.Broadcast(jobName, result);
-            // await _commService.Broadcast(jobName, "Ready");
+            await _commService.Broadcast(jobName, "Finished", cancellationToken);
+            await _commService.Broadcast(jobName, result, cancellationToken);
+            await _commService.Broadcast(jobName, "Ready", cancellationToken);
         }
         catch (Exception e)
         {
             _logger.LogError(e, $"Job {jobName} failed");
-            //await _commService.Broadcast(jobName, "Error");
+            await _commService.Broadcast(jobName, "Error", cancellationToken);
             tcs.SetException(e);
         }
 
@@ -110,7 +123,7 @@ public sealed class SingleInstanceJobManager : IJobManager
     }
 
     /// <inheritdoc />
-    public Task RunScheduled(CancellationToken cancellationToken = default)
+    public async Task RunScheduled(CancellationToken cancellationToken = default)
     {
         foreach (var job in _jobSchedules)
         {
@@ -127,7 +140,10 @@ public sealed class SingleInstanceJobManager : IJobManager
             _ = Task.Run(async () => await Run(job.JobType, job.JobInput, cancellationToken), cancellationToken);
         }
 
-        return Task.CompletedTask;
+        foreach (var activeJob in ActiveJobs)
+        {
+            await BroadcastProgress(activeJob.Key, cancellationToken);
+        }
     }
 
     /// <summary>
@@ -145,7 +161,25 @@ public sealed class SingleInstanceJobManager : IJobManager
     }
 
     /// <summary>
+    /// Broadcasts the progress of the job
+    /// </summary>
+    /// <param name="jobExecution">The running job</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    private async Task BroadcastProgress(JobExecution jobExecution, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation($"{jobExecution.JobType.Name} in progress...");
+        await _commService.Broadcast(jobExecution.JobType.Name, "In Progress", cancellationToken);
+    }
+
+    /// <summary>
     /// Represents an execution of a job
     /// </summary>
     private sealed record JobExecution(Type JobType, IJobInput JobInput);
+
+    /// <summary>
+    /// Dispose
+    /// </summary>
+    public void Dispose()
+    {
+    }
 }
