@@ -1,9 +1,7 @@
 ﻿using System.Data.Common;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Npgsql;
 using RabbitMQ.Client;
 using Testcontainers.PostgreSql;
@@ -16,6 +14,9 @@ public class ProgramIntegrationTests : IAsyncLifetime
     private readonly PostgreSqlContainer _dbContainer;
     private readonly RabbitMqContainer _rabbitMqContainer;
 
+    private const int PostgreSqlPort = 54326;
+    private const int RabbitMqPort = 56722;
+
     public ProgramIntegrationTests()
     {
         try
@@ -24,12 +25,12 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
                 .WithPassword("password99")
-                .WithPortBinding(54326, 5432)
+                .WithPortBinding(PostgreSqlPort, 5432)
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
                 .WithName(GetType().Name + Guid.NewGuid())
-                .WithPortBinding(56722, 5672)
+                .WithPortBinding(RabbitMqPort, 5672)
                 .WithPortBinding(15675, 15672)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
                 .Build();
@@ -55,27 +56,14 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Command line arguments when running the program
         var args = Array.Empty<string>();
 
-        // Key-value pairs for IConfiguration
-        var inMemoryConfig = new Dictionary<string, string>()
-        {
-            { "ConnectionStrings:PlayerSeasons", _dbContainer.GetConnectionString() + ";Pooling=false;" },
-            { "PerformanceTracker:Interval", "01:00:00:00" },
-            { "PerformanceTracker:StartDelay", "0" },
-            { "PerformanceTracker:Seasons:0", "2023" },
-            { "Messaging:RabbitMq:HostName", "localhost" },
-            { "Messaging:RabbitMq:UserName", "rabbitmq" },
-            { "Messaging:RabbitMq:Password", "rabbitmq" },
-            { "Messaging:RabbitMq:Port", "56722" },
-        };
-
-        // Build the host
-        var builder = Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((context, configurationBuilder) =>
-            {
-                configurationBuilder.AddInMemoryCollection(inMemoryConfig!);
-            })
-            .ConfigurePerformanceTracker(args); // Configure PerformanceTracker
-        var host = builder.Build();
+        // Builder
+        var builder = AppBuilder.CreateBuilder(args);
+        // Config overrides
+        builder.Configuration["ConnectionStrings:PlayerSeasons"] =
+            _dbContainer.GetConnectionString() + ";Pooling=false;";
+        builder.Configuration["Messaging:RabbitMq:Port"] = RabbitMqPort.ToString();
+        // Build the app
+        var app = AppBuilder.BuildApp(args, builder);
 
         // Setup the database
         await using var connection = await GetDbConnection();
@@ -89,11 +77,11 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Cancellation token to stop the program
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         // Start the host
-        await host.StartAsync(cts.Token);
+        await app.StartAsync(cts.Token);
         // Let it do some work
         await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
         // Stop the host
-        await host.StopAsync(cts.Token);
+        await app.StopAsync(cts.Token);
 
         /*
          * Assert
@@ -107,7 +95,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
             x.FieldingStatsByGamesChronologically.Count > 0);
         Assert.NotNull(playerSeason);
         // Domain events should have been published
-        using var rabbitMqChannel = host.Services.GetRequiredService<IModel>();
+        using var rabbitMqChannel = app.Services.GetRequiredService<IModel>();
         var messageCount = rabbitMqChannel.MessageCount("PlayerBattedInGame")
                            + rabbitMqChannel.MessageCount("PlayerPitchedInGame")
                            + rabbitMqChannel.MessageCount("PlayerFieldedInGame");
