@@ -7,7 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 
 /// <summary>
 /// <see cref="IJobManager"/> that allows only one combination of <see cref="IJob"/> and <see cref="IJobInput"/> to be
-/// executing at any given time
+/// executing at any given time. Each job execution is in its own service scope
 /// </summary>
 public sealed class ScopedSingleInstanceJobManager : IJobManager
 {
