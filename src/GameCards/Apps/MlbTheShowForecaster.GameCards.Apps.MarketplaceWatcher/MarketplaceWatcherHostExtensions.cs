@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
@@ -17,6 +18,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerFre
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerTeamSigning;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PositionChange;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.RealTime;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Events;
@@ -206,6 +208,7 @@ public static class MarketplaceWatcherHostExtensions
             services.AddForecasting(context.Configuration);
             services.AddTrendReporting(context.Configuration);
             services.AddGameCardsEntityFrameworkCoreRepositories(context.Configuration);
+            services.TryAddScoped<IRealTimeCommService, SignalRCommService>();
 
             // Register the domain event consumers
             foreach (var consumerEvent in DomainEventConsumerTypes)
