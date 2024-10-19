@@ -62,6 +62,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
         builder.Configuration["ConnectionStrings:Cards"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
+        builder.Configuration["ConnectionStrings:Forecasts"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["Messaging:RabbitMq:Port"] = RabbitMqPort.ToString();
         // Build the app
@@ -87,17 +88,18 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await marketplaceDbContext.Listings.AddAsync(Faker.FakeListing(playerCardExternalId1));
         await marketplaceDbContext.SaveChangesAsync();
 
+        // Will be used for asserting. Resolving before the service provider is shut down
+        using var rabbitMqChannel = app.Services.GetRequiredService<IModel>();
+
         /*
          * Act
          */
         // Cancellation token to stop the program
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(25));
         // Start the host
-        await app.StartAsync(cts.Token);
+        _ = app.RunAsync();
         // Let it do some work
         await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
-        // Stop the host
-        await app.StopAsync(cts.Token);
 
         /*
          * Assert
@@ -114,7 +116,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var listings = assertMarketplaceDbContext.Listings.Count();
         Assert.True(listings > 1); // One was already inserted by the setup of this test
         // Domain events should have been published
-        using var rabbitMqChannel = app.Services.GetRequiredService<IModel>();
         var messageCount = rabbitMqChannel.MessageCount("ListingBuyPriceDecreased") +
                            rabbitMqChannel.MessageCount("ListingBuyPriceIncreased");
         Assert.True(messageCount > 0);

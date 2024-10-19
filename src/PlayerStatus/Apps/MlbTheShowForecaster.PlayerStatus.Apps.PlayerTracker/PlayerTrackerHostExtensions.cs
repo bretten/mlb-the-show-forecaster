@@ -1,12 +1,14 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.Jobs;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.Jobs.Io;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.RealTime;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure;
@@ -24,31 +26,6 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker;
 /// </summary>
 public static class PlayerTrackerHostExtensions
 {
-    /// <summary>
-    /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPlayerStatusTracker"/>
-    /// </summary>
-    private static readonly Func<IPlayerStatusTracker, IServiceProvider, CancellationToken, Task>
-        PlayerTrackerBackgroundWork = async (tracker, sp, ct) =>
-        {
-            var config = sp.GetRequiredService<IConfiguration>();
-            var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPlayerStatusTracker>>>();
-
-            // Service name
-            const string s = nameof(IPlayerStatusTracker);
-
-            // The seasons to track
-            var seasons = config.GetRequiredValue<ushort[]>("PlayerStatusTracker:Seasons");
-            foreach (var season in seasons)
-            {
-                logger.LogInformation($"{s} - {season}");
-                var result = await tracker.TrackPlayers(SeasonYear.Create(season), ct);
-                logger.LogInformation($"{s} - Total roster entries = {result.TotalRosterEntries}");
-                logger.LogInformation($"{s} - Total new players = {result.TotalNewPlayers}");
-                logger.LogInformation($"{s} - Total updated players = {result.TotalUpdatedPlayers}");
-                logger.LogInformation($"{s} - Total unchanged players = {result.TotalUnchangedPlayers}");
-            }
-        };
-
     /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be published in this domain mapped to their corresponding
     /// RabbitMQ exchanges
@@ -81,19 +58,8 @@ public static class PlayerTrackerHostExtensions
         {
             services.AddLogging();
 
-            // Rabbit MQ
-            var factory = new ConnectionFactory
-            {
-                HostName = context.Configuration["Messaging:RabbitMq:HostName"],
-                UserName = context.Configuration["Messaging:RabbitMq:UserName"],
-                Password = context.Configuration["Messaging:RabbitMq:Password"],
-                Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
-                DispatchConsumersAsync = true
-            };
-            services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
-            {
-                typeof(PlayerActivatedEvent).Assembly
-            });
+            // Add messaging
+            AddMessaging(context, services);
 
             // Player status tracking dependencies
             services.AddPlayerTeamProvider();
@@ -101,19 +67,74 @@ public static class PlayerTrackerHostExtensions
             services.AddPlayerStatusTracker(context.Configuration);
             services.AddPlayerStatusEntityFrameworkCoreRepositories(context.Configuration);
             services.AddPlayerSearchService(context.Configuration);
-            services.TryAddScoped<IRealTimeCommService, SignalRCommService>();
+            services.TryAddTransient<IRealTimeCommService, SignalRCommService>();
 
-            // Background service for tracking player statuses
-            services.AddHostedService<ScheduledBackgroundService<IPlayerStatusTracker>>(sp =>
-                new ScheduledBackgroundService<IPlayerStatusTracker>(
-                    sp.GetRequiredService<IServiceScopeFactory>(),
-                    PlayerTrackerBackgroundWork,
-                    TimeSpan.ParseExact(
-                        context.Configuration.GetRequiredValue<string>("PlayerStatusTracker:Interval"), "g",
-                        CultureInfo.InvariantCulture)
-                ));
+            // Register jobs and the job manager
+            AddJobs(context, services);
         });
 
         return builder;
+    }
+
+    /// <summary>
+    /// Add messaging
+    /// </summary>
+    private static void AddMessaging(HostBuilderContext context, IServiceCollection services)
+    {
+        var factory = new ConnectionFactory
+        {
+            HostName = context.Configuration["Messaging:RabbitMq:HostName"],
+            UserName = context.Configuration["Messaging:RabbitMq:UserName"],
+            Password = context.Configuration["Messaging:RabbitMq:Password"],
+            Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
+            DispatchConsumersAsync = true
+        };
+        services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
+        {
+            typeof(PlayerActivatedEvent).Assembly
+        });
+    }
+
+    /// <summary>
+    /// Register jobs and the job manager
+    /// </summary>
+    private static void AddJobs(HostBuilderContext context, IServiceCollection services)
+    {
+        services.TryAddScoped<PlayerStatusTrackerJob>();
+        services.TryAddSingleton<IJobManager>(sp =>
+        {
+            var interval =
+                ParseInterval(context.Configuration.GetRequiredValue<string>("PlayerStatusTracker:Interval"));
+            var seasons = context.Configuration.GetRequiredValue<ushort[]>("PlayerStatusTracker:Seasons");
+            var jobSchedules = new List<JobSchedule>();
+            foreach (var season in seasons)
+            {
+                var input = new SeasonJobInput(SeasonYear.Create(season));
+                jobSchedules.Add(new JobSchedule(JobType: typeof(PlayerStatusTrackerJob), JobInput: input,
+                    Interval: interval));
+            }
+
+            var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+            var commService = sp.GetRequiredService<IRealTimeCommService>();
+            var logger = sp.GetRequiredService<ILogger<ScopedSingleInstanceJobManager>>();
+            return new ScopedSingleInstanceJobManager(scopeFactory, jobSchedules, commService, logger);
+        });
+
+        var jobManagerInterval = ParseInterval("00:00:01:00");
+
+        services.AddHostedService<ScheduledBackgroundService<IJobManager>>(sp =>
+            new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(), JobManagerWork,
+                jobManagerInterval));
+    }
+
+    /// <summary>
+    /// The job manager will run scheduled jobs on an interval
+    /// </summary>
+    private static readonly Func<IJobManager, IServiceProvider, CancellationToken, Task>
+        JobManagerWork = async (jobManager, sp, ct) => { await jobManager.RunScheduled(ct); };
+
+    private static TimeSpan ParseInterval(string interval)
+    {
+        return TimeSpan.ParseExact(interval, "g", CultureInfo.InvariantCulture);
     }
 }

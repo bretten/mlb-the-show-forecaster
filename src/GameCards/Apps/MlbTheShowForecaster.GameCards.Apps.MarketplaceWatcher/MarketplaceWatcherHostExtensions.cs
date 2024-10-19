@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
@@ -17,7 +18,8 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerDea
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerFreeAgency;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerTeamSigning;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PositionChange;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs.Io;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.RealTime;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Events;
@@ -37,96 +39,6 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher;
 /// </summary>
 public static class MarketplaceWatcherHostExtensions
 {
-    /// <summary>
-    /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPlayerCardTracker"/>
-    /// </summary>
-    private static readonly Func<IPlayerCardTracker, IServiceProvider, CancellationToken, Task>
-        PlayerCardBackgroundWork = async (tracker, sp, ct) =>
-        {
-            var config = sp.GetRequiredService<IConfiguration>();
-            var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPlayerCardTracker>>>();
-
-            // Service name
-            const string s = nameof(IPlayerCardTracker);
-
-            // The seasons to track
-            var seasons = config.GetRequiredValue<ushort[]>("PlayerCardTracker:Seasons");
-            foreach (var season in seasons)
-            {
-                logger.LogInformation($"{s} - {season}");
-                var result = await tracker.TrackPlayerCards(SeasonYear.Create(season), ct);
-                logger.LogInformation($"{s} - Total catalog cards = {result.TotalCatalogCards}");
-                logger.LogInformation($"{s} - Total new catalog cards = {result.TotalNewCatalogCards}");
-                logger.LogInformation($"{s} - Total updated player cards = {result.TotalUpdatedPlayerCards}");
-                logger.LogInformation($"{s} - Total unchanged player cards = {result.TotalUnchangedPlayerCards}");
-            }
-        };
-
-    /// <summary>
-    /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="ICardPriceTracker"/>
-    /// </summary>
-    private static readonly Func<ICardPriceTracker, IServiceProvider, CancellationToken, Task> CardPriceBackgroundWork =
-        async (tracker, sp, ct) =>
-        {
-            var config = sp.GetRequiredService<IConfiguration>();
-            var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<ICardPriceTracker>>>();
-
-            // Service name
-            const string s = nameof(ICardPriceTracker);
-
-            // The seasons to track
-            var seasons = config.GetRequiredValue<ushort[]>("CardPriceTracker:Seasons");
-            foreach (var season in seasons)
-            {
-                logger.LogInformation($"{s} - {season}");
-                var result = await tracker.TrackCardPrices(SeasonYear.Create(season), ct);
-                logger.LogInformation($"{s} - Total cards = {result.TotalCards}");
-                logger.LogInformation($"{s} - Total new listings = {result.TotalNewListings}");
-                logger.LogInformation($"{s} - Total updated listings = {result.TotalUpdatedListings}");
-                logger.LogInformation($"{s} - Total unchanged listings = {result.TotalUnchangedListings}");
-            }
-        };
-
-    /// <summary>
-    /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IRosterUpdateOrchestrator"/>
-    /// </summary>
-    private static readonly Func<IRosterUpdateOrchestrator, IServiceProvider, CancellationToken, Task>
-        RosterUpdateBackgroundWork = async (rosterUpdater, sp, ct) =>
-        {
-            var config = sp.GetRequiredService<IConfiguration>();
-            var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IRosterUpdateOrchestrator>>>();
-            var historyService = sp.GetRequiredService<IPlayerRatingHistoryService>();
-
-            // Service name
-            const string s = nameof(IRosterUpdateOrchestrator);
-            const string h = nameof(IPlayerRatingHistoryService);
-
-            // The seasons to track
-            var seasons = config.GetRequiredValue<ushort[]>("PlayerCardTracker:Seasons");
-            foreach (var season in seasons)
-            {
-                logger.LogInformation($"{s} - {season}");
-
-                // Sync the player card historical ratings before running roster updates
-                var historyResult = await historyService.SyncHistory(SeasonYear.Create(season), ct);
-                logger.LogInformation($"{h} - Total cards updated = {historyResult.UpdatedPlayerCards.Count()}");
-                foreach (var historicalUpdate in historyResult.UpdatedPlayerCards)
-                {
-                    logger.LogInformation(
-                        $"{h} - Updated {historicalUpdate.Name.Value}, {historicalUpdate.ExternalId.Value}, {historicalUpdate.Id}");
-                }
-
-                var results = await rosterUpdater.SyncRosterUpdates(SeasonYear.Create(season), ct);
-                foreach (var result in results)
-                {
-                    logger.LogInformation($"{s} - Date = {result.Date}");
-                    logger.LogInformation($"{s} - Total rating changes = {result.TotalRatingChanges}");
-                    logger.LogInformation($"{s} - Total position changes = {result.TotalPositionChanges}");
-                    logger.LogInformation($"{s} - Total new players = {result.TotalNewPlayers}");
-                }
-            }
-        };
-
     /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be published in this domain mapped to their corresponding
     /// RabbitMQ exchanges
@@ -184,20 +96,8 @@ public static class MarketplaceWatcherHostExtensions
         {
             services.AddLogging();
 
-            // Rabbit MQ
-            var factory = new ConnectionFactory
-            {
-                HostName = context.Configuration["Messaging:RabbitMq:HostName"],
-                UserName = context.Configuration["Messaging:RabbitMq:UserName"],
-                Password = context.Configuration["Messaging:RabbitMq:Password"],
-                Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
-                DispatchConsumersAsync = true
-            };
-            services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
-            {
-                typeof(PlayerCardOverallRatingDeclinedEvent).Assembly,
-                typeof(BattingStatsImprovementEvent).Assembly
-            });
+            // Add messaging
+            AddMessaging(context, services);
 
             // MLB The Show cards and marketplace dependencies
             services.AddFileSystems(context.Configuration);
@@ -208,51 +108,103 @@ public static class MarketplaceWatcherHostExtensions
             services.AddForecasting(context.Configuration);
             services.AddTrendReporting(context.Configuration);
             services.AddGameCardsEntityFrameworkCoreRepositories(context.Configuration);
-            services.TryAddScoped<IRealTimeCommService, SignalRCommService>();
+            services.TryAddTransient<IRealTimeCommService, SignalRCommService>();
 
             // Register the domain event consumers
-            foreach (var consumerEvent in DomainEventConsumerTypes)
-            {
-                var rabbitMqConsumerWrapperType =
-                    typeof(RabbitMqDomainEventConsumer<>).MakeGenericType(consumerEvent.Key);
-                var keepAliveServiceType =
-                    typeof(KeepAliveBackgroundService<>).MakeGenericType(rabbitMqConsumerWrapperType);
+            AddDomainEventConsumers(context, services);
 
-                // The following mimics services.AddHostedService()
-                var descriptor = ServiceDescriptor.DescribeKeyed(typeof(IHostedService), null, keepAliveServiceType,
-                    ServiceLifetime.Singleton);
-                services.TryAddEnumerable(descriptor);
-            }
-
-            // Background service for tracking player cards
-            services.AddHostedService<ScheduledBackgroundService<IPlayerCardTracker>>(sp =>
-                new ScheduledBackgroundService<IPlayerCardTracker>(
-                    sp.GetRequiredService<IServiceScopeFactory>(),
-                    PlayerCardBackgroundWork,
-                    TimeSpan.ParseExact(
-                        context.Configuration.GetRequiredValue<string>("PlayerCardTracker:Interval"), "g",
-                        CultureInfo.InvariantCulture)
-                ));
-            // Background service for tracking marketplace card prices
-            services.AddHostedService<ScheduledBackgroundService<ICardPriceTracker>>(sp =>
-                new ScheduledBackgroundService<ICardPriceTracker>(
-                    sp.GetRequiredService<IServiceScopeFactory>(),
-                    CardPriceBackgroundWork,
-                    TimeSpan.ParseExact(
-                        context.Configuration.GetRequiredValue<string>("CardPriceTracker:Interval"), "g",
-                        CultureInfo.InvariantCulture)
-                ));
-            // Background service for tracking roster updates
-            services.AddHostedService<ScheduledBackgroundService<IRosterUpdateOrchestrator>>(sp =>
-                new ScheduledBackgroundService<IRosterUpdateOrchestrator>(
-                    sp.GetRequiredService<IServiceScopeFactory>(),
-                    RosterUpdateBackgroundWork,
-                    TimeSpan.ParseExact(
-                        context.Configuration.GetRequiredValue<string>("PlayerCardTracker:Interval"), "g",
-                        CultureInfo.InvariantCulture)
-                ));
+            // Register jobs and the job manager
+            AddJobs(context, services);
         });
 
         return builder;
+    }
+
+    /// <summary>
+    /// Add messaging
+    /// </summary>
+    private static void AddMessaging(HostBuilderContext context, IServiceCollection services)
+    {
+        var factory = new ConnectionFactory
+        {
+            HostName = context.Configuration["Messaging:RabbitMq:HostName"],
+            UserName = context.Configuration["Messaging:RabbitMq:UserName"],
+            Password = context.Configuration["Messaging:RabbitMq:Password"],
+            Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
+            DispatchConsumersAsync = true
+        };
+        services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
+        {
+            typeof(PlayerCardOverallRatingDeclinedEvent).Assembly,
+            typeof(BattingStatsImprovementEvent).Assembly
+        });
+    }
+
+    /// <summary>
+    /// Register the domain event consumers
+    /// </summary>
+    private static void AddDomainEventConsumers(HostBuilderContext context, IServiceCollection services)
+    {
+        // Register the domain event consumers
+        foreach (var consumerEvent in DomainEventConsumerTypes)
+        {
+            var rabbitMqConsumerWrapperType =
+                typeof(RabbitMqDomainEventConsumer<>).MakeGenericType(consumerEvent.Key);
+            var keepAliveServiceType =
+                typeof(KeepAliveBackgroundService<>).MakeGenericType(rabbitMqConsumerWrapperType);
+
+            // The following mimics services.AddHostedService()
+            var descriptor = ServiceDescriptor.DescribeKeyed(typeof(IHostedService), null, keepAliveServiceType,
+                ServiceLifetime.Singleton);
+            services.TryAddEnumerable(descriptor);
+        }
+    }
+
+    /// <summary>
+    /// Register jobs and the job manager
+    /// </summary>
+    private static void AddJobs(HostBuilderContext context, IServiceCollection services)
+    {
+        services.TryAddScoped<PlayerCardTrackerJob>();
+        services.TryAddScoped<CardPriceTrackerJob>();
+        services.TryAddScoped<RosterUpdaterJob>();
+        services.TryAddSingleton<IJobManager>(sp =>
+        {
+            var interval = ParseInterval(context.Configuration.GetRequiredValue<string>("PlayerCardTracker:Interval"));
+            var seasons = context.Configuration.GetRequiredValue<ushort[]>("PlayerCardTracker:Seasons");
+            var jobSchedules = new List<JobSchedule>();
+            foreach (var season in seasons)
+            {
+                var input = new SeasonJobInput(SeasonYear.Create(season));
+                jobSchedules.Add(new JobSchedule(JobType: typeof(PlayerCardTrackerJob), JobInput: input,
+                    Interval: interval));
+                jobSchedules.Add(new JobSchedule(JobType: typeof(CardPriceTrackerJob), JobInput: input,
+                    Interval: interval));
+                jobSchedules.Add(
+                    new JobSchedule(JobType: typeof(RosterUpdaterJob), JobInput: input, Interval: interval));
+            }
+
+            var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+            var commService = sp.GetRequiredService<IRealTimeCommService>();
+            var logger = sp.GetRequiredService<ILogger<ScopedSingleInstanceJobManager>>();
+            return new ScopedSingleInstanceJobManager(scopeFactory, jobSchedules, commService, logger);
+        });
+
+        var jobManagerInterval = ParseInterval("00:00:01:00");
+
+        services.AddHostedService<ScheduledBackgroundService<IJobManager>>(sp =>
+            new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(), JobManagerWork,
+                jobManagerInterval));
+    }
+
+    /// <summary>
+    /// The job manager will run scheduled jobs on an interval
+    /// </summary>
+    private static readonly Func<IJobManager, IServiceProvider, CancellationToken, Task>
+        JobManagerWork = async (jobManager, sp, ct) => { await jobManager.RunScheduled(ct); };
+
+    private static TimeSpan ParseInterval(string interval)
+    {
+        return TimeSpan.ParseExact(interval, "g", CultureInfo.InvariantCulture);
     }
 }

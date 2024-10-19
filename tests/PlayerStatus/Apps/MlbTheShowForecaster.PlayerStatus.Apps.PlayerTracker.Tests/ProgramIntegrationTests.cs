@@ -76,17 +76,18 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await dbContext.Players.AddAsync(player);
         await dbContext.SaveChangesAsync();
 
+        // Will be used for asserting. Resolving before the service provider is shut down
+        using var rabbitMqChannel = app.Services.GetRequiredService<IModel>();
+
         /*
          * Act
          */
         // Cancellation token to stop the program
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         // Start the host
-        await app.StartAsync(cts.Token);
+        _ = app.RunAsync();
         // Let it do some work
         await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
-        // Stop the host
-        await app.StopAsync(cts.Token);
 
         /*
          * Assert
@@ -97,7 +98,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var players = assertDbContext.Players.Count();
         Assert.True(players > 0);
         // Domain events should have been published
-        using var rabbitMqChannel = app.Services.GetRequiredService<IModel>();
         var messageCount = rabbitMqChannel.MessageCount("PlayerActivated");
         Assert.True(messageCount > 0);
     }
