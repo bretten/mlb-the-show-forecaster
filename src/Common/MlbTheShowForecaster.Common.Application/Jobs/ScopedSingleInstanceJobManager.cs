@@ -9,7 +9,7 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 /// <see cref="IJobManager"/> that allows only one combination of <see cref="IJob"/> and <see cref="IJobInput"/> to be
 /// executing at any given time
 /// </summary>
-public sealed class SingleInstanceJobManager : IJobManager
+public sealed class ScopedSingleInstanceJobManager : IJobManager
 {
     /// <summary>
     /// <see cref="IServiceScopeFactory"/> that will resolve jobs within their own scope
@@ -29,7 +29,7 @@ public sealed class SingleInstanceJobManager : IJobManager
     /// <summary>
     /// Logger
     /// </summary>
-    private readonly ILogger<SingleInstanceJobManager> _logger;
+    private readonly ILogger<ScopedSingleInstanceJobManager> _logger;
 
     /// <summary>
     /// Status of the jobs, where the value is a <see cref="TaskCompletionSource{TResult}"/> that will track the result
@@ -47,8 +47,8 @@ public sealed class SingleInstanceJobManager : IJobManager
     /// <param name="schedules">Schedules for the available jobs</param>
     /// <param name="commService">Provides real time job status updates to clients</param>
     /// <param name="logger">Logger</param>
-    public SingleInstanceJobManager(IServiceScopeFactory serviceScopeFactory, IEnumerable<JobSchedule> schedules,
-        IRealTimeCommService commService, ILogger<SingleInstanceJobManager> logger)
+    public ScopedSingleInstanceJobManager(IServiceScopeFactory serviceScopeFactory, IEnumerable<JobSchedule> schedules,
+        IRealTimeCommService commService, ILogger<ScopedSingleInstanceJobManager> logger)
     {
         _serviceScopeFactory = serviceScopeFactory;
         _jobSchedules = schedules.ToList().AsReadOnly();

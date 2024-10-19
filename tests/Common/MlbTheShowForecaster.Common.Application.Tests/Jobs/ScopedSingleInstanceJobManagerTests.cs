@@ -7,7 +7,7 @@ using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Application.Tests.Jobs;
 
-public class SingleInstanceJobManagerTests
+public class ScopedSingleInstanceJobManagerTests
 {
     [Fact]
     public async Task Run_FailedJob_ThrowsException()
@@ -24,9 +24,10 @@ public class SingleInstanceJobManagerTests
 
         var (stubServiceScopeFactory, stubServiceScope) = MockScope(new List<IJob>() { job });
         var mockCommService = Mock.Of<IRealTimeCommService>();
-        var mockLogger = Mock.Of<ILogger<SingleInstanceJobManager>>();
+        var mockLogger = Mock.Of<ILogger<ScopedSingleInstanceJobManager>>();
 
-        var m = new SingleInstanceJobManager(stubServiceScopeFactory.Object, jobSchedules, mockCommService, mockLogger);
+        var m = new ScopedSingleInstanceJobManager(stubServiceScopeFactory.Object, jobSchedules, mockCommService,
+            mockLogger);
 
         var action = async () => await m.Run<TestExceptionJob, TestJobOutput>(jobInput, cToken);
 
@@ -62,9 +63,10 @@ public class SingleInstanceJobManagerTests
 
         var (stubServiceScopeFactory, stubServiceScope) = MockScope(new List<IJob>() { job });
         var mockCommService = Mock.Of<IRealTimeCommService>();
-        var mockLogger = Mock.Of<ILogger<SingleInstanceJobManager>>();
+        var mockLogger = Mock.Of<ILogger<ScopedSingleInstanceJobManager>>();
 
-        var m = new SingleInstanceJobManager(stubServiceScopeFactory.Object, jobSchedules, mockCommService, mockLogger);
+        var m = new ScopedSingleInstanceJobManager(stubServiceScopeFactory.Object, jobSchedules, mockCommService,
+            mockLogger);
 
         // Act
         _ = m.Run<TestJob, TestJobOutput>(jobInput, cToken);
@@ -92,9 +94,10 @@ public class SingleInstanceJobManagerTests
 
         var (stubServiceScopeFactory, stubServiceScope) = MockScope(new List<IJob>() { job });
         var mockCommService = Mock.Of<IRealTimeCommService>();
-        var mockLogger = Mock.Of<ILogger<SingleInstanceJobManager>>();
+        var mockLogger = Mock.Of<ILogger<ScopedSingleInstanceJobManager>>();
 
-        var m = new SingleInstanceJobManager(stubServiceScopeFactory.Object, jobSchedules, mockCommService, mockLogger);
+        var m = new ScopedSingleInstanceJobManager(stubServiceScopeFactory.Object, jobSchedules, mockCommService,
+            mockLogger);
 
         // Act
         _ = m.RunScheduled(cToken); // Start the scheduled job
