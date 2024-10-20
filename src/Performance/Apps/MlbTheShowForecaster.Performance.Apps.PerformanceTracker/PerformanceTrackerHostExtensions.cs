@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Reflection;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
@@ -7,7 +8,8 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
-using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Jobs;
+using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Jobs.Io;
 using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.RealTime;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Events.Participation;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Batting;
@@ -29,34 +31,6 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracke
 /// </summary>
 public static class PerformanceTrackerHostExtensions
 {
-    /// <summary>
-    /// The background work that will be done by <see cref="ScheduledBackgroundService{T}"/> for the <see cref="IPerformanceTracker"/>
-    /// </summary>
-    private static readonly Func<IPerformanceTracker, IServiceProvider, CancellationToken, Task>
-        PerformanceBackgroundWork = async (tracker, sp, ct) =>
-        {
-            var config = sp.GetRequiredService<IConfiguration>();
-            var logger = sp.GetRequiredService<ILogger<ScheduledBackgroundService<IPerformanceTracker>>>();
-            // Wait for NewPlayerSeasonEvents to be consumed
-            await Task.Delay(TimeSpan.FromSeconds(config.GetRequiredValue<int>("PerformanceTracker:StartDelay")));
-
-            // Service name
-            const string s = nameof(IPerformanceTracker);
-
-            // The seasons to track
-            var seasons = config.GetRequiredValue<ushort[]>("PerformanceTracker:Seasons");
-            foreach (var season in seasons)
-            {
-                logger.LogInformation($"{s} - {season}");
-                var result = await tracker.TrackPlayerPerformance(SeasonYear.Create(season), ct);
-                logger.LogInformation($"{s} - Total player seasons = {result.TotalPlayerSeasons}");
-                logger.LogInformation($"{s} - Total new player seasons = {result.TotalNewPlayerSeasons}");
-                logger.LogInformation($"{s} - Total player season updates = {result.TotalPlayerSeasonUpdates}");
-                logger.LogInformation(
-                    $"{s} - Total up-to-date player seasons = {result.TotalUpToDatePlayerSeasons}");
-            }
-        };
-
     /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be published in this domain mapped to their corresponding
     /// RabbitMQ exchanges
@@ -94,19 +68,8 @@ public static class PerformanceTrackerHostExtensions
         {
             services.AddLogging();
 
-            // Rabbit MQ
-            var factory = new ConnectionFactory
-            {
-                HostName = context.Configuration["Messaging:RabbitMq:HostName"],
-                UserName = context.Configuration["Messaging:RabbitMq:UserName"],
-                Password = context.Configuration["Messaging:RabbitMq:Password"],
-                Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
-                DispatchConsumersAsync = true
-            };
-            services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
-            {
-                typeof(PlayerBattedInGameEvent).Assembly
-            });
+            // Add messaging
+            AddMessaging(context, services);
 
             // Player performance tracking dependencies
             services.AddSingleton<ICalendar, Calendar>();
@@ -115,19 +78,74 @@ public static class PerformanceTrackerHostExtensions
             services.AddPerformancePlayerSeasonScorekeeper();
             services.AddPerformanceTracker(context.Configuration);
             services.AddPerformanceEntityFrameworkCoreRepositories(context.Configuration);
-            services.TryAddScoped<IRealTimeCommService, SignalRCommService>();
+            services.TryAddTransient<IRealTimeCommService, SignalRCommService>();
 
-            // Background service for tracking player performance
-            services.AddHostedService<ScheduledBackgroundService<IPerformanceTracker>>(sp =>
-                new ScheduledBackgroundService<IPerformanceTracker>(
-                    sp.GetRequiredService<IServiceScopeFactory>(),
-                    PerformanceBackgroundWork,
-                    TimeSpan.ParseExact(
-                        context.Configuration.GetRequiredValue<string>("PerformanceTracker:Interval"), "g",
-                        CultureInfo.InvariantCulture)
-                ));
+            // Register jobs and the job manager
+            AddJobs(context, services);
         });
 
         return builder;
+    }
+
+    /// <summary>
+    /// Add messaging
+    /// </summary>
+    private static void AddMessaging(HostBuilderContext context, IServiceCollection services)
+    {
+        var factory = new ConnectionFactory
+        {
+            HostName = context.Configuration["Messaging:RabbitMq:HostName"],
+            UserName = context.Configuration["Messaging:RabbitMq:UserName"],
+            Password = context.Configuration["Messaging:RabbitMq:Password"],
+            Port = context.Configuration.GetValue<int>("Messaging:RabbitMq:Port"),
+            DispatchConsumersAsync = true
+        };
+        services.AddRabbitMq(factory, DomainEventPublisherTypes, DomainEventConsumerTypes, new List<Assembly>()
+        {
+            typeof(PlayerBattedInGameEvent).Assembly
+        });
+    }
+
+    /// <summary>
+    /// Register jobs and the job manager
+    /// </summary>
+    private static void AddJobs(HostBuilderContext context, IServiceCollection services)
+    {
+        services.TryAddScoped<PerformanceTrackerJob>();
+        services.TryAddSingleton<IJobManager>(sp =>
+        {
+            var interval =
+                ParseInterval(context.Configuration.GetRequiredValue<string>("PerformanceTracker:Interval"));
+            var seasons = context.Configuration.GetRequiredValue<ushort[]>("PerformanceTracker:Seasons");
+            var jobSchedules = new List<JobSchedule>();
+            foreach (var season in seasons)
+            {
+                var input = new SeasonJobInput(SeasonYear.Create(season));
+                jobSchedules.Add(new JobSchedule(JobType: typeof(PerformanceTrackerJob), JobInput: input,
+                    Interval: interval));
+            }
+
+            var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
+            var commService = sp.GetRequiredService<IRealTimeCommService>();
+            var logger = sp.GetRequiredService<ILogger<ScopedSingleInstanceJobManager>>();
+            return new ScopedSingleInstanceJobManager(scopeFactory, jobSchedules, commService, logger);
+        });
+
+        var jobManagerInterval = ParseInterval("00:00:01:00");
+
+        services.AddHostedService<ScheduledBackgroundService<IJobManager>>(sp =>
+            new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(), JobManagerWork,
+                jobManagerInterval));
+    }
+
+    /// <summary>
+    /// The job manager will run scheduled jobs on an interval
+    /// </summary>
+    private static readonly Func<IJobManager, IServiceProvider, CancellationToken, Task>
+        JobManagerWork = async (jobManager, sp, ct) => { await jobManager.RunScheduled(ct); };
+
+    private static TimeSpan ParseInterval(string interval)
+    {
+        return TimeSpan.ParseExact(interval, "g", CultureInfo.InvariantCulture);
     }
 }
