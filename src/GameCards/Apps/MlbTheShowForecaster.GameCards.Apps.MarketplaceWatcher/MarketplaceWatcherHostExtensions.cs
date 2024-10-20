@@ -168,6 +168,7 @@ public static class MarketplaceWatcherHostExtensions
         services.TryAddScoped<PlayerCardTrackerJob>();
         services.TryAddScoped<CardPriceTrackerJob>();
         services.TryAddScoped<RosterUpdaterJob>();
+        services.TryAddScoped<TrendReporterJob>();
         services.TryAddSingleton<IJobManager>(sp =>
         {
             var interval = ParseInterval(context.Configuration.GetRequiredValue<string>("PlayerCardTracker:Interval"));
@@ -182,6 +183,7 @@ public static class MarketplaceWatcherHostExtensions
                     Interval: interval));
                 jobSchedules.Add(
                     new JobSchedule(JobType: typeof(RosterUpdaterJob), JobInput: input, Interval: interval));
+                jobSchedules.Add(new JobSchedule(JobType: typeof(TrendReporterJob), JobInput: input, Interval: interval));
             }
 
             var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
