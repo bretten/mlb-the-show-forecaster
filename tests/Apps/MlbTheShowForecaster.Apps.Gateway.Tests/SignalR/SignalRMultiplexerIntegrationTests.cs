@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace com.brettnamba.MlbTheShowForecaster.Apps.Gateway;
+namespace com.brettnamba.MlbTheShowForecaster.Apps.Gateway.Tests.SignalR;
 
 public class SignalRMultiplexerIntegrationTests
 {

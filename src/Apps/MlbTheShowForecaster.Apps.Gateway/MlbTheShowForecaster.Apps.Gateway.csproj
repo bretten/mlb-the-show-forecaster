@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AWSSDK.CognitoIdentityProvider" Version="3.7.403.17" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.10" />
       <PackageReference Include="Ocelot" Version="23.3.4" />
     </ItemGroup>

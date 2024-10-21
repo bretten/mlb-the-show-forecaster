@@ -13,7 +13,17 @@
           "Host": "localhost",
           "Port": 5003
         }
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "cognito/groups": [
+          "Admins",
+          "Viewers"
+        ]
+      }
     },
     // Marketplace jobs
     {
@@ -28,7 +38,14 @@
           "Host": "localhost",
           "Port": 5003
         }
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "cognito/groups": "Admins"
+      }
     },
     // Performance jobs
     {
@@ -43,7 +60,14 @@
           "Host": "localhost",
           "Port": 5002
         }
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "cognito/groups": "Admins"
+      }
     },
     // Players jobs
     {
@@ -58,7 +82,14 @@
           "Host": "localhost",
           "Port": 5001
         }
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "cognito/groups": "Admins"
+      }
     }
   ],
   "GlobalConfiguration": {

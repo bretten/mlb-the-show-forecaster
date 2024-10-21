@@ -140,6 +140,10 @@ public sealed class SignalRMultiplexer : BackgroundService
         {
             connectionBuilder.WithAutomaticReconnect(_options.RetryPolicy);
         }
+        else
+        {
+            connectionBuilder.WithAutomaticReconnect();
+        }
 
         var connection = connectionBuilder.Build();
 
