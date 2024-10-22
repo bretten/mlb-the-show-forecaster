@@ -15,7 +15,7 @@ public class PerformanceTrackerJobTests
         // Arrange
         var cToken = CancellationToken.None;
         var input = new SeasonJobInput(SeasonYear.Create(2024));
-        var result = Application.Tests.Services.TestClasses.Faker.FakePerformanceTrackerResult();
+        var result = Application.Tests.Services.TestClasses.Faker.FakePerformanceTrackerResult(1, 2, 3);
 
         var stubPerformanceTracker = new Mock<IPerformanceTracker>();
         stubPerformanceTracker.Setup(x => x.TrackPlayerPerformance(input.Year, cToken))
@@ -29,6 +29,8 @@ public class PerformanceTrackerJobTests
         var actual = await job.Execute(input, cToken);
 
         // Arrange
-        Assert.Equal(result, actual.Result);
+        Assert.Equal(1, actual.TotalPlayerSeasons);
+        Assert.Equal(2, actual.TotalNewPlayerSeasons);
+        Assert.Equal(3, actual.TotalPlayerSeasonUpdates);
     }
 }

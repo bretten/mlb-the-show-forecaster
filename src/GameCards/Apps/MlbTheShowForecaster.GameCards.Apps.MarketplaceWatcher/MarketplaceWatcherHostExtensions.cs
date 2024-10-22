@@ -183,7 +183,8 @@ public static class MarketplaceWatcherHostExtensions
                     Interval: interval));
                 jobSchedules.Add(
                     new JobSchedule(JobType: typeof(RosterUpdaterJob), JobInput: input, Interval: interval));
-                jobSchedules.Add(new JobSchedule(JobType: typeof(TrendReporterJob), JobInput: input, Interval: interval));
+                jobSchedules.Add(
+                    new JobSchedule(JobType: typeof(TrendReporterJob), JobInput: input, Interval: interval));
             }
 
             var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();

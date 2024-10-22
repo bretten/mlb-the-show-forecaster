@@ -46,7 +46,8 @@ public sealed class PlayerStatusTrackerJob : BaseJob<SeasonJobInput, PlayerStatu
         _logger.LogInformation($"{S} - Total new players = {result.TotalNewPlayers}");
         _logger.LogInformation($"{S} - Total updated players = {result.TotalUpdatedPlayers}");
         _logger.LogInformation($"{S} - Total unchanged players = {result.TotalUnchangedPlayers}");
-        return new PlayerStatusTrackerJobResult(result);
+        return new PlayerStatusTrackerJobResult(TotalRosterEntries: result.TotalRosterEntries,
+            TotalNewPlayers: result.TotalNewPlayers, TotalUpdatedPlayers: result.TotalUpdatedPlayers);
     }
 
     /// <summary>

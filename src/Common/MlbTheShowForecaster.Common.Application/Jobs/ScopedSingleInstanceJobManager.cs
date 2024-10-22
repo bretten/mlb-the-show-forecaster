@@ -1,5 +1,7 @@
 ﻿using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
+using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -90,7 +92,7 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
         try
         {
             _logger.LogInformation($"Starting job {jobName}");
-            await _commService.Broadcast(jobName, "Start", cancellationToken);
+            await _commService.Broadcast(jobName, JobState.Start(), cancellationToken);
 
             // Resolve the job
             var scope = _serviceScopeFactory.CreateScope();
@@ -104,14 +106,12 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
             tcs.SetResult(result);
             UpdateLastRun(jobExecution);
 
-            await _commService.Broadcast(jobName, "Finished", cancellationToken);
-            await _commService.Broadcast(jobName, result, cancellationToken);
-            await _commService.Broadcast(jobName, "Ready", cancellationToken);
+            await _commService.Broadcast(jobName, JobState.Done(data: result), cancellationToken);
         }
         catch (Exception e)
         {
             _logger.LogError(e, $"Job {jobName} failed");
-            await _commService.Broadcast(jobName, "Error", cancellationToken);
+            await _commService.Broadcast(jobName, JobState.Error(), cancellationToken);
             tcs.SetException(e);
         }
 
@@ -168,13 +168,81 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
     private async Task BroadcastProgress(JobExecution jobExecution, CancellationToken cancellationToken)
     {
         _logger.LogInformation($"{jobExecution.JobType.Name} in progress...");
-        await _commService.Broadcast(jobExecution.JobType.Name, "In Progress", cancellationToken);
+        await _commService.Broadcast(jobExecution.JobType.Name, JobState.InProgress(), cancellationToken);
     }
 
     /// <summary>
     /// Represents an execution of a job
     /// </summary>
     private sealed record JobExecution(Type JobType, IJobInput JobInput);
+
+    /// <summary>
+    /// Represents the state of a job
+    /// </summary>
+    public sealed record JobState
+    {
+        /// <summary>
+        /// The state of the job
+        /// </summary>
+        private readonly StateType _state;
+
+        /// <summary>
+        /// State of the job as a string
+        /// </summary>
+        public string State => _state.ToString();
+
+        /// <summary>
+        /// Message about the state
+        /// </summary>
+        public string Message { get; }
+
+        /// <summary>
+        /// Data about the state
+        /// </summary>
+        public object? Data { get; }
+
+        private JobState(StateType state, string message, object? data)
+        {
+            _state = state;
+            Message = message;
+            Data = data;
+        }
+
+        public static JobState Start(string? message = null, object? data = null)
+        {
+            return new JobState(StateType.Start, message ?? StateType.Start.GetDisplayName(), data);
+        }
+
+        public static JobState InProgress(string? message = null, object? data = null)
+        {
+            return new JobState(StateType.InProgress, message ?? StateType.InProgress.GetDisplayName(), data);
+        }
+
+        public static JobState Done(string? message = null, object? data = null)
+        {
+            return new JobState(StateType.Done, message ?? StateType.Done.GetDisplayName(), data);
+        }
+
+        public static JobState Error(string? message = null, object? data = null)
+        {
+            return new JobState(StateType.Error, message ?? StateType.Error.GetDisplayName(), data);
+        }
+    }
+
+    /// <summary>
+    /// All possible states
+    /// </summary>
+    private enum StateType
+    {
+        [Display(Name = "Starting...")] Start,
+
+        [Display(Name = "In progress...")] InProgress,
+
+        [Display(Name = "Finished!")] Done,
+
+        [Display(Name = "The job encountered an error")]
+        Error
+    }
 
     /// <summary>
     /// Dispose

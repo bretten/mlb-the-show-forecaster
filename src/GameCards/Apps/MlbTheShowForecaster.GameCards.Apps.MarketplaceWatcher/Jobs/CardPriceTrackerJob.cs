@@ -46,7 +46,8 @@ public sealed class CardPriceTrackerJob : BaseJob<SeasonJobInput, CardPriceTrack
         _logger.LogInformation($"{S} - Total new listings = {result.TotalNewListings}");
         _logger.LogInformation($"{S} - Total updated listings = {result.TotalUpdatedListings}");
         _logger.LogInformation($"{S} - Total unchanged listings = {result.TotalUnchangedListings}");
-        return new CardPriceTrackerJobResult(result);
+        return new CardPriceTrackerJobResult(TotalCards: result.TotalCards, TotalNewListings: result.TotalNewListings,
+            TotalUpdatedListings: result.TotalUpdatedListings);
     }
 
     /// <summary>
