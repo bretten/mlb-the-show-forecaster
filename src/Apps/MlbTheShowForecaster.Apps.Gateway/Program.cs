@@ -51,14 +51,15 @@ builder.Services.AddAuthorization(options =>
 });
 
 // CORS (only allowed in development mode, such as developing in a separate SPA)
-if (authConfig.AllowCors && builder.Environment.IsDevelopment())
+var allowCors = authConfig.AllowCors && builder.Environment.IsDevelopment();
+if (allowCors)
 {
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("AllowSpecificOrigins",
             corsPolicyBuilder =>
             {
-                var trustedOrigins = builder.Configuration.GetSection("Cors:TrustedOrigins").Get<string[]>();
+                var trustedOrigins = builder.Configuration.GetSection("CorsTrustedOrigins").Get<string[]>();
                 if (trustedOrigins == null)
                 {
                     throw new ArgumentException("No trusted origins specified");
@@ -88,6 +89,11 @@ builder.Services.AddOcelot();
 builder.Services.AddAwsCognitoClaimsAuthorizer();
 
 var app = builder.Build();
+
+if (allowCors)
+{
+    app.UseCors("AllowSpecificOrigins");
+}
 
 app.UseRouting();
 app.UseAuthentication();
