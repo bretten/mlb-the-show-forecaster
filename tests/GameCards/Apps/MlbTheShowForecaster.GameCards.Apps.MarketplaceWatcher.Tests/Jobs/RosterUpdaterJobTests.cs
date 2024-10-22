@@ -4,6 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs.Io;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -17,8 +18,14 @@ public class RosterUpdaterJobTests
         // Arrange
         var cToken = CancellationToken.None;
         var input = new SeasonJobInput(SeasonYear.Create(2024));
-        var result = new List<RosterUpdateOrchestratorResult>() { Faker.FakeRosterUpdateOrchestratorResult() };
-        var historyResult = Faker.FakePlayerRatingHistoryResult();
+        var result = new List<RosterUpdateOrchestratorResult>()
+        {
+            Faker.FakeRosterUpdateOrchestratorResult(), Faker.FakeRosterUpdateOrchestratorResult()
+        };
+        var historyResult = Faker.FakePlayerRatingHistoryResult(new List<PlayerCard>()
+        {
+            Domain.Tests.Cards.TestClasses.Faker.FakePlayerCard()
+        });
 
         var stubRosterUpdateOrchestrator = new Mock<IRosterUpdateOrchestrator>();
         stubRosterUpdateOrchestrator.Setup(x => x.SyncRosterUpdates(input.Year, cToken))
@@ -37,6 +44,7 @@ public class RosterUpdaterJobTests
         var actual = await job.Execute(input, cToken);
 
         // Arrange
-        Assert.Equal(result, actual.Result);
+        Assert.Equal(2, actual.TotalRosterUpdatesApplied);
+        Assert.Equal(1, actual.TotalHistoricalUpdatesApplied);
     }
 }

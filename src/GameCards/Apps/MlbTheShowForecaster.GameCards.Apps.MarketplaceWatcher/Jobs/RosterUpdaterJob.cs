@@ -73,7 +73,8 @@ public sealed class RosterUpdaterJob : BaseJob<SeasonJobInput, RosterUpdaterJobR
             _logger.LogInformation($"{S} - Total new players = {result.TotalNewPlayers}");
         }
 
-        return new RosterUpdaterJobResult(results);
+        return new RosterUpdaterJobResult(TotalHistoricalUpdatesApplied: historyResult.UpdatedPlayerCards.Count(),
+            TotalRosterUpdatesApplied: results.Count);
     }
 
     /// <summary>

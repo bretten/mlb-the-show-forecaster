@@ -16,7 +16,7 @@ public class CardPriceTrackerJobTests
         // Arrange
         var cToken = CancellationToken.None;
         var input = new SeasonJobInput(SeasonYear.Create(2024));
-        var result = Faker.FakeCardPriceTrackerResult();
+        var result = Faker.FakeCardPriceTrackerResult(1, 2, 3);
 
         var stubCardPriceTracker = new Mock<ICardPriceTracker>();
         stubCardPriceTracker.Setup(x => x.TrackCardPrices(input.Year, cToken))
@@ -30,6 +30,8 @@ public class CardPriceTrackerJobTests
         var actual = await job.Execute(input, cToken);
 
         // Arrange
-        Assert.Equal(result, actual.Result);
+        Assert.Equal(1, actual.TotalCards);
+        Assert.Equal(2, actual.TotalNewListings);
+        Assert.Equal(3, actual.TotalUpdatedListings);
     }
 }

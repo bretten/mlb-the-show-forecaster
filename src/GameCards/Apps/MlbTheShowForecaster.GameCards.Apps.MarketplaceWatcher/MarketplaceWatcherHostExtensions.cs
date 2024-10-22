@@ -183,7 +183,8 @@ public static class MarketplaceWatcherHostExtensions
                     Interval: interval));
                 jobSchedules.Add(
                     new JobSchedule(JobType: typeof(RosterUpdaterJob), JobInput: input, Interval: interval));
-                jobSchedules.Add(new JobSchedule(JobType: typeof(TrendReporterJob), JobInput: input, Interval: interval));
+                jobSchedules.Add(
+                    new JobSchedule(JobType: typeof(TrendReporterJob), JobInput: input, Interval: interval));
             }
 
             var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
@@ -192,7 +193,7 @@ public static class MarketplaceWatcherHostExtensions
             return new ScopedSingleInstanceJobManager(scopeFactory, jobSchedules, commService, logger);
         });
 
-        var jobManagerInterval = ParseInterval("00:00:01:00");
+        var jobManagerInterval = ParseInterval(context.Configuration.GetRequiredValue<string>("Jobs:Interval"));
 
         services.AddHostedService<ScheduledBackgroundService<IJobManager>>(sp =>
             new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(), JobManagerWork,

@@ -16,7 +16,7 @@ public class PlayerStatusTrackerJobTests
         // Arrange
         var cToken = CancellationToken.None;
         var input = new SeasonJobInput(SeasonYear.Create(2024));
-        var result = Faker.FakePlayerStatusTrackerResult();
+        var result = Faker.FakePlayerStatusTrackerResult(1, 2, 3);
 
         var stubPlayerStatusTracker = new Mock<IPlayerStatusTracker>();
         stubPlayerStatusTracker.Setup(x => x.TrackPlayers(input.Year, cToken))
@@ -30,6 +30,8 @@ public class PlayerStatusTrackerJobTests
         var actual = await job.Execute(input, cToken);
 
         // Arrange
-        Assert.Equal(result, actual.Result);
+        Assert.Equal(1, actual.TotalRosterEntries);
+        Assert.Equal(2, actual.TotalNewPlayers);
+        Assert.Equal(3, actual.TotalUpdatedPlayers);
     }
 }

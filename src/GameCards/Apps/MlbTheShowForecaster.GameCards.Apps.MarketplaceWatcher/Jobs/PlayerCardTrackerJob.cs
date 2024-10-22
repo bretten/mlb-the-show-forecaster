@@ -47,7 +47,8 @@ public sealed class PlayerCardTrackerJob : BaseJob<SeasonJobInput, PlayerCardTra
         _logger.LogInformation($"{S} - Total updated player cards = {result.TotalUpdatedPlayerCards}");
         _logger.LogInformation($"{S} - Total unchanged player cards = {result.TotalUnchangedPlayerCards}");
 
-        return new PlayerCardTrackerJobResult(result);
+        return new PlayerCardTrackerJobResult(TotalCatalogCards: result.TotalCatalogCards,
+            TotalNewCatalogCards: result.TotalNewCatalogCards, TotalUpdatedPlayerCards: result.TotalUpdatedPlayerCards);
     }
 
     /// <summary>

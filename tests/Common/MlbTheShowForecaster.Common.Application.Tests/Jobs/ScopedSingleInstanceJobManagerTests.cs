@@ -35,7 +35,8 @@ public class ScopedSingleInstanceJobManagerTests
         var actual = await Record.ExceptionAsync(action);
 
         // Assert
-        Mock.Get(mockCommService).Verify(x => x.Broadcast(jobName, "Error", cToken), Times.Once);
+        var error = ScopedSingleInstanceJobManager.JobState.Error();
+        Mock.Get(mockCommService).Verify(x => x.Broadcast(jobName, error, cToken), Times.Once);
         Mock.Get(mockLogger).Verify(x => x.Log(LogLevel.Error,
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((o, t) => o.ToString()!.Equals("Job TestExceptionJob failed")),
