@@ -1,6 +1,9 @@
-﻿using System.Net;
+﻿using System.ComponentModel;
+using System.Net;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Exceptions;
@@ -27,12 +30,15 @@ public sealed class PlayerMatcher : IPlayerMatcher
     }
 
     /// <inheritdoc />
-    public async Task<MlbId?> GetPlayerByName(CardName name, TeamShortName teamShortName)
+    public async Task<Player?> GetPlayerByName(CardName name, TeamShortName teamShortName)
     {
         var response = await _playerStatusApi.FindPlayer(name.Value, teamShortName.Value);
         if (response.IsSuccessStatusCode)
         {
-            return MlbId.Create(response.Content.MlbId);
+            return new Player(MlbId.Create(response.Content.MlbId),
+                $"{response.Content.FirstName} {response.Content.LastName}",
+                (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(response.Content.Position)!,
+                teamShortName);
         }
 
         // Valid case, the server returns 404 when the query does not match a player

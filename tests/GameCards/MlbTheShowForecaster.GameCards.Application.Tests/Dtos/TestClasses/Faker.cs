@@ -251,4 +251,10 @@ public static class Faker
     {
         return PaginationResult<TrendReport>.Create(page, pageSize, totalItems, items ?? Array.Empty<TrendReport>());
     }
+
+    public static Player FakePlayer(int mlbId = 1, string name = "dot spot", Position position = Position.CenterField,
+        string team = "SEA")
+    {
+        return new Player(MlbId.Create(mlbId), name, position, TeamShortName.Create(team));
+    }
 }

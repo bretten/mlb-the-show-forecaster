@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi.Responses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
@@ -53,7 +54,10 @@ public class PlayerMatcherTests
 
         // Assert
         Assert.NotNull(actual);
-        Assert.Equal(1, actual.Value);
+        Assert.Equal(1, actual.Value.MlbId.Value);
+        Assert.Equal("dot spot", actual.Value.Name);
+        Assert.Equal(Position.RightField, actual.Value.Position);
+        Assert.Equal("SEA", actual.Value.Team.Value);
     }
 
     [Fact]
