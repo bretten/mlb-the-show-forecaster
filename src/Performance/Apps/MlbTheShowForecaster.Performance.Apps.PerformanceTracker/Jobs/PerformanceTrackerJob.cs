@@ -46,7 +46,9 @@ public sealed class PerformanceTrackerJob : BaseJob<SeasonJobInput, PerformanceT
         _logger.LogInformation($"{S} - Total new player seasons = {result.TotalNewPlayerSeasons}");
         _logger.LogInformation($"{S} - Total player season updates = {result.TotalPlayerSeasonUpdates}");
         _logger.LogInformation($"{S} - Total up-to-date player seasons = {result.TotalUpToDatePlayerSeasons}");
-        return new PerformanceTrackerJobResult(result);
+        return new PerformanceTrackerJobResult(TotalPlayerSeasons: result.TotalPlayerSeasons,
+            TotalNewPlayerSeasons: result.TotalNewPlayerSeasons,
+            TotalPlayerSeasonUpdates: result.TotalPlayerSeasonUpdates);
     }
 
     /// <summary>

@@ -16,7 +16,7 @@ public class PlayerCardTrackerJobTests
         // Arrange
         var cToken = CancellationToken.None;
         var input = new SeasonJobInput(SeasonYear.Create(2024));
-        var result = Faker.FakePlayerCardTrackerResult();
+        var result = Faker.FakePlayerCardTrackerResult(1, 2, 3);
 
         var stubPlayerCardTracker = new Mock<IPlayerCardTracker>();
         stubPlayerCardTracker.Setup(x => x.TrackPlayerCards(input.Year, cToken))
@@ -30,6 +30,8 @@ public class PlayerCardTrackerJobTests
         var actual = await job.Execute(input, cToken);
 
         // Arrange
-        Assert.Equal(result, actual.Result);
+        Assert.Equal(1, actual.TotalCatalogCards);
+        Assert.Equal(2, actual.TotalNewCatalogCards);
+        Assert.Equal(3, actual.TotalUpdatedPlayerCards);
     }
 }
