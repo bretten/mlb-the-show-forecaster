@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
@@ -15,5 +16,5 @@ public interface IPlayerMatcher
     /// <param name="name"><see cref="CardName"/></param>
     /// <param name="teamShortName"><see cref="TeamShortName"/></param>
     /// <returns>The player's <see cref="MlbId"/> or null if no matching player was found</returns>
-    Task<MlbId?> GetPlayerByName(CardName name, TeamShortName teamShortName);
+    Task<Player?> GetPlayerByName(CardName name, TeamShortName teamShortName);
 }
