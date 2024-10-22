@@ -131,7 +131,7 @@ public static class PerformanceTrackerHostExtensions
             return new ScopedSingleInstanceJobManager(scopeFactory, jobSchedules, commService, logger);
         });
 
-        var jobManagerInterval = ParseInterval("00:00:01:00");
+        var jobManagerInterval = ParseInterval(context.Configuration.GetRequiredValue<string>("Jobs:Interval"));
 
         services.AddHostedService<ScheduledBackgroundService<IJobManager>>(sp =>
             new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(), JobManagerWork,
