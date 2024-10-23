@@ -73,6 +73,16 @@ if (allowCors)
     });
 }
 
+// SPA
+var spaConfig = builder.Configuration.GetRequiredSection("Spa");
+var useSpa = spaConfig.GetValue<bool>("Active");
+var spaRoot = spaConfig.GetValue<string>("RootPath")!;
+var spaPathsToReserve = spaConfig.GetSection("PathsToReserve").Get<string[]>()!;
+if (useSpa)
+{
+    builder.Services.AddSpaStaticFiles(configuration => { configuration.RootPath = spaRoot; });
+}
+
 // SignalR multiplexer
 builder.Services.AddSingleton<SignalRMultiplexer.Options>(_ =>
 {
@@ -95,28 +105,77 @@ if (allowCors)
     app.UseCors("AllowSpecificOrigins");
 }
 
+// Routing and auth
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// In order to use both Ocelot and ASP.NET controllers, you need UseEndpoints => MapControllers, not just MapControllers (https://github.com/Burgyn/MMLib.SwaggerForOcelot/issues/277#issuecomment-2004186620)
-#pragma warning disable ASP0014
-app.UseEndpoints(
-    routeBuilder =>
-    {
-        routeBuilder.MapControllers();
-        routeBuilder.MapHub<GatewayHub>("/job-hub");
-    });
-#pragma warning restore ASP0014
-
-// Needs to be before UseOcelot (https://stackoverflow.com/a/63472914/1251396)
-app.UseWebSockets();
-
-// Ocelot should be last
-await app.UseOcelot();
+// Map endpoints
+if (useSpa)
+{
+    UseSpaAndGateway(app, Path.Combine(builder.Environment.ContentRootPath, spaRoot), spaPathsToReserve);
+}
+else
+{
+    await UseOnlyGateway(app);
+}
 
 await app.RunAsync();
 return;
+
+static async Task UseOnlyGateway(IApplicationBuilder app)
+{
+    // In order to use both Ocelot and ASP.NET controllers, you need UseEndpoints => MapControllers, not just MapControllers (https://github.com/Burgyn/MMLib.SwaggerForOcelot/issues/277#issuecomment-2004186620)
+#pragma warning disable ASP0014
+    app.UseEndpoints(
+        routeBuilder =>
+        {
+            routeBuilder.MapControllers();
+            routeBuilder.MapHub<GatewayHub>("/job-hub");
+        });
+#pragma warning restore ASP0014
+
+    // Needs to be before UseOcelot (https://stackoverflow.com/a/63472914/1251396)
+    app.UseWebSockets();
+
+    // Ocelot should be last
+    await app.UseOcelot();
+}
+
+static void UseSpaAndGateway(IApplicationBuilder app, string sourcePath, string[] pathsToReserve)
+{
+    app.UseStaticFiles();
+    app.UseSpaStaticFiles();
+
+    // SPA
+    var reservedPaths = pathsToReserve.Select(x => $"/{x}") // Reserve endpoints for SPA
+        .Append("/"); // Reserve the root
+    app.MapWhen(context => reservedPaths.Any(x => context.Request.Path == x),
+        applicationBuilder =>
+        {
+            applicationBuilder.UseSpa(spaBuilder => { spaBuilder.Options.SourcePath = sourcePath; });
+        });
+
+    // Needs to be before UseOcelot (https://stackoverflow.com/a/63472914/1251396)
+    app.UseWebSockets();
+
+    async void ApiMapping(IApplicationBuilder applicationBuilder)
+    {
+        // In order to use both Ocelot and ASP.NET controllers, you need UseEndpoints => MapControllers, not just MapControllers (https://github.com/Burgyn/MMLib.SwaggerForOcelot/issues/277#issuecomment-2004186620)
+#pragma warning disable ASP0014
+        applicationBuilder.UseEndpoints(routeBuilder =>
+        {
+            routeBuilder.MapControllers();
+            routeBuilder.MapHub<GatewayHub>("/job-hub");
+        });
+#pragma warning restore ASP0014
+
+        // Ocelot should be last
+        await applicationBuilder.UseOcelot();
+    }
+
+    app.Map("/api", ApiMapping);
+}
 
 static AuthConfiguration GetAuthConfig(WebApplicationBuilder builder)
 {
