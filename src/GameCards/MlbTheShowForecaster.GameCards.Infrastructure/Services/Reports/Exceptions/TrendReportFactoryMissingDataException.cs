@@ -29,5 +29,11 @@ public sealed class TrendReportFactoryMissingDataException : Exception
         Message = $"Forecast required to retrieve data, but could not be found for {year.Value} and {mlbId.Value}";
     }
 
+    public TrendReportFactoryMissingDataException(PlayerCard card)
+    {
+        Message =
+            $"Player info required, but could not be found for {card.Name} and {card.ExternalId.Value.ToString()}";
+    }
+
     public override string Message { get; }
 }

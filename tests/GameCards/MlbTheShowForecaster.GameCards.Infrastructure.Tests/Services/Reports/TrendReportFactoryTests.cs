@@ -3,6 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi.Responses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
@@ -48,12 +49,14 @@ public class TrendReportFactoryTests
 
         var mockPerformanceApi = Mock.Of<IPerformanceApi>();
 
+        var mockPlayerMatcher = Mock.Of<IPlayerMatcher>();
+
         var stubCalendar = new Mock<ICalendar>();
         stubCalendar.Setup(x => x.Today())
             .Returns(new DateOnly(2024, 10, 8));
 
         var factory = new TrendReportFactory(stubPlayerCardRepository.Object, stubListingRepository.Object,
-            stubForecastRepository.Object, mockPerformanceApi, stubCalendar.Object);
+            stubForecastRepository.Object, mockPerformanceApi, mockPlayerMatcher, stubCalendar.Object);
 
         var action = async () => await factory.GetReport(playerCard.Year, playerCard.ExternalId, cToken);
 
@@ -81,6 +84,7 @@ public class TrendReportFactoryTests
         forecast.Reassess(Domain.Tests.Forecasts.TestClasses.Faker.FakeBoostForecastImpact(
                 startDate: new DateOnly(2024, 10, 8), endDate: new DateOnly(2024, 10, 9)),
             new DateOnly(2024, 10, 9));
+        var player = Application.Tests.Dtos.TestClasses.Faker.FakePlayer();
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
         stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
@@ -121,12 +125,16 @@ public class TrendReportFactoryTests
                     }
                 }, new RefitSettings()));
 
+        var stubPlayerMatcher = new Mock<IPlayerMatcher>();
+        stubPlayerMatcher.Setup(x => x.GetPlayerByName(playerCard.Name, playerCard.TeamShortName))
+            .ReturnsAsync(player);
+
         var stubCalendar = new Mock<ICalendar>();
         stubCalendar.Setup(x => x.Today())
             .Returns(new DateOnly(2024, 10, 8));
 
         var factory = new TrendReportFactory(stubPlayerCardRepository.Object, stubListingRepository.Object,
-            stubForecastRepository.Object, stubPerformanceApi.Object, stubCalendar.Object);
+            stubForecastRepository.Object, stubPerformanceApi.Object, stubPlayerMatcher.Object, stubCalendar.Object);
 
         // Act
         var actual = await factory.GetReport(playerCard.Year, playerCard.ExternalId, cToken);
@@ -193,12 +201,14 @@ public class TrendReportFactoryTests
 
         var mockPerformanceApi = Mock.Of<IPerformanceApi>();
 
+        var mockPlayerMatcher = Mock.Of<IPlayerMatcher>();
+
         var stubCalendar = new Mock<ICalendar>();
         stubCalendar.Setup(x => x.Today())
             .Returns(new DateOnly(2024, 10, 8));
 
         var factory = new TrendReportFactory(stubPlayerCardRepository.Object, stubListingRepository.Object,
-            stubForecastRepository.Object, mockPerformanceApi, stubCalendar.Object);
+            stubForecastRepository.Object, mockPerformanceApi, mockPlayerMatcher, stubCalendar.Object);
 
         var action = async () => await factory.GetReport(forecast.Year, forecast.MlbId!, cToken);
 
@@ -227,6 +237,7 @@ public class TrendReportFactoryTests
         forecast.Reassess(Domain.Tests.Forecasts.TestClasses.Faker.FakeBoostForecastImpact(
                 startDate: new DateOnly(2024, 10, 8), endDate: new DateOnly(2024, 10, 9)),
             new DateOnly(2024, 10, 9));
+        var player = Application.Tests.Dtos.TestClasses.Faker.FakePlayer();
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
         stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
@@ -267,12 +278,16 @@ public class TrendReportFactoryTests
                     }
                 }, new RefitSettings()));
 
+        var stubPlayerMatcher = new Mock<IPlayerMatcher>();
+        stubPlayerMatcher.Setup(x => x.GetPlayerByName(playerCard.Name, playerCard.TeamShortName))
+            .ReturnsAsync(player);
+
         var stubCalendar = new Mock<ICalendar>();
         stubCalendar.Setup(x => x.Today())
             .Returns(new DateOnly(2024, 10, 8));
 
         var factory = new TrendReportFactory(stubPlayerCardRepository.Object, stubListingRepository.Object,
-            stubForecastRepository.Object, stubPerformanceApi.Object, stubCalendar.Object);
+            stubForecastRepository.Object, stubPerformanceApi.Object, stubPlayerMatcher.Object, stubCalendar.Object);
 
         // Act
         var actual = await factory.GetReport(playerCard.Year, forecast.MlbId!, cToken);
