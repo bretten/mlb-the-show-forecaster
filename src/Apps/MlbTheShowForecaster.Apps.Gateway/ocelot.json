@@ -5,7 +5,7 @@
       "UpstreamHttpMethod": [
         "GET"
       ],
-      "UpstreamPathTemplate": "/api/marketplace/trends",
+      "UpstreamPathTemplate": "/marketplace/trends",
       "DownstreamPathTemplate": "/trends",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -30,7 +30,7 @@
       "UpstreamHttpMethod": [
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/marketplace/jobs/start",
+      "UpstreamPathTemplate": "/marketplace/jobs/start",
       "DownstreamPathTemplate": "/jobs/start",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -52,7 +52,7 @@
       "UpstreamHttpMethod": [
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/performance/jobs/start",
+      "UpstreamPathTemplate": "/performance/jobs/start",
       "DownstreamPathTemplate": "/jobs/start",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
@@ -74,7 +74,7 @@
       "UpstreamHttpMethod": [
         "POST"
       ],
-      "UpstreamPathTemplate": "/api/players/jobs/start",
+      "UpstreamPathTemplate": "/players/jobs/start",
       "DownstreamPathTemplate": "/jobs/start",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
