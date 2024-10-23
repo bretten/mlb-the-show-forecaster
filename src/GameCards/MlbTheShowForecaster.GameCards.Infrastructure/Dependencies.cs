@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AngleSharp;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
@@ -33,6 +34,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
 using Npgsql;
 using Refit;
+using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure;
 
@@ -75,6 +77,11 @@ public static class Dependencies
         /// <see cref="ListingPriceSignificantChangeThreshold.SellPricePercentageChangeThreshold"/> conig key
         /// </summary>
         public const string SellPricePercentageChangeThreshold = "CardPriceTracker:SellPricePercentageChangeThreshold";
+
+        /// <summary>
+        /// Config key that determines if the website should be used for historical prices
+        /// </summary>
+        public const string UseWebsiteForHistoricalPrices = "CardPriceTracker:UseWebsiteForHistoricalPrices";
 
         /// <summary>
         /// PlayerStatus API base address config key
@@ -139,7 +146,21 @@ public static class Dependencies
         });
         services.TryAddSingleton<IMlbTheShowApiFactory, MlbTheShowApiFactory>();
         services.TryAddSingleton<IMlbTheShowListingMapper, MlbTheShowListingMapper>();
-        services.TryAddTransient<ICardMarketplace, MlbTheShowApiCardMarketplace>();
+        var useWebsite = config.GetRequiredValue<bool>(ConfigKeys.UseWebsiteForHistoricalPrices);
+        if (useWebsite)
+        {
+            services.AddTransient<ICardMarketplace, MlbTheShowComCardMarketplace>(sp =>
+            {
+                var angleSharpConfig = Configuration.Default.WithDefaultLoader();
+                var browsingContext = BrowsingContext.New(angleSharpConfig);
+                return new MlbTheShowComCardMarketplace(browsingContext);
+            });
+        }
+        else
+        {
+            services.TryAddTransient<ICardMarketplace, MlbTheShowApiCardMarketplace>();
+        }
+
         services.TryAddTransient<ICardPriceTracker, CardPriceTracker>();
     }
 
