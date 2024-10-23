@@ -4,7 +4,9 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi.Responses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Reports;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
@@ -45,6 +47,11 @@ public sealed class TrendReportFactory : ITrendReportFactory
     private readonly IPerformanceApi _performanceApi;
 
     /// <summary>
+    /// Gets player info
+    /// </summary>
+    private readonly IPlayerMatcher _playerMatcher;
+
+    /// <summary>
     /// Calendar to get today's date
     /// </summary>
     private readonly ICalendar _calendar;
@@ -56,15 +63,18 @@ public sealed class TrendReportFactory : ITrendReportFactory
     /// <param name="listingRepository">The <see cref="Listing"/> repository</param>
     /// <param name="forecastRepository">The <see cref="PlayerCardForecast"/> repository</param>
     /// <param name="performanceApi">Performance API for querying stat metrics</param>
+    /// <param name="playerMatcher">Gets player info</param>
     /// <param name="calendar">Calendar to get today's date</param>
     public TrendReportFactory(IPlayerCardRepository playerCardRepository, IListingRepository listingRepository,
-        IForecastRepository forecastRepository, IPerformanceApi performanceApi, ICalendar calendar)
+        IForecastRepository forecastRepository, IPerformanceApi performanceApi, IPlayerMatcher playerMatcher,
+        ICalendar calendar)
     {
         _playerCardRepository = playerCardRepository;
         _listingRepository = listingRepository;
         _forecastRepository = forecastRepository;
         _performanceApi = performanceApi;
         _calendar = calendar;
+        _playerMatcher = playerMatcher;
     }
 
     /// <inheritdoc />
@@ -77,7 +87,10 @@ public sealed class TrendReportFactory : ITrendReportFactory
         // Get performance metrics
         var performanceMetrics = await GetPerformanceMetrics(year, mlbId);
 
-        return MapReport(card, listing, forecast, mlbId, performanceMetrics);
+        // Get player info
+        var player = await GetPlayerInfo(card);
+
+        return MapReport(card, listing, forecast, mlbId, performanceMetrics, player);
     }
 
     /// <inheritdoc />
@@ -89,7 +102,10 @@ public sealed class TrendReportFactory : ITrendReportFactory
         // Get performance metrics
         var performanceMetrics = await GetPerformanceMetrics(year, mlbId);
 
-        return MapReport(card, listing, forecast, mlbId, performanceMetrics);
+        // Get player info
+        var player = await GetPlayerInfo(card);
+
+        return MapReport(card, listing, forecast, mlbId, performanceMetrics, player);
     }
 
     /// <summary>
@@ -156,6 +172,17 @@ public sealed class TrendReportFactory : ITrendReportFactory
     }
 
     /// <summary>
+    /// Gets player info
+    /// </summary>
+    /// <param name="card"><see cref="PlayerCard"/></param>
+    /// <returns><see cref="Player"/> or null if none was found</returns>
+    private async Task<Player> GetPlayerInfo(PlayerCard card)
+    {
+        return await _playerMatcher.GetPlayerByName(card.Name, card.TeamShortName)
+               ?? throw new TrendReportFactoryMissingDataException(card);
+    }
+
+    /// <summary>
     /// Maps all data to a <see cref="TrendReport"/>
     /// </summary>
     /// <param name="card"><see cref="PlayerCard"/></param>
@@ -163,16 +190,17 @@ public sealed class TrendReportFactory : ITrendReportFactory
     /// <param name="forecast"><see cref="PlayerCardForecast"/></param>
     /// <param name="mlbId"><see cref="MlbId"/></param>
     /// <param name="performanceMetrics"><see cref="PerformanceMetricsByDate"/> collection</param>
+    /// <param name="player"><see cref="Player"/></param>
     /// <returns><see cref="TrendReport"/></returns>
     private static TrendReport MapReport(PlayerCard card, Listing listing, PlayerCardForecast forecast, MlbId mlbId,
-        IReadOnlyList<PerformanceMetricsByDate> performanceMetrics)
+        IReadOnlyList<PerformanceMetricsByDate> performanceMetrics, Player player)
     {
         return new TrendReport(
             Year: card.Year,
             CardExternalId: card.ExternalId,
             MlbId: mlbId,
             CardName: card.Name,
-            PrimaryPosition: card.Position,
+            PrimaryPosition: player.Position,
             OverallRating: card.OverallRating,
             MetricsByDate: listing.HistoricalPricesChronologically.Select(x => MapMetrics(x, performanceMetrics))
                 .ToImmutableList(),
