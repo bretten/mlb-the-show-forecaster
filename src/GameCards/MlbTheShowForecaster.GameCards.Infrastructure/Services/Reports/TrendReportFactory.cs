@@ -175,7 +175,8 @@ public sealed class TrendReportFactory : ITrendReportFactory
     /// Gets player info
     /// </summary>
     /// <param name="card"><see cref="PlayerCard"/></param>
-    /// <returns><see cref="Player"/> or null if none was found</returns>
+    /// <returns><see cref="Player"/></returns>
+    /// <exception cref="TrendReportFactoryMissingDataException">Thrown if no player was found</exception>
     private async Task<Player> GetPlayerInfo(PlayerCard card)
     {
         return await _playerMatcher.GetPlayerByName(card.Name, card.TeamShortName)
