@@ -85,6 +85,7 @@ public class DependenciesTests
         {
             { Dependencies.ConfigKeys.BuyPricePercentageChangeThreshold, "1" },
             { Dependencies.ConfigKeys.SellPricePercentageChangeThreshold, "2" },
+            { Dependencies.ConfigKeys.UseWebsiteForHistoricalPrices, "false" },
         };
         var config = GetConfig(settings);
 
@@ -111,6 +112,46 @@ public class DependenciesTests
 
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardMarketplace)).Lifetime);
         Assert.IsType<MlbTheShowApiCardMarketplace>(actual.GetRequiredService<ICardMarketplace>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardPriceTracker)).Lifetime);
+        Assert.IsType<CardPriceTracker>(actual.GetRequiredService<ICardPriceTracker>());
+    }
+
+    [Fact]
+    public void AddGameCardsPriceTracker_ServiceCollectionWithWebsitePriceTracker_RegistersDependencies()
+    {
+        // Arrange
+        var settings = new Dictionary<string, string?>
+        {
+            { Dependencies.ConfigKeys.BuyPricePercentageChangeThreshold, "1" },
+            { Dependencies.ConfigKeys.SellPricePercentageChangeThreshold, "2" },
+            { Dependencies.ConfigKeys.UseWebsiteForHistoricalPrices, "true" },
+        };
+        var config = GetConfig(settings);
+
+        var s = new ServiceCollection();
+
+        // Act
+        s.AddGameCardsPriceTracker(config);
+        var actual = s.BuildServiceProvider();
+
+        // Assert
+        var threshold = actual.GetRequiredService<IListingPriceSignificantChangeThreshold>();
+        Assert.Equal(ServiceLifetime.Singleton,
+            s.First(x => x.ServiceType == typeof(IListingPriceSignificantChangeThreshold)).Lifetime);
+        Assert.IsType<ListingPriceSignificantChangeThreshold>(threshold);
+        Assert.Equal(1, threshold.BuyPricePercentageChangeThreshold);
+        Assert.Equal(2, threshold.SellPricePercentageChangeThreshold);
+
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IMlbTheShowApiFactory)).Lifetime);
+        Assert.IsType<MlbTheShowApiFactory>(actual.GetRequiredService<IMlbTheShowApiFactory>());
+
+        Assert.Equal(ServiceLifetime.Singleton,
+            s.First(x => x.ServiceType == typeof(IMlbTheShowListingMapper)).Lifetime);
+        Assert.IsType<MlbTheShowListingMapper>(actual.GetRequiredService<IMlbTheShowListingMapper>());
+
+        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardMarketplace)).Lifetime);
+        Assert.IsType<MlbTheShowComCardMarketplace>(actual.GetRequiredService<ICardMarketplace>());
 
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardPriceTracker)).Lifetime);
         Assert.IsType<CardPriceTracker>(actual.GetRequiredService<ICardPriceTracker>());
