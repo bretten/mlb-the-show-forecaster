@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Enums;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
@@ -13,6 +14,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Fakes;
 /// <summary>
 /// Fake of <see cref="IMlbTheShowApi"/>
 /// </summary>
+[ExcludeFromCodeCoverage]
 public sealed class FakeMlbTheShowApi : IMlbTheShowApi
 {
     /// <summary>

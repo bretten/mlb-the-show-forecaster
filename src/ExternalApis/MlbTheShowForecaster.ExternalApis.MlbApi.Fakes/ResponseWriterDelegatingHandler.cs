@@ -15,20 +15,6 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Fakes;
 public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
 {
     /// <summary>
-    /// Path for writing individual stats
-    /// </summary>
-    /// <param name="season">The season</param>
-    /// <param name="mlbId">MLB ID of a player</param>
-    private static string StatsPath(string season, string mlbId) =>
-        Path.Combine("temp", "stats", season, $"{mlbId}.json");
-
-    /// <summary>
-    /// Path for writing all players
-    /// </summary>
-    /// <param name="season">The season</param>
-    private static string PlayersPath(string season) => Path.Combine("temp", "players", season, "all_players.json");
-
-    /// <summary>
     /// Used to match the stats URL and the ID of the player
     /// </summary>
     private const string StatsPattern = @"people/(\d+).*season=(\d+)";
@@ -55,13 +41,13 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
 
             if (SelectStatIds.Contains(int.Parse(id)) || SelectStatIds.Count == 0)
             {
-                Write(StatsPath(season, id), content);
+                Write(Paths.PlayerStats(Paths.Temp, season, id), content);
             }
         }
         else if (requestUri.Contains("/v1/sports/1/players")) // Players by season request
         {
             var season = GetQueryParam(request.RequestUri, "season");
-            Write(PlayersPath(season), FilterPlayers(content));
+            Write(Paths.SeasonPlayers(Paths.Temp, season), FilterPlayers(content));
         }
 
         return response;

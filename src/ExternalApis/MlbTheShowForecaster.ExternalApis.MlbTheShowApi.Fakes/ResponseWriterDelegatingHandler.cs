@@ -1,7 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using System.Web;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 
@@ -13,34 +15,6 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Fakes;
 [ExcludeFromCodeCoverage]
 public class ResponseWriterDelegatingHandler : DelegatingHandler
 {
-    /// <summary>
-    /// Path for writing individual cards
-    /// </summary>
-    /// <param name="id">ID of the card</param>
-    private static string CardPath(string id) => Path.Combine("temp", "cards", "individual", $"{id}.json");
-
-    /// <summary>
-    /// Path for writing paged cards
-    /// </summary>
-    /// <param name="page">The page of cards</param>
-    private static string PagedCardsPath(string page) => Path.Combine("temp", "cards", "pages", $"{page}.json");
-
-    /// <summary>
-    /// Path for selected cards
-    /// </summary>
-    private static readonly string SelectedCardsPath = Path.Combine("temp", "cards", "selected", "selected_cards.json");
-
-    /// <summary>
-    /// Path for writing roster updates
-    /// </summary>
-    /// <param name="id">The roster update ID</param>
-    private static string RosterUpdate(string id) => Path.Combine("temp", "roster_updates", "individual", $"{id}.json");
-
-    /// <summary>
-    /// Path for writing the roster update list
-    /// </summary>
-    private static readonly string RosterUpdateList = Path.Combine("temp", "roster_updates", "list", "list.json");
-
     /// <summary>
     /// When iterating over all the card pages, cards that have been selected by <see cref="CardIdsToWrite"/> will be
     /// stored here
@@ -63,32 +37,37 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         var requestUri = request.RequestUri!.ToString();
+        var match = Regex.Match(requestUri, @"mlb(\d+)");
+        var seasonShort = match.Success
+            ? match.Groups[1].Value
+            : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no MLB The Show season");
+        var season = DateOnly.ParseExact(seasonShort, "yy").ToString("yyyy");
 
         // Save the response based on which type of request
         if (requestUri.Contains("/apis/item.json")) // Request an individual card
         {
             var id = GetQueryParam(request.RequestUri, "uuid");
 
-            Write(CardPath(id), content);
+            Write(Paths.Card(Paths.Temp, season, id), content);
         }
         else if (requestUri.Contains("/apis/items.json")) // Request all cards by page
         {
             // Gather the selected cards and write them when on the last page
-            CollectAndWriteSelectedCards(content);
+            CollectAndWriteSelectedCards(content, season);
 
             // Write the page's cards
             var page = GetQueryParam(request.RequestUri, "page");
-            Write(PagedCardsPath(page), content);
+            Write(Paths.PagedCards(Paths.Temp, season, page), content);
         }
         else if (requestUri.Contains("/apis/roster_updates.json")) // All roster updates
         {
-            Write(RosterUpdateList, content);
+            Write(Paths.RosterUpdateList(Paths.Temp, season), content);
         }
         else if (requestUri.Contains("/apis/roster_update.json?id")) // Single roster update details
         {
             var id = GetQueryParam(request.RequestUri, "id");
 
-            Write(RosterUpdate(id), content);
+            Write(Paths.RosterUpdate(Paths.Temp, season, id), content);
         }
 
         return response;
@@ -98,7 +77,8 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
     /// Writes the selected cards
     /// </summary>
     /// <param name="content">Content for a page of cards</param>
-    private static void CollectAndWriteSelectedCards(string content)
+    /// <param name="season">The season</param>
+    private static void CollectAndWriteSelectedCards(string content, string season)
     {
         using var jDoc = JsonDocument.Parse(content);
         var page = jDoc.RootElement.GetProperty("page").GetInt32();
@@ -114,18 +94,22 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
         {
             var id = item.GetProperty("uuid").GetString()!;
             if (!CardIdsToWrite.Contains(id)) continue;
-            _cardsToWrite.Add(item);
+            // Clone the item since the JsonDocument will be disposed of
+            _cardsToWrite.Add(JsonSerializer.Deserialize<JsonElement>(item.GetRawText()));
         }
 
-        if (page != totalPages) return;
+        if (page != totalPages || CardIdsToWrite.Count == 0) return;
 
-        Write(SelectedCardsPath, new JsonObject()
+        Write(Paths.SelectedCards(Paths.Temp, season), new JsonObject()
         {
             ["page"] = 1,
             ["per_page"] = _cardsToWrite.Count,
             ["total_pages"] = 1,
             ["items"] = _cardsToWrite
-        }.ToJsonString());
+        }.ToJsonString(new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        }));
     }
 
     /// <summary>
