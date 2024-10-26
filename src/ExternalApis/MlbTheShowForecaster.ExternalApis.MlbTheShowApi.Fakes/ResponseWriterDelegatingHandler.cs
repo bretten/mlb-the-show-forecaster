@@ -67,7 +67,10 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
         {
             var id = GetQueryParam(request.RequestUri, "id");
 
-            Write(Paths.RosterUpdate(Paths.Temp, season, id), content);
+            // If the cards are being filtered, just save roster updates for corresponding players
+            var updateContent = CardIdsToWrite.Count == 0 ? content : FilterRosterUpdate(content);
+
+            Write(Paths.RosterUpdate(Paths.Temp, season, id), updateContent);
         }
 
         return response;
@@ -95,7 +98,10 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
             var id = item.GetProperty("uuid").GetString()!;
             if (!CardIdsToWrite.Contains(id)) continue;
             // Clone the item since the JsonDocument will be disposed of
-            _cardsToWrite.Add(JsonSerializer.Deserialize<JsonElement>(item.GetRawText()));
+            var itemJson = item.GetRawText();
+            _cardsToWrite.Add(JsonSerializer.Deserialize<JsonElement>(itemJson));
+            // Write the individual item
+            Write(Paths.Card(Paths.Temp, season, id), itemJson);
         }
 
         if (page != totalPages || CardIdsToWrite.Count == 0) return;
@@ -110,6 +116,32 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         }));
+    }
+
+    /// <summary>
+    /// Filters the roster update to have only players in <see cref="CardIdsToWrite"/>
+    /// </summary>
+    private static string FilterRosterUpdate(string content)
+    {
+        using var jDoc = JsonDocument.Parse(content);
+        var changes = jDoc.RootElement.GetProperty("attribute_changes");
+        var filteredChanges = new JsonArray();
+        foreach (var p in changes.EnumerateArray())
+        {
+            var id = p.GetProperty("obfuscated_id").GetString()!;
+            if (!CardIdsToWrite.Contains(id)) continue;
+            filteredChanges.Add(p);
+        }
+
+        return new JsonObject()
+        {
+            ["attribute_changes"] = filteredChanges,
+            ["position_changes"] = new JsonArray(),
+            ["newly_added"] = new JsonArray()
+        }.ToJsonString(new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        });
     }
 
     /// <summary>

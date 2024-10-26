@@ -45,6 +45,24 @@ public static class Paths
         Path.Combine(root, "cards", season, "selected", "selected_cards.json");
 
     /// <summary>
+    /// Path for writing individual listings
+    /// </summary>
+    /// <param name="root">The root path</param>
+    /// <param name="season">The season</param>
+    /// <param name="id">ID of the listing's card</param>
+    public static string Listing(string root, string season, string id) =>
+        Path.Combine(root, "listings", season, "individual", $"{id}.json");
+
+    /// <summary>
+    /// Path for writing paged listings
+    /// </summary>
+    /// <param name="root">The root path</param>
+    /// <param name="season">The season</param>
+    /// <param name="page">The page of listings</param>
+    public static string PagedListings(string root, string season, string page) =>
+        Path.Combine(root, "listings", season, "pages", $"{page}.json");
+
+    /// <summary>
     /// Path for writing roster updates
     /// </summary>
     /// <param name="root">The root path</param>
