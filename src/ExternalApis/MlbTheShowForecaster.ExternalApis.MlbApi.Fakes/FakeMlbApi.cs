@@ -31,7 +31,7 @@ public sealed class FakeMlbApi : IMlbApi
     /// </summary>
     private static string PlayersFor(int season)
     {
-        return Path.Combine("mlb_api_fakes", "players", season.ToString(), "players.json");
+        return Path.Combine("mlb_api_fakes", "players", season.ToString(), "all_players.json");
     }
 
     /// <summary>

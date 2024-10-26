@@ -4,6 +4,7 @@ using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Fakes;
 
@@ -16,18 +17,21 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
     /// <summary>
     /// Path for writing individual stats
     /// </summary>
+    /// <param name="season">The season</param>
     /// <param name="mlbId">MLB ID of a player</param>
-    private static string StatsPath(string mlbId) => Path.Combine("temp", "stats", mlbId, ".json");
+    private static string StatsPath(string season, string mlbId) =>
+        Path.Combine("temp", "stats", season, $"{mlbId}.json");
 
     /// <summary>
     /// Path for writing all players
     /// </summary>
-    private static readonly string PlayersPath = Path.Combine("temp", "players", "all_players.json");
+    /// <param name="season">The season</param>
+    private static string PlayersPath(string season) => Path.Combine("temp", "players", season, "all_players.json");
 
     /// <summary>
     /// Used to match the stats URL and the ID of the player
     /// </summary>
-    private const string StatsPattern = @"^https:\/\/statsapi\.mlb\.com\/api\/v1\/people\/(\d+)\?hydrate=stats.*";
+    private const string StatsPattern = @"people/(\d+).*season=(\d+)";
 
     /// <inheritdoc />
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
@@ -36,7 +40,7 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
         var response = await base.SendAsync(request, cancellationToken);
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
-        var requestUri = request.RequestUri!.ToString();
+        var requestUri = Uri.UnescapeDataString(request.RequestUri!.ToString());
 
         // Save the response based on which type of request
         if (requestUri.Contains("hydrate=stats")) // Stats request
@@ -45,15 +49,19 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
             var id = match.Success
                 ? match.Groups[1].Value
                 : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no stat ID");
+            var season = match.Success
+                ? match.Groups[2].Value
+                : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no stat season");
 
             if (SelectStatIds.Contains(int.Parse(id)) || SelectStatIds.Count == 0)
             {
-                Write(StatsPath(id), content);
+                Write(StatsPath(season, id), content);
             }
         }
         else if (requestUri.Contains("/v1/sports/1/players")) // Players by season request
         {
-            Write(PlayersPath, FilterPlayers(content));
+            var season = GetQueryParam(request.RequestUri, "season");
+            Write(PlayersPath(season), FilterPlayers(content));
         }
 
         return response;
@@ -91,6 +99,15 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
         var dirName = Path.GetDirectoryName(path)!;
         Directory.CreateDirectory(dirName);
         File.WriteAllText(path, content, Encoding.UTF8);
+    }
+
+    /// <summary>
+    /// Extracts the query param value
+    /// </summary>
+    private static string GetQueryParam(Uri uri, string paramName)
+    {
+        var queryParams = HttpUtility.ParseQueryString(uri.Query);
+        return queryParams.Get(paramName)!;
     }
 
     /// <summary>
