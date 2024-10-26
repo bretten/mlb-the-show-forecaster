@@ -13,6 +13,7 @@
 
     <ItemGroup>
       <InternalsVisibleTo Include="DynamicProxyGenAssembly2" /> <!-- Needed so Moq can generate implementations for internal methods: https://github.com/devlooped/moq/wiki/Quickstart#advanced-features -->
+      <InternalsVisibleTo Include="MlbTheShowForecaster.ExternalApis.MlbApi.Fakes" />
     </ItemGroup>
 
 </Project>
