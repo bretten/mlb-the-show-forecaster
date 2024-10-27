@@ -58,9 +58,14 @@ public class DependenciesTests
     {
         // Arrange
         var s = new ServiceCollection();
+        var settings = new Dictionary<string, string?>
+        {
+            { Dependencies.ConfigKeys.DemoMode, "false" },
+        };
+        var config = GetConfig(settings);
 
         // Act
-        s.AddGameCardsPlayerCardTracker();
+        s.AddGameCardsPlayerCardTracker(config);
         var actual = s.BuildServiceProvider();
 
         // Assert
@@ -86,6 +91,7 @@ public class DependenciesTests
             { Dependencies.ConfigKeys.BuyPricePercentageChangeThreshold, "1" },
             { Dependencies.ConfigKeys.SellPricePercentageChangeThreshold, "2" },
             { Dependencies.ConfigKeys.UseWebsiteForHistoricalPrices, "false" },
+            { Dependencies.ConfigKeys.DemoMode, "false" },
         };
         var config = GetConfig(settings);
 
@@ -126,6 +132,7 @@ public class DependenciesTests
             { Dependencies.ConfigKeys.BuyPricePercentageChangeThreshold, "1" },
             { Dependencies.ConfigKeys.SellPricePercentageChangeThreshold, "2" },
             { Dependencies.ConfigKeys.UseWebsiteForHistoricalPrices, "true" },
+            { Dependencies.ConfigKeys.DemoMode, "false" },
         };
         var config = GetConfig(settings);
 
@@ -162,10 +169,15 @@ public class DependenciesTests
     {
         // Arrange
         var s = new ServiceCollection();
+        var settings = new Dictionary<string, string?>
+        {
+            { Dependencies.ConfigKeys.DemoMode, "false" },
+        };
+        var config = GetConfig(settings);
 
         // Act
         s.AddLogging();
-        s.AddGameCardsRosterUpdates();
+        s.AddGameCardsRosterUpdates(config);
         var actual = s.BuildServiceProvider();
 
         // Assert

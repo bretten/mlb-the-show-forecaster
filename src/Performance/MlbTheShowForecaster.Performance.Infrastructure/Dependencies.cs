@@ -6,6 +6,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Fakes;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain;
@@ -35,6 +36,11 @@ public static class Dependencies
     /// </summary>
     public static class ConfigKeys
     {
+        /// <summary>
+        /// Demo mode key
+        /// </summary>
+        public const string DemoMode = "DemoMode";
+
         /// <summary>
         /// PlayerSeasons connection string key
         /// </summary>
@@ -139,6 +145,12 @@ public static class Dependencies
     /// <param name="config">Configuration for MLB API</param>
     private static void AddMlbAPi(this IServiceCollection services, IConfiguration config)
     {
+        if (config.GetRequiredValue<bool>(ConfigKeys.DemoMode))
+        {
+            services.AddSingleton<IMlbApi, FakeMlbApi>();
+            return;
+        }
+
         services.AddRefitClient<IMlbApi>(provider => new RefitSettings()
             {
                 ContentSerializer = new SystemTextJsonContentSerializer(new JsonSerializerOptions()

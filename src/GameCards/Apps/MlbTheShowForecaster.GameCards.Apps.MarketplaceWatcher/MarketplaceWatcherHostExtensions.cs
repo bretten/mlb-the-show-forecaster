@@ -102,9 +102,9 @@ public static class MarketplaceWatcherHostExtensions
             // MLB The Show cards and marketplace dependencies
             services.AddFileSystems(context.Configuration);
             services.AddGameCardsMapping();
-            services.AddGameCardsPlayerCardTracker();
+            services.AddGameCardsPlayerCardTracker(context.Configuration);
             services.AddGameCardsPriceTracker(context.Configuration);
-            services.AddGameCardsRosterUpdates();
+            services.AddGameCardsRosterUpdates(context.Configuration);
             services.AddForecasting(context.Configuration);
             services.AddTrendReporting(context.Configuration);
             services.AddGameCardsEntityFrameworkCoreRepositories(context.Configuration);
