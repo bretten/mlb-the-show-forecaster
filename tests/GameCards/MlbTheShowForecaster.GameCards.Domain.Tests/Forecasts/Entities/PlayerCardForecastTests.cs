@@ -3,6 +3,9 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Events;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.AdministrativeImpacts;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.StatImpacts;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Forecasts.TestClasses;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Forecasts.Entities;
@@ -345,6 +348,50 @@ public class PlayerCardForecastTests
         Assert.IsType<CardDemandIncreasedEvent>(forecast.DomainEvents[0]);
     }
 
+    [Theory]
+    [InlineData(typeof(PlayerActivationForecastImpact))]
+    [InlineData(typeof(PlayerDeactivationForecastImpact))]
+    [InlineData(typeof(PlayerFreeAgencyForecastImpact))]
+    [InlineData(typeof(PlayerTeamSigningForecastImpact))]
+    [InlineData(typeof(BattingStatsForecastImpact))]
+    [InlineData(typeof(FieldingStatsForecastImpact))]
+    [InlineData(typeof(PitchingStatsForecastImpact))]
+    [InlineData(typeof(BoostForecastImpact))]
+    [InlineData(typeof(OverallRatingChangeForecastImpact))]
+    [InlineData(typeof(PositionChangeForecastImpact))]
+    public void IsAlreadyImpacted_DuplicateImpacts_AssessesOnlyOnce(Type type)
+    {
+        // Arrange
+        var forecast = Faker.FakePlayerCardForecast();
+        var impact1 = CreateFakeImpact(type);
+        var impact2 = CreateFakeImpact(type);
+
+        // Act
+        forecast.Reassess(impact1, Faker.EndDate);
+        forecast.Reassess(impact2, Faker.EndDate);
+
+        // Assert
+        Assert.Single(forecast.DomainEvents);
+    }
+
+    [Fact]
+    public void IsAlreadyImpacted_FarApartStatChanges_AssessesBoth()
+    {
+        // Arrange
+        var forecast = Faker.FakePlayerCardForecast();
+        var impact1 = Faker.FakeBattingStatsForecastImpact(startDate: new DateOnly(2024, 10, 28),
+            endDate: new DateOnly(2024, 10, 31));
+        var impact2 = Faker.FakeBattingStatsForecastImpact(startDate: new DateOnly(2024, 11, 8),
+            endDate: new DateOnly(2024, 11, 11));
+
+        // Act
+        forecast.Reassess(impact1, impact1.EndDate);
+        forecast.Reassess(impact2, impact2.EndDate);
+
+        // Assert
+        Assert.Equal(2, forecast.DomainEvents.Count);
+    }
+
     [Fact]
     public void Create_ValidValues_Created()
     {
@@ -364,5 +411,29 @@ public class PlayerCardForecastTests
         Assert.Equal(1, actual.MlbId!.Value);
         Assert.Equal(Position.CenterField, actual.PrimaryPosition);
         Assert.Equal(80, actual.OverallRating.Value);
+    }
+
+    private static ForecastImpact CreateFakeImpact(Type type)
+    {
+        return type switch
+        {
+            not null when type == typeof(PlayerActivationForecastImpact) => Faker.FakePlayerActivationForecastImpact(),
+            not null when type == typeof(PlayerDeactivationForecastImpact) =>
+                Faker.FakePlayerDeactivationForecastImpact(),
+            not null when type == typeof(PlayerFreeAgencyForecastImpact) => Faker.FakePlayerFreeAgencyForecastImpact(),
+            not null when type == typeof(PlayerTeamSigningForecastImpact) =>
+                Faker.FakePlayerTeamSigningForecastImpact(),
+            not null when type == typeof(BattingStatsForecastImpact) => Faker.FakeBattingStatsForecastImpact(),
+            not null when type == typeof(FieldingStatsForecastImpact) => Faker.FakeFieldingStatsForecastImpact(),
+            not null when type == typeof(PitchingStatsForecastImpact) => Faker.FakePitchingStatsForecastImpact(),
+            not null when type == typeof(BoostForecastImpact) => Faker.FakeBoostForecastImpact(),
+            not null when type == typeof(OverallRatingChangeForecastImpact) =>
+                // There needs to be a rarity change in order to raise a domain event
+                Faker.FakeOverallRatingChangeForecastImpact(oldOverallRating: 60, newOverallRating: 90),
+            not null when type == typeof(PositionChangeForecastImpact) =>
+                // The new position needs to be a desired position in order to raise a domain event
+                Faker.FakePositionChangeForecastImpact(newPosition: Position.Catcher),
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
     }
 }

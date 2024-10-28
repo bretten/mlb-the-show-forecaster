@@ -77,6 +77,11 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// <param name="date">The date that the demand should be estimated for: <see cref="EstimateDemandFor"/></param>
     public void Reassess(ForecastImpact impact, DateOnly date)
     {
+        if (IsAlreadyImpacted(impact))
+        {
+            return;
+        }
+
         var oldDemand = EstimateDemandFor(date);
 
         _forecastImpacts.Add(impact);
@@ -198,6 +203,21 @@ public sealed class PlayerCardForecast : AggregateRoot
     private void RaiseDemandDecreasedEvent()
     {
         RaiseDomainEvent(new CardDemandDecreasedEvent(Year, CardExternalId));
+    }
+
+    /// <summary>
+    /// True if the specified <see cref="ForecastImpact"/> is already influencing the forecast
+    /// </summary>
+    /// <param name="impact"><see cref="ForecastImpact"/></param>
+    /// <returns>True if the specified <see cref="ForecastImpact"/> is already influencing the forecast, otherwise false</returns>
+    private bool IsAlreadyImpacted(ForecastImpact impact)
+    {
+        return impact switch
+        {
+            StatsForecastImpact s => _forecastImpacts.Any(x =>
+                s.GetType() == x.GetType() && s.StartDate <= x.EndDate.AddDays(7)),
+            _ => _forecastImpacts.Any(x => x == impact)
+        };
     }
 
     /// <summary>
