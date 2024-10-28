@@ -43,4 +43,18 @@ public class StatsForecastImpactTests
         // Assert
         Assert.Equal(Demand.Stable(), actual);
     }
+
+    [Fact]
+    public void PercentageChange_ZeroInitialScore_DoesNotDivideByZero()
+    {
+        // Arrange
+        var impact = Faker.FakeBattingStatsForecastImpact(oldScore: 0.0m, newScore: 0.11m);
+
+        // Act
+        var actual = impact.PercentageChange;
+
+        // Assert
+        Assert.Equal(11.0m, actual.PercentageChangeValue);
+        Assert.True(actual.TreatZeroReferenceValueAsOne);
+    }
 }

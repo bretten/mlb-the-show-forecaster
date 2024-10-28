@@ -32,7 +32,7 @@ public abstract class StatsForecastImpact(decimal oldScore, decimal newScore, Da
     /// <summary>
     /// The percentage change between their old and new performance scores
     /// </summary>
-    public PercentageChange PercentageChange => PercentageChange.Create(OldScore, NewScore);
+    public PercentageChange PercentageChange => PercentageChange.Create(OldScore, NewScore, true);
 
     /// <summary>
     /// True if the new score is an improvement
