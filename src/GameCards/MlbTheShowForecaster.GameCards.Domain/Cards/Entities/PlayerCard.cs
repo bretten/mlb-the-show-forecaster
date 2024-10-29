@@ -46,6 +46,13 @@ public sealed class PlayerCard : Card
         _historicalRatings.OrderBy(x => x.StartDate).ToImmutableList();
 
     /// <summary>
+    /// The number of <see cref="PlayerCardHistoricalRatingType.Baseline"/> <see cref="PlayerCardHistoricalRating"/>s
+    /// that have been applied to this player card
+    /// </summary>
+    public int BaselineHistoricalRatingsApplied =>
+        _historicalRatings.Count(x => x.Type == PlayerCardHistoricalRatingType.Baseline);
+
+    /// <summary>
     /// A temporary and minor <see cref="OverallRating"/> change that is influenced by real-world events or match-ups
     /// </summary>
     public OverallRating? TemporaryOverallRating => GetCurrentTemporaryRatingFromHistory()?.OverallRating;

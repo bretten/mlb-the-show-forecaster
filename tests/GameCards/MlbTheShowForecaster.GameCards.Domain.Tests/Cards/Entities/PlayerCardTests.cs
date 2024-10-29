@@ -12,6 +12,38 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.Entit
 public class PlayerCardTests
 {
     [Fact]
+    public void BaselineHistoricalRatingsApplied_OneBaselineHistoricalRatingApplied_ReturnsOne()
+    {
+        // Arrange
+        var card = Faker.FakePlayerCard();
+        var historicalRating = Faker.FakeBaselinePlayerCardHistoricalRating();
+        card.AddHistoricalRating(historicalRating);
+
+        // Act
+        var actual = card.BaselineHistoricalRatingsApplied;
+
+        // Assert
+        Assert.Equal(1, actual);
+    }
+
+    [Fact]
+    public void BaselineHistoricalRatingsApplied_NoBaselineHistoricalRatingApplied_ReturnsZero()
+    {
+        // Arrange
+        var card = Faker.FakePlayerCard();
+        var tempHistoricalRating = Faker.FakeTemporaryPlayerCardHistoricalRating();
+        var boostHistoricalRating = Faker.FakeBoostPlayerCardHistoricalRating();
+        card.AddHistoricalRating(tempHistoricalRating);
+        card.AddHistoricalRating(boostHistoricalRating);
+
+        // Act
+        var actual = card.BaselineHistoricalRatingsApplied;
+
+        // Assert
+        Assert.Equal(0, actual);
+    }
+
+    [Fact]
     public void TemporaryOverallRating_TempRatingChangeThatEnded_ReturnsNull()
     {
         // Arrange

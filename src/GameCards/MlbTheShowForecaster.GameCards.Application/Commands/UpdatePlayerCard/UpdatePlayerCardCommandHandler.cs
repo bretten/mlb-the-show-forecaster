@@ -63,9 +63,9 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
         var historicalRatings = command.HistoricalRatings ?? new Stack<PlayerCardHistoricalRating>();
         foreach (var item in historicalRatings)
         {
-            if (item == historicalRatings.First() && domainPlayerCard.HistoricalRatingsChronologically.Count == 0)
+            if (item == historicalRatings.First() && domainPlayerCard.BaselineHistoricalRatingsApplied == 0)
             {
-                // For the first historical rating, simply add a record of it (no domain event triggered)
+                // When no ratings have been applied and this is the first, simply add a record of it (no domain event triggered)
                 domainPlayerCard.AddHistoricalRating(PlayerCardHistoricalRating.Baseline(item.StartDate, null,
                     item.OverallRating, item.Attributes));
             }
