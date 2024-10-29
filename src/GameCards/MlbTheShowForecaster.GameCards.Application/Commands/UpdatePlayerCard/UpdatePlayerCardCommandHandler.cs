@@ -65,12 +65,13 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
         {
             if (item == historicalRatings.First() && domainPlayerCard.HistoricalRatingsChronologically.Count == 0)
             {
-                // For the first historical rating, simply add a record of it
+                // For the first historical rating, simply add a record of it (no domain event triggered)
                 domainPlayerCard.AddHistoricalRating(PlayerCardHistoricalRating.Baseline(item.StartDate, null,
                     item.OverallRating, item.Attributes));
             }
             else
             {
+                // Apply the rating (this triggers a domain event)
                 domainPlayerCard.ChangePlayerRating(item.StartDate, item.OverallRating, item.Attributes);
             }
         }

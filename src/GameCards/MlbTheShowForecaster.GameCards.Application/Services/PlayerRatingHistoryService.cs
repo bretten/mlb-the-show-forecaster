@@ -209,7 +209,7 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, null, null, null, stack), cancellationToken);
         return new ValueTuple<PlayerCard, IEnumerable<PlayerCardHistoricalRating>>(playerCard,
             stack.Select(
-                    // Create a copy rather instead of passing the reference since it is only used for reporting
+                    // Create a copy instead of passing the reference since it is only used for reporting
                     x => PlayerCardHistoricalRating.Baseline(x.StartDate, x.EndDate, x.OverallRating, x.Attributes))
                 .ToList());
     }
