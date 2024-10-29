@@ -1,5 +1,4 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
@@ -64,7 +63,6 @@ public class DependenciesTests
         var s = new ServiceCollection();
 
         // Act
-        s.AddSingleton<ICalendar, Calendar>();
         s.AddPlayerStatusTracker(config);
         var actual = s.BuildServiceProvider();
 
