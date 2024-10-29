@@ -9,5 +9,9 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueOb
 /// <param name="newScore"><inheritdoc cref="StatsForecastImpact.NewScore"/></param>
 /// <param name="startDate"><inheritdoc cref="StatsForecastImpact.StartDate"/></param>
 /// <param name="endDate"><inheritdoc cref="StatsForecastImpact.EndDate"/></param>
-public sealed class PitchingStatsForecastImpact(decimal oldScore, decimal newScore, DateOnly startDate, DateOnly endDate)
+public sealed class PitchingStatsForecastImpact(
+    decimal oldScore,
+    decimal newScore,
+    DateOnly startDate,
+    DateOnly endDate)
     : StatsForecastImpact(oldScore, newScore, startDate, endDate);

@@ -11,7 +11,9 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.
 /// <param name="Year">The year the player is being updated for</param>
 /// <param name="Player">The <see cref="Player"/> to update</param>
 /// <param name="PlayerStatusChanges">The status changes for the <see cref="Player"/></param>
+/// <param name="Date">The date</param>
 internal readonly record struct UpdatePlayerCommand(
     SeasonYear Year,
     Player Player,
-    PlayerStatusChanges PlayerStatusChanges) : ICommand;
+    PlayerStatusChanges PlayerStatusChanges,
+    DateOnly Date) : ICommand;

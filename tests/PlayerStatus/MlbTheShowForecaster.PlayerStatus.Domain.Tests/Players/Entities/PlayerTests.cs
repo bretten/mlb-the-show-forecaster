@@ -11,6 +11,8 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.
 
 public class PlayerTests
 {
+    private static readonly DateOnly Date = new DateOnly(2024, 10, 28);
+
     [Fact]
     public void Create_ValidValues_Created()
     {
@@ -55,13 +57,14 @@ public class PlayerTests
         var player = PlayerFaker.Fake(team: currentTeam);
 
         // Act
-        player.SignContractWithTeam(year, newTeam);
+        player.SignContractWithTeam(year, newTeam, Date);
 
         // Assert
         Assert.NotNull(player.Team);
         Assert.Equal(newTeam, player.Team);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerSignedContractWithTeamEvent(year, player.MlbId, newTeam.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerSignedContractWithTeamEvent(year, player.MlbId, newTeam.MlbId, Date),
+            player.DomainEvents[0]);
     }
 
     [Fact]
@@ -74,13 +77,14 @@ public class PlayerTests
         var player = PlayerFaker.Fake(team: currentTeam);
 
         // Act
-        player.SignContractWithTeam(year, newTeam);
+        player.SignContractWithTeam(year, newTeam, Date);
 
         // Assert
         Assert.NotNull(player.Team);
         Assert.Equal(newTeam, player.Team);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerSignedContractWithTeamEvent(year, player.MlbId, newTeam.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerSignedContractWithTeamEvent(year, player.MlbId, newTeam.MlbId, Date),
+            player.DomainEvents[0]);
     }
 
     [Fact]
@@ -92,13 +96,13 @@ public class PlayerTests
         var player = PlayerFaker.Fake(team: currentTeam);
 
         // Act
-        player.EnterFreeAgency(year);
+        player.EnterFreeAgency(year, Date);
 
         // Assert
         Assert.Null(player.Team);
         Assert.NotEqual(currentTeam, player.Team);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerEnteredFreeAgencyEvent(year, player.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerEnteredFreeAgencyEvent(year, player.MlbId, Date), player.DomainEvents[0]);
     }
 
     [Fact]
@@ -109,12 +113,12 @@ public class PlayerTests
         var player = PlayerFaker.Fake(active: false);
 
         // Act
-        player.Activate(year);
+        player.Activate(year, Date);
 
         // Assert
         Assert.True(player.Active);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerActivatedEvent(year, player.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerActivatedEvent(year, player.MlbId, Date), player.DomainEvents[0]);
     }
 
     [Fact]
@@ -125,11 +129,11 @@ public class PlayerTests
         var player = PlayerFaker.Fake(active: true);
 
         // Act
-        player.Inactivate(year);
+        player.Inactivate(year, Date);
 
         // Assert
         Assert.False(player.Active);
         Assert.Equal(1, player.DomainEvents.Count);
-        Assert.Equal(new PlayerInactivatedEvent(year, player.MlbId), player.DomainEvents[0]);
+        Assert.Equal(new PlayerInactivatedEvent(year, player.MlbId, Date), player.DomainEvents[0]);
     }
 }

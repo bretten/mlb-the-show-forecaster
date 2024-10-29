@@ -1,5 +1,4 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerCardBoosted;
@@ -12,12 +11,14 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.Playe
 /// <param name="NewOverallRating">The new overall rating</param>
 /// <param name="BoostReason">The reason the card is being boosted</param>
 /// <param name="BoostEndDate">The end date of the boost</param>
+/// <param name="Date">The date</param>
 public sealed record PlayerCardBoostEvent(
     SeasonYear Year,
     CardExternalId CardExternalId,
     OverallRating NewOverallRating,
     string BoostReason,
-    DateOnly BoostEndDate) : IForecastImpactEvent
+    DateOnly BoostEndDate,
+    DateOnly Date) : IForecastImpactEvent
 {
     /// <inheritdoc />
     public MlbId? MlbId => null;

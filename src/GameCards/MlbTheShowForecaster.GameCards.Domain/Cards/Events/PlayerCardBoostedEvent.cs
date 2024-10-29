@@ -15,11 +15,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 /// <param name="NewPlayerCardAttributes">The new player attributes</param>
 /// <param name="BoostReason">The reason the card is being boosted</param>
 /// <param name="BoostEndDate">The end date of the boost</param>
+/// <param name="Date">The date the boost occured</param>
 public sealed record PlayerCardBoostedEvent(
     SeasonYear Year,
     CardExternalId CardExternalId,
     OverallRating NewOverallRating,
     PlayerCardAttributes NewPlayerCardAttributes,
     string BoostReason,
-    DateOnly BoostEndDate
+    DateOnly BoostEndDate,
+    DateOnly Date
 ) : IDomainEvent;

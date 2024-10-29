@@ -15,6 +15,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 /// <param name="PreviousOverallRating">The previous overall rating being replaced</param>
 /// <param name="PreviousPlayerCardAttributes">The previous player attributes being replaced</param>
 /// <param name="RarityChanged">True if the card rarity changed, otherwise false</param>
+/// <param name="Date">The date</param>
 public sealed record PlayerCardOverallRatingImprovedEvent(
     SeasonYear Year,
     CardExternalId CardExternalId,
@@ -22,4 +23,5 @@ public sealed record PlayerCardOverallRatingImprovedEvent(
     PlayerCardAttributes NewPlayerCardAttributes,
     OverallRating PreviousOverallRating,
     PlayerCardAttributes PreviousPlayerCardAttributes,
-    bool RarityChanged) : IPlayerCardOverallRatingChangedEvent;
+    bool RarityChanged,
+    DateOnly Date) : IPlayerCardOverallRatingChangedEvent;

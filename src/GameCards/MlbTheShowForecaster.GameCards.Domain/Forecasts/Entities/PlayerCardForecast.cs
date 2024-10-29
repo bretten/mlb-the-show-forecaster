@@ -90,11 +90,11 @@ public sealed class PlayerCardForecast : AggregateRoot
 
         if (newDemand > oldDemand)
         {
-            RaiseDemandIncreasedEvent();
+            RaiseDemandIncreasedEvent(date);
         }
         else if (newDemand < oldDemand)
         {
-            RaiseDemandDecreasedEvent();
+            RaiseDemandDecreasedEvent(date);
         }
     }
 
@@ -192,17 +192,19 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// <summary>
     /// Raises a domain event indicating that the card's demand has increased
     /// </summary>
-    private void RaiseDemandIncreasedEvent()
+    /// <param name="date">The date</param>
+    private void RaiseDemandIncreasedEvent(DateOnly date)
     {
-        RaiseDomainEvent(new CardDemandIncreasedEvent(Year, CardExternalId));
+        RaiseDomainEvent(new CardDemandIncreasedEvent(Year, CardExternalId, date));
     }
 
     /// <summary>
     /// Raises a domain event indicating that the card's demand has decreased
     /// </summary>
-    private void RaiseDemandDecreasedEvent()
+    /// <param name="date">The date</param>
+    private void RaiseDemandDecreasedEvent(DateOnly date)
     {
-        RaiseDomainEvent(new CardDemandDecreasedEvent(Year, CardExternalId));
+        RaiseDomainEvent(new CardDemandDecreasedEvent(Year, CardExternalId, date));
     }
 
     /// <summary>

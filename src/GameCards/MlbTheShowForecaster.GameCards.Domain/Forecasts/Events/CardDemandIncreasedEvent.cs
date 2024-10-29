@@ -10,4 +10,6 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Events;
 /// </summary>
 /// <param name="SeasonYear">The year of MLB The Show</param>
 /// <param name="CardExternalId">The card ID from MLB The Show</param>
-public sealed record CardDemandIncreasedEvent(SeasonYear SeasonYear, CardExternalId CardExternalId) : IDomainEvent;
+/// <param name="Date">The date</param>
+public sealed record CardDemandIncreasedEvent(SeasonYear SeasonYear, CardExternalId CardExternalId, DateOnly Date)
+    : IDomainEvent;

@@ -22,7 +22,6 @@ public sealed class PlayerActivationEventConsumer : BaseForecastImpactEventConsu
     /// <inheritdoc />
     protected override ForecastImpact CreateImpact(IForecastImpactEvent ev)
     {
-        return new PlayerActivationForecastImpact(Calendar.Today(),
-            Calendar.Today().AddDays(Duration.PlayerActivation));
+        return new PlayerActivationForecastImpact(ev.Date, ev.Date.AddDays(Duration.PlayerActivation));
     }
 }

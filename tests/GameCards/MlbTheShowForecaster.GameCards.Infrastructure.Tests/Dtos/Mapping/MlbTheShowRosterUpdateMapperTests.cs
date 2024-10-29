@@ -91,6 +91,7 @@ public class MlbTheShowRosterUpdateMapperTests
     public void Map_PositionChange_ReturnsPlayerPositionChange()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var id = new UuidDto(Faker.FakeGuid1);
         const string position = "3B";
         var positionChange = new PlayerPositionChangeDto(
@@ -108,9 +109,10 @@ public class MlbTheShowRosterUpdateMapperTests
         var mapper = new MlbTheShowRosterUpdateMapper(stubItemMapper.Object);
 
         // Act
-        var actual = mapper.Map(positionChange);
+        var actual = mapper.Map(date, positionChange);
 
         // Assert
+        Assert.Equal(new DateOnly(2024, 10, 28), actual.Date);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(Position.ThirdBase, actual.NewPosition);
     }
@@ -119,6 +121,7 @@ public class MlbTheShowRosterUpdateMapperTests
     public void Map_NewlyAddedPlayer_ReturnsPlayerAddition()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var id = new UuidDto(Faker.FakeGuid1);
         var newlyAddedPlayer = new NewlyAddedPlayerDto(
             id,
@@ -132,9 +135,10 @@ public class MlbTheShowRosterUpdateMapperTests
         var mapper = new MlbTheShowRosterUpdateMapper(Mock.Of<IMlbTheShowItemMapper>());
 
         // Act
-        var actual = mapper.Map(newlyAddedPlayer);
+        var actual = mapper.Map(date, newlyAddedPlayer);
 
         // Assert
+        Assert.Equal(new DateOnly(2024, 10, 28), actual.Date);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
     }
 

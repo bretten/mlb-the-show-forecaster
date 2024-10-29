@@ -38,8 +38,8 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
         return new RosterUpdate(
             rosterUpdate.Date,
             rosterUpdateChanges.PlayerAttributeChanges.Select(x => Map(rosterUpdate.Date, x)).ToImmutableList(),
-            rosterUpdateChanges.PlayerPositionChanges.Select(Map).ToImmutableList(),
-            rosterUpdateChanges.NewlyAddedPlayers.Select(Map).ToImmutableList()
+            rosterUpdateChanges.PlayerPositionChanges.Select(x => Map(rosterUpdate.Date, x)).ToImmutableList(),
+            rosterUpdateChanges.NewlyAddedPlayers.Select(x => Map(rosterUpdate.Date, x)).ToImmutableList()
         );
     }
 
@@ -84,11 +84,13 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     /// <summary>
     /// Maps <see cref="PlayerPositionChangeDto"/> to <see cref="PlayerPositionChange"/>
     /// </summary>
+    /// <param name="date">The date of the change</param>
     /// <param name="positionChange">The position change</param>
     /// <returns><see cref="PlayerPositionChange"/></returns>
-    public PlayerPositionChange Map(PlayerPositionChangeDto positionChange)
+    public PlayerPositionChange Map(DateOnly date, PlayerPositionChangeDto positionChange)
     {
         return new PlayerPositionChange(
+            date,
             CardExternalId: CardExternalId.Create(positionChange.Uuid.Value ?? throw new InvalidTheShowUuidException(
                 $"Could not map the {nameof(PlayerPositionChangeDto)}'s UUID since it is not valid: ${positionChange.Uuid.RawValue}")),
             NewPosition: _itemMapper.MapPosition(positionChange.Position)
@@ -98,11 +100,13 @@ public sealed class MlbTheShowRosterUpdateMapper : IMlbTheShowRosterUpdateMapper
     /// <summary>
     /// Maps <see cref="NewlyAddedPlayerDto"/> to <see cref="PlayerAddition"/>
     /// </summary>
+    /// <param name="date">The date of the addition</param>
     /// <param name="newPlayer">The new player</param>
     /// <returns><see cref="PlayerAddition"/></returns>
-    public PlayerAddition Map(NewlyAddedPlayerDto newPlayer)
+    public PlayerAddition Map(DateOnly date, NewlyAddedPlayerDto newPlayer)
     {
         return new PlayerAddition(
+            date,
             cardExternalId: CardExternalId.Create(newPlayer.Uuid.Value ?? Guid.Empty),
             playerName: newPlayer.Name
         );

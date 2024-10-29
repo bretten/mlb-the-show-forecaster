@@ -8,7 +8,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.Playe
 /// </summary>
 /// <param name="Year">The year the player was inactivated</param>
 /// <param name="PlayerMlbId">The MLB ID of the player</param>
-public sealed record PlayerDeactivationEvent(SeasonYear Year, MlbId PlayerMlbId) : IForecastImpactEvent
+/// <param name="Date">The date</param>
+public sealed record PlayerDeactivationEvent(SeasonYear Year, MlbId PlayerMlbId, DateOnly Date) : IForecastImpactEvent
 {
     /// <inheritdoc />
     public CardExternalId? CardExternalId => null;

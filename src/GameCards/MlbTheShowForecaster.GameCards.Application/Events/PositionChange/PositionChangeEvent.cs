@@ -12,11 +12,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.Posit
 /// <param name="CardExternalId">The card ID from MLB The Show</param>
 /// <param name="NewPosition">The new fielding position</param>
 /// <param name="OldPosition">The old fielding position</param>
+/// <param name="Date">The date</param>
 public sealed record PositionChangeEvent(
     SeasonYear Year,
     CardExternalId CardExternalId,
     Position NewPosition,
-    Position OldPosition) : IForecastImpactEvent
+    Position OldPosition,
+    DateOnly Date) : IForecastImpactEvent
 {
     /// <inheritdoc />
     public MlbId? MlbId => null;

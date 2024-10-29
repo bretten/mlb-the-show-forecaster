@@ -564,7 +564,8 @@ public class PlayerStatsBySeasonTests
         var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.8m);
         var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
         var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
-        var seasonStats = Faker.FakePlayerStatsBySeason();
+        var seasonStats = Faker.FakePlayerStatsBySeason(battingStatsByGames: new List<PlayerBattingStatsByGame>()
+            { Faker.FakePlayerBattingStats() });
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.SetupSequence(x => x.AssessBatting(It.IsAny<BattingStats>()))
@@ -590,7 +591,8 @@ public class PlayerStatsBySeasonTests
         var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.2m);
         var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
         var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
-        var seasonStats = Faker.FakePlayerStatsBySeason();
+        var seasonStats = Faker.FakePlayerStatsBySeason(battingStatsByGames: new List<PlayerBattingStatsByGame>()
+            { Faker.FakePlayerBattingStats() });
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.SetupSequence(x => x.AssessBatting(It.IsAny<BattingStats>()))
@@ -616,7 +618,8 @@ public class PlayerStatsBySeasonTests
         var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.8m);
         var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
         var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
-        var seasonStats = Faker.FakePlayerStatsBySeason();
+        var seasonStats = Faker.FakePlayerStatsBySeason(pitchingStatsByGames: new List<PlayerPitchingStatsByGame>()
+            { Faker.FakePlayerPitchingStats() });
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.SetupSequence(x => x.AssessPitching(It.IsAny<PitchingStats>()))
@@ -642,7 +645,8 @@ public class PlayerStatsBySeasonTests
         var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.2m);
         var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
         var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
-        var seasonStats = Faker.FakePlayerStatsBySeason();
+        var seasonStats = Faker.FakePlayerStatsBySeason(pitchingStatsByGames: new List<PlayerPitchingStatsByGame>()
+            { Faker.FakePlayerPitchingStats() });
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.SetupSequence(x => x.AssessPitching(It.IsAny<PitchingStats>()))
@@ -668,7 +672,8 @@ public class PlayerStatsBySeasonTests
         var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.8m);
         var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
         var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
-        var seasonStats = Faker.FakePlayerStatsBySeason();
+        var seasonStats = Faker.FakePlayerStatsBySeason(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
+            { Faker.FakePlayerFieldingStats() });
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.SetupSequence(x => x.AssessFielding(It.IsAny<FieldingStats>()))
@@ -694,7 +699,8 @@ public class PlayerStatsBySeasonTests
         var newScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.2m);
         var firstHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.9m);
         var secondHalfScore = PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m);
-        var seasonStats = Faker.FakePlayerStatsBySeason();
+        var seasonStats = Faker.FakePlayerStatsBySeason(fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
+            { Faker.FakePlayerFieldingStats() });
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.SetupSequence(x => x.AssessFielding(It.IsAny<FieldingStats>()))

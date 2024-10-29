@@ -23,4 +23,9 @@ public interface IPerformanceChangeEvent : IDomainEvent
     /// A comparison of the previous and new performance
     /// </summary>
     public PerformanceScoreComparison Comparison { get; }
+
+    /// <summary>
+    /// The date
+    /// </summary>
+    public DateOnly Date { get; }
 }

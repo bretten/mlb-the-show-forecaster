@@ -24,6 +24,6 @@ public sealed class PlayerCardBoostEventConsumer : BaseForecastImpactEventConsum
     protected override ForecastImpact CreateImpact(IForecastImpactEvent ev)
     {
         var e = (PlayerCardBoostEvent)ev;
-        return new BoostForecastImpact(e.BoostReason, Calendar.Today(), e.BoostEndDate);
+        return new BoostForecastImpact(e.BoostReason, ev.Date, e.BoostEndDate);
     }
 }

@@ -353,7 +353,7 @@ public class RosterUpdateOrchestratorTests
         // RosterUpdate3 - PlayerCard4 is a new addition to the domain
         var rosterUpdate3Date = new DateOnly(2024, 4, 3);
         var cardExternalId4 = Faker.FakeGuid4;
-        var playerAddition4 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId4);
+        var playerAddition4 = Dtos.TestClasses.Faker.FakePlayerAddition(cardExternalId: cardExternalId4);
         var externalCard4 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId4);
 
         var rosterUpdate3 = Dtos.TestClasses.Faker.FakeRosterUpdate(date: rosterUpdate3Date,

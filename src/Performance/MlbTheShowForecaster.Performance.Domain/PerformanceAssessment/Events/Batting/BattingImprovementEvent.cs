@@ -6,5 +6,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAsse
 /// <summary>
 /// Published when there is an improvement in batting performance
 /// </summary>
-public sealed record BattingImprovementEvent(SeasonYear Year, MlbId MlbId, PerformanceScoreComparison Comparison)
+public sealed record BattingImprovementEvent(
+    SeasonYear Year,
+    MlbId MlbId,
+    PerformanceScoreComparison Comparison,
+    DateOnly Date)
     : IPerformanceChangeEvent;

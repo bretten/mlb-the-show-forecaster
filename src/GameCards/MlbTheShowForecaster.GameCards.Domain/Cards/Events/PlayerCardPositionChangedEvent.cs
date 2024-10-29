@@ -13,9 +13,11 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 /// <param name="CardExternalId">The card ID from MLB The Show</param>
 /// <param name="NewPosition">The new fielding position</param>
 /// <param name="OldPosition">The old fielding position</param>
+/// <param name="Date">The date of the change</param>
 public sealed record PlayerCardPositionChangedEvent(
     SeasonYear Year,
     CardExternalId CardExternalId,
     Position NewPosition,
-    Position OldPosition
+    Position OldPosition,
+    DateOnly Date
 ) : IDomainEvent;

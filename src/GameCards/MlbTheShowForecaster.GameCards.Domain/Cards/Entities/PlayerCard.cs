@@ -139,7 +139,7 @@ public sealed class PlayerCard : Card
         AddBaselineHistoricalRating(date, null, newOverallRating, newAttributes);
 
         // Raise domain events based on whether the rating increased or decreased
-        AssessOverallRatingChange(newOverallRating, newAttributes);
+        AssessOverallRatingChange(newOverallRating, newAttributes, date);
 
         // Set the new rarity
         if (OverallRating.Rarity != newOverallRating.Rarity)
@@ -163,7 +163,7 @@ public sealed class PlayerCard : Card
         AddTemporaryHistoricalRating(date, null, temporaryOverallRating, PlayerCardAttributes);
 
         // Raise domain events based on whether the rating increased or decreased
-        AssessOverallRatingChange(temporaryOverallRating, PlayerCardAttributes);
+        AssessOverallRatingChange(temporaryOverallRating, PlayerCardAttributes, date);
     }
 
     /// <summary>
@@ -194,7 +194,7 @@ public sealed class PlayerCard : Card
 
         // Raise a domain event that this card has a significant rating boost
         RaiseDomainEvent(new PlayerCardBoostedEvent(Year, ExternalId, boostedRating, boostedAttributes, boostReason,
-            endDate));
+            endDate, date));
     }
 
     /// <summary>
@@ -231,10 +231,11 @@ public sealed class PlayerCard : Card
     /// Changes the player card's primary position
     /// </summary>
     /// <param name="newPosition">The new position</param>
-    public void ChangePosition(Position newPosition)
+    /// <param name="date">The date of the change</param>
+    public void ChangePosition(Position newPosition, DateOnly date)
     {
-        RaiseDomainEvent(
-            new PlayerCardPositionChangedEvent(Year, ExternalId, OldPosition: Position, NewPosition: newPosition));
+        RaiseDomainEvent(new PlayerCardPositionChangedEvent(
+            Year, ExternalId, OldPosition: Position, NewPosition: newPosition, Date: date));
         Position = newPosition;
     }
 
@@ -273,7 +274,8 @@ public sealed class PlayerCard : Card
     /// </summary>
     /// <param name="newRating">The new <see cref="OverallRating"/></param>
     /// <param name="newAttributes">The new <see cref="PlayerCardAttributes"/></param>
-    private void AssessOverallRatingChange(OverallRating newRating, PlayerCardAttributes newAttributes)
+    /// <param name="date">The date</param>
+    private void AssessOverallRatingChange(OverallRating newRating, PlayerCardAttributes newAttributes, DateOnly date)
     {
         var rarityChanged = OverallRating.Rarity != newRating.Rarity;
 
@@ -285,7 +287,8 @@ public sealed class PlayerCard : Card
                 PreviousPlayerCardAttributes: PlayerCardAttributes,
                 NewOverallRating: newRating,
                 NewPlayerCardAttributes: newAttributes,
-                RarityChanged: rarityChanged));
+                RarityChanged: rarityChanged,
+                Date: date));
         }
         else if (OverallRating.Value > newRating.Value)
         {
@@ -294,7 +297,8 @@ public sealed class PlayerCard : Card
                 PreviousPlayerCardAttributes: PlayerCardAttributes,
                 NewOverallRating: newRating,
                 NewPlayerCardAttributes: newAttributes,
-                RarityChanged: rarityChanged));
+                RarityChanged: rarityChanged,
+                Date: date));
         }
         // If the overall rating hasn't changed, it means the player has negligible changes, and is not important or actionable
     }

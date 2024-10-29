@@ -16,13 +16,20 @@ public readonly record struct PlayerAddition
     /// <summary>
     /// Constructor
     /// </summary>
+    /// <param name="date">The date of the addition</param>
     /// <param name="cardExternalId">The ID of the player card</param>
     /// <param name="playerName">The name of the player</param>
-    public PlayerAddition(CardExternalId cardExternalId, string playerName)
+    public PlayerAddition(DateOnly date, CardExternalId cardExternalId, string playerName)
     {
+        Date = date;
         _cardExternalId = cardExternalId;
         PlayerName = playerName;
     }
+
+    /// <summary>
+    /// The date of the addition
+    /// </summary>
+    public DateOnly Date { get; }
 
     /// <summary>
     /// The ID of the player card

@@ -12,6 +12,7 @@ public class BattingStatsImprovementEventConsumerTests : BaseForecastImpactEvent
     public async Task Handle_BattingStatsImprovementEvent_AppliesForecastImpact()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
@@ -20,14 +21,14 @@ public class BattingStatsImprovementEventConsumerTests : BaseForecastImpactEvent
         var consumer =
             new BattingStatsImprovementEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
 
-        var e = new BattingStatsImprovementEvent(Year, MlbId, PercentageChange.Create(0.5m, 0.7m));
+        var e = new BattingStatsImprovementEvent(Year, MlbId, PercentageChange.Create(0.5m, 0.7m), date);
 
         // Act
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new BattingStatsForecastImpact(0.5m, 0.7m, stubCalendar.Object.Today(),
-            stubCalendar.Object.Today().AddDays(stubImpactDuration.BattingStatsChange));
+        var expectedImpact =
+            new BattingStatsForecastImpact(0.5m, 0.7m, date, date.AddDays(stubImpactDuration.BattingStatsChange));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

@@ -25,4 +25,9 @@ public interface IForecastImpactEvent : IDomainEvent
     /// The MLB ID of the Player
     /// </summary>
     public MlbId? MlbId { get; }
+
+    /// <summary>
+    /// The date
+    /// </summary>
+    public DateOnly Date { get; }
 }

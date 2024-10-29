@@ -154,18 +154,21 @@ public static class Faker
         );
     }
 
-    public static PlayerPositionChange FakePlayerPositionChange(Guid? cardExternalId = null,
+    public static PlayerPositionChange FakePlayerPositionChange(DateOnly? date = null, Guid? cardExternalId = null,
         Position newPosition = Position.Shortstop)
     {
         return new PlayerPositionChange(
+            Date: date ?? new DateOnly(2024, 4, 1),
             CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             NewPosition: newPosition
         );
     }
 
-    public static PlayerAddition FakePlayerAddition(Guid? cardExternalId = null, string name = "playerName1")
+    public static PlayerAddition FakePlayerAddition(DateOnly? date = null, Guid? cardExternalId = null,
+        string name = "playerName1")
     {
         return new PlayerAddition(
+            date: date ?? new DateOnly(2024, 4, 1),
             cardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             playerName: name
         );

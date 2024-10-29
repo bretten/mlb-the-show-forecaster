@@ -11,6 +11,7 @@ public class PlayerFreeAgencyEventConsumerTests : BaseForecastImpactEventConsume
     public async Task Handle_PlayerFreeAgencyEvent_AppliesForecastImpact()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
@@ -19,14 +20,14 @@ public class PlayerFreeAgencyEventConsumerTests : BaseForecastImpactEventConsume
         var consumer =
             new PlayerFreeAgencyEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
 
-        var e = new PlayerFreeAgencyEvent(Year, MlbId);
+        var e = new PlayerFreeAgencyEvent(Year, MlbId, date);
 
         // Act
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new PlayerFreeAgencyForecastImpact(stubCalendar.Object.Today(),
-            stubCalendar.Object.Today().AddDays(stubImpactDuration.PlayerFreeAgency));
+        var expectedImpact =
+            new PlayerFreeAgencyForecastImpact(date, date.AddDays(stubImpactDuration.PlayerFreeAgency));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

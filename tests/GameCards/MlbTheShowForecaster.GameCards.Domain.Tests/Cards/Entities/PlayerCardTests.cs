@@ -445,7 +445,7 @@ public class PlayerCardTests
         var card = Faker.FakePlayerCard(position: Position.FirstBase);
 
         // Act
-        card.ChangePosition(newPosition);
+        card.ChangePosition(newPosition, new DateOnly(2024, 10, 28));
 
         // Assert
         Assert.Equal(Position.Catcher, card.Position);
@@ -455,6 +455,7 @@ public class PlayerCardTests
         Assert.Equal(card.ExternalId, e!.CardExternalId);
         Assert.Equal(Position.Catcher, e.NewPosition);
         Assert.Equal(Position.FirstBase, e.OldPosition);
+        Assert.Equal(new DateOnly(2024, 10, 28), e.Date);
     }
 
     [Fact]
