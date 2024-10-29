@@ -12,6 +12,7 @@ public class FieldingStatsDeclineEventConsumerTests : BaseForecastImpactEventCon
     public async Task Handle_FieldingStatsDeclineEvent_AppliesForecastImpact()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
@@ -20,14 +21,14 @@ public class FieldingStatsDeclineEventConsumerTests : BaseForecastImpactEventCon
         var consumer =
             new FieldingStatsDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
 
-        var e = new FieldingStatsDeclineEvent(Year, MlbId, PercentageChange.Create(0.7m, 0.5m));
+        var e = new FieldingStatsDeclineEvent(Year, MlbId, PercentageChange.Create(0.7m, 0.5m), date);
 
         // Act
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new FieldingStatsForecastImpact(0.7m, 0.5m,stubCalendar.Object.Today(),
-            stubCalendar.Object.Today().AddDays(stubImpactDuration.FieldingStatsChange));
+        var expectedImpact =
+            new FieldingStatsForecastImpact(0.7m, 0.5m, date, date.AddDays(stubImpactDuration.FieldingStatsChange));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

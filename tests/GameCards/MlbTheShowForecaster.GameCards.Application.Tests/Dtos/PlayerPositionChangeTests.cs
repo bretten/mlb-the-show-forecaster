@@ -11,7 +11,7 @@ public class PlayerPositionChangeTests
     {
         // Arrange
         var card = Faker.FakePlayerCard(position: Position.Shortstop);
-        var positionChange = new PlayerPositionChange(card.ExternalId, Position.Shortstop);
+        var positionChange = new PlayerPositionChange(new DateOnly(2024, 10, 28), card.ExternalId, Position.Shortstop);
 
         // Act
         var actual = positionChange.IsApplied(card);
@@ -25,7 +25,7 @@ public class PlayerPositionChangeTests
     {
         // Arrange
         var card = Faker.FakePlayerCard(position: Position.ThirdBase);
-        var positionChange = new PlayerPositionChange(card.ExternalId, Position.Shortstop);
+        var positionChange = new PlayerPositionChange(new DateOnly(2024, 10, 28), card.ExternalId, Position.Shortstop);
 
         // Act
         var actual = positionChange.IsApplied(card);

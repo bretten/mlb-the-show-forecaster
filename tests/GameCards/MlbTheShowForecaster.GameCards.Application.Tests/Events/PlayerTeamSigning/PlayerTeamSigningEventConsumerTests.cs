@@ -11,6 +11,7 @@ public class PlayerTeamSigningEventConsumerTests : BaseForecastImpactEventConsum
     public async Task Handle_PlayerTeamSigningEvent_AppliesForecastImpact()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
@@ -19,14 +20,14 @@ public class PlayerTeamSigningEventConsumerTests : BaseForecastImpactEventConsum
         var consumer =
             new PlayerTeamSigningEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
 
-        var e = new PlayerTeamSigningEvent(Year, MlbId);
+        var e = new PlayerTeamSigningEvent(Year, MlbId, date);
 
         // Act
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new PlayerTeamSigningForecastImpact(stubCalendar.Object.Today(),
-            stubCalendar.Object.Today().AddDays(stubImpactDuration.PlayerTeamSigning));
+        var expectedImpact =
+            new PlayerTeamSigningForecastImpact(date, date.AddDays(stubImpactDuration.PlayerTeamSigning));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

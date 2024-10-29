@@ -7,9 +7,11 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// <summary>
 /// Represents a player's primary position changing in MLB The Show
 /// </summary>
+/// <param name="Date">The date of the change</param>
 /// <param name="CardExternalId">The ID of the player card</param>
 /// <param name="NewPosition">The player's new position</param>
 public readonly record struct PlayerPositionChange(
+    DateOnly Date,
     CardExternalId CardExternalId,
     Position NewPosition
 )

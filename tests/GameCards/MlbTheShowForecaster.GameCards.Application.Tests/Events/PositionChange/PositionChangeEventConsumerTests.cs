@@ -12,6 +12,7 @@ public class PositionChangeEventConsumerTests : BaseForecastImpactEventConsumerT
     public async Task Handle_PositionChangeEvent_AppliesForecastImpact()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
@@ -22,14 +23,14 @@ public class PositionChangeEventConsumerTests : BaseForecastImpactEventConsumerT
 
         const Position oldPosition = Position.CenterField;
         const Position newPosition = Position.LeftField;
-        var e = new PositionChangeEvent(Year, CardExternalId, NewPosition: newPosition, oldPosition);
+        var e = new PositionChangeEvent(Year, CardExternalId, NewPosition: newPosition, oldPosition, date);
 
         // Act
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new PositionChangeForecastImpact(oldPosition: oldPosition, newPosition,
-            stubCalendar.Object.Today(), stubCalendar.Object.Today().AddDays(stubImpactDuration.PlayerTeamSigning));
+        var expectedImpact = new PositionChangeForecastImpact(oldPosition: oldPosition, newPosition, date,
+            date.AddDays(stubImpactDuration.PlayerTeamSigning));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

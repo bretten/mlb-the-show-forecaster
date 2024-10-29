@@ -46,4 +46,9 @@ public interface IPlayerCardOverallRatingChangedEvent : IDomainEvent
     /// True if the card rarity changed, otherwise false
     /// </summary>
     bool RarityChanged { get; }
+
+    /// <summary>
+    /// The date
+    /// </summary>
+    DateOnly Date { get; }
 }

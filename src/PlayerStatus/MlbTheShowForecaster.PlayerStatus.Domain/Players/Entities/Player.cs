@@ -102,7 +102,8 @@ public sealed class Player : AggregateRoot
     /// </summary>
     /// <param name="year">The year the player signed with the team</param>
     /// <param name="team">The Team to sign with</param>
-    public void SignContractWithTeam(SeasonYear year, Team team)
+    /// <param name="date">The date</param>
+    public void SignContractWithTeam(SeasonYear year, Team team, DateOnly date)
     {
         if (!IsFreeAgent())
         {
@@ -110,40 +111,43 @@ public sealed class Player : AggregateRoot
         }
 
         Team = team;
-        RaiseDomainEvent(new PlayerSignedContractWithTeamEvent(year, MlbId, team.MlbId));
+        RaiseDomainEvent(new PlayerSignedContractWithTeamEvent(year, MlbId, team.MlbId, date));
     }
 
     /// <summary>
     /// Enters the Player into free agency
     /// </summary>
     /// <param name="year">The year the player entered free agency</param>
-    public void EnterFreeAgency(SeasonYear year)
+    /// <param name="date">The date</param>
+    public void EnterFreeAgency(SeasonYear year, DateOnly date)
     {
         EndCurrentTeamContract();
 
-        RaiseDomainEvent(new PlayerEnteredFreeAgencyEvent(year, MlbId));
+        RaiseDomainEvent(new PlayerEnteredFreeAgencyEvent(year, MlbId, date));
     }
 
     /// <summary>
     /// Activates the Player
     /// </summary>
     /// <param name="year">The year the player was activated</param>
-    public void Activate(SeasonYear year)
+    /// <param name="date">The date</param>
+    public void Activate(SeasonYear year, DateOnly date)
     {
         Active = true;
 
-        RaiseDomainEvent(new PlayerActivatedEvent(year, MlbId));
+        RaiseDomainEvent(new PlayerActivatedEvent(year, MlbId, date));
     }
 
     /// <summary>
     /// Inactivates a Player
     /// </summary>
     /// <param name="year">The year the player was inactivated</param>
-    public void Inactivate(SeasonYear year)
+    /// <param name="date">The date</param>
+    public void Inactivate(SeasonYear year, DateOnly date)
     {
         Active = false;
 
-        RaiseDomainEvent(new PlayerInactivatedEvent(year, MlbId));
+        RaiseDomainEvent(new PlayerInactivatedEvent(year, MlbId, date));
     }
 
     /// <summary>

@@ -32,7 +32,7 @@ public class UpdatePlayerCommandHandlerTests
             .Returns(mockPlayerRepository);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCommand(year, fakePlayer, fakePlayerStatusChange);
+        var command = new UpdatePlayerCommand(year, fakePlayer, fakePlayerStatusChange, new DateOnly(2024, 10, 28));
         var handler = new UpdatePlayerCommandHandler(stubUnitOfWork.Object);
 
         // Act
@@ -65,7 +65,7 @@ public class UpdatePlayerCommandHandlerTests
             .Returns(mockPlayerRepository);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCommand(year, fakePlayer, fakePlayerStatusChange);
+        var command = new UpdatePlayerCommand(year, fakePlayer, fakePlayerStatusChange, new DateOnly(2024, 10, 28));
         var handler = new UpdatePlayerCommandHandler(stubUnitOfWork.Object);
 
         // Act
@@ -98,7 +98,7 @@ public class UpdatePlayerCommandHandlerTests
             .Returns(mockPlayerRepository);
 
         var cToken = CancellationToken.None;
-        var command = new UpdatePlayerCommand(year, fakePlayer, fakePlayerStatusChange);
+        var command = new UpdatePlayerCommand(year, fakePlayer, fakePlayerStatusChange, new DateOnly(2024, 10, 28));
         var handler = new UpdatePlayerCommandHandler(stubUnitOfWork.Object);
         var action = async () => await handler.Handle(command, cToken);
 

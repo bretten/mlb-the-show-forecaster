@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
@@ -73,6 +74,7 @@ public static class Dependencies
 
         services.AddMlbAPi(config);
         services.AddPlayerTeamProvider();
+        services.TryAddSingleton<ICalendar, Calendar>();
         services.TryAddSingleton<IMlbApiPlayerMapper, MlbApiPlayerMapper>();
         services.TryAddSingleton<IPlayerStatusChangeDetector, PlayerStatusChangeDetector>();
         services.TryAddTransient<IPlayerRoster, MlbApiPlayerRoster>();

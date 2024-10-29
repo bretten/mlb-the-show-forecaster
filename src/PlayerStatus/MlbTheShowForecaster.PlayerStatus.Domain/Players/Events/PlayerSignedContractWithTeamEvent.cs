@@ -9,5 +9,9 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events
 /// <param name="Year">The year the player signed with the team</param>
 /// <param name="PlayerMlbId">The MLB ID of the player</param>
 /// <param name="TeamMlbId">The MLB ID of the team</param>
-public sealed record PlayerSignedContractWithTeamEvent(SeasonYear Year, MlbId PlayerMlbId, MlbId TeamMlbId)
-    : IDomainEvent;
+/// <param name="Date">The date</param>
+public sealed record PlayerSignedContractWithTeamEvent(
+    SeasonYear Year,
+    MlbId PlayerMlbId,
+    MlbId TeamMlbId,
+    DateOnly Date) : IDomainEvent;

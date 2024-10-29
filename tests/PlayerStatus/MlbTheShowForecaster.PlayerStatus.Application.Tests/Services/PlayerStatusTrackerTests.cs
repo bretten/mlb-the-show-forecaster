@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.CreatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
@@ -34,9 +35,10 @@ public class PlayerStatusTrackerTests
         var mockCommandSender = Mock.Of<ICommandSender>();
         var mockPlayerChangeDetector = Mock.Of<IPlayerStatusChangeDetector>();
         var mockTeamProvider = Mock.Of<ITeamProvider>();
+        var mockCalendar = Mock.Of<ICalendar>();
 
         var tracker = new PlayerStatusTracker(mockPlayerRoster.Object, mockQuerySender, mockCommandSender,
-            mockPlayerChangeDetector, mockTeamProvider);
+            mockPlayerChangeDetector, mockTeamProvider, mockCalendar);
 
         var action = () => tracker.TrackPlayers(seasonYear, cToken);
 
@@ -57,9 +59,10 @@ public class PlayerStatusTrackerTests
         var stubPlayerStatusDetector = scenario.StubPlayerStatusChangeDetector;
         var mockQuerySender = scenario.MockQuerySender;
         var mockCommandSender = scenario.MockCommandSender;
+        var stubCalendar = scenario.StubCalendar;
 
         var tracker = new PlayerStatusTracker(stubPlayerRoster, mockQuerySender.Object,
-            mockCommandSender.Object, stubPlayerStatusDetector.Object, scenario.StubTeamProvider);
+            mockCommandSender.Object, stubPlayerStatusDetector.Object, scenario.StubTeamProvider, stubCalendar.Object);
 
         // Act
         var actual = await tracker.TrackPlayers(TestScenario.SeasonYear, scenario.CancellationToken);
@@ -134,6 +137,11 @@ public class PlayerStatusTrackerTests
         public Mock<IQuerySender> MockQuerySender { get; private set; } = null!;
 
         /// <summary>
+        /// Calendar for getting date
+        /// </summary>
+        public Mock<ICalendar> StubCalendar { get; private set; } = null!;
+
+        /// <summary>
         /// Query for Player1
         /// </summary>
         public GetPlayerByMlbIdQuery Query1 { get; private set; }
@@ -175,6 +183,11 @@ public class PlayerStatusTrackerTests
 
         private void Setup()
         {
+            // Calendar
+            StubCalendar = new Mock<ICalendar>();
+            StubCalendar.Setup(x => x.Today())
+                .Returns(new DateOnly(2024, 10, 28));
+
             // Fake Team
             var team = Faker.FakeTeam(Faker.DefaultTeamMlbId);
             var otherTeam = Faker.FakeTeam(999);
@@ -275,7 +288,8 @@ public class PlayerStatusTrackerTests
         {
             MockCommandSender = new Mock<ICommandSender>();
             CreatePlayer2Command = new CreatePlayerCommand(rosterEntry2);
-            UpdatePlayer3Command = new UpdatePlayerCommand(SeasonYear, player3, player3Changes);
+            UpdatePlayer3Command =
+                new UpdatePlayerCommand(SeasonYear, player3, player3Changes, StubCalendar.Object.Today());
         }
     }
 }

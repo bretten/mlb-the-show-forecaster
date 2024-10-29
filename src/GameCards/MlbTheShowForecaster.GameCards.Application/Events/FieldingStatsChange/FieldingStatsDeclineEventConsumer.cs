@@ -23,7 +23,7 @@ public sealed class FieldingStatsDeclineEventConsumer : BaseForecastImpactEventC
     protected override ForecastImpact CreateImpact(IForecastImpactEvent ev)
     {
         var e = (FieldingStatsDeclineEvent)ev;
-        return new FieldingStatsForecastImpact(e.Comparison.ReferenceValue, e.Comparison.NewValue,
-            Calendar.Today(), Calendar.Today().AddDays(Duration.FieldingStatsChange));
+        return new FieldingStatsForecastImpact(e.Comparison.ReferenceValue, e.Comparison.NewValue, ev.Date,
+            ev.Date.AddDays(Duration.FieldingStatsChange));
     }
 }

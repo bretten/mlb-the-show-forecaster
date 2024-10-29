@@ -80,7 +80,7 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
         // If there was a position change, apply it
         if (positionChange != null)
         {
-            domainPlayerCard.ChangePosition(positionChange.Value.NewPosition);
+            domainPlayerCard.ChangePosition(positionChange.Value.NewPosition, positionChange.Value.Date);
         }
 
         // Add or remove a card boost

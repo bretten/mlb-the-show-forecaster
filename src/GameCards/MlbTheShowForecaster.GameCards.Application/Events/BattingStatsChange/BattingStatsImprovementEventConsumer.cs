@@ -23,7 +23,7 @@ public sealed class BattingStatsImprovementEventConsumer : BaseForecastImpactEve
     protected override ForecastImpact CreateImpact(IForecastImpactEvent ev)
     {
         var e = (BattingStatsImprovementEvent)ev;
-        return new BattingStatsForecastImpact(e.Comparison.ReferenceValue, e.Comparison.NewValue,
-            Calendar.Today(), Calendar.Today().AddDays(Duration.BattingStatsChange));
+        return new BattingStatsForecastImpact(e.Comparison.ReferenceValue, e.Comparison.NewValue, ev.Date,
+            ev.Date.AddDays(Duration.BattingStatsChange));
     }
 }

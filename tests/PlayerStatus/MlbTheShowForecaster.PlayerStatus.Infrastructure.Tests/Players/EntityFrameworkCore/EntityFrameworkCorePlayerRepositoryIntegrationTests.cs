@@ -91,7 +91,7 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
         var repo = new EntityFrameworkCorePlayerRepository(dbContext);
 
         // Act
-        fakePlayer.Activate(year);
+        fakePlayer.Activate(year, new DateOnly(2024, 10, 28));
         await repo.Update(fakePlayer);
         await dbContext.SaveChangesAsync();
 

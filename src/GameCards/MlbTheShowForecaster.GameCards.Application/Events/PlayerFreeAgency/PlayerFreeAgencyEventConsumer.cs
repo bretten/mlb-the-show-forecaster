@@ -22,6 +22,6 @@ public sealed class PlayerFreeAgencyEventConsumer : BaseForecastImpactEventConsu
     /// <inheritdoc />
     protected override ForecastImpact CreateImpact(IForecastImpactEvent ev)
     {
-        return new PlayerFreeAgencyForecastImpact(Calendar.Today(), Calendar.Today().AddDays(Duration.PlayerFreeAgency));
+        return new PlayerFreeAgencyForecastImpact(ev.Date, ev.Date.AddDays(Duration.PlayerFreeAgency));
     }
 }

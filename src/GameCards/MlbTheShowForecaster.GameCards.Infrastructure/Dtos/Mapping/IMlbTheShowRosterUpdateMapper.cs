@@ -35,14 +35,16 @@ public interface IMlbTheShowRosterUpdateMapper
     /// <summary>
     /// Should map <see cref="PlayerPositionChangeDto"/> to <see cref="PlayerPositionChange"/>
     /// </summary>
+    /// <param name="date">The date of the change</param>
     /// <param name="positionChange">The position change</param>
     /// <returns><see cref="PlayerPositionChange"/></returns>
-    PlayerPositionChange Map(PlayerPositionChangeDto positionChange);
+    PlayerPositionChange Map(DateOnly date, PlayerPositionChangeDto positionChange);
 
     /// <summary>
     /// Should map <see cref="NewlyAddedPlayerDto"/> to <see cref="PlayerAddition"/>
     /// </summary>
+    /// <param name="date">The date of the addition</param>
     /// <param name="newPlayer">The new player</param>
     /// <returns><see cref="PlayerAddition"/></returns>
-    PlayerAddition Map(NewlyAddedPlayerDto newPlayer);
+    PlayerAddition Map(DateOnly date, NewlyAddedPlayerDto newPlayer);
 }

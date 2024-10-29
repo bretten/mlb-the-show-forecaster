@@ -12,6 +12,7 @@ public class PlayerCardBoostEventConsumerTests : BaseForecastImpactEventConsumer
     public async Task Handle_PlayerCardBoostedEvent_AppliesForecastImpact()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
@@ -22,15 +23,14 @@ public class PlayerCardBoostEventConsumerTests : BaseForecastImpactEventConsumer
 
         var newRating = Faker.FakeOverallRating(90);
         const string boostReason = "Hit 5 HRs";
-        var boostEndDate = stubCalendar.Object.Today().AddDays(stubImpactDuration.Boost);
-        var e = new PlayerCardBoostEvent(Year, CardExternalId, newRating, boostReason, boostEndDate);
+        var boostEndDate = date.AddDays(stubImpactDuration.Boost);
+        var e = new PlayerCardBoostEvent(Year, CardExternalId, newRating, boostReason, boostEndDate, date);
 
         // Act
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact =
-            new BoostForecastImpact(boostReason, stubCalendar.Object.Today(), boostEndDate);
+        var expectedImpact = new BoostForecastImpact(boostReason, date, boostEndDate);
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

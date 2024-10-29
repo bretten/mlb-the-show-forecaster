@@ -11,6 +11,7 @@ public class PlayerDeactivationEventConsumerTests : BaseForecastImpactEventConsu
     public async Task Handle_PlayerDeactivationEvent_AppliesForecastImpact()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
@@ -19,14 +20,14 @@ public class PlayerDeactivationEventConsumerTests : BaseForecastImpactEventConsu
         var consumer =
             new PlayerDeactivationEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
 
-        var e = new PlayerDeactivationEvent(Year, MlbId);
+        var e = new PlayerDeactivationEvent(Year, MlbId, date);
 
         // Act
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new PlayerDeactivationForecastImpact(stubCalendar.Object.Today(),
-            stubCalendar.Object.Today().AddDays(stubImpactDuration.PlayerDeactivation));
+        var expectedImpact =
+            new PlayerDeactivationForecastImpact(date, date.AddDays(stubImpactDuration.PlayerDeactivation));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

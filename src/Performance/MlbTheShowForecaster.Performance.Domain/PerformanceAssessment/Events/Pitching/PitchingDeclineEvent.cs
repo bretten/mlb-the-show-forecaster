@@ -6,5 +6,9 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAsse
 /// <summary>
 /// Published when there is a decline in pitching performance
 /// </summary>
-public sealed record PitchingDeclineEvent(SeasonYear Year, MlbId MlbId, PerformanceScoreComparison Comparison)
+public sealed record PitchingDeclineEvent(
+    SeasonYear Year,
+    MlbId MlbId,
+    PerformanceScoreComparison Comparison,
+    DateOnly Date)
     : IPerformanceChangeEvent;

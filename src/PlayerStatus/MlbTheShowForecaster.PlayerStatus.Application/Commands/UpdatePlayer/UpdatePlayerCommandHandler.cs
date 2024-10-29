@@ -50,8 +50,8 @@ internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerC
         var player = command.Player;
         var playerStatusChanges = command.PlayerStatusChanges;
 
-        UpdateActiveStatus(ref player, year, playerStatusChanges);
-        UpdateTeamStatus(ref player, year, playerStatusChanges);
+        UpdateActiveStatus(ref player, year, playerStatusChanges, command.Date);
+        UpdateTeamStatus(ref player, year, playerStatusChanges, command.Date);
 
         await _playerRepository.Update(player);
 
@@ -64,15 +64,17 @@ internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerC
     /// <param name="player">The <see cref="Player"/></param>
     /// <param name="year">The year the player is being updated for</param>
     /// <param name="statusChanges">The status changes</param>
-    private void UpdateActiveStatus(ref Player player, SeasonYear year, PlayerStatusChanges statusChanges)
+    /// <param name="date">The date</param>
+    private void UpdateActiveStatus(ref Player player, SeasonYear year, PlayerStatusChanges statusChanges,
+        DateOnly date)
     {
         if (statusChanges.Activated)
         {
-            player.Activate(year);
+            player.Activate(year, date);
         }
         else if (statusChanges.Inactivated)
         {
-            player.Inactivate(year);
+            player.Inactivate(year, date);
         }
     }
 
@@ -82,18 +84,20 @@ internal sealed class UpdatePlayerCommandHandler : ICommandHandler<UpdatePlayerC
     /// <param name="player">The <see cref="Player"/></param>
     /// <param name="year">The year the player is being updated for</param>
     /// <param name="statusChanges">The status changes</param>
+    /// <param name="date">The date</param>
     /// <exception cref="MissingTeamContractSigningException">Thrown when there is no <see cref="Team"/> when signing a contract</exception>
-    private void UpdateTeamStatus(ref Player player, SeasonYear year, PlayerStatusChanges statusChanges)
+    private void UpdateTeamStatus(ref Player player, SeasonYear year, PlayerStatusChanges statusChanges, DateOnly date)
     {
         if (statusChanges.EnteredFreeAgency)
         {
-            player.EnterFreeAgency(year);
+            player.EnterFreeAgency(year, date);
         }
         else if (statusChanges.SignedContractWithTeam)
         {
             player.SignContractWithTeam(year, statusChanges.NewTeam ??
                                               throw new MissingTeamContractSigningException(
-                                                  $"No team specified when signing contract for {player.MlbId.Value} {player.FirstName} {player.LastName}"));
+                                                  $"No team specified when signing contract for {player.MlbId.Value} {player.FirstName} {player.LastName}"),
+                date);
         }
     }
 }

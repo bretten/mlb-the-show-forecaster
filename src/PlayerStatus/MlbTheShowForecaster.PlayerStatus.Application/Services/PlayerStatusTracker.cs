@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.CreatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
@@ -43,6 +44,11 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
     private readonly ITeamProvider _teamProvider;
 
     /// <summary>
+    /// Gets today's date
+    /// </summary>
+    private readonly ICalendar _calendar;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="playerRoster">The roster provides a list of MLB players</param>
@@ -50,14 +56,16 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
     /// <param name="commandSender">Sends commands to mutate the system</param>
     /// <param name="playerStatusChangeDetector">Detects if there are any changes in a player's status</param>
     /// <param name="teamProvider">Provides information on teams</param>
+    /// <param name="calendar">Gets today's date</param>
     public PlayerStatusTracker(IPlayerRoster playerRoster, IQuerySender querySender, ICommandSender commandSender,
-        IPlayerStatusChangeDetector playerStatusChangeDetector, ITeamProvider teamProvider)
+        IPlayerStatusChangeDetector playerStatusChangeDetector, ITeamProvider teamProvider, ICalendar calendar)
     {
         _playerRoster = playerRoster;
         _querySender = querySender;
         _commandSender = commandSender;
         _playerStatusChangeDetector = playerStatusChangeDetector;
         _teamProvider = teamProvider;
+        _calendar = calendar;
     }
 
     /// <summary>
@@ -101,7 +109,8 @@ public sealed class PlayerStatusTracker : IPlayerStatusTracker
                 _teamProvider.GetBy(rosterEntry.CurrentTeamMlbId));
             if (detectedChanges.Any())
             {
-                await _commandSender.Send(new UpdatePlayerCommand(seasonYear, existingPlayer, detectedChanges),
+                await _commandSender.Send(
+                    new UpdatePlayerCommand(seasonYear, existingPlayer, detectedChanges, _calendar.Today()),
                     cancellationToken);
                 updatedPlayers++;
             }

@@ -12,6 +12,7 @@ public class OverallRatingImprovementEventConsumerTests : BaseForecastImpactEven
     public async Task Handle_OverallRatingImprovementEvent_AppliesForecastImpact()
     {
         // Arrange
+        var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
         var stubCalendar = StubCalendar();
@@ -23,14 +24,14 @@ public class OverallRatingImprovementEventConsumerTests : BaseForecastImpactEven
 
         var oldRating = Faker.FakeOverallRating(70);
         var newRating = Faker.FakeOverallRating(90);
-        var e = new OverallRatingImprovementEvent(Year, CardExternalId, NewOverallRating: newRating, oldRating);
+        var e = new OverallRatingImprovementEvent(Year, CardExternalId, NewOverallRating: newRating, oldRating, date);
 
         // Act
         await consumer.Handle(e, cToken);
 
         // Assert
-        var expectedImpact = new OverallRatingChangeForecastImpact(oldRating, newRating, stubCalendar.Object.Today(),
-            stubCalendar.Object.Today().AddDays(stubImpactDuration.OverallRatingChange));
+        var expectedImpact = new OverallRatingChangeForecastImpact(oldRating, newRating, date,
+            date.AddDays(stubImpactDuration.OverallRatingChange));
         mockCommandSender.Verify(
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>

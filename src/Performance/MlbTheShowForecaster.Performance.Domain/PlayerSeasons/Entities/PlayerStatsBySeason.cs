@@ -236,11 +236,13 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
         {
-            RaiseDomainEvent(new BattingImprovementEvent(SeasonYear, PlayerMlbId, comparison));
+            RaiseDomainEvent(new BattingImprovementEvent(SeasonYear, PlayerMlbId, comparison,
+                BattingStatsByGamesChronologically[^1].GameDate));
         }
         else if (comparison.IsSignificantDecrease)
         {
-            RaiseDomainEvent(new BattingDeclineEvent(SeasonYear, PlayerMlbId, comparison));
+            RaiseDomainEvent(new BattingDeclineEvent(SeasonYear, PlayerMlbId, comparison,
+                BattingStatsByGamesChronologically[^1].GameDate));
         }
 
         // Set the new score
@@ -267,11 +269,13 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
         {
-            RaiseDomainEvent(new PitchingImprovementEvent(SeasonYear, PlayerMlbId, comparison));
+            RaiseDomainEvent(new PitchingImprovementEvent(SeasonYear, PlayerMlbId, comparison,
+                PitchingStatsByGamesChronologically[^1].GameDate));
         }
         else if (comparison.IsSignificantDecrease)
         {
-            RaiseDomainEvent(new PitchingDeclineEvent(SeasonYear, PlayerMlbId, comparison));
+            RaiseDomainEvent(new PitchingDeclineEvent(SeasonYear, PlayerMlbId, comparison,
+                PitchingStatsByGamesChronologically[^1].GameDate));
         }
 
         // Set the new score
@@ -298,11 +302,13 @@ public sealed class PlayerStatsBySeason : AggregateRoot
         // If the stats have improved, raise an event. If they have declined, raise an event
         if (comparison.IsSignificantIncrease)
         {
-            RaiseDomainEvent(new FieldingImprovementEvent(SeasonYear, PlayerMlbId, comparison));
+            RaiseDomainEvent(new FieldingImprovementEvent(SeasonYear, PlayerMlbId, comparison,
+                FieldingStatsByGamesChronologically[^1].GameDate));
         }
         else if (comparison.IsSignificantDecrease)
         {
-            RaiseDomainEvent(new FieldingDeclineEvent(SeasonYear, PlayerMlbId, comparison));
+            RaiseDomainEvent(new FieldingDeclineEvent(SeasonYear, PlayerMlbId, comparison,
+                FieldingStatsByGamesChronologically[^1].GameDate));
         }
 
         // Set the new score
