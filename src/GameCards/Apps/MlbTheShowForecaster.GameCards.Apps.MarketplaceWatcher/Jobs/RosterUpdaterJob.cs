@@ -60,8 +60,12 @@ public sealed class RosterUpdaterJob : BaseJob<SeasonJobInput, RosterUpdaterJobR
         _logger.LogInformation($"{H} - Total cards updated = {historyResult.UpdatedPlayerCards.Count()}");
         foreach (var historicalUpdate in historyResult.UpdatedPlayerCards)
         {
-            _logger.LogInformation(
-                $"{H} - Updated {historicalUpdate.Name.Value}, {historicalUpdate.ExternalId.Value}, {historicalUpdate.Id}");
+            var updatedCard = historicalUpdate.Key;
+            foreach (var update in historicalUpdate.Value)
+            {
+                _logger.LogInformation(
+                    $"{H} - Updated {updatedCard.Name.Value}, {updatedCard.ExternalId.Value}, {update.StartDate.ToString("O")}");
+            }
         }
 
         var results = (await _rosterUpdateOrchestrator.SyncRosterUpdates(input.Year, cancellationToken)).ToList();
@@ -73,7 +77,7 @@ public sealed class RosterUpdaterJob : BaseJob<SeasonJobInput, RosterUpdaterJobR
             _logger.LogInformation($"{S} - Total new players = {result.TotalNewPlayers}");
         }
 
-        return new RosterUpdaterJobResult(TotalHistoricalUpdatesApplied: historyResult.UpdatedPlayerCards.Count(),
+        return new RosterUpdaterJobResult(TotalHistoricalUpdatesApplied: historyResult.UpdatedPlayerCards.Count,
             TotalRosterUpdatesApplied: results.Count);
     }
 

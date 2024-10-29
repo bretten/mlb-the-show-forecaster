@@ -73,14 +73,14 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         var rosterUpdates = await _rosterUpdateFeed.GetNewRosterUpdates(seasonYear, cancellationToken);
 
         // Sync historical ratings for all player card rating changes in the roster updates
-        var results = new List<PlayerCard>();
+        var results = new Dictionary<PlayerCard, IReadOnlyList<PlayerCardHistoricalRating>>();
         var tasks = SyncHistoryByPlayerCard(rosterUpdates.OldToNew, seasonYear, cancellationToken);
         foreach (var task in tasks)
         {
             try
             {
                 var result = await task;
-                if (result != null) results.Add(result);
+                if (result.HasValue) results.TryAdd(result.Value.Item1, result.Value.Item2.ToImmutableList());
             }
             catch (NoPlayerCardFoundForRosterUpdateException e)
             {
@@ -98,9 +98,8 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
     /// <param name="seasonYear">The season to sync rating changes for</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>A collection of Tasks that will sync the historical ratings</returns>
-    private IEnumerable<Task<PlayerCard?>> SyncHistoryByPlayerCard(IEnumerable<RosterUpdate> rosterUpdates,
-        SeasonYear seasonYear,
-        CancellationToken cancellationToken)
+    private IEnumerable<Task<(PlayerCard, IEnumerable<PlayerCardHistoricalRating>)?>> SyncHistoryByPlayerCard(
+        IEnumerable<RosterUpdate> rosterUpdates, SeasonYear seasonYear, CancellationToken cancellationToken)
     {
         // Group rating changes by the card's external ID
         var ratingChanges = rosterUpdates.SelectMany(x => x.RatingChanges)
@@ -122,10 +121,11 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
     /// <param name="cardExternalId">The <see cref="CardExternalId"/> of the <see cref="PlayerCard"/></param>
     /// <param name="changes">All rating changes from the <see cref="ICardCatalog"/></param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    /// <returns>The updated <see cref="PlayerCard"/> or null if nothing was changed</returns>
+    /// <returns>The updated <see cref="PlayerCard"/> and the applied <see cref="PlayerCardHistoricalRating"/>s or null if nothing was changed</returns>
     /// <exception cref="NoPlayerCardFoundForRosterUpdateException">Thrown if no <see cref="PlayerCard"/> could be found in the domain</exception>
-    private async Task<PlayerCard?> AddHistoricalRatingsForPlayerCard(SeasonYear seasonYear,
-        CardExternalId cardExternalId, IReadOnlyList<PlayerRatingChange> changes, CancellationToken cancellationToken)
+    private async Task<(PlayerCard, IEnumerable<PlayerCardHistoricalRating>)?> AddHistoricalRatingsForPlayerCard(
+        SeasonYear seasonYear, CardExternalId cardExternalId, IReadOnlyList<PlayerRatingChange> changes,
+        CancellationToken cancellationToken)
     {
         // Get the corresponding player card
         var playerCard = await _querySender.Send(new GetPlayerCardByExternalIdQuery(cardExternalId), cancellationToken);
@@ -158,6 +158,11 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         // This will rebuild the history
         var currentState = externalCard.GetAttributes();
 
+        // Use a FILO collection since we will be pushing changes in newest to oldest
+        var stack = new Stack<PlayerCardHistoricalRating>();
+        // Push in the current state
+        stack.Push(PlayerCardHistoricalRating.Baseline(changes[0].Date, null, changes[0].NewRating,
+            externalCard.GetAttributes()));
         // Iterate through all rating changes from newest to oldest
         var lastRatingChangeIndex = changes.Count - 1;
         for (var i = 0; i < changes.Count; i++)
@@ -175,7 +180,6 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
                 return null;
             }
 
-
             // A historical rating is being created for the state of the card BEFORE the current PlayerRatingChange (changes[i])
             // The last item is the oldest/first rating change. Its start date is considered to be the beginning of the year
             var startDate = i == lastRatingChangeIndex
@@ -188,10 +192,11 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
             var rating = changes[i].OldRating;
 
             // Add the historical rating to the PlayerCard if it has no record of it
-            var historicalRating = PlayerCardHistoricalRating.Baseline(startDate, endDate, rating, currentState);
+            var historicalRating = PlayerCardHistoricalRating.Baseline(startDate, null, rating, currentState);
             if (playerCard.IsRatingAppliedFor(historicalRating.StartDate)) continue;
             wasUpdated = true;
-            playerCard.AddHistoricalRating(historicalRating);
+
+            stack.Push(historicalRating);
         }
 
         // No new historical ratings, so no further action needed
@@ -200,14 +205,13 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
             return null;
         }
 
-        // Add a rating for the most recent state
-        var recentState = PlayerCardHistoricalRating.Baseline(changes[0].Date, null, changes[0].NewRating,
-            externalCard.GetAttributes());
-        if (!playerCard.IsRatingAppliedFor(recentState.StartDate)) playerCard.AddHistoricalRating(recentState);
-
         // Update the PlayerCard with the new historical ratings
-        await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, null, null, null), cancellationToken);
-        return playerCard;
+        await _commandSender.Send(new UpdatePlayerCardCommand(playerCard, null, null, null, stack), cancellationToken);
+        return new ValueTuple<PlayerCard, IEnumerable<PlayerCardHistoricalRating>>(playerCard,
+            stack.Select(
+                    // Create a copy rather instead of passing the reference since it is only used for reporting
+                    x => PlayerCardHistoricalRating.Baseline(x.StartDate, x.EndDate, x.OverallRating, x.Attributes))
+                .ToList());
     }
 
     /// <summary>

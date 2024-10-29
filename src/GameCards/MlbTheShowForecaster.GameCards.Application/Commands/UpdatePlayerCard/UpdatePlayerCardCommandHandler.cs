@@ -6,6 +6,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
 
@@ -58,11 +59,20 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
                 $"{nameof(PlayerCard)} not found for CardExternalId {command.PlayerCard.ExternalId.Value}");
         }
 
-        // Copy the previous historical ratings BEFORE updating with the most recent rating
-        foreach (var historicalRating in command.PlayerCard.HistoricalRatingsChronologically)
+        // Apply the previous historical ratings BEFORE updating with the most recent rating
+        var historicalRatings = command.HistoricalRatings ?? new Stack<PlayerCardHistoricalRating>();
+        foreach (var item in historicalRatings)
         {
-            if (domainPlayerCard.IsRatingAppliedFor(historicalRating.StartDate)) continue;
-            domainPlayerCard.AddHistoricalRating(historicalRating);
+            if (item == historicalRatings.First() && domainPlayerCard.HistoricalRatingsChronologically.Count == 0)
+            {
+                // For the first historical rating, simply add a record of it
+                domainPlayerCard.AddHistoricalRating(PlayerCardHistoricalRating.Baseline(item.StartDate, null,
+                    item.OverallRating, item.Attributes));
+            }
+            else
+            {
+                domainPlayerCard.ChangePlayerRating(item.StartDate, item.OverallRating, item.Attributes);
+            }
         }
 
         // The changes from the external source

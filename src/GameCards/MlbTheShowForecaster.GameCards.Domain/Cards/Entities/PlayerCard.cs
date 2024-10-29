@@ -124,8 +124,10 @@ public sealed class PlayerCard : Card
     {
         // Before replacing the current rating, set its end date in the history
         var currentRating = GetCurrentRatingFromHistory();
+        OverallRating prevRating; // The previous (as in before the incoming "new" rating is applied)
         if (currentRating != null)
         {
+            prevRating = currentRating.OverallRating;
             // The end date for the current rating is when the new rating begins
             currentRating.End(date);
         }
@@ -133,13 +135,14 @@ public sealed class PlayerCard : Card
         {
             // If there was no rating in the history, this is the first change. Add the original state to the history
             AddBaselineHistoricalRating(StartOfSeason, date, OverallRating, PlayerCardAttributes);
+            prevRating = OverallRating;
         }
 
         // The new rating is added to the history, without an end date
         AddBaselineHistoricalRating(date, null, newOverallRating, newAttributes);
 
         // Raise domain events based on whether the rating increased or decreased
-        AssessOverallRatingChange(newOverallRating, newAttributes, date);
+        AssessOverallRatingChange(prevRating, newOverallRating, newAttributes, date);
 
         // Set the new rarity
         if (OverallRating.Rarity != newOverallRating.Rarity)
@@ -163,7 +166,7 @@ public sealed class PlayerCard : Card
         AddTemporaryHistoricalRating(date, null, temporaryOverallRating, PlayerCardAttributes);
 
         // Raise domain events based on whether the rating increased or decreased
-        AssessOverallRatingChange(temporaryOverallRating, PlayerCardAttributes, date);
+        AssessOverallRatingChange(OverallRating, temporaryOverallRating, PlayerCardAttributes, date);
     }
 
     /// <summary>
@@ -269,31 +272,33 @@ public sealed class PlayerCard : Card
     }
 
     /// <summary>
-    /// Compares the current <see cref="OverallRating"/> to the specified new rating. If there is an increase,
+    /// Compares the old <see cref="OverallRating"/> to the specified new rating. If there is an increase,
     /// it raises a domain improvement event. If there is a decrease, it raises a domain decline event
     /// </summary>
+    /// <param name="oldRating">The old <see cref="OverallRating"/></param>
     /// <param name="newRating">The new <see cref="OverallRating"/></param>
     /// <param name="newAttributes">The new <see cref="PlayerCardAttributes"/></param>
     /// <param name="date">The date</param>
-    private void AssessOverallRatingChange(OverallRating newRating, PlayerCardAttributes newAttributes, DateOnly date)
+    private void AssessOverallRatingChange(OverallRating oldRating, OverallRating newRating,
+        PlayerCardAttributes newAttributes, DateOnly date)
     {
-        var rarityChanged = OverallRating.Rarity != newRating.Rarity;
+        var rarityChanged = oldRating.Rarity != newRating.Rarity;
 
         // Raise domain events based on whether the rating increased or decreased
-        if (OverallRating.Value < newRating.Value)
+        if (oldRating.Value < newRating.Value)
         {
             RaiseDomainEvent(new PlayerCardOverallRatingImprovedEvent(Year, ExternalId,
-                PreviousOverallRating: OverallRating,
+                PreviousOverallRating: oldRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes,
                 NewOverallRating: newRating,
                 NewPlayerCardAttributes: newAttributes,
                 RarityChanged: rarityChanged,
                 Date: date));
         }
-        else if (OverallRating.Value > newRating.Value)
+        else if (oldRating.Value > newRating.Value)
         {
             RaiseDomainEvent(new PlayerCardOverallRatingDeclinedEvent(Year, ExternalId,
-                PreviousOverallRating: OverallRating,
+                PreviousOverallRating: oldRating,
                 PreviousPlayerCardAttributes: PlayerCardAttributes,
                 NewOverallRating: newRating,
                 NewPlayerCardAttributes: newAttributes,

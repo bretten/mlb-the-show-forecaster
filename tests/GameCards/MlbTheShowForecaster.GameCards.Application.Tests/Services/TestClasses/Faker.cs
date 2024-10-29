@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services.TestClasses;
 
@@ -27,8 +28,10 @@ public static class Faker
             totalPositionChanges, totalNewPlayers);
     }
 
-    public static PlayerRatingHistoryResult FakePlayerRatingHistoryResult(IEnumerable<PlayerCard>? cards = null)
+    public static PlayerRatingHistoryResult FakePlayerRatingHistoryResult(
+        Dictionary<PlayerCard, IReadOnlyList<PlayerCardHistoricalRating>>? cards = null)
     {
-        return new PlayerRatingHistoryResult(cards ?? new List<PlayerCard>());
+        return new PlayerRatingHistoryResult(cards ??
+                                             new Dictionary<PlayerCard, IReadOnlyList<PlayerCardHistoricalRating>>());
     }
 }
