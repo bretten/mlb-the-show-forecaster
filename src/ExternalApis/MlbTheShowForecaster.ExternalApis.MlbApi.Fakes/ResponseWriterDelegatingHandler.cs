@@ -1,8 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-using System.Text.Encodings.Web;
-using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Web;
 
@@ -15,9 +12,25 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Fakes;
 public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
 {
     /// <summary>
+    /// Options
+    /// </summary>
+    private readonly FakeMlbApiOptions _options;
+
+    /// <summary>
     /// Used to match the stats URL and the ID of the player
     /// </summary>
     private const string StatsPattern = @"people/(\d+).*season=(\d+)";
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="innerHandler"><inheritdoc /></param>
+    /// <param name="options">Options</param>
+    public ResponseWriterDelegatingHandler(HttpMessageHandler innerHandler, FakeMlbApiOptions options) :
+        base(innerHandler)
+    {
+        _options = options;
+    }
 
     /// <inheritdoc />
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
@@ -39,7 +52,7 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
                 ? match.Groups[2].Value
                 : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no stat season");
 
-            if (SelectStatIds.Contains(int.Parse(id)) || SelectStatIds.Count == 0)
+            if (_options.PlayerFilter == null || _options.PlayerFilter.Contains(int.Parse(id)))
             {
                 Write(Paths.PlayerStats(Paths.Temp, season, id), content);
             }
@@ -47,34 +60,10 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
         else if (requestUri.Contains("/v1/sports/1/players")) // Players by season request
         {
             var season = GetQueryParam(request.RequestUri, "season");
-            Write(Paths.SeasonPlayers(Paths.Temp, season), FilterPlayers(content));
+            Write(Paths.SeasonPlayers(Paths.Temp, season), Filters.FilterPlayers(content, _options.PlayerFilter));
         }
 
         return response;
-    }
-
-    /// <summary>
-    /// Filters players from the response and re-serializes as a response
-    /// </summary>
-    private static string FilterPlayers(string content)
-    {
-        using var jDoc = JsonDocument.Parse(content);
-        var people = jDoc.RootElement.GetProperty("people");
-        var filteredPlayers = new JsonArray();
-        foreach (var p in people.EnumerateArray())
-        {
-            var id = p.GetProperty("id").GetInt32();
-            if (!SelectStatIds.Contains(id)) continue;
-            filteredPlayers.Add(p);
-        }
-
-        return new JsonObject()
-        {
-            ["people"] = filteredPlayers
-        }.ToJsonString(new JsonSerializerOptions
-        {
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        });
     }
 
     /// <summary>
@@ -95,11 +84,4 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
         var queryParams = HttpUtility.ParseQueryString(uri.Query);
         return queryParams.Get(paramName)!;
     }
-
-    /// <summary>
-    /// Which IDs will be saved
-    /// </summary>
-    private static readonly List<int> SelectStatIds = new List<int>()
-    {
-    };
 }

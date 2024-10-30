@@ -35,11 +35,6 @@ public static class Dependencies
     public static class ConfigKeys
     {
         /// <summary>
-        /// Demo mode key
-        /// </summary>
-        public const string DemoMode = "DemoMode";
-
-        /// <summary>
         /// Players connection string key
         /// </summary>
         public const string PlayersConnection = "Players";
@@ -48,6 +43,16 @@ public static class Dependencies
         /// MLB API base address config key
         /// </summary>
         public const string MlbApiBaseAddress = "Api:Mlb:BaseAddress";
+
+        /// <summary>
+        /// Use fake MLB API config key
+        /// </summary>
+        public const string UseFakeMlbApi = "Api:Mlb:Fake:Active";
+
+        /// <summary>
+        /// Fake MLB API options config key
+        /// </summary>
+        public const string FakeMlbApiOptions = "Api:Mlb:Fake";
     }
 
     /// <summary>
@@ -122,8 +127,11 @@ public static class Dependencies
     /// <param name="config">Configuration for MLB API</param>
     private static void AddMlbAPi(this IServiceCollection services, IConfiguration config)
     {
-        if (config.GetRequiredValue<bool>(ConfigKeys.DemoMode))
+        if (config.GetRequiredValue<bool>(ConfigKeys.UseFakeMlbApi))
         {
+            var options = config.GetRequiredSection(ConfigKeys.FakeMlbApiOptions).Get<FakeMlbApiOptions>()!;
+            services.AddSingleton(options);
+
             services.AddSingleton<IMlbApi, FakeMlbApi>();
             return;
         }

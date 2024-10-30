@@ -1,7 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Requests;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
+using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Fakes;
 
@@ -11,21 +13,62 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Fakes;
 [ExcludeFromCodeCoverage]
 public sealed class FakeMlbApi : IMlbApi
 {
-    /// <inheritdoc />
-    public Task<GetPlayersBySeasonResponse> GetPlayersBySeason(GetPlayersBySeasonRequest request)
+    /// <summary>
+    /// Options
+    /// </summary>
+    private readonly FakeMlbApiOptions _options;
+
+    /// <summary>
+    /// Fallback API, which can be a mock server
+    /// </summary>
+    private readonly IMlbApi _api;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="options">Options</param>
+    public FakeMlbApi(FakeMlbApiOptions options)
     {
-        var json = File.ReadAllText(Paths.SeasonPlayers(Paths.Fakes, request.Season.ToString()));
-        var response = JsonSerializer.Deserialize<GetPlayersBySeasonResponse>(json)!;
-        return Task.FromResult(response);
+        _options = options;
+        _api = RestService.For<IMlbApi>(options.BaseAddress,
+            new RefitSettings
+            {
+                ContentSerializer = new SystemTextJsonContentSerializer(
+                    new JsonSerializerOptions()
+                    {
+                        Converters = { new JsonStringEnumConverter() }
+                    }
+                ),
+                HttpMessageHandlerFactory = () => new ResponseFilterDelegatingHandler(new HttpClientHandler(), options)
+            }
+        );
     }
 
     /// <inheritdoc />
-    public Task<GetPlayerSeasonStatsByGameResponse> GetPlayerSeasonStatsByGameInternal(
+    public async Task<GetPlayersBySeasonResponse> GetPlayersBySeason(GetPlayersBySeasonRequest request)
+    {
+        if (!_options.UseLocalFiles)
+        {
+            return await _api.GetPlayersBySeason(request);
+        }
+
+        var json = await File.ReadAllTextAsync(Paths.SeasonPlayers(Paths.Fakes, request.Season.ToString()));
+        var response = JsonSerializer.Deserialize<GetPlayersBySeasonResponse>(json)!;
+        return await Task.FromResult(response);
+    }
+
+    /// <inheritdoc />
+    public async Task<GetPlayerSeasonStatsByGameResponse> GetPlayerSeasonStatsByGameInternal(
         GetPlayerSeasonStatsByGameRequest request)
     {
-        var json = File.ReadAllText(Paths.PlayerStats(Paths.Fakes, request.Season.ToString(),
+        if (!_options.UseLocalFiles)
+        {
+            return await _api.GetPlayerSeasonStatsByGame(request);
+        }
+
+        var json = await File.ReadAllTextAsync(Paths.PlayerStats(Paths.Fakes, request.Season.ToString(),
             request.PlayerMlbId.ToString()));
         var response = JsonSerializer.Deserialize<GetPlayerSeasonStatsByGameResponse>(json)!;
-        return Task.FromResult(response);
+        return await Task.FromResult(response);
     }
 }
