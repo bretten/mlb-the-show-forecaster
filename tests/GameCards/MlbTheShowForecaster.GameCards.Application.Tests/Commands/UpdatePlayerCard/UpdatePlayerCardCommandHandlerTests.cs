@@ -7,6 +7,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasse
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Commands.UpdatePlayerCard;
@@ -54,12 +55,14 @@ public class UpdatePlayerCardCommandHandlerTests
         var playerCardInCommand = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
         // Add the original state to the history
         var originalState = Faker.FakeBaselinePlayerCardHistoricalRating(
-            startDate: new DateOnly(2024, 1, 1), endDate: new DateOnly(2024, 4, 1));
-        playerCardInCommand.AddHistoricalRating(originalState);
+            startDate: new DateOnly(2024, 1, 1), endDate: null);
         // Add the current state
         var currentState = Faker.FakeBaselinePlayerCardHistoricalRating(
             startDate: new DateOnly(2024, 4, 1), endDate: null);
-        playerCardInCommand.AddHistoricalRating(currentState);
+        var historicalRatings = new Stack<PlayerCardHistoricalRating>();
+        // Newest are in the stack first
+        historicalRatings.Push(currentState);
+        historicalRatings.Push(originalState);
 
         // The card data from the external card catalog
         var externalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard(speed: 20);
@@ -84,8 +87,8 @@ public class UpdatePlayerCardCommandHandlerTests
 
         // The command and handler
         var cToken = CancellationToken.None;
-        var command =
-            new UpdatePlayerCardCommand(playerCardInCommand, externalPlayerCard, ratingChange, positionChange);
+        var command = new UpdatePlayerCardCommand(playerCardInCommand, externalPlayerCard, ratingChange, positionChange,
+            historicalRatings);
         var handler = new UpdatePlayerCardCommandHandler(stubUnitOfWork.Object, Mock.Of<ICalendar>());
 
         /*
@@ -107,6 +110,9 @@ public class UpdatePlayerCardCommandHandlerTests
         Assert.Equal(Position.FirstBase, playerCard.Position);
         // The historical ratings should have been updated
         Assert.Equal(3, playerCard.HistoricalRatingsChronologically.Count);
+        // The states that previously had no end date should now be equal to start date of the following historical rating
+        originalState.End(new DateOnly(2024, 4, 1));
+        currentState.End(new DateOnly(2024, 5, 29));
         Assert.Equal(originalState, playerCard.HistoricalRatingsChronologically[0]);
         Assert.Equal(currentState, playerCard.HistoricalRatingsChronologically[1]);
         // The most recent rating change should have ended the previous one and started a new one

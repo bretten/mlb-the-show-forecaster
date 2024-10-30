@@ -70,7 +70,7 @@ public class PlayerRatingHistoryServiceTests
     }
 
     [Fact]
-    public async Task SyncHistory_SingleRatingChange_AddsInitialStateToHistory()
+    public async Task SyncHistory_SingleRatingChange_ReturnsOneRatingForInitialStateAndOneForCurrentState()
     {
         /*
          * Arrange
@@ -114,30 +114,33 @@ public class PlayerRatingHistoryServiceTests
          * Assert
          */
         // There should be two historical ratings
-        Assert.Equal(2, playerCard.HistoricalRatingsChronologically.Count);
+        var result = actual.UpdatedPlayerCards[playerCard];
+        Assert.Equal(2, result.Count);
         // The 1st historical rating chronologically is the card's initial state: CardStateInitial
-        var historical1 = playerCard.HistoricalRatingsChronologically[0];
+        var historical1 = result[0];
         Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical1.Type);
         Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
-        Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
+        Assert.Null(historical1.EndDate);
         Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
         Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
         // The 2nd historical rating chronologically is from RosterUpdate1: CardStateAfterRosterUpdate1
-        var historical2 = playerCard.HistoricalRatingsChronologically[1];
+        var historical2 = result[1];
         Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical2.Type);
         Assert.Equal(RosterUpdate1.Date, historical2.StartDate);
         Assert.Null(historical2.EndDate);
         Assert.Equal(CardStateAfterRosterUpdate1.OverallRating, historical2.OverallRating);
         Assert.Equal(CardStateAfterRosterUpdate1.Card.GetAttributes(), historical2.Attributes);
         // An update command should have been sent with the new historical ratings
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
-        mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Once);
+        mockCommandSender.Verify(x => x.Send(
+            It.Is<UpdatePlayerCardCommand>(c => c.PlayerCard == playerCard && ItIs(c.HistoricalRatings!, result)),
+            cToken
+        ), Times.Once);
         // The result should contain the updated PlayerCard
-        Assert.Contains(playerCard, actual.UpdatedPlayerCards);
+        Assert.Contains(playerCard, actual.UpdatedPlayerCards.Keys);
     }
 
     [Fact]
-    public async Task SyncHistory_MultipleRatingChanges_AddsAllHistory()
+    public async Task SyncHistory_MultipleRatingChanges_ReturnsOneRatingForEachChangeAndOneForCurrentState()
     {
         /*
          * Arrange
@@ -181,44 +184,47 @@ public class PlayerRatingHistoryServiceTests
          * Assert
          */
         // There should be four historical ratings
-        Assert.Equal(4, playerCard.HistoricalRatingsChronologically.Count);
+        var result = actual.UpdatedPlayerCards[playerCard];
+        Assert.Equal(4, result.Count);
         // The 1st historical rating chronologically is the card's initial state: CardStateInitial
-        var historical1 = playerCard.HistoricalRatingsChronologically[0];
+        var historical1 = result[0];
         Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical1.Type);
         Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
-        Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
+        Assert.Null(historical1.EndDate);
         Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
         Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
         // The 2nd historical rating chronologically is from RosterUpdate1: CardStateAfterRosterUpdate1
-        var historical2 = playerCard.HistoricalRatingsChronologically[1];
+        var historical2 = result[1];
         Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical2.Type);
         Assert.Equal(RosterUpdate1.Date, historical2.StartDate);
-        Assert.Equal(RosterUpdate2.Date, historical2.EndDate);
+        Assert.Null(historical2.EndDate);
         Assert.Equal(CardStateAfterRosterUpdate1.OverallRating, historical2.OverallRating);
         Assert.Equal(CardStateAfterRosterUpdate1.Card.GetAttributes(), historical2.Attributes);
         // The 3rd historical rating chronologically is from RosterUpdate2: CardStateAfterRosterUpdate2
-        var historical3 = playerCard.HistoricalRatingsChronologically[2];
+        var historical3 = result[2];
         Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical3.Type);
         Assert.Equal(RosterUpdate2.Date, historical3.StartDate);
-        Assert.Equal(RosterUpdate3.Date, historical3.EndDate);
+        Assert.Null(historical3.EndDate);
         Assert.Equal(CardStateAfterRosterUpdate2.OverallRating, historical3.OverallRating);
         Assert.Equal(CardStateAfterRosterUpdate2.Card.GetAttributes(), historical3.Attributes);
         // The 4th historical rating chronologically is from RosterUpdate3: CardStateCurrent
-        var historical4 = playerCard.HistoricalRatingsChronologically[3];
+        var historical4 = result[3];
         Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical4.Type);
         Assert.Equal(RosterUpdate3.Date, historical4.StartDate);
         Assert.Null(historical4.EndDate);
         Assert.Equal(CardStateCurrent.OverallRating, historical4.OverallRating);
         Assert.Equal(CardStateCurrent.Card.GetAttributes(), historical4.Attributes);
         // An update command should have been sent with the new historical ratings
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
-        mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Once);
+        mockCommandSender.Verify(x => x.Send(
+            It.Is<UpdatePlayerCardCommand>(c => c.PlayerCard == playerCard && ItIs(c.HistoricalRatings!, result)),
+            cToken
+        ), Times.Once);
         // The result should contain the updated PlayerCard
-        Assert.Contains(playerCard, actual.UpdatedPlayerCards);
+        Assert.Contains(playerCard, actual.UpdatedPlayerCards.Keys);
     }
 
     [Fact]
-    public async Task SyncHistory_MultipleRatingChangesWithSomeAlreadyAdded_AddsOnlyNewHistory()
+    public async Task SyncHistory_MultipleRatingChangesWithSomeAlreadyAdded_ReturnsOnlyRatingsThatHaveNotBeenApplied()
     {
         /*
          * Arrange
@@ -265,41 +271,30 @@ public class PlayerRatingHistoryServiceTests
         /*
          * Assert
          */
-        // There should be four historical ratings
-        Assert.Equal(4, playerCard.HistoricalRatingsChronologically.Count);
-        // The 1st historical rating chronologically is the card's initial state: CardStateInitial
-        var historical1 = playerCard.HistoricalRatingsChronologically[0];
+        // There should be two historical ratings, RosterUpdate0 and RosterUpdate1 are already applied
+        var result = actual.UpdatedPlayerCards[playerCard];
+        Assert.Equal(2, result.Count);
+        // The 1st historical rating chronologically is from RosterUpdate2: CardStateAfterRosterUpdate2
+        var historical1 = result[0];
         Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical1.Type);
-        Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
-        Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
-        Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
-        Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
-        // The 2nd historical rating chronologically is from RosterUpdate1: CardStateAfterRosterUpdate1
-        var historical2 = playerCard.HistoricalRatingsChronologically[1];
+        Assert.Equal(RosterUpdate2.Date, historical1.StartDate);
+        Assert.Null(historical1.EndDate);
+        Assert.Equal(CardStateAfterRosterUpdate2.OverallRating, historical1.OverallRating);
+        Assert.Equal(CardStateAfterRosterUpdate2.Card.GetAttributes(), historical1.Attributes);
+        // The 2nd historical rating chronologically is from RosterUpdate3: CardStateCurrent
+        var historical2 = result[1];
         Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical2.Type);
-        Assert.Equal(RosterUpdate1.Date, historical2.StartDate);
-        Assert.Equal(RosterUpdate2.Date, historical2.EndDate);
-        Assert.Equal(CardStateAfterRosterUpdate1.OverallRating, historical2.OverallRating);
-        Assert.Equal(CardStateAfterRosterUpdate1.Card.GetAttributes(), historical2.Attributes);
-        // The 3rd historical rating chronologically is from RosterUpdate2: CardStateAfterRosterUpdate2
-        var historical3 = playerCard.HistoricalRatingsChronologically[2];
-        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical3.Type);
-        Assert.Equal(RosterUpdate2.Date, historical3.StartDate);
-        Assert.Equal(RosterUpdate3.Date, historical3.EndDate);
-        Assert.Equal(CardStateAfterRosterUpdate2.OverallRating, historical3.OverallRating);
-        Assert.Equal(CardStateAfterRosterUpdate2.Card.GetAttributes(), historical3.Attributes);
-        // The 4th historical rating chronologically is from RosterUpdate3: CardStateCurrent
-        var historical4 = playerCard.HistoricalRatingsChronologically[3];
-        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical4.Type);
-        Assert.Equal(RosterUpdate3.Date, historical4.StartDate);
-        Assert.Null(historical4.EndDate);
-        Assert.Equal(CardStateCurrent.OverallRating, historical4.OverallRating);
-        Assert.Equal(CardStateCurrent.Card.GetAttributes(), historical4.Attributes);
+        Assert.Equal(RosterUpdate3.Date, historical2.StartDate);
+        Assert.Null(historical2.EndDate);
+        Assert.Equal(CardStateCurrent.OverallRating, historical2.OverallRating);
+        Assert.Equal(CardStateCurrent.Card.GetAttributes(), historical2.Attributes);
         // An update command should have been sent with the new historical ratings
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
-        mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Once);
+        mockCommandSender.Verify(x => x.Send(
+            It.Is<UpdatePlayerCardCommand>(c => c.PlayerCard == playerCard && ItIs(c.HistoricalRatings!, result)),
+            cToken
+        ), Times.Once);
         // The result should contain the updated PlayerCard
-        Assert.Contains(playerCard, actual.UpdatedPlayerCards);
+        Assert.Contains(playerCard, actual.UpdatedPlayerCards.Keys);
     }
 
     [Fact]
@@ -347,20 +342,10 @@ public class PlayerRatingHistoryServiceTests
         /*
          * Assert
          */
-        // There should be a single historical rating
-        Assert.Single(playerCard.HistoricalRatingsChronologically);
-        // The 1st historical rating chronologically is the card's initial state: CardStateInitial
-        var historical1 = playerCard.HistoricalRatingsChronologically[0];
-        Assert.Equal(PlayerCardHistoricalRatingType.Baseline, historical1.Type);
-        Assert.Equal(RosterUpdate0.Date, historical1.StartDate);
-        Assert.Equal(RosterUpdate1.Date, historical1.EndDate);
-        Assert.Equal(CardStateInitial.OverallRating, historical1.OverallRating);
-        Assert.Equal(CardStateInitial.Card.GetAttributes(), historical1.Attributes);
+        // The result should not contain any updated cards
+        Assert.Empty(actual.UpdatedPlayerCards);
         // No update command should have been sent
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
-        mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Never);
-        // The result should not contain the PlayerCard since it was not updated
-        Assert.DoesNotContain(playerCard, actual.UpdatedPlayerCards);
+        mockCommandSender.Verify(x => x.Send(It.IsAny<UpdatePlayerCardCommand>(), cToken), Times.Never);
     }
 
     [Fact]
@@ -407,18 +392,10 @@ public class PlayerRatingHistoryServiceTests
         /*
          * Assert
          */
-        // There should be a single historical rating for the boost, but not the roster update
-        Assert.Single(playerCard.HistoricalRatingsChronologically);
-        // The only historical rating is the boost
-        var historical1 = playerCard.HistoricalRatingsChronologically[0];
-        Assert.Equal(PlayerCardHistoricalRatingType.Boost, historical1.Type);
-        Assert.Equal(boostDate, historical1.StartDate);
-        Assert.Null(historical1.EndDate);
+        // The result should not contain any updated cards
+        Assert.Empty(actual.UpdatedPlayerCards);
         // No update command should have been sent
-        var expectedCommand = new UpdatePlayerCardCommand(playerCard, null, null, null);
-        mockCommandSender.Verify(x => x.Send(expectedCommand, cToken), Times.Never);
-        // The result should not contain the PlayerCard since it was not updated
-        Assert.DoesNotContain(playerCard, actual.UpdatedPlayerCards);
+        mockCommandSender.Verify(x => x.Send(It.IsAny<UpdatePlayerCardCommand>(), cToken), Times.Never);
     }
 
     private static readonly SeasonYear Year = SeasonYear.Create(2024);
@@ -771,5 +748,19 @@ public class PlayerRatingHistoryServiceTests
 
         public static readonly RosterUpdate Value = Dtos.TestClasses.Faker.FakeRosterUpdate(ratingChanges:
             new List<PlayerRatingChange>() { RatingChange });
+    }
+
+    private static bool ItIs(Stack<PlayerCardHistoricalRating> stack,
+        IReadOnlyList<PlayerCardHistoricalRating> comparison)
+    {
+        for (int i = 0; i < stack.Count; i++)
+        {
+            if (!stack.ElementAt(i).Equals(comparison[i]))
+            {
+                return false;
+            }
+        }
+
+        return stack.Count == comparison.Count;
     }
 }

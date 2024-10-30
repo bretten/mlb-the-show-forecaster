@@ -5,6 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services.T
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs.Io;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -22,10 +23,11 @@ public class RosterUpdaterJobTests
         {
             Faker.FakeRosterUpdateOrchestratorResult(), Faker.FakeRosterUpdateOrchestratorResult()
         };
-        var historyResult = Faker.FakePlayerRatingHistoryResult(new List<PlayerCard>()
-        {
-            Domain.Tests.Cards.TestClasses.Faker.FakePlayerCard()
-        });
+        var historyResult = Faker.FakePlayerRatingHistoryResult(
+            new Dictionary<PlayerCard, IReadOnlyList<PlayerCardHistoricalRating>>()
+            {
+                { Domain.Tests.Cards.TestClasses.Faker.FakePlayerCard(), new List<PlayerCardHistoricalRating>() }
+            });
 
         var stubRosterUpdateOrchestrator = new Mock<IRosterUpdateOrchestrator>();
         stubRosterUpdateOrchestrator.Setup(x => x.SyncRosterUpdates(input.Year, cToken))
