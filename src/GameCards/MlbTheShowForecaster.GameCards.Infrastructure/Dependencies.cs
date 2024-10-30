@@ -50,11 +50,6 @@ public static class Dependencies
     public static class ConfigKeys
     {
         /// <summary>
-        /// Demo mode key
-        /// </summary>
-        public const string DemoMode = "DemoMode";
-
-        /// <summary>
         /// Cards connection string key
         /// </summary>
         public const string CardsConnection = "Cards";
@@ -73,6 +68,16 @@ public static class Dependencies
         /// Trends MongoDB connection string key
         /// </summary>
         public const string TrendsMongoDbConnection = "TrendsMongoDb";
+
+        /// <summary>
+        /// Use fake MLB The Show API config key
+        /// </summary>
+        public const string UseFakeMlbTheShowApi = "Api:MlbTheShow:Fake:Active";
+
+        /// <summary>
+        /// Fake MLB The Show API options config key
+        /// </summary>
+        public const string FakeMlbTheShowApiOptions = "Api:MlbTheShow:Fake";
 
         /// <summary>
         /// <see cref="ListingPriceSignificantChangeThreshold.BuyPricePercentageChangeThreshold"/> config key
@@ -102,7 +107,7 @@ public static class Dependencies
         /// <summary>
         /// Performance API base address config key
         /// </summary>
-        public const string PerformanceApiBaseAddress = "PerformanceApi:BaseAddress";
+        public const string PerformanceApiBaseAddress = "Api:Performance:BaseAddress";
 
         /// <summary>
         /// Trend report Mongo DB config
@@ -285,8 +290,12 @@ public static class Dependencies
     /// <param name="config"><see cref="IConfiguration"/></param>
     private static void AddMlbTheShowApiFactory(this IServiceCollection services, IConfiguration config)
     {
-        if (config.GetRequiredValue<bool>(ConfigKeys.DemoMode))
+        if (config.GetValue<bool>(ConfigKeys.UseFakeMlbTheShowApi))
         {
+            var options =
+                config.GetRequiredSection(ConfigKeys.FakeMlbTheShowApiOptions).Get<FakeMlbTheShowApiOptions>()!;
+            services.AddSingleton(options);
+
             services.TryAddSingleton<IMlbTheShowApiFactory, FakeMlbTheShowApiFactory>();
             return;
         }

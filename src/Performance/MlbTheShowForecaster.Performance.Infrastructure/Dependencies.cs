@@ -150,7 +150,7 @@ public static class Dependencies
     /// <param name="config">Configuration for MLB API</param>
     private static void AddMlbAPi(this IServiceCollection services, IConfiguration config)
     {
-        if (config.GetRequiredValue<bool>(ConfigKeys.UseFakeMlbApi))
+        if (config.GetValue<bool>(ConfigKeys.UseFakeMlbApi))
         {
             var options = config.GetRequiredSection(ConfigKeys.FakeMlbApiOptions).Get<FakeMlbApiOptions>()!;
             services.AddSingleton(options);

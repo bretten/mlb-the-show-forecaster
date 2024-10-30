@@ -5,7 +5,6 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Web;
-using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Fakes;
 
@@ -16,6 +15,11 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Fakes;
 public class ResponseWriterDelegatingHandler : DelegatingHandler
 {
     /// <summary>
+    /// Options
+    /// </summary>
+    private readonly FakeMlbTheShowApiOptions _options;
+
+    /// <summary>
     /// When iterating over all the card pages, cards that have been selected by <see cref="CardIdsToWrite"/> will be
     /// stored here
     /// </summary>
@@ -25,8 +29,11 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
     /// Constructor
     /// </summary>
     /// <param name="innerHandler"><see cref="HttpMessageHandler"/></param>
-    public ResponseWriterDelegatingHandler(HttpMessageHandler innerHandler) : base(innerHandler)
+    /// <param name="options">Options</param>
+    public ResponseWriterDelegatingHandler(HttpMessageHandler innerHandler, FakeMlbTheShowApiOptions options) :
+        base(innerHandler)
     {
+        _options = options;
     }
 
     /// <inheritdoc />
@@ -68,7 +75,9 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
             var id = GetQueryParam(request.RequestUri, "id");
 
             // If the cards are being filtered, just save roster updates for corresponding players
-            var updateContent = CardIdsToWrite.Count == 0 ? content : FilterRosterUpdate(content);
+            var updateContent = _options.PlayerCardFilter != null && _options.PlayerCardFilter.Length == 0
+                ? content
+                : Filters.FilterRosterUpdate(content, _options.PlayerCardFilter);
 
             Write(Paths.RosterUpdate(Paths.Temp, season, id), updateContent);
         }
@@ -81,8 +90,13 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
     /// </summary>
     /// <param name="content">Content for a page of cards</param>
     /// <param name="season">The season</param>
-    private static void CollectAndWriteSelectedCards(string content, string season)
+    private void CollectAndWriteSelectedCards(string content, string season)
     {
+        if (_options.PlayerCardFilter == null)
+        {
+            return;
+        }
+
         using var jDoc = JsonDocument.Parse(content);
         var page = jDoc.RootElement.GetProperty("page").GetInt32();
         var totalPages = jDoc.RootElement.GetProperty("total_pages").GetInt32();
@@ -96,7 +110,7 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
         foreach (var item in items.EnumerateArray())
         {
             var id = item.GetProperty("uuid").GetString()!;
-            if (!CardIdsToWrite.Contains(id)) continue;
+            if (!_options.PlayerCardFilter.Contains(id)) continue;
             // Clone the item since the JsonDocument will be disposed of
             var itemJson = item.GetRawText();
             _cardsToWrite.Add(JsonSerializer.Deserialize<JsonElement>(itemJson));
@@ -104,7 +118,7 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
             Write(Paths.Card(Paths.Temp, season, id), itemJson);
         }
 
-        if (page != totalPages || CardIdsToWrite.Count == 0) return;
+        if (page != totalPages || _options.PlayerCardFilter.Length == 0) return;
 
         Write(Paths.SelectedCards(Paths.Temp, season), new JsonObject()
         {
@@ -116,32 +130,6 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
         {
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         }));
-    }
-
-    /// <summary>
-    /// Filters the roster update to have only players in <see cref="CardIdsToWrite"/>
-    /// </summary>
-    private static string FilterRosterUpdate(string content)
-    {
-        using var jDoc = JsonDocument.Parse(content);
-        var changes = jDoc.RootElement.GetProperty("attribute_changes");
-        var filteredChanges = new JsonArray();
-        foreach (var p in changes.EnumerateArray())
-        {
-            var id = p.GetProperty("obfuscated_id").GetString()!;
-            if (!CardIdsToWrite.Contains(id)) continue;
-            filteredChanges.Add(p);
-        }
-
-        return new JsonObject()
-        {
-            ["attribute_changes"] = filteredChanges,
-            ["position_changes"] = new JsonArray(),
-            ["newly_added"] = new JsonArray()
-        }.ToJsonString(new JsonSerializerOptions
-        {
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        });
     }
 
     /// <summary>
@@ -162,11 +150,4 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
         var queryParams = HttpUtility.ParseQueryString(uri.Query);
         return queryParams.Get(paramName)!;
     }
-
-    /// <summary>
-    /// Cards IDs (<see cref="MlbCardDto.Uuid"/>) that will be written by <see cref="CollectAndWriteSelectedCards"/>
-    /// </summary>
-    private static readonly List<string> CardIdsToWrite = new List<string>()
-    {
-    };
 }
