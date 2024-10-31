@@ -11,6 +11,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkC
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Fakes;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -69,6 +70,16 @@ public static class Dependencies
         public const string TrendsMongoDbConnection = "TrendsMongoDb";
 
         /// <summary>
+        /// Use fake MLB The Show API config key
+        /// </summary>
+        public const string UseFakeMlbTheShowApi = "Api:MlbTheShow:Fake:Active";
+
+        /// <summary>
+        /// Fake MLB The Show API options config key
+        /// </summary>
+        public const string FakeMlbTheShowApiOptions = "Api:MlbTheShow:Fake";
+
+        /// <summary>
         /// <see cref="ListingPriceSignificantChangeThreshold.BuyPricePercentageChangeThreshold"/> config key
         /// </summary>
         public const string BuyPricePercentageChangeThreshold = "CardPriceTracker:BuyPricePercentageChangeThreshold";
@@ -96,7 +107,7 @@ public static class Dependencies
         /// <summary>
         /// Performance API base address config key
         /// </summary>
-        public const string PerformanceApiBaseAddress = "PerformanceApi:BaseAddress";
+        public const string PerformanceApiBaseAddress = "Api:Performance:BaseAddress";
 
         /// <summary>
         /// Trend report Mongo DB config
@@ -119,11 +130,12 @@ public static class Dependencies
     /// Registers GameCards <see cref="PlayerCardTracker"/>
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
-    public static void AddGameCardsPlayerCardTracker(this IServiceCollection services)
+    /// <param name="config"><see cref="IConfiguration"/></param>
+    public static void AddGameCardsPlayerCardTracker(this IServiceCollection services, IConfiguration config)
     {
         services.AddMediatRCqrs(new List<Assembly>() { typeof(IPlayerCardTracker).Assembly });
 
-        services.TryAddSingleton<IMlbTheShowApiFactory, MlbTheShowApiFactory>();
+        services.AddMlbTheShowApiFactory(config);
         services.TryAddSingleton<IMlbTheShowItemMapper, MlbTheShowItemMapper>();
         services.TryAddTransient<ICardCatalog, MlbTheShowApiCardCatalog>();
         services.TryAddTransient<IPlayerCardTracker, PlayerCardTracker>();
@@ -144,7 +156,7 @@ public static class Dependencies
             var sellThreshold = config.GetRequiredValue<decimal>(ConfigKeys.SellPricePercentageChangeThreshold);
             return ListingPriceSignificantChangeThreshold.Create(buyThreshold, sellThreshold);
         });
-        services.TryAddSingleton<IMlbTheShowApiFactory, MlbTheShowApiFactory>();
+        services.AddMlbTheShowApiFactory(config);
         services.TryAddSingleton<IMlbTheShowListingMapper, MlbTheShowListingMapper>();
         var useWebsite = config.GetRequiredValue<bool>(ConfigKeys.UseWebsiteForHistoricalPrices);
         if (useWebsite)
@@ -168,11 +180,12 @@ public static class Dependencies
     /// Registers GameCards <see cref="RosterUpdateOrchestrator"/>
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
-    public static void AddGameCardsRosterUpdates(this IServiceCollection services)
+    /// /// <param name="config"><see cref="IConfiguration"/></param>
+    public static void AddGameCardsRosterUpdates(this IServiceCollection services, IConfiguration config)
     {
         services.AddMediatRCqrs(new List<Assembly>() { typeof(IRosterUpdateOrchestrator).Assembly });
 
-        services.TryAddSingleton<IMlbTheShowApiFactory, MlbTheShowApiFactory>();
+        services.AddMlbTheShowApiFactory(config);
         services.TryAddSingleton<IMlbTheShowItemMapper, MlbTheShowItemMapper>();
         services.TryAddSingleton<IMlbTheShowRosterUpdateMapper, MlbTheShowRosterUpdateMapper>();
         services.TryAddSingleton<IMemoryCache>(new MemoryCache(new MemoryCacheOptions()));
@@ -268,5 +281,25 @@ public static class Dependencies
         services.AddTransient<IUnitOfWork<ICardWork>, UnitOfWork<CardsDbContext>>();
         services.AddTransient<IUnitOfWork<IForecastWork>, UnitOfWork<ForecastsDbContext>>();
         services.AddTransient<IUnitOfWork<IMarketplaceWork>, DbUnitOfWork<MarketplaceDbContext>>();
+    }
+
+    /// <summary>
+    /// Registers <see cref="IMlbTheShowApiFactory"/>
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
+    /// <param name="config"><see cref="IConfiguration"/></param>
+    private static void AddMlbTheShowApiFactory(this IServiceCollection services, IConfiguration config)
+    {
+        if (config.GetValue<bool>(ConfigKeys.UseFakeMlbTheShowApi))
+        {
+            var options =
+                config.GetRequiredSection(ConfigKeys.FakeMlbTheShowApiOptions).Get<FakeMlbTheShowApiOptions>()!;
+            services.AddSingleton(options);
+
+            services.TryAddSingleton<IMlbTheShowApiFactory, FakeMlbTheShowApiFactory>();
+            return;
+        }
+
+        services.TryAddSingleton<IMlbTheShowApiFactory, MlbTheShowApiFactory>();
     }
 }

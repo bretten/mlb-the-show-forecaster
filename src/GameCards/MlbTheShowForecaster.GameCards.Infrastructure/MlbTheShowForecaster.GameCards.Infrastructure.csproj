@@ -11,6 +11,7 @@
       <ProjectReference Include="..\..\Common\MlbTheShowForecaster.Common.Infrastructure\MlbTheShowForecaster.Common.Infrastructure.csproj" />
       <ProjectReference Include="..\..\DomainApis\MlbTheShowForecaster.DomainApis.PerformanceApi\MlbTheShowForecaster.DomainApis.PerformanceApi.csproj" />
       <ProjectReference Include="..\..\DomainApis\MlbTheShowForecaster.DomainApis.PlayerStatusApi\MlbTheShowForecaster.DomainApis.PlayerStatusApi.csproj" />
+      <ProjectReference Include="..\..\ExternalApis\MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Fakes\MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Fakes.csproj" />
       <ProjectReference Include="..\..\ExternalApis\MlbTheShowForecaster.ExternalApis.MlbTheShowApi\MlbTheShowForecaster.ExternalApis.MlbTheShowApi.csproj" />
       <ProjectReference Include="..\MlbTheShowForecaster.GameCards.Application\MlbTheShowForecaster.GameCards.Application.csproj" />
     </ItemGroup>

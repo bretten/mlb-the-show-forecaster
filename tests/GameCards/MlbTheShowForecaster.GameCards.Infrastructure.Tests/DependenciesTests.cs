@@ -58,9 +58,13 @@ public class DependenciesTests
     {
         // Arrange
         var s = new ServiceCollection();
+        var settings = new Dictionary<string, string?>
+        {
+        };
+        var config = GetConfig(settings);
 
         // Act
-        s.AddGameCardsPlayerCardTracker();
+        s.AddGameCardsPlayerCardTracker(config);
         var actual = s.BuildServiceProvider();
 
         // Assert
@@ -162,10 +166,14 @@ public class DependenciesTests
     {
         // Arrange
         var s = new ServiceCollection();
+        var settings = new Dictionary<string, string?>
+        {
+        };
+        var config = GetConfig(settings);
 
         // Act
         s.AddLogging();
-        s.AddGameCardsRosterUpdates();
+        s.AddGameCardsRosterUpdates(config);
         var actual = s.BuildServiceProvider();
 
         // Assert

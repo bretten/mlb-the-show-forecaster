@@ -6,6 +6,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Cqrs.MediatR;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Fakes;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain;
@@ -44,6 +45,16 @@ public static class Dependencies
         /// MLB API base address config key
         /// </summary>
         public const string MlbApiBaseAddress = "Api:Mlb:BaseAddress";
+
+        /// <summary>
+        /// Use fake MLB API config key
+        /// </summary>
+        public const string UseFakeMlbApi = "Api:Mlb:Fake:Active";
+
+        /// <summary>
+        /// Fake MLB API options config key
+        /// </summary>
+        public const string FakeMlbApiOptions = "Api:Mlb:Fake";
 
         /// <summary>
         /// <see cref="PerformanceScoreComparison"/> threshold config key
@@ -139,6 +150,15 @@ public static class Dependencies
     /// <param name="config">Configuration for MLB API</param>
     private static void AddMlbAPi(this IServiceCollection services, IConfiguration config)
     {
+        if (config.GetValue<bool>(ConfigKeys.UseFakeMlbApi))
+        {
+            var options = config.GetRequiredSection(ConfigKeys.FakeMlbApiOptions).Get<FakeMlbApiOptions>()!;
+            services.AddSingleton(options);
+
+            services.AddSingleton<IMlbApi, FakeMlbApi>();
+            return;
+        }
+
         services.AddRefitClient<IMlbApi>(provider => new RefitSettings()
             {
                 ContentSerializer = new SystemTextJsonContentSerializer(new JsonSerializerOptions()
