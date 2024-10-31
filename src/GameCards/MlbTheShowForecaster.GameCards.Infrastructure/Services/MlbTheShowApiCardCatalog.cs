@@ -1,9 +1,9 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using System.Collections.Concurrent;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Enums;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Items;
-using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Responses.Items;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
@@ -52,29 +52,42 @@ public sealed class MlbTheShowApiCardCatalog : ICardCatalog
         var mlbTheShowApiForSeason = _mlbTheShowApiFactory.GetClient((Year)seasonYear.Value);
 
         // Holds the resulting player cards
-        var theShowCards = new List<MlbPlayerCard>();
+        var theShowCards = new ConcurrentBag<MlbPlayerCard>();
 
-        GetItemsPaginatedResponse response;
-        var page = 1;
-        do
+        // Get the first page of cards so that the total pages is known
+        var pageOneResponse = await mlbTheShowApiForSeason.GetItems(new GetItemsRequest(1, ItemType.MlbCard));
+        var pageOneCards = FilterLiveMlbCards(pageOneResponse.Items)
+            .Select(x => _itemMapper.Map(seasonYear, x));
+        foreach (var card in pageOneCards)
         {
-            response = await mlbTheShowApiForSeason.GetItems(new GetItemsRequest(page, ItemType.MlbCard));
+            theShowCards.Add(card);
+        }
+
+        // The different pages to request
+        var pages = new List<int>();
+        for (var i = 2; i <= pageOneResponse.TotalPages; i++)
+        {
+            pages.Add(i);
+        }
+
+        // Get cards from each page
+        await Parallel.ForEachAsync(pages, new ParallelOptions { MaxDegreeOfParallelism = 10 }, async (page, ct) =>
+        {
+            var r = await mlbTheShowApiForSeason.GetItems(new GetItemsRequest(page, ItemType.MlbCard));
 
             // Map the items in the response to player cards
-            if (response.Items.Any())
+            if (r.Items.Any())
             {
-                var activeLiveCards = response.Items
-                    .Where(x => x.Type == Constants.ItemTypes.MlbCard)
-                    .Cast<MlbCardDto>()
-                    .Where(x => x.Series == Constants.Series.Live)
+                var cards = FilterLiveMlbCards(r.Items)
                     .Select(x => _itemMapper.Map(seasonYear, x));
-                theShowCards.AddRange(activeLiveCards);
+                foreach (var card in cards)
+                {
+                    theShowCards.Add(card);
+                }
             }
+        });
 
-            page++;
-        } while (response.Items.Any());
-
-        if (theShowCards.Count == 0)
+        if (theShowCards.IsEmpty)
         {
             throw new ActiveRosterMlbPlayerCardsNotFoundInCatalogException(
                 $"No active roster found for {seasonYear.Value}");
@@ -108,6 +121,18 @@ public sealed class MlbTheShowApiCardCatalog : ICardCatalog
         }
 
         return _itemMapper.Map(seasonYear, item);
+    }
+
+    /// <summary>
+    /// Filters out all <see cref="ItemDto"/>s except Live <see cref="MlbCardDto"/>s from the specified collection
+    /// </summary>
+    /// <param name="items">The collection to filter</param>
+    /// <returns>The filtered collection</returns>
+    private static IEnumerable<MlbCardDto> FilterLiveMlbCards(IEnumerable<ItemDto> items)
+    {
+        return items.Where(x => x.Type == Constants.ItemTypes.MlbCard)
+            .Cast<MlbCardDto>()
+            .Where(x => x.Series == Constants.Series.Live);
     }
 
     /// <summary>

@@ -96,7 +96,7 @@ public class MlbTheShowApiCardCatalogTests
         var actual = await catalog.GetActiveRosterMlbPlayerCards(seasonYear, cToken);
 
         // Assert
-        Assert.Equal(new List<MlbPlayerCard>() { externalCard1, externalCard3 }, actual);
+        Assert.Equal(new HashSet<MlbPlayerCard>() { externalCard1, externalCard3 }, actual.ToHashSet());
     }
 
     [Fact]

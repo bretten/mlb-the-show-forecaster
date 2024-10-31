@@ -64,7 +64,9 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
 
         var newPlayerCards = 0;
         var updatedPlayerCards = 0;
-        foreach (var externalCard in externalCards.Where(x => x.IsSupported).OrderByDescending(x => x.Priority))
+        var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
+        externalCards = externalCards.Where(x => x.IsSupported).OrderByDescending(x => x.Priority).ToList();
+        await Parallel.ForEachAsync(externalCards, options, async (externalCard, token) =>
         {
             var existingPlayerCard =
                 await _querySender.Send(new GetPlayerCardByExternalIdQuery(externalCard.ExternalUuid),
@@ -81,13 +83,13 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
                     updatedPlayerCards++;
                 }
 
-                continue;
+                return;
             }
 
             // The card does not exist in this domain, so create it
             await _commandSender.Send(new CreatePlayerCardCommand(externalCard), cancellationToken);
             newPlayerCards++;
-        }
+        });
 
         return new PlayerCardTrackerResult(TotalCatalogCards: externalCards.Count,
             TotalNewCatalogCards: newPlayerCards,
