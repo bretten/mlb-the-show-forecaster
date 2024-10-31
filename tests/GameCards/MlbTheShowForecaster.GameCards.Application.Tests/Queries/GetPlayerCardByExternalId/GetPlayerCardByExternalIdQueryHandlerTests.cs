@@ -1,5 +1,7 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using Moq;
 
@@ -17,9 +19,13 @@ public class GetPlayerCardByExternalIdQueryHandlerTests
         var stubPlayerCardRepository = Mock.Of<IPlayerCardRepository>(x =>
             x.GetByExternalId(cardExternalId) == Task.FromResult(fakeDomainPlayerCard));
 
+        var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())
+            .Returns(stubPlayerCardRepository);
+
         var cToken = CancellationToken.None;
         var query = new GetPlayerCardByExternalIdQuery(cardExternalId);
-        var handler = new GetPlayerCardByExternalIdQueryHandler(stubPlayerCardRepository);
+        var handler = new GetPlayerCardByExternalIdQueryHandler(stubUnitOfWork.Object);
 
         // Act
         var actual = await handler.Handle(query, cToken);
