@@ -1,4 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
@@ -20,10 +22,10 @@ internal sealed class GetListingByCardExternalIdQueryHandler : IQueryHandler<Get
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="listingRepository">The <see cref="Listing"/> repository</param>
-    public GetListingByCardExternalIdQueryHandler(IListingRepository listingRepository)
+    /// <param name="unitOfWork">The unit of work that encapsulates all actions for getting a <see cref="Listing"/></param>
+    public GetListingByCardExternalIdQueryHandler(IUnitOfWork<IMarketplaceWork> unitOfWork)
     {
-        _listingRepository = listingRepository;
+        _listingRepository = unitOfWork.GetContributor<IListingRepository>();
     }
 
     /// <summary>

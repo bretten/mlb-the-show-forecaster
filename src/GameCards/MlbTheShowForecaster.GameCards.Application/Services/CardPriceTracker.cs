@@ -74,7 +74,8 @@ public sealed class CardPriceTracker : ICardPriceTracker
         // Make sure each card price listings are up-to-date
         var newListings = 0;
         var updatedListings = 0;
-        foreach (var domainPlayerCard in domainPlayerCards)
+        var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
+        await Parallel.ForEachAsync(domainPlayerCards, options, async (domainPlayerCard, token) =>
         {
             // Get the Listing for the card as it currently exists in the domain
             var domainListing =
@@ -89,8 +90,8 @@ public sealed class CardPriceTracker : ICardPriceTracker
             if (domainListing == null)
             {
                 await _commandSender.Send(new CreateListingCommand(externalPrices), cancellationToken);
-                newListings++;
-                continue;
+                Interlocked.Increment(ref newListings);
+                return;
             }
 
             // If there is new pricing information from the external source, update the domain Listing with the new data
@@ -100,9 +101,9 @@ public sealed class CardPriceTracker : ICardPriceTracker
                     new UpdateListingCommand(domainListing, externalPrices, _listingPriceSignificantChangeThreshold),
                     cancellationToken
                 );
-                updatedListings++;
+                Interlocked.Increment(ref updatedListings);
             }
-        }
+        });
 
         return new CardPriceTrackerResult(TotalCards: domainPlayerCards.Count,
             TotalNewListings: newListings,

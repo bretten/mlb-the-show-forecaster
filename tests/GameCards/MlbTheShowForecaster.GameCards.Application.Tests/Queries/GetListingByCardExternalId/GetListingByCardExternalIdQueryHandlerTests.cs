@@ -1,5 +1,7 @@
-﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using Moq;
 
@@ -19,8 +21,12 @@ public class GetListingByCardExternalIdQueryHandlerTests
         stubListingRepository.Setup(x => x.GetByExternalId(cardExternalId, cToken))
             .ReturnsAsync(domainListing);
 
+        var stubUnitOfWork = new Mock<IUnitOfWork<IMarketplaceWork>>();
+        stubUnitOfWork.Setup(x => x.GetContributor<IListingRepository>())
+            .Returns(stubListingRepository.Object);
+
         var query = new GetListingByCardExternalIdQuery(cardExternalId);
-        var handler = new GetListingByCardExternalIdQueryHandler(stubListingRepository.Object);
+        var handler = new GetListingByCardExternalIdQueryHandler(stubUnitOfWork.Object);
 
         // Act
         var actual = await handler.Handle(query, cToken);
