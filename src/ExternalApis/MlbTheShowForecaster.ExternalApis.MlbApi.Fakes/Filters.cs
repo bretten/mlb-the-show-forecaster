@@ -39,4 +39,52 @@ public static class Filters
             Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         });
     }
+
+    /// <summary>
+    /// Filters the response so only stats before the specified date are included
+    /// </summary>
+    /// <param name="content">The original response</param>
+    /// <param name="date">The date</param>
+    /// <returns>The filtered response</returns>
+    public static string FilterStats(string content, DateOnly date)
+    {
+        using var jDoc = JsonDocument.Parse(content);
+        // There is only one player
+        var player = jDoc.RootElement.GetProperty("people").EnumerateArray().First();
+
+        // Get the player's stats array
+        var stats = player.GetProperty("stats");
+
+        // Build a replacement stats array
+        var replacementStats = new JsonArray();
+        foreach (var statSet in stats.EnumerateArray())
+        {
+            // Each split entry represents stats for a single day
+            var splits = statSet.GetProperty("splits");
+            var replacementSplits = new JsonArray();
+            foreach (var split in splits.EnumerateArray())
+            {
+                var gameDate = DateOnly.Parse(split.GetProperty("date").GetString()!);
+                if (gameDate > date) continue;
+                replacementSplits.Add(split);
+            }
+
+            // Replace the splits in this stat set
+            var replacementStatSet = JsonNode.Parse(statSet.GetRawText())!;
+            replacementStatSet["splits"] = replacementSplits;
+            replacementStats.Add(replacementStatSet);
+        }
+
+        // Replace the whole stats array on the player
+        var replacementPlayer = JsonNode.Parse(player.GetRawText())!;
+        replacementPlayer["stats"] = replacementStats;
+
+        return new JsonObject()
+        {
+            ["people"] = new JsonArray(replacementPlayer)
+        }.ToJsonString(new JsonSerializerOptions
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        });
+    }
 }

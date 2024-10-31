@@ -22,4 +22,15 @@ public sealed class FakeMlbApiOptions
     /// Address of the fallback API, which can be a mock server
     /// </summary>
     public string BaseAddress { get; init; } = null!;
+
+    /// <summary>
+    /// Dates that determine which data is returned from the fake API on consecutive requests. An empty or null value
+    /// means all data is returned.
+    ///
+    /// A value of ["2024-03-28", "2024-08-28"] means:
+    /// - 1st request => data from the beginning of the season to 2024-03-28 is returned
+    /// - 2nd request => data from the beginning of the season to 2024-08-28 is returned
+    /// - 3rd request => all data for the season is returned
+    /// </summary>
+    public DateOnly[]? SnapshotDates { get; init; }
 }
