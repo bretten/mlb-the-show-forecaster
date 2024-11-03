@@ -82,6 +82,7 @@ builder.Services.AddSingleton<SignalRMultiplexer.Options>(_ =>
                throw new ArgumentException("Missing Hub relays");
     return new SignalRMultiplexer.Options(interval, hubs);
 });
+builder.Services.AddSingleton<HubCurrentState>();
 builder.Services.AddHostedService<SignalRMultiplexer>();
 
 // Ocelot should be last
