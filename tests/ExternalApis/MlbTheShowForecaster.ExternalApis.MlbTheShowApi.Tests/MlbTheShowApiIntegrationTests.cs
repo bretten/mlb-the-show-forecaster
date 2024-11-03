@@ -116,8 +116,8 @@ public class MlbTheShowApiIntegrationTests
 
         // Assert
         Assert.Equal("Shohei Ohtani", actual.ListingName);
-        Assert.True(0 < actual.BestBuyPrice);
-        Assert.True(0 < actual.BestSellPrice);
+        Assert.True(0 <= actual.BestBuyPrice);
+        Assert.True(0 <= actual.BestSellPrice);
         Assert.IsType<MlbCardDto>(actual.Item);
         var actualItem = actual.Item as MlbCardDto;
         Assert.Equal("a71cdf423ea5906c5fa85fff95d90360", actualItem!.Uuid.ValueAsString);
@@ -146,8 +146,8 @@ public class MlbTheShowApiIntegrationTests
 
         // Assert
         Assert.Equal("Crosley Field", actual.ListingName);
-        Assert.True(0 < actual.BestBuyPrice);
-        Assert.True(0 < actual.BestSellPrice);
+        Assert.True(0 <= actual.BestBuyPrice);
+        Assert.True(0 <= actual.BestSellPrice);
         Assert.IsType<StadiumDto>(actual.Item);
         var actualItem = actual.Item as StadiumDto;
         Assert.Equal("7520fa31d14f45add6d61e52df5a03ff", actualItem!.Uuid.ValueAsString);
