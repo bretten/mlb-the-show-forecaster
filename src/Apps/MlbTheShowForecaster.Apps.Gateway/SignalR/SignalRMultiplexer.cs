@@ -33,6 +33,11 @@ public sealed class SignalRMultiplexer : BackgroundService
     private readonly Options _options;
 
     /// <summary>
+    /// The last published messages of all methods across all hubs
+    /// </summary>
+    private readonly HubCurrentState _hubCurrentState;
+
+    /// <summary>
     /// Logger
     /// </summary>
     private readonly ILogger<SignalRMultiplexer> _logger;
@@ -47,14 +52,17 @@ public sealed class SignalRMultiplexer : BackgroundService
     /// </summary>
     /// <param name="hubContext"><see cref="GatewayHub"/> context</param>
     /// <param name="options">Configuration <see cref="Options"/></param>
+    /// <param name="hubCurrentState">The last published messages of all methods across all hubs</param>
     /// <param name="logger">Logger</param>
-    public SignalRMultiplexer(IHubContext<GatewayHub> hubContext, Options options, ILogger<SignalRMultiplexer> logger)
+    public SignalRMultiplexer(IHubContext<GatewayHub> hubContext, Options options, HubCurrentState hubCurrentState,
+        ILogger<SignalRMultiplexer> logger)
     {
         _hubContext = hubContext;
         _relayedHubs = options.Hubs;
         _keepAliveInterval = options.Interval;
         _options = options;
         _logger = logger;
+        _hubCurrentState = hubCurrentState;
     }
 
     /// <inheritdoc />
@@ -163,6 +171,8 @@ public sealed class SignalRMultiplexer : BackgroundService
                     $"Received message from {hub.Url} {method}: {JsonSerializer.Serialize(payload)} ");
                 // Relay the message
                 await _hubContext.Clients.All.SendAsync(method, payload);
+                // Store the last relayed message
+                _hubCurrentState.MethodsToPayloads.AddOrUpdate(method, () => payload, (_, __) => payload);
             });
         }
 

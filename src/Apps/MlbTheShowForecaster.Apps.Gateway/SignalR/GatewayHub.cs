@@ -18,12 +18,19 @@ public sealed class GatewayHub : Hub
     private readonly ILogger<GatewayHub> _logger;
 
     /// <summary>
+    /// The last published messages of all methods across all hubs
+    /// </summary>
+    private readonly HubCurrentState _state;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="logger">Logger</param>
-    public GatewayHub(ILogger<GatewayHub> logger)
+    /// <param name="state">The last published messages of all methods across all hubs</param>
+    public GatewayHub(ILogger<GatewayHub> logger, HubCurrentState state)
     {
         _logger = logger;
+        _state = state;
     }
 
     /// <inheritdoc />
@@ -38,5 +45,14 @@ public sealed class GatewayHub : Hub
     {
         _logger.LogInformation("Client disconnected: {ConnectionId}", Context.ConnectionId);
         return base.OnDisconnectedAsync(exception);
+    }
+
+    /// <summary>
+    /// Returns the current state of all the methods
+    /// </summary>
+    /// <returns>The last published messages of all methods across all hubs</returns>
+    public Task<Dictionary<string, object>> CurrentState()
+    {
+        return Task.FromResult(_state.MethodsToPayloads.ToDictionary());
     }
 }

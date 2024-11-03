@@ -30,13 +30,14 @@ public class SignalRMultiplexerIntegrationTests
             new RelayedHub("ForceFailedConnection", new HashSet<string>() { "Method2" })
         };
         var options = new SignalRMultiplexer.Options(interval, hubs, new TestRetryPolicy());
+        var currentState = new HubCurrentState();
 
         // Create the app
         var builder = WebApplication.CreateBuilder([]);
         builder.Configuration.SetBasePath(builder.Environment.ContentRootPath);
         builder.Services.AddSignalR();
         builder.Services.AddHostedService<SignalRMultiplexer>(_ =>
-            new SignalRMultiplexer(mockHubContext.Object, options, mockLogger.Object));
+            new SignalRMultiplexer(mockHubContext.Object, options, currentState, mockLogger.Object));
         var app = builder.Build();
         app.Urls.Add(url);
         app.UseRouting();
