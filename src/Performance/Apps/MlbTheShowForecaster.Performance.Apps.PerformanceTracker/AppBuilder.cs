@@ -39,13 +39,13 @@ public static class AppBuilder
         builder.Services.AddSignalR();
 
         builder.Configuration.AddJsonFile("appsettings.json")
-            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true);
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
+            .AddEnvironmentVariables();
+
         if (builder.Environment.IsDevelopment())
         {
             builder.Configuration.AddUserSecrets<Program>(true);
         }
-
-        builder.Configuration.AddEnvironmentVariables();
 
         return builder;
     }
