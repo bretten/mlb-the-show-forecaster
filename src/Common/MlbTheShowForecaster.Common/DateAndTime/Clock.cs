@@ -15,7 +15,6 @@ public sealed class Clock : IClock
     public DateTimeOffset PstNow()
     {
         var tzInfo = TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
-        var dateTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, tzInfo);
-        return new DateTimeOffset(dateTime, TimeSpan.FromHours(-7));
+        return TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, tzInfo);
     }
 }
