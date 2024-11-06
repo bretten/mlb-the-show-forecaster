@@ -23,14 +23,13 @@ public class ClockTests
     {
         // Arrange
         var clock = new Clock();
+        var tzInfo = TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
 
         // Act
         var actual = clock.PstNow();
 
         // Assert
-        var pstNow = DateTime.UtcNow.AddHours(-7);
-        var pstNowOffset = new DateTimeOffset(DateOnly.FromDateTime(pstNow), TimeOnly.FromDateTime(pstNow),
-            TimeSpan.FromHours(-7));
+        var pstNowOffset = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, tzInfo);
         var timeDifference = pstNowOffset - actual;
         Assert.InRange(timeDifference.TotalMilliseconds, 0, 50);
     }
