@@ -43,7 +43,8 @@ public static class AppBuilder
         builder.Services.AddSignalR();
 
         builder.Configuration.AddJsonFile("appsettings.json");
-        builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json");
+        builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true);
+        builder.Configuration.AddEnvironmentVariables();
 
         return builder;
     }

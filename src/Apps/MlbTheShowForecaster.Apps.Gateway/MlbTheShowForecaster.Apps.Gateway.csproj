@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>com.brettnamba.MlbTheShowForecaster.Apps.Gateway</RootNamespace>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,6 +14,12 @@
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.10" />
       <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.10" />
       <PackageReference Include="Ocelot" Version="23.3.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

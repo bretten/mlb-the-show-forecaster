@@ -1,0 +1,53 @@
+﻿services:
+  mlb-the-show-forecaster.apps.gateway:
+    build:
+      context: .
+      dockerfile: src/Apps/MlbTheShowForecaster.Apps.Gateway/Dockerfile
+    environment:
+      - Urls=http://*:5000
+      - SignalRMultiplexer__RelayedHubs__0__Url=http://host.docker.internal:5001/job-hub
+      - SignalRMultiplexer__RelayedHubs__1__Url=http://host.docker.internal:5002/job-hub
+      - SignalRMultiplexer__RelayedHubs__2__Url=http://host.docker.internal:5003/job-hub
+    ports:
+      - "5000:5000"
+
+  mlb-the-show-forecaster.game-cards.apps.marketplace-watcher:
+    build:
+      context: .
+      dockerfile: src/GameCards/Apps/MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Local
+      - Urls=http://*:5003
+      - Api__Performance__BaseAddress=http://host.docker.internal:5002
+      - Forecasting__PlayerMatcher__BaseAddress=http://host.docker.internal:5001
+      - Messaging__RabbitMq__HostName=host.docker.internal
+      - ConnectionStrings__Cards=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54329;Database=mlb_forecaster_test;
+      - ConnectionStrings__Forecasts=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54329;Database=mlb_forecaster_test;
+      - ConnectionStrings__Marketplace=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54329;Database=mlb_forecaster_test;
+      - ConnectionStrings__TrendsMongoDb=mongodb://root:example@host.docker.internal:27017/?authSource=admin
+    ports:
+      - "5003:5003"
+
+  mlb-the-show-forecaster.performance.apps.performance-tracker:
+    build:
+      context: .
+      dockerfile: src/Performance/Apps/MlbTheShowForecaster.Performance.Apps.PerformanceTracker/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Local
+      - Urls=http://*:5002
+      - ConnectionStrings__PlayerSeasons=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54329;Database=mlb_forecaster_test;
+      - Messaging__RabbitMq__HostName=host.docker.internal
+    ports:
+      - "5002:5002"
+
+  mlb-the-show-forecaster.player-status.apps.player-tracker:
+    build:
+      context: .
+      dockerfile: src/PlayerStatus/Apps/MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker/Dockerfile
+    environment:
+      - DOTNET_ENVIRONMENT=Local
+      - Urls=http://*:5001
+      - ConnectionStrings__Players=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54329;Database=mlb_forecaster_test;
+      - Messaging__RabbitMq__HostName=host.docker.internal
+    ports:
+      - "5001:5001"
