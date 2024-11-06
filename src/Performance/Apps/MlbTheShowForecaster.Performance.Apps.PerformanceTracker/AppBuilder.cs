@@ -1,9 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.RealTime;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker;
 
@@ -42,9 +38,14 @@ public static class AppBuilder
         builder.Services.AddControllers();
         builder.Services.AddSignalR();
 
-        builder.Configuration.AddJsonFile("appsettings.json");
-        builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true);
-        builder.Configuration.AddEnvironmentVariables();
+        builder.Configuration.AddJsonFile("appsettings.json")
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
+            .AddEnvironmentVariables();
+
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Configuration.AddUserSecrets<Program>(true);
+        }
 
         return builder;
     }

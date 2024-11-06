@@ -3,7 +3,6 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs.Io;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports.Exceptions;
-using Microsoft.Extensions.Logging;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs;
 

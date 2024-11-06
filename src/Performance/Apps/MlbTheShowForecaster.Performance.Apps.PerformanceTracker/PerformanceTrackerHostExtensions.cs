@@ -16,11 +16,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessme
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Fielding;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PerformanceAssessment.Events.Pitching;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Calendar = com.brettnamba.MlbTheShowForecaster.Common.DateAndTime.Calendar;
 

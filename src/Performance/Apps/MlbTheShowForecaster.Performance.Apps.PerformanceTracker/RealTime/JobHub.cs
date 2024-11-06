@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.RealTime;
 
