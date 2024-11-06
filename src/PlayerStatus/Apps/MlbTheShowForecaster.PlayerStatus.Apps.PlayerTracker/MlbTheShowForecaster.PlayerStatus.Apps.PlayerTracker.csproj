@@ -1,11 +1,11 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <OutputType>Exe</OutputType>
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker</RootNamespace>
+        <UserSecretsId>f6f2d223-60a9-4a6b-8670-5f9c1726c9bb</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,15 +17,6 @@
       <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="appsettings.Local.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
     </ItemGroup>
 
 </Project>

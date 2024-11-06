@@ -1,7 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs.Io;
-using Microsoft.Extensions.Logging;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs;
 

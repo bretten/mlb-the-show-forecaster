@@ -12,11 +12,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.Jobs.I
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.RealTime;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker;

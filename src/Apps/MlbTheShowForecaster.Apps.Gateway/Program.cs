@@ -16,9 +16,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath);
 builder.Configuration.AddJsonFile("appsettings.json", true, true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
-    .AddJsonFile($"appsettings.Local.json", true, true)
-    .AddJsonFile("ocelot.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true);
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>(true);
+}
+
+builder.Configuration.AddJsonFile("ocelot.json")
     .AddEnvironmentVariables();
 
 builder.Services.AddLogging();

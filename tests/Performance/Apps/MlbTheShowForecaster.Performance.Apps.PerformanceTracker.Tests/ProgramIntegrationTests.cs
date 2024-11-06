@@ -19,6 +19,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
 
     public ProgramIntegrationTests()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test");
+        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Test");
         try
         {
             _dbContainer = new PostgreSqlBuilder()
