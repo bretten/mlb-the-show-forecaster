@@ -1,7 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Jobs.Io;
-using Microsoft.Extensions.Logging;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Jobs;
 
