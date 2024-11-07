@@ -1,5 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.RealTime;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher;
 
@@ -61,6 +65,14 @@ public static class AppBuilder
         builder.Host.ConfigureMarketplaceWatcher(args);
 
         var app = builder.Build();
+
+        if (app.Configuration.GetValue<bool>("RunMigrations"))
+        {
+            using var scope = app.Services.CreateScope();
+            scope.ServiceProvider.GetRequiredService<CardsDbContext>().Database.Migrate();
+            scope.ServiceProvider.GetRequiredService<MarketplaceDbContext>().Database.Migrate();
+            scope.ServiceProvider.GetRequiredService<ForecastsDbContext>().Database.Migrate();
+        }
 
         if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
         {

@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker.RealTime;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker;
 
@@ -61,6 +63,12 @@ public static class AppBuilder
         builder.Host.ConfigurePlayerTracker(args);
 
         var app = builder.Build();
+
+        if (app.Configuration.GetValue<bool>("RunMigrations"))
+        {
+            using var scope = app.Services.CreateScope();
+            scope.ServiceProvider.GetRequiredService<PlayersDbContext>().Database.Migrate();
+        }
 
         if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "Local")
         {
