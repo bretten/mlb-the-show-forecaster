@@ -1,5 +1,6 @@
 services:
-  mlb-the-show-forecaster.apps.gateway:
+  mlb-the-show-forecaster-gateway:
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Urls=http://*:5000
@@ -8,28 +9,28 @@ services:
       - Auth__AllowCors=false
       - Aws__Region=us-west-2
       - Spa__Active=true
-      - SignalRMultiplexer__RelayedHubs__0__Url=http://host.docker.internal:5001/job-hub
-      - SignalRMultiplexer__RelayedHubs__1__Url=http://host.docker.internal:5002/job-hub
-      - SignalRMultiplexer__RelayedHubs__2__Url=http://host.docker.internal:5003/job-hub
+      - SignalRMultiplexer__Interval=00:00:00:05
+      - SignalRMultiplexer__RelayedHubs__0__Url=http://mlb-the-show-forecaster-player-tracker:5001/job-hub
+      - SignalRMultiplexer__RelayedHubs__1__Url=http://mlb-the-show-forecaster-performance-tracker:5002/job-hub
+      - SignalRMultiplexer__RelayedHubs__2__Url=http://mlb-the-show-forecaster-marketplace-watcher:5003/job-hub
     ports:
       - "5000:5000"
 
-  mlb-the-show-forecaster.apps.marketplace-watcher:
+  mlb-the-show-forecaster-marketplace-watcher:
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - RunMigrations=true
       - Urls=http://*:5003
-      - Api__Performance__BaseAddress=http://host.docker.internal:5002
-      - Forecasting__PlayerMatcher__BaseAddress=http://host.docker.internal:5001
-      - ConnectionStrings__Cards=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54320;Database=mlb_forecaster_test;
-      - ConnectionStrings__Forecasts=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54320;Database=mlb_forecaster_test;
-      - ConnectionStrings__Marketplace=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54320;Database=mlb_forecaster_test;
-      - ConnectionStrings__TrendsMongoDb=mongodb://root:example@host.docker.internal:27017/?authSource=admin
-      - Messaging__RabbitMq__HostName=host.docker.internal
+      - Api__Performance__BaseAddress=http://mlb-the-show-forecaster-performance-tracker:5002
+      - Forecasting__PlayerMatcher__BaseAddress=http://mlb-the-show-forecaster-player-tracker:5001
+      - ConnectionStrings__Cards=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
+      - ConnectionStrings__Forecasts=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
+      - ConnectionStrings__Marketplace=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
+      - ConnectionStrings__TrendsMongoDb=mongodb://root:example@mongo:27017/?authSource=admin
+      - Messaging__RabbitMq__HostName=rabbitmq
       - Messaging__RabbitMq__UserName=guest
       - Messaging__RabbitMq__Password=guest
-    ports:
-      - "5003:5003"
     depends_on:
       postgres-db:
         condition: service_healthy
@@ -38,34 +39,32 @@ services:
       mongo:
         condition: service_healthy
 
-  mlb-the-show-forecaster.apps.performance-tracker:
+  mlb-the-show-forecaster-performance-tracker:
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - RunMigrations=true
       - Urls=http://*:5002
-      - ConnectionStrings__PlayerSeasons=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54320;Database=mlb_forecaster_test;
-      - Messaging__RabbitMq__HostName=host.docker.internal
+      - ConnectionStrings__PlayerSeasons=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
+      - Messaging__RabbitMq__HostName=rabbitmq
       - Messaging__RabbitMq__UserName=guest
       - Messaging__RabbitMq__Password=guest
-    ports:
-      - "5002:5002"
     depends_on:
       postgres-db:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
 
-  mlb-the-show-forecaster.apps.player-tracker:
+  mlb-the-show-forecaster-player-tracker:
+    restart: always
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - RunMigrations=true
       - Urls=http://*:5001
-      - ConnectionStrings__Players=Server=host.docker.internal;Username=postgres;Password=postgres;Port=54320;Database=mlb_forecaster_test;
-      - Messaging__RabbitMq__HostName=host.docker.internal
+      - ConnectionStrings__Players=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
+      - Messaging__RabbitMq__HostName=rabbitmq
       - Messaging__RabbitMq__UserName=guest
       - Messaging__RabbitMq__Password=guest
-    ports:
-      - "5001:5001"
     depends_on:
       postgres-db:
         condition: service_healthy
@@ -82,6 +81,9 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "54320:5432"
+    networks:
+      - public # So the data can be debugged via a client
+      - backend
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -d mlb_forecaster_test" ]
       interval: 10s
@@ -95,6 +97,9 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - public # So the data can be debugged via a client
+      - backend
     healthcheck:
       test: rabbitmq-diagnostics check_port_connectivity
       interval: 10s
@@ -110,6 +115,9 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: example
     ports:
       - "27017:27017"
+    networks:
+      - public # So the data can be debugged via a client
+      - backend
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       interval: 10s

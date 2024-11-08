@@ -12,6 +12,21 @@ COPY ["src/Apps/MlbTheShowForecaster.Apps.Gateway/MlbTheShowForecaster.Apps.Gate
 RUN dotnet restore "MlbTheShowForecaster.Apps.Gateway.csproj"
 # Source code for building
 COPY src/Apps/MlbTheShowForecaster.Apps.Gateway .
+
+# If building for docker compose, replace the gateway routes with the service names
+ARG IS_DOCKER_COMPOSE=false
+RUN if [ "$IS_DOCKER_COMPOSE" = "true" ]; then \
+    perl -0777 -pe 's/"Host": "localhost",\s*"Port": 5003/"Host": "mlb-the-show-forecaster-marketplace-watcher", "Port": 5003/g' -i ocelot.json && \
+    perl -0777 -pe 's/"Host": "localhost",\s*"Port": 5002/"Host": "mlb-the-show-forecaster-performance-tracker", "Port": 5002/g' -i ocelot.json && \
+    perl -0777 -pe 's/"Host": "localhost",\s*"Port": 5001/"Host": "mlb-the-show-forecaster-player-tracker", "Port": 5001/g' -i ocelot.json && \
+    perl -0777 -pe 's/"DownstreamScheme": "https"/"DownstreamScheme": "http"/g' -i ocelot.json && \
+    perl -0777 -pe 's/"BaseUrl":\s*"https:\/\/localhost:5000"/"BaseUrl": "http:\/\/mlb-the-show-forecaster-gateway:5000"/g' -i ocelot.json; \
+    echo "ocelot.json:" && cat ocelot.json; \
+else \
+    echo "IS_DOCKER_COMPOSE=false, ocelot.json remains unchanged"; \
+fi
+
+# Build
 RUN dotnet build "MlbTheShowForecaster.Apps.Gateway.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # .NET Publish stage
