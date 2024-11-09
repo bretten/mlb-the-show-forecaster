@@ -60,6 +60,11 @@ public static class AppBuilder
     /// <returns>The app</returns>
     public static WebApplication BuildApp(string[] args, WebApplicationBuilder builder)
     {
+        builder.Host.UseDefaultServiceProvider(options =>
+        {
+            // Prevent resolving as scoped when the only scope is the whole application lifetime scope
+            options.ValidateScopes = true;
+        });
         builder.Host.ConfigurePlayerTracker(args);
 
         var app = builder.Build();
