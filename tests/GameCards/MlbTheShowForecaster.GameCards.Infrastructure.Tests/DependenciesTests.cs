@@ -136,6 +136,7 @@ public class DependenciesTests
         var s = new ServiceCollection();
 
         // Act
+        s.TryAddSingleton<ICalendar, Calendar>();
         s.AddGameCardsPriceTracker(config);
         var actual = s.BuildServiceProvider();
 
