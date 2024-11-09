@@ -1,0 +1,43 @@
+﻿services:
+  mlb-the-show-forecaster-gateway:
+    build:
+      context: .
+      dockerfile: src/Apps/MlbTheShowForecaster.Apps.Gateway/Dockerfile
+      args:
+        IS_DOCKER_COMPOSE: true
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - public
+      - backend
+
+  mlb-the-show-forecaster-marketplace-watcher:
+    build:
+      context: .
+      dockerfile: src/GameCards/Apps/MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - backend
+
+  mlb-the-show-forecaster-performance-tracker:
+    build:
+      context: .
+      dockerfile: src/Performance/Apps/MlbTheShowForecaster.Performance.Apps.PerformanceTracker/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - backend
+
+  mlb-the-show-forecaster-player-tracker:
+    build:
+      context: .
+      dockerfile: src/PlayerStatus/Apps/MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker/Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+    networks:
+      - backend
+
+networks:
+  public:
+  backend:

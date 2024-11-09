@@ -6,6 +6,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>com.brettnamba.MlbTheShowForecaster.Apps.Gateway</RootNamespace>
         <UserSecretsId>5d342484-d09e-49b9-9d66-fe2a2a8c41f8</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,6 +15,12 @@
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.10" />
       <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="8.0.10" />
       <PackageReference Include="Ocelot" Version="23.3.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

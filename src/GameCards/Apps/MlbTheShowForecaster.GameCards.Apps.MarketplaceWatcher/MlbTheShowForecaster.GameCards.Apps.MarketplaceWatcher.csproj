@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <RootNamespace>com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher</RootNamespace>
         <UserSecretsId>ce0035e4-9cf7-44e8-a2a4-7c8fccee4c13</UserSecretsId>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +18,12 @@
       <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.6" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\..\..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>
