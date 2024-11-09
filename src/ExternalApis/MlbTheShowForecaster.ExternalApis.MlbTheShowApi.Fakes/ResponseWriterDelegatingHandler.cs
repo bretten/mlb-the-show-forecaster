@@ -48,14 +48,15 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
         var seasonShort = match.Success
             ? match.Groups[1].Value
             : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no MLB The Show season");
-        var season = DateOnly.ParseExact(seasonShort, "yy").ToString("yyyy");
+        var season = DateOnly.ParseExact(seasonShort, "yy").Year;
+        var seasonStr = season.ToString("yyyy");
 
         // Save the response based on which type of request
         if (requestUri.Contains("/apis/item.json")) // Request an individual card
         {
             var id = GetQueryParam(request.RequestUri, "uuid");
 
-            Write(Paths.Card(Paths.Temp, season, id), content);
+            Write(Paths.Card(Paths.Temp, seasonStr, id), content);
         }
         else if (requestUri.Contains("/apis/items.json")) // Request all cards by page
         {
@@ -64,22 +65,22 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
 
             // Write the page's cards
             var page = GetQueryParam(request.RequestUri, "page");
-            Write(Paths.PagedCards(Paths.Temp, season, page), content);
+            Write(Paths.PagedCards(Paths.Temp, seasonStr, page), content);
         }
         else if (requestUri.Contains("/apis/roster_updates.json")) // All roster updates
         {
-            Write(Paths.RosterUpdateList(Paths.Temp, season), content);
+            Write(Paths.RosterUpdateList(Paths.Temp, seasonStr), content);
         }
         else if (requestUri.Contains("/apis/roster_update.json?id")) // Single roster update details
         {
             var id = GetQueryParam(request.RequestUri, "id");
 
             // If the cards are being filtered, just save roster updates for corresponding players
-            var updateContent = _options.PlayerCardFilter != null && _options.PlayerCardFilter.Length == 0
+            var updateContent = _options.PlayerCardFilter != null && _options.PlayerCardFilterFor(season).Length == 0
                 ? content
-                : Filters.FilterRosterUpdate(content, _options.PlayerCardFilter);
+                : Filters.FilterRosterUpdate(content, _options.PlayerCardFilterFor(season));
 
-            Write(Paths.RosterUpdate(Paths.Temp, season, id), updateContent);
+            Write(Paths.RosterUpdate(Paths.Temp, seasonStr, id), updateContent);
         }
 
         return response;
@@ -90,7 +91,7 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
     /// </summary>
     /// <param name="content">Content for a page of cards</param>
     /// <param name="season">The season</param>
-    private void CollectAndWriteSelectedCards(string content, string season)
+    private void CollectAndWriteSelectedCards(string content, int season)
     {
         if (_options.PlayerCardFilter == null)
         {
@@ -110,17 +111,17 @@ public class ResponseWriterDelegatingHandler : DelegatingHandler
         foreach (var item in items.EnumerateArray())
         {
             var id = item.GetProperty("uuid").GetString()!;
-            if (!_options.PlayerCardFilter.Contains(id)) continue;
+            if (!_options.PlayerCardFilterFor(season).Contains(id)) continue;
             // Clone the item since the JsonDocument will be disposed of
             var itemJson = item.GetRawText();
             _cardsToWrite.Add(JsonSerializer.Deserialize<JsonElement>(itemJson));
             // Write the individual item
-            Write(Paths.Card(Paths.Temp, season, id), itemJson);
+            Write(Paths.Card(Paths.Temp, season.ToString(), id), itemJson);
         }
 
-        if (page != totalPages || _options.PlayerCardFilter.Length == 0) return;
+        if (page != totalPages || _options.PlayerCardFilterFor(season).Length == 0) return;
 
-        Write(Paths.SelectedCards(Paths.Temp, season), new JsonObject()
+        Write(Paths.SelectedCards(Paths.Temp, season.ToString()), new JsonObject()
         {
             ["page"] = 1,
             ["per_page"] = _cardsToWrite.Count,

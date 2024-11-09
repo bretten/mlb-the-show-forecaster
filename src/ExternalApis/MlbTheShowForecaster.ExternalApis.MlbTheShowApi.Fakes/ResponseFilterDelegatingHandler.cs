@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Fakes;
 
@@ -42,11 +43,16 @@ public sealed class ResponseFilterDelegatingHandler : DelegatingHandler
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         var requestUri = request.RequestUri!.ToString();
+        var match = Regex.Match(requestUri, @"mlb(\d+)");
+        var seasonShort = match.Success
+            ? match.Groups[1].Value
+            : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no MLB The Show season");
+        var season = DateOnly.ParseExact(seasonShort, "yy").Year;
 
         // Filter the response based on which type of request
         if (requestUri.Contains("/apis/items.json")) // Request all cards by page
         {
-            var responseOverride = FilterAndStoreCards(content);
+            var responseOverride = FilterAndStoreCards(content, season);
             if (!string.IsNullOrEmpty(responseOverride))
             {
                 response.Content = new StringContent(responseOverride);
@@ -54,7 +60,8 @@ public sealed class ResponseFilterDelegatingHandler : DelegatingHandler
         }
         else if (requestUri.Contains("/apis/roster_update.json?id")) // Single roster update details
         {
-            response.Content = new StringContent(Filters.FilterRosterUpdate(content, _options.PlayerCardFilter));
+            response.Content =
+                new StringContent(Filters.FilterRosterUpdate(content, _options.PlayerCardFilterFor(season)));
         }
 
         return response;
@@ -64,8 +71,9 @@ public sealed class ResponseFilterDelegatingHandler : DelegatingHandler
     /// Filters the cards in the response using <see cref="FakeMlbTheShowApiOptions.PlayerCardFilter"/>
     /// </summary>
     /// <param name="content">The response to filter</param>
+    /// <param name="season">The season to filter</param>
     /// <returns>A response containing only the filtered items or null if they are still being requested</returns>
-    private string? FilterAndStoreCards(string content)
+    private string? FilterAndStoreCards(string content, int season)
     {
         if (_options.PlayerCardFilter == null)
         {
@@ -86,14 +94,14 @@ public sealed class ResponseFilterDelegatingHandler : DelegatingHandler
         foreach (var item in items.EnumerateArray())
         {
             var id = item.GetProperty("uuid").GetString()!;
-            if (!_options.PlayerCardFilter.Contains(id)) continue;
+            if (!_options.PlayerCardFilterFor(season).Contains(id)) continue;
             // Clone the item since the JsonDocument will be disposed of
             var itemJson = item.GetRawText();
             _cardsToWrite.TryAdd(id, JsonSerializer.Deserialize<JsonElement>(itemJson));
         }
 
         // Check if we have found all the cards specified in the filter
-        if (!_cardsToWrite.Keys.ToHashSet().SetEquals(_options.PlayerCardFilter))
+        if (!_cardsToWrite.Keys.ToHashSet().SetEquals(_options.PlayerCardFilterFor(season)))
         {
             return null;
         }
