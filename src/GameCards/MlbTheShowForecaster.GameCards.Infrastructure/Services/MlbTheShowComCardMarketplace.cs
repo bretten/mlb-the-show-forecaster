@@ -1,4 +1,5 @@
 using AngleSharp;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -22,12 +23,19 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
     private readonly IBrowsingContext _context;
 
     /// <summary>
+    /// Gets the current date
+    /// </summary>
+    private readonly ICalendar _calendar;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="context"><see cref="IBrowsingContext"/> for <see cref="AngleSharp"/></param>
-    public MlbTheShowComCardMarketplace(IBrowsingContext context)
+    /// <param name="calendar">Gets the current date</param>
+    public MlbTheShowComCardMarketplace(IBrowsingContext context, ICalendar calendar)
     {
         _context = context;
+        _calendar = calendar;
     }
 
     /// <inheritdoc />
@@ -56,7 +64,16 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
 
         var listingName = titleParts[1].Trim();
 
-        // Parse historical prices
+        // MLB The Show's website has an issue where games from previous years will start listing prices at 12/31
+        // These seem to be erroneous and can be ignored until the current date's pricing is found
+        // You can then start at the current calendar year and go back to the day that the game launched
+        var today = _calendar.Today();
+        var todayDateString = today.ToString("MM/dd"); // Used to skip erroneous dates
+        var passedErroneousDates = false; // Will be set to true once erroneous rows have been passed
+        var currentYear = today.Year; // 1st price is for the current year. When 12/31 is reached, decrement year
+        var previousDateString = todayDateString; // Used to handle case where data has no 12/31 date, only 12/30
+
+        // Parse historical prices from the table body rows
         var historicalPrices = new List<CardListingPrice>();
         var rows = doc.QuerySelectorAll("#table-trends tbody tr");
         foreach (var row in rows)
@@ -68,9 +85,28 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
                     $"The historical price row was not formatted correctly for {cardExternalId.AsStringDigits}");
             }
 
-            // No year is provided with the date
-            var dateWithAutoYear = DateOnly.ParseExact(cells[0].TextContent.Trim(), "MM/dd");
-            var date = new DateOnly(seasonYear.Value, dateWithAutoYear.Month, dateWithAutoYear.Day);
+            // The dates are in the format MM/dd with no year. It starts at the current calendar year and goes back to the year the game launched
+            var dateString = cells[0].TextContent.Trim();
+
+            // Skip erroneous dates
+            if (!passedErroneousDates && dateString != todayDateString)
+            {
+                continue;
+            }
+
+            // The current date has been reached, so no more skipping needed
+            passedErroneousDates = true;
+
+            // When the previous year has been reached, change the year
+            // NOTE: When looking at 2021 data for Aaron Judge, some 12/31's were missing, so use 12/30 as a fallback
+            if (previousDateString == "01/01" && (dateString == "12/31" || dateString == "12/30"))
+            {
+                currentYear--;
+            }
+
+            // Parse the date and use the current year counter
+            var dateWithAutoYear = DateOnly.ParseExact(dateString, "MM/dd");
+            var date = new DateOnly(currentYear, dateWithAutoYear.Month, dateWithAutoYear.Day);
 
             // Buy price is the first number, sell price is the second
             var buyNowPrice = int.Parse(cells[1].TextContent.Trim());
@@ -78,6 +114,8 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
 
             historicalPrices.Add(new CardListingPrice(date, NaturalNumber.Create(buyNowPrice),
                 NaturalNumber.Create(sellNowPrice)));
+
+            previousDateString = dateString;
         }
 
         var mostRecentPrice = historicalPrices.OrderByDescending(x => x.Date).First();
