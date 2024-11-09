@@ -203,7 +203,10 @@ public sealed class TrendReportFactory : ITrendReportFactory
             CardName: card.Name,
             PrimaryPosition: player.Position,
             OverallRating: card.OverallRating,
-            MetricsByDate: listing.HistoricalPricesChronologically.Select(x => MapMetrics(x, performanceMetrics))
+            MetricsByDate: listing.HistoricalPricesChronologically
+                // Only prices for the season
+                .Where(x => x.Date.Year == card.Year.Value && x.Date <= new DateOnly(card.Year.Value, 11, 1))
+                .Select(x => MapMetrics(x, performanceMetrics))
                 .ToImmutableList(),
             Impacts: forecast.ForecastImpactsChronologically.Select(MapForecastImpact).ToImmutableList()
         );
