@@ -15,11 +15,11 @@ public class PlayerCardBoostEventConsumerTests : BaseForecastImpactEventConsumer
         var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
-        var stubCalendar = StubCalendar();
+        var mockTrendReporter = MockTrendReporter();
         var stubImpactDuration = StubImpactDuration();
 
-        var consumer =
-            new PlayerCardBoostEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+        var consumer = new PlayerCardBoostEventConsumer(mockCommandSender.Object, mockTrendReporter.Object,
+            stubImpactDuration);
 
         var newRating = Faker.FakeOverallRating(90);
         const string boostReason = "Hit 5 HRs";
@@ -36,5 +36,6 @@ public class PlayerCardBoostEventConsumerTests : BaseForecastImpactEventConsumer
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
                     y.Year == Year && y.CardExternalId == CardExternalId && y.Impacts[0] == expectedImpact), cToken),
             Times.Once);
+        mockTrendReporter.Verify(x => x.UpdateTrendReport(Year, CardExternalId, cToken), Times.Once);
     }
 }

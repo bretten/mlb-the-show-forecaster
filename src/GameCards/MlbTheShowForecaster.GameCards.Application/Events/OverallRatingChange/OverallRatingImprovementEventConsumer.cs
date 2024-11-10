@@ -1,5 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 
@@ -14,8 +14,8 @@ public sealed class
     OverallRatingImprovementEventConsumer : BaseForecastImpactEventConsumer<OverallRatingImprovementEvent>
 {
     /// <inheritdoc />
-    public OverallRatingImprovementEventConsumer(ICommandSender commandSender, ICalendar calendar,
-        ForecastImpactDuration duration) : base(commandSender, calendar, duration)
+    public OverallRatingImprovementEventConsumer(ICommandSender commandSender, ITrendReporter trendReporter,
+        ForecastImpactDuration duration) : base(commandSender, trendReporter, duration)
     {
     }
 

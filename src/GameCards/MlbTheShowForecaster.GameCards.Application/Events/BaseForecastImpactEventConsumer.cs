@@ -1,7 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCardForecastImpacts;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 
@@ -20,9 +20,9 @@ public abstract class BaseForecastImpactEventConsumer<T> : IDomainEventConsumer<
     protected readonly ICommandSender CommandSender;
 
     /// <summary>
-    /// Gets today's date
+    /// Updates the trend report for the affected entity
     /// </summary>
-    protected readonly ICalendar Calendar;
+    protected readonly ITrendReporter TrendReporter;
 
     /// <summary>
     /// Determines how long the forecast impact will last
@@ -33,13 +33,13 @@ public abstract class BaseForecastImpactEventConsumer<T> : IDomainEventConsumer<
     /// Constructor
     /// </summary>
     /// <param name="commandSender">Sends commands to mutate the system</param>
-    /// <param name="calendar">Gets today's date</param>
+    /// <param name="trendReporter">Updates the trend report for the affected entity</param>
     /// <param name="duration">Determines how long the forecast impact will last</param>
-    protected BaseForecastImpactEventConsumer(ICommandSender commandSender, ICalendar calendar,
+    protected BaseForecastImpactEventConsumer(ICommandSender commandSender, ITrendReporter trendReporter,
         ForecastImpactDuration duration)
     {
         CommandSender = commandSender;
-        Calendar = calendar;
+        TrendReporter = trendReporter;
         Duration = duration;
     }
 
@@ -53,6 +53,14 @@ public abstract class BaseForecastImpactEventConsumer<T> : IDomainEventConsumer<
         await CommandSender.Send(
             new UpdatePlayerCardForecastImpactsCommand(e.Year, e.CardExternalId, e.MlbId, CreateImpact(e)),
             cancellationToken);
+
+        if (e.CardExternalId != null)
+        {
+            await TrendReporter.UpdateTrendReport(e.Year, e.CardExternalId, cancellationToken);
+            return;
+        }
+
+        await TrendReporter.UpdateTrendReport(e.Year, e.MlbId!, cancellationToken);
     }
 
     /// <summary>

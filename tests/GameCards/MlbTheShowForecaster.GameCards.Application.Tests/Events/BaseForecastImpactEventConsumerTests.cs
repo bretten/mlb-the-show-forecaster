@@ -1,7 +1,7 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 using Moq;
@@ -19,12 +19,9 @@ public class BaseForecastImpactEventConsumerTests
         return new Mock<ICommandSender>();
     }
 
-    protected static Mock<ICalendar> StubCalendar(DateOnly? date = null)
+    protected static Mock<ITrendReporter> MockTrendReporter()
     {
-        var calendar = new Mock<ICalendar>();
-        calendar.Setup(x => x.Today())
-            .Returns(date ?? new DateOnly(2024, 8, 7));
-        return calendar;
+        return new Mock<ITrendReporter>();
     }
 
     protected static ForecastImpactDuration StubImpactDuration(int d = 3)
