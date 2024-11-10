@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using RabbitMQ.Client;
+using Testcontainers.MongoDb;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
 
@@ -15,9 +16,13 @@ public class ProgramIntegrationTests : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _dbContainer;
     private readonly RabbitMqContainer _rabbitMqContainer;
+    private readonly MongoDbContainer _mongoDbContainer;
 
     private const int PostgreSqlPort = 54327;
     private const int RabbitMqPort = 56723;
+    private const string MongoUser = "mongo";
+    private const string MongoPass = "password99";
+    private const int MongoPort = 50000;
 
     public ProgramIntegrationTests()
     {
@@ -37,6 +42,12 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithPortBinding(RabbitMqPort, 5672)
                 .WithPortBinding(15676, 15672)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
+                .Build();
+            _mongoDbContainer = new MongoDbBuilder()
+                .WithName(GetType().Name + Guid.NewGuid())
+                .WithUsername(MongoUser)
+                .WithPassword(MongoPass)
+                .WithPortBinding(MongoPort, 27017)
                 .Build();
         }
         catch (ArgumentException e)
@@ -66,6 +77,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         builder.Configuration["ConnectionStrings:Cards"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Forecasts"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
+        builder.Configuration["ConnectionStrings:TrendsMongoDb"] = _mongoDbContainer.GetConnectionString();
         builder.Configuration["Messaging:RabbitMq:Port"] = RabbitMqPort.ToString();
         // Build the app
         var app = AppBuilder.BuildApp(args, builder);
@@ -127,12 +139,14 @@ public class ProgramIntegrationTests : IAsyncLifetime
     {
         await _dbContainer.StartAsync();
         await _rabbitMqContainer.StartAsync();
+        await _mongoDbContainer.StartAsync();
     }
 
     public async Task DisposeAsync()
     {
         await _dbContainer.StopAsync();
         await _rabbitMqContainer.StopAsync();
+        await _mongoDbContainer.StopAsync();
     }
 
     private async Task<NpgsqlConnection> GetDbConnection()
