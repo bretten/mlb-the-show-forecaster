@@ -14,11 +14,11 @@ public class PlayerDeactivationEventConsumerTests : BaseForecastImpactEventConsu
         var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
-        var stubCalendar = StubCalendar();
+        var mockTrendReporter = MockTrendReporter();
         var stubImpactDuration = StubImpactDuration();
 
-        var consumer =
-            new PlayerDeactivationEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+        var consumer = new PlayerDeactivationEventConsumer(mockCommandSender.Object, mockTrendReporter.Object,
+            stubImpactDuration);
 
         var e = new PlayerDeactivationEvent(Year, MlbId, date);
 
@@ -32,5 +32,6 @@ public class PlayerDeactivationEventConsumerTests : BaseForecastImpactEventConsu
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
                     y.Year == Year && y.MlbId == MlbId && y.Impacts[0] == expectedImpact), cToken), Times.Once);
+        mockTrendReporter.Verify(x => x.UpdateTrendReport(Year, MlbId, cToken), Times.Once);
     }
 }

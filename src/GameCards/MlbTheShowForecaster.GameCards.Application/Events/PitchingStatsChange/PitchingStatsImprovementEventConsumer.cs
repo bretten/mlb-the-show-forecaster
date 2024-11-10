@@ -1,5 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.StatImpacts;
@@ -15,8 +15,8 @@ public sealed class
     PitchingStatsImprovementEventConsumer : BaseForecastImpactEventConsumer<PitchingStatsImprovementEvent>
 {
     /// <inheritdoc />
-    public PitchingStatsImprovementEventConsumer(ICommandSender commandSender, ICalendar calendar,
-        ForecastImpactDuration duration) : base(commandSender, calendar, duration)
+    public PitchingStatsImprovementEventConsumer(ICommandSender commandSender, ITrendReporter trendReporter,
+        ForecastImpactDuration duration) : base(commandSender, trendReporter, duration)
     {
     }
 

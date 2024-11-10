@@ -1,5 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.AdministrativeImpacts;
@@ -14,8 +14,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.Playe
 public sealed class PlayerTeamSigningEventConsumer : BaseForecastImpactEventConsumer<PlayerTeamSigningEvent>
 {
     /// <inheritdoc />
-    public PlayerTeamSigningEventConsumer(ICommandSender commandSender, ICalendar calendar,
-        ForecastImpactDuration duration) : base(commandSender, calendar, duration)
+    public PlayerTeamSigningEventConsumer(ICommandSender commandSender, ITrendReporter trendReporter,
+        ForecastImpactDuration duration) : base(commandSender, trendReporter, duration)
     {
     }
 

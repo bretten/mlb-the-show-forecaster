@@ -1,5 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.StatImpacts;
@@ -14,8 +14,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.Field
 public sealed class FieldingStatsDeclineEventConsumer : BaseForecastImpactEventConsumer<FieldingStatsDeclineEvent>
 {
     /// <inheritdoc />
-    public FieldingStatsDeclineEventConsumer(ICommandSender commandSender, ICalendar calendar,
-        ForecastImpactDuration duration) : base(commandSender, calendar, duration)
+    public FieldingStatsDeclineEventConsumer(ICommandSender commandSender, ITrendReporter trendReporter,
+        ForecastImpactDuration duration) : base(commandSender, trendReporter, duration)
     {
     }
 

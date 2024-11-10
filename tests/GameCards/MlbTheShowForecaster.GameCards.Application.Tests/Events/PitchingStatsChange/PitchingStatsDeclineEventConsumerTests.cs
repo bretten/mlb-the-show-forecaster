@@ -15,11 +15,11 @@ public class PitchingStatsDeclineEventConsumerTests : BaseForecastImpactEventCon
         var date = new DateOnly(2024, 10, 28);
         var cToken = CancellationToken.None;
         var mockCommandSender = MockCommandSender();
-        var stubCalendar = StubCalendar();
+        var mockTrendReporter = MockTrendReporter();
         var stubImpactDuration = StubImpactDuration();
 
-        var consumer =
-            new PitchingStatsDeclineEventConsumer(mockCommandSender.Object, stubCalendar.Object, stubImpactDuration);
+        var consumer = new PitchingStatsDeclineEventConsumer(mockCommandSender.Object, mockTrendReporter.Object,
+            stubImpactDuration);
 
         var e = new PitchingStatsDeclineEvent(Year, MlbId, PercentageChange.Create(0.7m, 0.5m), date);
 
@@ -33,5 +33,6 @@ public class PitchingStatsDeclineEventConsumerTests : BaseForecastImpactEventCon
             x => x.Send(
                 It.Is<UpdatePlayerCardForecastImpactsCommand>(y =>
                     y.Year == Year && y.MlbId == MlbId && y.Impacts[0] == expectedImpact), cToken), Times.Once);
+        mockTrendReporter.Verify(x => x.UpdateTrendReport(Year, MlbId, cToken), Times.Once);
     }
 }
