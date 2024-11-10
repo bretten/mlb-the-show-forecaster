@@ -22,7 +22,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
     private const int RabbitMqPort = 56723;
     private const string MongoUser = "mongo";
     private const string MongoPass = "password99";
-    private const int MongoPort = 50000;
+    private const int MongoPort = 27018;
 
     public ProgramIntegrationTests()
     {
