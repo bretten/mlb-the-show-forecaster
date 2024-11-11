@@ -10,4 +10,10 @@ public interface ICalendar
     /// </summary>
     /// <returns>Today's date</returns>
     DateOnly Today();
+
+    /// <summary>
+    /// Today's date from the perspective of PST
+    /// </summary>
+    /// <returns>Today's date in the PST timezone</returns>
+    DateOnly TodayPst();
 }
