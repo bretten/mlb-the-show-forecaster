@@ -102,12 +102,11 @@ public static class PlayerTrackerHostExtensions
             var interval =
                 ParseInterval(context.Configuration.GetRequiredValue<string>("PlayerStatusTracker:Interval"));
             var seasons = context.Configuration.GetRequiredValue<ushort[]>("PlayerStatusTracker:Seasons");
+            var runOnStartup = context.Configuration.GetRequiredValue<bool>("Jobs:RunOnStartup");
             var jobSchedules = new List<JobSchedule>();
             foreach (var season in seasons)
             {
-                var input = new SeasonJobInput(SeasonYear.Create(season));
-                jobSchedules.Add(new JobSchedule(JobType: typeof(PlayerStatusTrackerJob), JobInput: input,
-                    Interval: interval));
+                jobSchedules.AddRange(JobsForSeason(season, interval, runOnStartup));
             }
 
             var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
@@ -121,6 +120,24 @@ public static class PlayerTrackerHostExtensions
         services.AddHostedService<ScheduledBackgroundService<IJobManager>>(sp =>
             new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(), JobManagerWork,
                 jobManagerInterval));
+    }
+
+    /// <summary>
+    /// Gets the jobs for the season
+    /// </summary>
+    private static List<JobSchedule> JobsForSeason(ushort season, TimeSpan interval, bool runOnStartup)
+    {
+        var input = new SeasonJobInput(SeasonYear.Create(season));
+        var jobs = new List<JobSchedule>()
+        {
+            new JobSchedule(JobType: typeof(PlayerStatusTrackerJob), JobInput: input, Interval: interval)
+        };
+        foreach (var job in jobs)
+        {
+            job.LastRun = runOnStartup ? DateTime.MinValue : DateTime.UtcNow.AddDays(1);
+        }
+
+        return jobs;
     }
 
     /// <summary>
