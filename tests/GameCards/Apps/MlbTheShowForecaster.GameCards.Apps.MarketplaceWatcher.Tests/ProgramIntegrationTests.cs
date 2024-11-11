@@ -28,8 +28,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
 
     public ProgramIntegrationTests()
     {
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test");
-        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Test");
         try
         {
             _dbContainer = new PostgreSqlBuilder()
@@ -80,6 +78,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
         builder.Configuration["ConnectionStrings:Forecasts"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:TrendsMongoDb"] = _mongoDbContainer.GetConnectionString();
+        builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
+        builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
         builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();
         // Build the app
         var app = AppBuilder.BuildApp(args, builder);
@@ -87,13 +87,12 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Setup the cards database
         await using var connection = await GetDbConnection();
         await using var cardsDbContext = GetCardsDbContext(connection);
-        await CreateSchema(connection);
         await cardsDbContext.Database.MigrateAsync();
         // Add a PlayerCard (and a listing below) so the ICardPriceTracker can update the listing and dispatch price change domain events
-        var playerCardExternalId1 = Guid.Parse("a71cdf423ea5906c5fa85fff95d90360");
+        var playerCardExternalId1 = Guid.Parse("7d6c7d95a1e5e861c54d20002585a809");
         await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId1));
         // Add another PlayerCard (with no listing) so the ICardPriceTracker can create a new listing
-        var playerCardExternalId2 = Guid.Parse("7a1609ab176b59d06b0f9e4db8e079a8");
+        var playerCardExternalId2 = Guid.Parse("da757117dff1551f109453a8b80f28c8");
         await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId2));
         await cardsDbContext.SaveChangesAsync();
 
@@ -111,11 +110,11 @@ public class ProgramIntegrationTests : IAsyncLifetime
          * Act
          */
         // Cancellation token to stop the program
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(25));
+        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         // Start the host
         _ = app.RunAsync();
         // Let it do some work
-        await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
 
         /*
          * Assert
@@ -172,12 +171,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
             .UseNpgsql(connection)
             .Options;
         return new MarketplaceDbContext(contextOptions);
-    }
-
-    private async Task CreateSchema(NpgsqlConnection connection)
-    {
-        await using var cmd = new NpgsqlCommand("CREATE SCHEMA game_cards;", connection);
-        await cmd.ExecuteNonQueryAsync();
     }
 
     private sealed class DockerNotRunningException : Exception

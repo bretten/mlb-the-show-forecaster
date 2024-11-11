@@ -23,8 +23,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
 
     public ProgramIntegrationTests()
     {
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test");
-        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Test");
         try
         {
             _dbContainer = new PostgreSqlBuilder()
@@ -66,6 +64,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
         builder.Configuration["ConnectionStrings:Players"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
+        builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
+        builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
         builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();
         // Build the app
         var app = AppBuilder.BuildApp(args, builder);
@@ -73,10 +73,9 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Setup the database
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection, new TeamProvider());
-        await CreateSchema(connection);
         await dbContext.Database.MigrateAsync();
         // Add an existing player so it can be activated (first player alphabetically in the 2024 season)
-        var player = Faker.FakePlayer(mlbId: 671096, team: Faker.FakeTeam(), active: false);
+        var player = Faker.FakePlayer(mlbId: 592450, team: Faker.FakeTeam(), active: false);
         await dbContext.Players.AddAsync(player);
         await dbContext.SaveChangesAsync();
 
@@ -131,12 +130,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
             .UseNpgsql(connection)
             .Options;
         return new PlayersDbContext(contextOptions, teamProvider);
-    }
-
-    private async Task CreateSchema(NpgsqlConnection connection)
-    {
-        await using var cmd = new NpgsqlCommand("CREATE SCHEMA players;", connection);
-        await cmd.ExecuteNonQueryAsync();
     }
 
     private sealed class DockerNotRunningException : Exception

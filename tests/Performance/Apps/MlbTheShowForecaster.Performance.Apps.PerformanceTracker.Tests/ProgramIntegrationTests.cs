@@ -21,8 +21,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
 
     public ProgramIntegrationTests()
     {
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test");
-        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Test");
         try
         {
             _dbContainer = new PostgreSqlBuilder()
@@ -65,6 +63,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Config overrides
         builder.Configuration["ConnectionStrings:PlayerSeasons"] =
             _dbContainer.GetConnectionString() + ";Pooling=false;";
+        builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
+        builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
         builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();
         // Build the app
         var app = AppBuilder.BuildApp(args, builder);
@@ -72,7 +72,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Setup the database
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);
-        await CreateSchema(connection);
         await dbContext.Database.MigrateAsync();
 
         // Will be used for asserting. Resolving before the service provider is shut down
@@ -131,12 +130,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
             .UseNpgsql(connection)
             .Options;
         return new PlayerSeasonsDbContext(contextOptions);
-    }
-
-    private async Task CreateSchema(NpgsqlConnection connection)
-    {
-        await using var cmd = new NpgsqlCommand("CREATE SCHEMA performance;", connection);
-        await cmd.ExecuteNonQueryAsync();
     }
 
     private sealed class DockerNotRunningException : Exception
