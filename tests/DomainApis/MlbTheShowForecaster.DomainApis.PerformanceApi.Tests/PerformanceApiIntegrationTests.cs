@@ -9,7 +9,9 @@ namespace com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi.Tests;
 public class PerformanceApiIntegrationTests : IAsyncLifetime
 {
     private readonly IContainer _container;
-    private const int Port = 10802;
+    private const int Port = 1080;
+
+    private int HostPort => _container.GetMappedPublicPort(Port);
 
     /// <summary>
     /// Configures the container options that will be used for each test
@@ -23,7 +25,7 @@ public class PerformanceApiIntegrationTests : IAsyncLifetime
                 .WithImage("mockserver/mockserver")
                 .WithEnvironment("MOCKSERVER_LOG_LEVEL", "TRACE")
                 .WithName(GetType().Name + Guid.NewGuid())
-                .WithPortBinding(Port, 1080)
+                .WithPortBinding(Port, true)
                 .Build();
         }
         catch (ArgumentException e)
@@ -92,10 +94,10 @@ public class PerformanceApiIntegrationTests : IAsyncLifetime
         Assert.Equal(2.9m, actual.Content.MetricsByDate[1].FieldingPercentage);
     }
 
-    private static async Task MockEndpoint(string endpoint)
+    private async Task MockEndpoint(string endpoint)
     {
         using var httpClient = new HttpClient();
-        await httpClient.PutAsync($"http://localhost:{Port}/mockserver/expectation", new StringContent(endpoint));
+        await httpClient.PutAsync($"http://localhost:{HostPort}/mockserver/expectation", new StringContent(endpoint));
     }
 
     private const string ReturnsPlayerSeasonEndpoint = @"
@@ -166,9 +168,9 @@ public class PerformanceApiIntegrationTests : IAsyncLifetime
         }
     ]";
 
-    private static IPerformanceApi GetClient()
+    private IPerformanceApi GetClient()
     {
-        return RestService.For<IPerformanceApi>($"http://localhost:{Port}",
+        return RestService.For<IPerformanceApi>($"http://localhost:{HostPort}",
             new RefitSettings
             {
                 ContentSerializer = new SystemTextJsonContentSerializer(
@@ -182,7 +184,7 @@ public class PerformanceApiIntegrationTests : IAsyncLifetime
 
     public async Task InitializeAsync() => await _container.StartAsync();
 
-    public async Task DisposeAsync() => await _container.StopAsync();
+    public async Task DisposeAsync() => await _container.DisposeAsync();
 
     private sealed class DockerNotRunningException : Exception
     {

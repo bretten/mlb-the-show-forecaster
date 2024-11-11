@@ -9,7 +9,9 @@ namespace com.brettnamba.MlbTheShowForecaster.DomainApis.PlayerStatusApi.Tests;
 public class PlayerStatusApiIntegrationTests : IAsyncLifetime
 {
     private readonly IContainer _container;
-    private const int Port = 10801;
+    private const int Port = 1080;
+
+    private int HostPort => _container.GetMappedPublicPort(Port);
 
     /// <summary>
     /// Configures the container options that will be used for each test
@@ -23,7 +25,7 @@ public class PlayerStatusApiIntegrationTests : IAsyncLifetime
                 .WithImage("mockserver/mockserver")
                 .WithEnvironment("MOCKSERVER_LOG_LEVEL", "TRACE")
                 .WithName(GetType().Name + Guid.NewGuid())
-                .WithPortBinding(Port, 1080)
+                .WithPortBinding(Port, true)
                 .Build();
         }
         catch (ArgumentException e)
@@ -59,10 +61,10 @@ public class PlayerStatusApiIntegrationTests : IAsyncLifetime
         Assert.Equal("SEA", actual.Content.Team);
     }
 
-    private static async Task MockEndpoint(string endpoint)
+    private async Task MockEndpoint(string endpoint)
     {
         using var httpClient = new HttpClient();
-        await httpClient.PutAsync($"http://localhost:{Port}/mockserver/expectation", new StringContent(endpoint));
+        await httpClient.PutAsync($"http://localhost:{HostPort}/mockserver/expectation", new StringContent(endpoint));
     }
 
     private const string ReturnsPlayerEndpoint = @"
@@ -92,9 +94,9 @@ public class PlayerStatusApiIntegrationTests : IAsyncLifetime
         }
     ]";
 
-    private static IPlayerStatusApi GetClient()
+    private IPlayerStatusApi GetClient()
     {
-        return RestService.For<IPlayerStatusApi>($"http://localhost:{Port}",
+        return RestService.For<IPlayerStatusApi>($"http://localhost:{HostPort}",
             new RefitSettings
             {
                 ContentSerializer = new SystemTextJsonContentSerializer(
@@ -108,7 +110,7 @@ public class PlayerStatusApiIntegrationTests : IAsyncLifetime
 
     public async Task InitializeAsync() => await _container.StartAsync();
 
-    public async Task DisposeAsync() => await _container.StopAsync();
+    public async Task DisposeAsync() => await _container.DisposeAsync();
 
     private sealed class DockerNotRunningException : Exception
     {

@@ -16,8 +16,10 @@ public class ProgramIntegrationTests : IAsyncLifetime
     private readonly PostgreSqlContainer _dbContainer;
     private readonly RabbitMqContainer _rabbitMqContainer;
 
-    private const int PostgreSqlPort = 54325;
-    private const int RabbitMqPort = 56721;
+    private const int PostgreSqlPort = 5432;
+    private const int RabbitMqPort = 5672;
+
+    private int HostRabbitMqPort => _rabbitMqContainer.GetMappedPublicPort(RabbitMqPort);
 
     public ProgramIntegrationTests()
     {
@@ -29,13 +31,13 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
                 .WithPassword("password99")
-                .WithPortBinding(PostgreSqlPort, 5432)
+                .WithPortBinding(PostgreSqlPort, true)
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
                 .WithName(GetType().Name + Guid.NewGuid())
-                .WithPortBinding(RabbitMqPort, 5672)
-                .WithPortBinding(15674, 15672)
+                .WithPortBinding(RabbitMqPort, true)
+                .WithPortBinding(15672, true)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
                 .Build();
         }
@@ -64,7 +66,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
         builder.Configuration["ConnectionStrings:Players"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
-        builder.Configuration["Messaging:RabbitMq:Port"] = RabbitMqPort.ToString();
+        builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();
         // Build the app
         var app = AppBuilder.BuildApp(args, builder);
 
@@ -112,8 +114,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _dbContainer.StopAsync();
-        await _rabbitMqContainer.StopAsync();
+        await _dbContainer.DisposeAsync();
+        await _rabbitMqContainer.DisposeAsync();
     }
 
     private async Task<NpgsqlConnection> GetDbConnection()
