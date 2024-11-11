@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
 using RabbitMQ.Client;
 using Testcontainers.PostgreSql;
@@ -74,18 +74,16 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await using var dbContext = GetDbContext(connection);
         await dbContext.Database.MigrateAsync();
 
-        // Will be used for asserting. Resolving before the service provider is shut down
-        using var rabbitMqChannel = app.Services.GetRequiredService<IModel>();
+        // Will be used for asserting
+        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
 
         /*
          * Act
          */
-        // Cancellation token to stop the program
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         // Start the host
         _ = app.RunAsync();
         // Let it do some work
-        await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(3), CancellationToken.None);
 
         /*
          * Assert
@@ -130,6 +128,18 @@ public class ProgramIntegrationTests : IAsyncLifetime
             .UseNpgsql(connection)
             .Options;
         return new PlayerSeasonsDbContext(contextOptions);
+    }
+
+    private IModel GetRabbitMqModel(IConfiguration config)
+    {
+        return new ConnectionFactory
+        {
+            HostName = config["Messaging:RabbitMq:HostName"],
+            UserName = config["Messaging:RabbitMq:UserName"],
+            Password = config["Messaging:RabbitMq:Password"],
+            Port = config.GetValue<int>("Messaging:RabbitMq:Port"),
+            DispatchConsumersAsync = true
+        }.CreateConnection().CreateModel();
     }
 
     private sealed class DockerNotRunningException : Exception
