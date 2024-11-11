@@ -10,4 +10,12 @@ public sealed class Calendar : ICalendar
     {
         return DateOnly.FromDateTime(DateTime.Today);
     }
+
+    /// <inheritdoc />
+    public DateOnly TodayPst()
+    {
+        var tzInfo = TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
+        var offset = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, tzInfo);
+        return DateOnly.FromDateTime(offset.DateTime);
+    }
 }

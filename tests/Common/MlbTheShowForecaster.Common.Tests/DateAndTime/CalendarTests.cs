@@ -16,4 +16,17 @@ public class CalendarTests
         // Assert
         Assert.Equal(DateOnly.FromDateTime(DateTime.Today), actual);
     }
+
+    [Fact]
+    public void TodayPst_NoParameters_ReturnsToday()
+    {
+        // Arrange
+        var calendar = new Calendar();
+
+        // Act
+        var actual = calendar.TodayPst();
+
+        // Assert
+        Assert.Equal(DateOnly.FromDateTime(DateTime.Today), actual);
+    }
 }
