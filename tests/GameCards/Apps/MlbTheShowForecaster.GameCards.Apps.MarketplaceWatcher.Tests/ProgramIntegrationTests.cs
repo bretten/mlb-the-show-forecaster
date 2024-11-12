@@ -3,7 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Test
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
 using RabbitMQ.Client;
 using Testcontainers.MongoDb;
@@ -18,36 +18,36 @@ public class ProgramIntegrationTests : IAsyncLifetime
     private readonly RabbitMqContainer _rabbitMqContainer;
     private readonly MongoDbContainer _mongoDbContainer;
 
-    private const int PostgreSqlPort = 54327;
-    private const int RabbitMqPort = 56723;
+    private const int PostgreSqlPort = 5432;
+    private const int RabbitMqPort = 5672;
     private const string MongoUser = "mongo";
     private const string MongoPass = "password99";
-    private const int MongoPort = 27018;
+    private const int MongoPort = 27017;
+
+    private int HostRabbitMqPort => _rabbitMqContainer.GetMappedPublicPort(RabbitMqPort);
 
     public ProgramIntegrationTests()
     {
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test");
-        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Test");
         try
         {
             _dbContainer = new PostgreSqlBuilder()
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
                 .WithPassword("password99")
-                .WithPortBinding(PostgreSqlPort, 5432)
+                .WithPortBinding(PostgreSqlPort, true)
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
                 .WithName(GetType().Name + Guid.NewGuid())
-                .WithPortBinding(RabbitMqPort, 5672)
-                .WithPortBinding(15676, 15672)
+                .WithPortBinding(RabbitMqPort, true)
+                .WithPortBinding(15672, true)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
                 .Build();
             _mongoDbContainer = new MongoDbBuilder()
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername(MongoUser)
                 .WithPassword(MongoPass)
-                .WithPortBinding(MongoPort, 27017)
+                .WithPortBinding(MongoPort, true)
                 .Build();
         }
         catch (ArgumentException e)
@@ -78,20 +78,21 @@ public class ProgramIntegrationTests : IAsyncLifetime
         builder.Configuration["ConnectionStrings:Forecasts"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:TrendsMongoDb"] = _mongoDbContainer.GetConnectionString();
-        builder.Configuration["Messaging:RabbitMq:Port"] = RabbitMqPort.ToString();
+        builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
+        builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
+        builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();
         // Build the app
         var app = AppBuilder.BuildApp(args, builder);
 
         // Setup the cards database
         await using var connection = await GetDbConnection();
         await using var cardsDbContext = GetCardsDbContext(connection);
-        await CreateSchema(connection);
         await cardsDbContext.Database.MigrateAsync();
         // Add a PlayerCard (and a listing below) so the ICardPriceTracker can update the listing and dispatch price change domain events
-        var playerCardExternalId1 = Guid.Parse("a71cdf423ea5906c5fa85fff95d90360");
+        var playerCardExternalId1 = Guid.Parse("7d6c7d95a1e5e861c54d20002585a809");
         await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId1));
         // Add another PlayerCard (with no listing) so the ICardPriceTracker can create a new listing
-        var playerCardExternalId2 = Guid.Parse("7a1609ab176b59d06b0f9e4db8e079a8");
+        var playerCardExternalId2 = Guid.Parse("da757117dff1551f109453a8b80f28c8");
         await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId2));
         await cardsDbContext.SaveChangesAsync();
 
@@ -102,31 +103,29 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await marketplaceDbContext.Listings.AddAsync(Faker.FakeListing(playerCardExternalId1));
         await marketplaceDbContext.SaveChangesAsync();
 
-        // Will be used for asserting. Resolving before the service provider is shut down
-        using var rabbitMqChannel = app.Services.GetRequiredService<IModel>();
+        // Will be used for asserting
+        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
 
         /*
          * Act
          */
-        // Cancellation token to stop the program
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(25));
         // Start the host
         _ = app.RunAsync();
         // Let it do some work
-        await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(3), CancellationToken.None);
 
         /*
          * Assert
          */
         // There should be more than one player cards
         await using var assertConnection = await GetDbConnection();
-        await using var assertCardsDbContext = GetCardsDbContext(connection);
+        await using var assertCardsDbContext = GetCardsDbContext(assertConnection);
         var playerCards = assertCardsDbContext.PlayerCards.Count();
         // Make sure the cards inserted above exist
         // NOTE: The time it takes to get all the MLB cards exceeds the test time, so IPlayerCardTracker may not have time to update the cards
         Assert.True(playerCards >= 2);
         // There should be marketplace listings
-        await using var assertMarketplaceDbContext = GetMarketplaceDbContext(connection);
+        await using var assertMarketplaceDbContext = GetMarketplaceDbContext(assertConnection);
         var listings = assertMarketplaceDbContext.Listings.Count();
         Assert.True(listings > 1); // One was already inserted by the setup of this test
         // Domain events should have been published
@@ -144,9 +143,9 @@ public class ProgramIntegrationTests : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _dbContainer.StopAsync();
-        await _rabbitMqContainer.StopAsync();
-        await _mongoDbContainer.StopAsync();
+        await _dbContainer.DisposeAsync();
+        await _rabbitMqContainer.DisposeAsync();
+        await _mongoDbContainer.DisposeAsync();
     }
 
     private async Task<NpgsqlConnection> GetDbConnection()
@@ -172,10 +171,16 @@ public class ProgramIntegrationTests : IAsyncLifetime
         return new MarketplaceDbContext(contextOptions);
     }
 
-    private async Task CreateSchema(NpgsqlConnection connection)
+    private IModel GetRabbitMqModel(IConfiguration config)
     {
-        await using var cmd = new NpgsqlCommand("CREATE SCHEMA game_cards;", connection);
-        await cmd.ExecuteNonQueryAsync();
+        return new ConnectionFactory
+        {
+            HostName = config["Messaging:RabbitMq:HostName"],
+            UserName = config["Messaging:RabbitMq:UserName"],
+            Password = config["Messaging:RabbitMq:Password"],
+            Port = config.GetValue<int>("Messaging:RabbitMq:Port"),
+            DispatchConsumersAsync = true
+        }.CreateConnection().CreateModel();
     }
 
     private sealed class DockerNotRunningException : Exception

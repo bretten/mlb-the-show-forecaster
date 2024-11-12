@@ -3,7 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
 using RabbitMQ.Client;
 using Testcontainers.PostgreSql;
@@ -16,26 +16,26 @@ public class ProgramIntegrationTests : IAsyncLifetime
     private readonly PostgreSqlContainer _dbContainer;
     private readonly RabbitMqContainer _rabbitMqContainer;
 
-    private const int PostgreSqlPort = 54325;
-    private const int RabbitMqPort = 56721;
+    private const int PostgreSqlPort = 5432;
+    private const int RabbitMqPort = 5672;
+
+    private int HostRabbitMqPort => _rabbitMqContainer.GetMappedPublicPort(RabbitMqPort);
 
     public ProgramIntegrationTests()
     {
-        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Test");
-        Environment.SetEnvironmentVariable("DOTNET_ENVIRONMENT", "Test");
         try
         {
             _dbContainer = new PostgreSqlBuilder()
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
                 .WithPassword("password99")
-                .WithPortBinding(PostgreSqlPort, 5432)
+                .WithPortBinding(PostgreSqlPort, true)
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
                 .WithName(GetType().Name + Guid.NewGuid())
-                .WithPortBinding(RabbitMqPort, 5672)
-                .WithPortBinding(15674, 15672)
+                .WithPortBinding(RabbitMqPort, true)
+                .WithPortBinding(15672, true)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
                 .Build();
         }
@@ -64,39 +64,38 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
         builder.Configuration["ConnectionStrings:Players"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
-        builder.Configuration["Messaging:RabbitMq:Port"] = RabbitMqPort.ToString();
+        builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
+        builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
+        builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();
         // Build the app
         var app = AppBuilder.BuildApp(args, builder);
 
         // Setup the database
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection, new TeamProvider());
-        await CreateSchema(connection);
         await dbContext.Database.MigrateAsync();
         // Add an existing player so it can be activated (first player alphabetically in the 2024 season)
-        var player = Faker.FakePlayer(mlbId: 671096, team: Faker.FakeTeam(), active: false);
+        var player = Faker.FakePlayer(mlbId: 592450, team: Faker.FakeTeam(), active: false);
         await dbContext.Players.AddAsync(player);
         await dbContext.SaveChangesAsync();
 
-        // Will be used for asserting. Resolving before the service provider is shut down
-        using var rabbitMqChannel = app.Services.GetRequiredService<IModel>();
+        // Will be used for asserting
+        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
 
         /*
          * Act
          */
-        // Cancellation token to stop the program
-        var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         // Start the host
         _ = app.RunAsync();
         // Let it do some work
-        await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
+        await Task.Delay(TimeSpan.FromSeconds(3), CancellationToken.None);
 
         /*
          * Assert
          */
         // Some Players should have been added to the DB
         await using var assertConnection = await GetDbConnection();
-        await using var assertDbContext = GetDbContext(connection, new TeamProvider());
+        await using var assertDbContext = GetDbContext(assertConnection, new TeamProvider());
         var players = assertDbContext.Players.Count();
         Assert.True(players > 0);
         // Domain events should have been published
@@ -112,8 +111,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await _dbContainer.StopAsync();
-        await _rabbitMqContainer.StopAsync();
+        await _dbContainer.DisposeAsync();
+        await _rabbitMqContainer.DisposeAsync();
     }
 
     private async Task<NpgsqlConnection> GetDbConnection()
@@ -131,10 +130,16 @@ public class ProgramIntegrationTests : IAsyncLifetime
         return new PlayersDbContext(contextOptions, teamProvider);
     }
 
-    private async Task CreateSchema(NpgsqlConnection connection)
+    private IModel GetRabbitMqModel(IConfiguration config)
     {
-        await using var cmd = new NpgsqlCommand("CREATE SCHEMA players;", connection);
-        await cmd.ExecuteNonQueryAsync();
+        return new ConnectionFactory
+        {
+            HostName = config["Messaging:RabbitMq:HostName"],
+            UserName = config["Messaging:RabbitMq:UserName"],
+            Password = config["Messaging:RabbitMq:Password"],
+            Port = config.GetValue<int>("Messaging:RabbitMq:Port"),
+            DispatchConsumersAsync = true
+        }.CreateConnection().CreateModel();
     }
 
     private sealed class DockerNotRunningException : Exception

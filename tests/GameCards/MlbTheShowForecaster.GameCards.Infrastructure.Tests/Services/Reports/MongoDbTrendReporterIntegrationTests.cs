@@ -14,7 +14,9 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
     private readonly MongoDbContainer _container;
     private const string U = "mongo";
     private const string P = "password99";
-    private const int Port = 50000;
+    private const int Port = 27017;
+
+    private int HostPort => _container.GetMappedPublicPort(Port);
 
     /// <summary>
     /// Configures the container options that will be used for each test
@@ -28,7 +30,7 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername(U)
                 .WithPassword(P)
-                .WithPortBinding(Port, 27017)
+                .WithPortBinding(27017, true)
                 .Build();
         }
         catch (ArgumentException e)
@@ -242,11 +244,11 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
 
     public async Task InitializeAsync() => await _container.StartAsync();
 
-    public async Task DisposeAsync() => await _container.StopAsync();
+    public async Task DisposeAsync() => await _container.DisposeAsync();
 
-    private static IMongoClient GetMongoClient()
+    private IMongoClient GetMongoClient()
     {
-        return new MongoClient($"mongodb://{U}:{P}@localhost:{Port}/?authSource=admin");
+        return new MongoClient($"mongodb://{U}:{P}@localhost:{HostPort}/?authSource=admin");
     }
 
     private static MongoDbTrendReporter.MongoDbTrendReporterConfig GetMongoConfig(string database = "local",
