@@ -74,6 +74,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Builder
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
+        builder.Configuration["Jobs:RunOnStartup"] = "true";
         builder.Configuration["ConnectionStrings:Cards"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Forecasts"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
@@ -103,9 +104,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await marketplaceDbContext.Listings.AddAsync(Faker.FakeListing(playerCardExternalId1));
         await marketplaceDbContext.SaveChangesAsync();
 
-        // Will be used for asserting
-        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
-
         /*
          * Act
          */
@@ -129,6 +127,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var listings = assertMarketplaceDbContext.Listings.Count();
         Assert.True(listings > 1); // One was already inserted by the setup of this test
         // Domain events should have been published
+        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
         var messageCount = rabbitMqChannel.MessageCount("ListingBuyPriceDecreased") +
                            rabbitMqChannel.MessageCount("ListingBuyPriceIncreased");
         Assert.True(messageCount > 0);
