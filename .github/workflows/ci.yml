@@ -73,3 +73,6 @@ jobs:
         with:
           script: |
             core.setFailed('${{ steps.check-code-coverage.outputs.message }}')
+
+      - name: Cleanup
+        run: docker system prune -a --volumes
