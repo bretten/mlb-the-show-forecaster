@@ -19,8 +19,8 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
             _container = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
                 .WithName(GetType().Name + Guid.NewGuid())
-                .WithPortBinding(56720, 5672)
-                .WithPortBinding(15673, 15672)
+                .WithPortBinding(5672, true)
+                .WithPortBinding(15672, true)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
                 .Build();
         }
@@ -156,7 +156,7 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
 
     public async Task InitializeAsync() => await _container.StartAsync();
 
-    public async Task DisposeAsync() => await _container.StopAsync();
+    public async Task DisposeAsync() => await _container.DisposeAsync();
 
     private sealed class DockerNotRunningException : Exception
     {

@@ -28,7 +28,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername("postgres")
                 .WithPassword("password99")
-                .WithPortBinding(54324, 5432)
+                .WithPortBinding(5432, true)
                 .Build();
         }
         catch (ArgumentException e)
@@ -256,7 +256,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
 
     public async Task InitializeAsync() => await _container.StartAsync();
 
-    public async Task DisposeAsync() => await _container.StopAsync();
+    public async Task DisposeAsync() => await _container.DisposeAsync();
 
     private async Task<DbConnection> GetDbConnection()
     {
