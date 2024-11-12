@@ -27,6 +27,9 @@ public class CalendarTests
         var actual = calendar.TodayPst();
 
         // Assert
-        Assert.Equal(DateOnly.FromDateTime(DateTime.Today), actual);
+        var tzInfo = TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
+        var offset = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, tzInfo);
+        var expected = DateOnly.FromDateTime(offset.DateTime);
+        Assert.Equal(expected, actual);
     }
 }
