@@ -95,7 +95,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
          */
         // Some Players should have been added to the DB
         await using var assertConnection = await GetDbConnection();
-        await using var assertDbContext = GetDbContext(connection, new TeamProvider());
+        await using var assertDbContext = GetDbContext(assertConnection, new TeamProvider());
         var players = assertDbContext.Players.Count();
         Assert.True(players > 0);
         // Domain events should have been published

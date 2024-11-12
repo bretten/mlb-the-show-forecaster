@@ -119,13 +119,13 @@ public class ProgramIntegrationTests : IAsyncLifetime
          */
         // There should be more than one player cards
         await using var assertConnection = await GetDbConnection();
-        await using var assertCardsDbContext = GetCardsDbContext(connection);
+        await using var assertCardsDbContext = GetCardsDbContext(assertConnection);
         var playerCards = assertCardsDbContext.PlayerCards.Count();
         // Make sure the cards inserted above exist
         // NOTE: The time it takes to get all the MLB cards exceeds the test time, so IPlayerCardTracker may not have time to update the cards
         Assert.True(playerCards >= 2);
         // There should be marketplace listings
-        await using var assertMarketplaceDbContext = GetMarketplaceDbContext(connection);
+        await using var assertMarketplaceDbContext = GetMarketplaceDbContext(assertConnection);
         var listings = assertMarketplaceDbContext.Listings.Count();
         Assert.True(listings > 1); // One was already inserted by the setup of this test
         // Domain events should have been published
