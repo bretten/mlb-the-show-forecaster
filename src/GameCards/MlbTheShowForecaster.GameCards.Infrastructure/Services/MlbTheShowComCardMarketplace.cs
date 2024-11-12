@@ -67,7 +67,7 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
         // MLB The Show's website has an issue where games from previous years will start listing prices at 12/31
         // These seem to be erroneous and can be ignored until the current date's pricing is found
         // You can then start at the current calendar year and go back to the day that the game launched
-        var today = _calendar.Today();
+        var today = _calendar.TodayPst();
         var todayDateString = today.ToString("MM/dd"); // Used to skip erroneous dates
         var passedErroneousDates = false; // Will be set to true once erroneous rows have been passed
         var currentYear = today.Year; // 1st price is for the current year. When 12/31 is reached, decrement year
