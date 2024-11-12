@@ -74,6 +74,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Builder
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
+        builder.Configuration["Jobs:RunOnStartup"] = "true";
         builder.Configuration["ConnectionStrings:Cards"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Forecasts"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";

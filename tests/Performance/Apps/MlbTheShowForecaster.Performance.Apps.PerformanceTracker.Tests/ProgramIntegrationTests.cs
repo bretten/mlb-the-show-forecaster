@@ -61,6 +61,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         // Builder
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
+        builder.Configuration["Jobs:RunOnStartup"] = "true";
         builder.Configuration["ConnectionStrings:PlayerSeasons"] =
             _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
