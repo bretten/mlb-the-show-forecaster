@@ -75,9 +75,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await using var dbContext = GetDbContext(connection);
         await dbContext.Database.MigrateAsync();
 
-        // Will be used for asserting
-        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
-
         /*
          * Act
          */
@@ -98,6 +95,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
             x.FieldingStatsByGamesChronologically.Count > 0);
         Assert.NotNull(playerSeason);
         // Domain events should have been published
+        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
         var messageCount = rabbitMqChannel.MessageCount("PlayerBattedInGame")
                            + rabbitMqChannel.MessageCount("PlayerPitchedInGame")
                            + rabbitMqChannel.MessageCount("PlayerFieldedInGame");

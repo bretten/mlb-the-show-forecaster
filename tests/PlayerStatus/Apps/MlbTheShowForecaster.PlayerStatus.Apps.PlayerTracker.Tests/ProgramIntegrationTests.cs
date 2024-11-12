@@ -80,9 +80,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await dbContext.Players.AddAsync(player);
         await dbContext.SaveChangesAsync();
 
-        // Will be used for asserting
-        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
-
         /*
          * Act
          */
@@ -100,6 +97,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var players = assertDbContext.Players.Count();
         Assert.True(players > 0);
         // Domain events should have been published
+        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
         var messageCount = rabbitMqChannel.MessageCount("PlayerActivated");
         Assert.True(messageCount > 0);
     }
