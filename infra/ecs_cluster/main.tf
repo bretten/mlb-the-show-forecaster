@@ -15,7 +15,7 @@ module "storage" {
   root_tags                 = var.root_tags
   task_execution_role_arn   = var.task_execution_role_arn
   private_dns_namespace_id  = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
-  main_cluster_id           = var.vpc_id
+  main_cluster_id           = aws_ecs_cluster.main.id
   security_group_id_private = var.security_group_id_private
   subnet_id_private         = var.subnet_id_private
   aspnetcore_environment    = var.aspnetcore_environment

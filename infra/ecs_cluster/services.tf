@@ -28,7 +28,7 @@ resource "aws_ecs_service" "ecs_service_gateway" {
   }
 
   load_balancer {
-    container_name   = var.resource_prefix
+    container_name   = "${var.resource_prefix}-gateway"
     container_port   = var.port_gateway
     elb_name         = null
     target_group_arn = var.load_balancer_target_group_arn

@@ -37,3 +37,9 @@ resource "aws_route_table_association" "route_table_igw_public2" {
   subnet_id      = aws_subnet.public2.id
   route_table_id = aws_route_table.route_table_internet_gateway.id
 }
+
+# Private subnet association with the NAT gateway route table
+resource "aws_route_table_association" "route_table_nat_private" {
+  subnet_id      = aws_subnet.private.id
+  route_table_id = aws_route_table.route_table_nat_gateway.id
+}
