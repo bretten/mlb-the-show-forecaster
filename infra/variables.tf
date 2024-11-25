@@ -92,6 +92,12 @@ variable "port_marketplace_watcher" {
 }
 
 # Read from TF_VAR_ prefixed environment variables from the system
+variable "image_tag" {
+  description = "The image tag that will be used for the task definitions"
+  type        = string
+  default     = "latest"
+}
+
 variable "use_storage" {
   description = "True to use the storage module, otherwise false"
   type        = bool

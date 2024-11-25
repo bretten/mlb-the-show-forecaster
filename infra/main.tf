@@ -50,10 +50,10 @@ module "ecs_cluster" {
   aws_region                         = var.aws_region
   resource_prefix                    = var.resource_prefix
   root_tags                          = var.root_tags
-  task_def_gateway_image             = "${var.container_registry_url}/gateway:latest"
-  task_def_player_tracker_image      = "${var.container_registry_url}/player-tracker:latest"
-  task_def_performance_tracker_image = "${var.container_registry_url}/performance-tracker:latest"
-  task_def_marketplace_watcher_image = "${var.container_registry_url}/marketplace-watcher:latest"
+  task_def_gateway_image             = "${var.container_registry_url}/gateway:${var.image_tag}"
+  task_def_player_tracker_image      = "${var.container_registry_url}/player-tracker:${var.image_tag}"
+  task_def_performance_tracker_image = "${var.container_registry_url}/performance-tracker:${var.image_tag}"
+  task_def_marketplace_watcher_image = "${var.container_registry_url}/marketplace-watcher:${var.image_tag}"
   task_execution_role_arn            = aws_iam_role.role_ecs_task_execution.arn
   load_balancer_target_group_arn     = module.load_balancer.load_balancer_target_group_arn
   vpc_id                             = module.vpc.vpc_id
