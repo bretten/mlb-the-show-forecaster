@@ -70,17 +70,29 @@ resource "aws_ecs_task_definition" "task_definition_gateway" {
             value = "00:00:00:05"
           },
           {
-            name  = "SignalRMultiplexer__RelayedHubs__0__Url"
-            value = "${local.url_player_tracker}/job-hub"
+            name  = "TargetApps__PlayerTracker__Scheme"
+            value = "http"
           },
           {
-            name  = "SignalRMultiplexer__RelayedHubs__1__Url"
-            value = "${local.url_performance_tracker}/job-hub"
+            name  = "TargetApps__PlayerTracker__Host"
+            value = local.dns_name_player_tracker
           },
           {
-            name  = "SignalRMultiplexer__RelayedHubs__2__Url"
-            value = "${local.url_marketplace_watcher}/job-hub"
+            name  = "TargetApps__PerformanceTracker__Scheme"
+            value = "http"
           },
+          {
+            name  = "TargetApps__PerformanceTracker__Host"
+            value = local.dns_name_performance_tracker
+          },
+          {
+            name  = "TargetApps__MarketplaceWatcher__Scheme"
+            value = "http"
+          },
+          {
+            name  = "TargetApps__MarketplaceWatcher__Host"
+            value = local.dns_name_marketplace_watcher
+          }
         ]
         environmentFiles = []
         mountPoints = []
