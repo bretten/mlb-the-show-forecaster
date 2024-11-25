@@ -2,16 +2,11 @@ name: CI - Publish
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
-    inputs:
-      ref:
-        description: 'The ref (tag, branch or commit) to publish'
-        required: false
-        default: 'main'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
+  TAG_NAME: main
 
 jobs:
   publish:
@@ -23,17 +18,6 @@ jobs:
       packages: write # For publishing the container images
 
     steps:
-      - name: Set the container image tag name
-        run: |
-          # Use the ref from the input or from the github event (push to main)
-          REF=${{ github.event_name == 'workflow_dispatch' && inputs.ref || github.ref }}
-
-          # Remove prefix from the tag name (ref/heads/)
-          TAG_NAME="${REF##*/}"
-
-          # Set the tag as an environment variable
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
-
       - uses: actions/checkout@v4
         with:
           ref: ${{ env.TAG_NAME }}
@@ -58,7 +42,6 @@ jobs:
           file: ./src/PlayerStatus/Apps/MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/player-tracker:latest
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/player-tracker:${{ env.TAG_NAME }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -69,7 +52,6 @@ jobs:
           file: ./src/Performance/Apps/MlbTheShowForecaster.Performance.Apps.PerformanceTracker/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/performance-tracker:latest
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/performance-tracker:${{ env.TAG_NAME }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -80,7 +62,6 @@ jobs:
           file: ./src/GameCards/Apps/MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/marketplace-watcher:latest
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/marketplace-watcher:${{ env.TAG_NAME }}
           labels: ${{ steps.meta.outputs.labels }}
 
@@ -91,6 +72,5 @@ jobs:
           file: ./src/Apps/MlbTheShowForecaster.Apps.Gateway/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/gateway:latest
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/gateway:${{ env.TAG_NAME }}
           labels: ${{ steps.meta.outputs.labels }}
