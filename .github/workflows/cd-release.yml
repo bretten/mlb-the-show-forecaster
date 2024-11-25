@@ -96,7 +96,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   deploy:
-    
+    needs: publish
     runs-on: ubuntu-latest
 
     permissions:
