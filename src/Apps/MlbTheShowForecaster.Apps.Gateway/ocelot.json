@@ -1,7 +1,7 @@
 {
   "Routes": [
-    // Marketplace trend reports
     {
+      "Target": "MarketplaceWatcher",
       "UpstreamHttpMethod": [
         "GET"
       ],
@@ -17,16 +17,10 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer",
         "AllowedScopes": []
-      },
-      "RouteClaimsRequirement": {
-        "cognito/groups": [
-          "Admins",
-          "Viewers"
-        ]
       }
     },
-    // Marketplace jobs
     {
+      "Target": "MarketplaceWatcher",
       "UpstreamHttpMethod": [
         "POST"
       ],
@@ -47,8 +41,8 @@
         "cognito/groups": "Admins"
       }
     },
-    // Performance jobs
     {
+      "Target": "PerformanceTracker",
       "UpstreamHttpMethod": [
         "POST"
       ],
@@ -69,8 +63,8 @@
         "cognito/groups": "Admins"
       }
     },
-    // Players jobs
     {
+      "Target": "PlayerTracker",
       "UpstreamHttpMethod": [
         "POST"
       ],

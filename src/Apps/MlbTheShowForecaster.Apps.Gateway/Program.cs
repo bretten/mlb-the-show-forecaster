@@ -4,6 +4,7 @@ using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
 using Amazon.Runtime;
 using com.brettnamba.MlbTheShowForecaster.Apps.Gateway.Auth;
+using com.brettnamba.MlbTheShowForecaster.Apps.Gateway.GatewayConfig;
 using com.brettnamba.MlbTheShowForecaster.Apps.Gateway.Ocelot;
 using com.brettnamba.MlbTheShowForecaster.Apps.Gateway.SignalR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,12 +13,13 @@ using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
+const string jobHubUri = "job-hub";
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath);
 builder.Configuration.AddJsonFile("appsettings.json", true, true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true, true)
-    .AddJsonFile("ocelot.json")
     .AddEnvironmentVariables();
 
 if (builder.Environment.IsDevelopment())
@@ -25,6 +27,13 @@ if (builder.Environment.IsDevelopment())
     builder.Configuration.AddUserSecrets<Program>(true);
 }
 
+// Gateway config
+var gatewayConfig = builder.Configuration.GetSection("TargetApps").Get<GatewayConfiguration>()!;
+
+// Ocelot config
+builder.ConfigureOcelot(gatewayConfig);
+
+// Services
 builder.Services.AddLogging();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
@@ -92,8 +101,7 @@ builder.Services.AddSingleton<SignalRMultiplexer.Options>(_ =>
 {
     var interval = TimeSpan.Parse(builder.Configuration["SignalRMultiplexer:Interval"] ??
                                   throw new ArgumentException("Missing SignalR interval"));
-    var hubs = builder.Configuration.GetSection("SignalRMultiplexer:RelayedHubs").Get<HashSet<RelayedHub>>() ??
-               throw new ArgumentException("Missing Hub relays");
+    var hubs = gatewayConfig.All.Select(x => new RelayedHub($"{x.Url}/{jobHubUri}", x.Methods)).ToHashSet();
     return new SignalRMultiplexer.Options(interval, hubs);
 });
 builder.Services.AddSingleton<HubCurrentState>();
@@ -136,7 +144,7 @@ static async Task UseOnlyGateway(IApplicationBuilder app)
         routeBuilder =>
         {
             routeBuilder.MapControllers();
-            routeBuilder.MapHub<GatewayHub>("/job-hub");
+            routeBuilder.MapHub<GatewayHub>($"/{jobHubUri}");
         });
 #pragma warning restore ASP0014
 
@@ -171,7 +179,7 @@ static void UseSpaAndGateway(IApplicationBuilder app, string sourcePath, string[
         applicationBuilder.UseEndpoints(routeBuilder =>
         {
             routeBuilder.MapControllers();
-            routeBuilder.MapHub<GatewayHub>("/job-hub");
+            routeBuilder.MapHub<GatewayHub>($"/{jobHubUri}");
         });
 #pragma warning restore ASP0014
 

@@ -10,9 +10,12 @@ services:
       - Aws__Region=us-west-2
       - Spa__Active=true
       - SignalRMultiplexer__Interval=00:00:00:05
-      - SignalRMultiplexer__RelayedHubs__0__Url=http://mlb-the-show-forecaster-player-tracker:5001/job-hub
-      - SignalRMultiplexer__RelayedHubs__1__Url=http://mlb-the-show-forecaster-performance-tracker:5002/job-hub
-      - SignalRMultiplexer__RelayedHubs__2__Url=http://mlb-the-show-forecaster-marketplace-watcher:5003/job-hub
+      - TargetApps__PlayerTracker__Scheme=http
+      - TargetApps__PlayerTracker__Host=mlb-the-show-forecaster-player-tracker
+      - TargetApps__PerformanceTracker__Scheme=http
+      - TargetApps__PerformanceTracker__Host=mlb-the-show-forecaster-performance-tracker
+      - TargetApps__MarketplaceWatcher__Scheme=http
+      - TargetApps__MarketplaceWatcher__Host=mlb-the-show-forecaster-marketplace-watcher
     ports:
       - "5000:5000"
 

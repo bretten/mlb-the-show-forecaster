@@ -71,4 +71,12 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=spa-assets /assets ./wwwroot
+
+# Allow the ocelot override file to be updated at startup (needs temp root access)
+USER root
+RUN echo '' > ocelot_override.json && \
+    chown app:app ocelot_override.json && \
+    chmod 644 ocelot_override.json
+USER app
+
 ENTRYPOINT ["dotnet", "MlbTheShowForecaster.Apps.Gateway.dll"]
