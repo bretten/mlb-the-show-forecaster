@@ -71,6 +71,7 @@ module "ecs_cluster" {
   jwt_authority                      = var.jwt_authority
   jwt_audience                       = var.jwt_audience
   aspnetcore_environment             = var.aspnetcore_environment
+  scheme_private_access              = var.scheme_private_access
   pgsql_user                         = var.pgsql_user
   pgsql_pass                         = var.pgsql_pass
   pgsql_db_name                      = var.pgsql_db_name

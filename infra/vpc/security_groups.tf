@@ -52,9 +52,33 @@ resource "aws_vpc_security_group_ingress_rule" "sg_private_in_allow_domain_servi
   referenced_security_group_id = aws_security_group.sg_public.id
 }
 
+# Security group for private subnet: Allow domain services to access each other within the private security group
+resource "aws_vpc_security_group_ingress_rule" "sg_private_in_allow_private_access_domain_services" {
+  for_each = toset([
+    tostring(var.port_player_tracker), tostring(var.port_performance_tracker), tostring(var.port_marketplace_watcher)
+  ])
+  security_group_id            = aws_security_group.sg_private.id
+  ip_protocol                  = "tcp"
+  from_port                    = each.value
+  to_port                      = each.value
+  referenced_security_group_id = aws_security_group.sg_private.id
+}
+
 # Security group for private subnet: Allow communication on storage related ports within the private security group
 resource "aws_vpc_security_group_ingress_rule" "sg_private_in_allow_storage" {
   for_each = toset(["5432", "27017", "5672"]) # PostgreSQL, MongoDB, RabbitMQ
+  security_group_id            = aws_security_group.sg_private.id
+  ip_protocol                  = "tcp"
+  from_port                    = each.value
+  to_port                      = each.value
+  referenced_security_group_id = aws_security_group.sg_private.id
+}
+
+# Security group for private subnet: Allow domain services to access each other within the private security group
+resource "aws_vpc_security_group_egress_rule" "sg_private_out_allow_domain_services" {
+  for_each = toset([
+    tostring(var.port_player_tracker), tostring(var.port_performance_tracker), tostring(var.port_marketplace_watcher)
+  ])
   security_group_id            = aws_security_group.sg_private.id
   ip_protocol                  = "tcp"
   from_port                    = each.value

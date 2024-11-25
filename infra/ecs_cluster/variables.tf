@@ -110,6 +110,11 @@ variable "aspnetcore_environment" {
   type        = string
 }
 
+variable "scheme_private_access" {
+  description = "The scheme that should be used when communicating to the private domain services"
+  type        = string
+}
+
 variable "jwt_authority" {
   description = "JWT Authority"
   type        = string
