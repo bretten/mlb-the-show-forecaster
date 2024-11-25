@@ -24,6 +24,7 @@ jobs:
     permissions:
       contents: read # For checking out
       packages: write # For publishing the container images
+      id-token: write # So AWS credentials can be requested
 
     steps:
       - name: Set the container image tag name
