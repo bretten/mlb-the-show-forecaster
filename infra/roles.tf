@@ -27,7 +27,7 @@ resource "aws_iam_role_policy" "policy_create_log_group" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = ["logs:CreateLogGroup"]
+        Action   = ["logs:CreateLogGroup"]
         Effect   = "Allow"
         Resource = "*"
       },

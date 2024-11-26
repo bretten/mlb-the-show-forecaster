@@ -3,7 +3,7 @@ resource "aws_lb" "load_balancer_gateway" {
   name               = "${var.resource_prefix}-lb"
   internal           = false
   load_balancer_type = "application"
-  security_groups = [var.security_group_id]
+  security_groups    = [var.security_group_id]
 
   subnet_mapping {
     allocation_id        = null

@@ -16,7 +16,7 @@ resource "aws_ecs_service" "ecs_service_gateway" {
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
-  triggers = {}
+  triggers                          = {}
 
   deployment_circuit_breaker {
     enable   = true
@@ -68,7 +68,7 @@ resource "aws_ecs_service" "ecs_service_player_tracker" {
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
-  triggers = {}
+  triggers                          = {}
 
   deployment_circuit_breaker {
     enable   = true
@@ -117,7 +117,7 @@ resource "aws_ecs_service" "ecs_service_performance_tracker" {
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
-  triggers = {}
+  triggers                          = {}
 
   deployment_circuit_breaker {
     enable   = true
@@ -166,7 +166,7 @@ resource "aws_ecs_service" "ecs_service_marketplace_watcher" {
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
-  triggers = {}
+  triggers                          = {}
 
   deployment_circuit_breaker {
     enable   = true

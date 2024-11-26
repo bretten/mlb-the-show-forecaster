@@ -5,7 +5,7 @@ variable "resource_prefix" {
 
 variable "root_tags" {
   description = "Common tags"
-  type = map(string)
+  type        = map(string)
 }
 
 variable "security_group_id" {

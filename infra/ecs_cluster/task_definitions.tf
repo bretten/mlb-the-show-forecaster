@@ -1,13 +1,13 @@
 # Task definition for gateway app
 resource "aws_ecs_task_definition" "task_definition_gateway" {
-  family             = "${var.resource_prefix}-gateway"
+  family                   = "${var.resource_prefix}-gateway"
   requires_compatibilities = ["FARGATE"]
-  network_mode       = "awsvpc"
-  cpu                = "256"
-  memory             = "512"
-  task_role_arn      = null
-  execution_role_arn = var.task_execution_role_arn
-  skip_destroy       = false
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+  task_role_arn            = null
+  execution_role_arn       = var.task_execution_role_arn
+  skip_destroy             = false
 
   container_definitions = jsonencode(
     [
@@ -95,10 +95,10 @@ resource "aws_ecs_task_definition" "task_definition_gateway" {
           }
         ]
         environmentFiles = []
-        mountPoints = []
-        systemControls = []
-        ulimits = []
-        volumesFrom = []
+        mountPoints      = []
+        systemControls   = []
+        ulimits          = []
+        volumesFrom      = []
       },
     ]
   )
@@ -113,14 +113,14 @@ resource "aws_ecs_task_definition" "task_definition_gateway" {
 
 # Task definition for player tracker
 resource "aws_ecs_task_definition" "task_definition_player_tracker" {
-  family             = "${var.resource_prefix}-player-tracker"
+  family                   = "${var.resource_prefix}-player-tracker"
   requires_compatibilities = ["FARGATE"]
-  network_mode       = "awsvpc"
-  cpu                = "256"
-  memory             = "512"
-  task_role_arn      = null
-  execution_role_arn = var.task_execution_role_arn
-  skip_destroy       = false
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+  task_role_arn            = null
+  execution_role_arn       = var.task_execution_role_arn
+  skip_destroy             = false
 
   container_definitions = jsonencode(
     [
@@ -180,10 +180,10 @@ resource "aws_ecs_task_definition" "task_definition_player_tracker" {
           }
         ]
         environmentFiles = []
-        mountPoints = []
-        systemControls = []
-        ulimits = []
-        volumesFrom = []
+        mountPoints      = []
+        systemControls   = []
+        ulimits          = []
+        volumesFrom      = []
       },
     ]
   )
@@ -198,14 +198,14 @@ resource "aws_ecs_task_definition" "task_definition_player_tracker" {
 
 # Task definition for performance tracker
 resource "aws_ecs_task_definition" "task_definition_performance_tracker" {
-  family             = "${var.resource_prefix}-performance-tracker"
+  family                   = "${var.resource_prefix}-performance-tracker"
   requires_compatibilities = ["FARGATE"]
-  network_mode       = "awsvpc"
-  cpu                = "256"
-  memory             = "512"
-  task_role_arn      = null
-  execution_role_arn = var.task_execution_role_arn
-  skip_destroy       = false
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+  task_role_arn            = null
+  execution_role_arn       = var.task_execution_role_arn
+  skip_destroy             = false
 
   container_definitions = jsonencode(
     [
@@ -265,10 +265,10 @@ resource "aws_ecs_task_definition" "task_definition_performance_tracker" {
           }
         ]
         environmentFiles = []
-        mountPoints = []
-        systemControls = []
-        ulimits = []
-        volumesFrom = []
+        mountPoints      = []
+        systemControls   = []
+        ulimits          = []
+        volumesFrom      = []
       },
     ]
   )
@@ -283,14 +283,14 @@ resource "aws_ecs_task_definition" "task_definition_performance_tracker" {
 
 # Task definition for marketplace watcher
 resource "aws_ecs_task_definition" "task_definition_marketplace_watcher" {
-  family             = "${var.resource_prefix}-marketplace-watcher"
+  family                   = "${var.resource_prefix}-marketplace-watcher"
   requires_compatibilities = ["FARGATE"]
-  network_mode       = "awsvpc"
-  cpu                = "256"
-  memory             = "512"
-  task_role_arn      = null
-  execution_role_arn = var.task_execution_role_arn
-  skip_destroy       = false
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+  task_role_arn            = null
+  execution_role_arn       = var.task_execution_role_arn
+  skip_destroy             = false
 
   container_definitions = jsonencode(
     [
@@ -370,10 +370,10 @@ resource "aws_ecs_task_definition" "task_definition_marketplace_watcher" {
           }
         ]
         environmentFiles = []
-        mountPoints = []
-        systemControls = []
-        ulimits = []
-        volumesFrom = []
+        mountPoints      = []
+        systemControls   = []
+        ulimits          = []
+        volumesFrom      = []
       },
     ]
   )

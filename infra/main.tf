@@ -41,7 +41,7 @@ module "load_balancer" {
   vpc_id            = module.vpc.vpc_id
   certificate_arn   = aws_acm_certificate.cert.arn
   port_gateway      = var.port_gateway
-  depends_on = [module.vpc]
+  depends_on        = [module.vpc]
 }
 
 # ECS cluster that runs .NET services as containers
@@ -79,5 +79,5 @@ module "ecs_cluster" {
   mongodb_pass                       = var.mongodb_pass
   rabbitmq_user                      = var.rabbitmq_user
   rabbitmq_pass                      = var.rabbitmq_pass
-  depends_on = [module.vpc, module.load_balancer]
+  depends_on                         = [module.vpc, module.load_balancer]
 }

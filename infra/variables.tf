@@ -12,7 +12,7 @@ variable "resource_prefix" {
 
 variable "root_tags" {
   description = "Common tags"
-  type = map(string)
+  type        = map(string)
   default = {
     Project = "mlb-the-show-forecaster"
   }
