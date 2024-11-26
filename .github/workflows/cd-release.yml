@@ -26,17 +26,15 @@ jobs:
       packages: write # For publishing the container images
 
     outputs:
-      tag_name: ${{ steps.set-tag.outputs.TAG_NAME }}
+      tag_name: ${{ steps.set-tag.outputs.tag_name }}
 
     steps:
       - name: Set the container image tag name
         id: set-tag
         run: |
-          # Use the tag name
-          TAG_NAME=${{ github.event.release.tag_name }}
-
-          # Set the tag as an environment variable
-          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          # Set the tag as an environment variable and in the output
+          echo "TAG_NAME=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+          echo "tag_name=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
 
       - uses: actions/checkout@v4
         with:
