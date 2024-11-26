@@ -1,13 +1,13 @@
 # rabbitmq
 resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
-  family             = "${var.resource_prefix}-rabbitmq"
+  family                   = "${var.resource_prefix}-rabbitmq"
   requires_compatibilities = ["FARGATE"]
-  network_mode       = "awsvpc"
-  cpu                = "256"
-  memory             = "512"
-  task_role_arn      = null
-  execution_role_arn = var.task_execution_role_arn
-  skip_destroy       = false
+  network_mode             = "awsvpc"
+  cpu                      = "256"
+  memory                   = "512"
+  task_role_arn            = null
+  execution_role_arn       = var.task_execution_role_arn
+  skip_destroy             = false
 
   container_definitions = jsonencode(
     [
@@ -47,10 +47,10 @@ resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
           }
         ]
         environmentFiles = []
-        mountPoints = []
-        systemControls = []
-        ulimits = []
-        volumesFrom = []
+        mountPoints      = []
+        systemControls   = []
+        ulimits          = []
+        volumesFrom      = []
       },
     ]
   )
@@ -105,7 +105,7 @@ resource "aws_ecs_service" "ecs_service_rabbitmq" {
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
-  triggers = {}
+  triggers                          = {}
 
   deployment_circuit_breaker {
     enable   = true

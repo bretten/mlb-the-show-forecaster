@@ -10,7 +10,7 @@ variable "resource_prefix" {
 
 variable "root_tags" {
   description = "Common tags"
-  type = map(string)
+  type        = map(string)
 }
 
 variable "task_execution_role_arn" {

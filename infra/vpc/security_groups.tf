@@ -66,7 +66,7 @@ resource "aws_vpc_security_group_ingress_rule" "sg_private_in_allow_private_acce
 
 # Security group for private subnet: Allow communication on storage related ports within the private security group
 resource "aws_vpc_security_group_ingress_rule" "sg_private_in_allow_storage" {
-  for_each = toset(["5432", "27017", "5672"]) # PostgreSQL, MongoDB, RabbitMQ
+  for_each                     = toset(["5432", "27017", "5672"]) # PostgreSQL, MongoDB, RabbitMQ
   security_group_id            = aws_security_group.sg_private.id
   ip_protocol                  = "tcp"
   from_port                    = each.value
@@ -106,7 +106,7 @@ resource "aws_vpc_security_group_egress_rule" "sg_private_out_allow_http" {
 
 # Security group for private subnet: Allow communication on storage related ports within the private security group
 resource "aws_vpc_security_group_egress_rule" "sg_private_out_allow_storage" {
-  for_each = toset(["5432", "27017", "5672"]) # PostgreSQL, MongoDB, RabbitMQ
+  for_each                     = toset(["5432", "27017", "5672"]) # PostgreSQL, MongoDB, RabbitMQ
   security_group_id            = aws_security_group.sg_private.id
   ip_protocol                  = "tcp"
   from_port                    = each.value

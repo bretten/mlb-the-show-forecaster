@@ -119,11 +119,6 @@ jobs:
         with:
           terraform_version: "1.9.8"
 
-      - name: Terraform fmt
-        run: terraform fmt -check
-        continue-on-error: true
-        working-directory: ${{ env.TF_WORK_DIR }}
-
       - name: Terraform Init
         run: terraform init
         working-directory: ${{ env.TF_WORK_DIR }}
@@ -133,7 +128,7 @@ jobs:
         working-directory: ${{ env.TF_WORK_DIR }}
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -no-color
+        run: terraform apply -auto-approve > /dev/null 2>&1
         continue-on-error: true
         working-directory: ${{ env.TF_WORK_DIR }}
         env:

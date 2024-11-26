@@ -13,13 +13,13 @@ locals {
   # Since count is used to conditionally include storage module, it is treated as a list by tf
   pgsql_dns_name = (var.use_storage ?
     "${module.storage[0].service_discovery_name_pgsql}.${aws_service_discovery_private_dns_namespace.private_dns_namespace.name}"
-    : "")
+  : "")
   mongodb_dns_name = (var.use_storage ?
     "${module.storage[0].service_discovery_name_mongodb}.${aws_service_discovery_private_dns_namespace.private_dns_namespace.name}"
-    : "")
+  : "")
   rabbitmq_dns_name = (var.use_storage ?
     "${module.storage[0].service_discovery_name_rabbitmq}.${aws_service_discovery_private_dns_namespace.private_dns_namespace.name}"
-    : "")
+  : "")
 
   pgsql_cs   = "Server=${local.pgsql_dns_name};Username=${var.pgsql_user};Password=${var.pgsql_pass};Port=5432;Database=${var.pgsql_db_name};"
   mongodb_cs = "mongodb://${var.mongodb_user}:${var.mongodb_pass}@${local.mongodb_dns_name}:27017/?authSource=admin"
