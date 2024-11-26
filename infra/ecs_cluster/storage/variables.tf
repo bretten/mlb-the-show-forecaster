@@ -44,6 +44,11 @@ variable "aspnetcore_environment" {
   type        = string
 }
 
+variable "capacity_provider" {
+  description = "ECS capacity provider"
+  type        = string
+}
+
 variable "pgsql_user" {
   description = "PGSQL user"
   type        = string

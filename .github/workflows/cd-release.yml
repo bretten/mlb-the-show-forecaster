@@ -136,6 +136,7 @@ jobs:
         env:
           TF_VAR_image_tag: ${{ needs.publish.outputs.tag_name }}
           TF_VAR_use_storage: ${{ vars.DEPLOY_CONTAINER_STORAGE }}
+          TF_VAR_use_spot_instances: ${{ vars.USE_SPOT_INSTANCES }}
           TF_VAR_aspnetcore_environment: ${{ vars.ASPNETCORE_ENVIRONMENT }}
           TF_VAR_scheme_private_access: ${{ vars.SCHEME_PRIVATE_ACCESS }}
           TF_VAR_jwt_authority: ${{ secrets.JWT_AUTHORITY }}

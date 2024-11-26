@@ -12,7 +12,6 @@ resource "aws_ecs_service" "ecs_service_gateway" {
   enable_execute_command            = false
   wait_for_steady_state             = false
   health_check_grace_period_seconds = 0
-  launch_type                       = "FARGATE"
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
@@ -47,6 +46,12 @@ resource "aws_ecs_service" "ecs_service_gateway" {
     ]
   }
 
+  capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = var.capacity_provider
+  }
+
   tags = var.root_tags
 }
 
@@ -64,7 +69,6 @@ resource "aws_ecs_service" "ecs_service_player_tracker" {
   enable_execute_command            = false
   wait_for_steady_state             = false
   health_check_grace_period_seconds = 0
-  launch_type                       = "FARGATE"
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
@@ -96,6 +100,12 @@ resource "aws_ecs_service" "ecs_service_player_tracker" {
     registry_arn   = aws_service_discovery_service.discovery_service_player_tracker.arn
   }
 
+  capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = var.capacity_provider
+  }
+
   tags = var.root_tags
 }
 
@@ -113,7 +123,6 @@ resource "aws_ecs_service" "ecs_service_performance_tracker" {
   enable_execute_command            = false
   wait_for_steady_state             = false
   health_check_grace_period_seconds = 0
-  launch_type                       = "FARGATE"
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
@@ -145,6 +154,12 @@ resource "aws_ecs_service" "ecs_service_performance_tracker" {
     registry_arn   = aws_service_discovery_service.discovery_service_performance_tracker.arn
   }
 
+  capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = var.capacity_provider
+  }
+
   tags = var.root_tags
 }
 
@@ -162,7 +177,6 @@ resource "aws_ecs_service" "ecs_service_marketplace_watcher" {
   enable_execute_command            = false
   wait_for_steady_state             = false
   health_check_grace_period_seconds = 0
-  launch_type                       = "FARGATE"
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
@@ -192,6 +206,12 @@ resource "aws_ecs_service" "ecs_service_marketplace_watcher" {
     container_port = 0
     port           = 0
     registry_arn   = aws_service_discovery_service.discovery_service_marketplace_watcher.arn
+  }
+
+  capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = var.capacity_provider
   }
 
   tags = var.root_tags

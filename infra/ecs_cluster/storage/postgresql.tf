@@ -119,7 +119,6 @@ resource "aws_ecs_service" "ecs_service_postgresql" {
   enable_execute_command            = false
   wait_for_steady_state             = false
   health_check_grace_period_seconds = 0
-  launch_type                       = "FARGATE"
   platform_version                  = "LATEST"
   propagate_tags                    = "NONE"
   scheduling_strategy               = "REPLICA"
@@ -149,6 +148,12 @@ resource "aws_ecs_service" "ecs_service_postgresql" {
     container_port = 0
     port           = 0
     registry_arn   = aws_service_discovery_service.discovery_service_postgresql.arn
+  }
+
+  capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = var.capacity_provider
   }
 
   tags = var.root_tags
