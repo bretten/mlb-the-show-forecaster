@@ -25,8 +25,12 @@ jobs:
       contents: read # For checking out
       packages: write # For publishing the container images
 
+    outputs:
+      tag_name: ${{ steps.set-tag.outputs.TAG_NAME }}
+
     steps:
       - name: Set the container image tag name
+        id: set-tag
         run: |
           # Use the tag name
           TAG_NAME=${{ github.event.release.tag_name }}
@@ -106,7 +110,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ env.TAG_NAME }}
+          ref: ${{ needs.publish.outputs.tag_name }}
 
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@v4.0.2
@@ -132,7 +136,7 @@ jobs:
         continue-on-error: true
         working-directory: ${{ env.TF_WORK_DIR }}
         env:
-          TF_VAR_image_tag: ${{ env.TAG_NAME }}
+          TF_VAR_image_tag: ${{ needs.publish.outputs.tag_name }}
           TF_VAR_use_storage: ${{ vars.DEPLOY_CONTAINER_STORAGE }}
           TF_VAR_aspnetcore_environment: ${{ vars.ASPNETCORE_ENVIRONMENT }}
           TF_VAR_scheme_private_access: ${{ vars.SCHEME_PRIVATE_ACCESS }}
