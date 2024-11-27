@@ -103,6 +103,11 @@ variable "use_storage" {
   type        = bool
 }
 
+variable "use_spot_instances" {
+  description = "True to use ECS Fargate spot instances, otherwise false"
+  type        = bool
+}
+
 variable "aspnetcore_environment" {
   description = "The ASP.NET Core environment"
   type        = string

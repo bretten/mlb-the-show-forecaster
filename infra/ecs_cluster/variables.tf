@@ -83,6 +83,11 @@ variable "use_storage" {
   type        = bool
 }
 
+variable "capacity_provider" {
+  description = "ECS capacity provider"
+  type        = string
+}
+
 # Domain service ports
 variable "port_gateway" {
   description = "The port for the Gateway"

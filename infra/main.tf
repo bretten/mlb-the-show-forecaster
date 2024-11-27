@@ -68,6 +68,7 @@ module "ecs_cluster" {
   port_performance_tracker           = var.port_performance_tracker
   port_marketplace_watcher           = var.port_marketplace_watcher
   use_storage                        = var.use_storage
+  capacity_provider                  = var.use_spot_instances == true ? "FARGATE_SPOT" : "FARGATE"
   jwt_authority                      = var.jwt_authority
   jwt_audience                       = var.jwt_audience
   aspnetcore_environment             = var.aspnetcore_environment
