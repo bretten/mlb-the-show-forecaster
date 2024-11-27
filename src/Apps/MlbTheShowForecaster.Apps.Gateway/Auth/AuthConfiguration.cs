@@ -5,6 +5,7 @@
 /// </summary>
 /// <param name="AdminGroup">Name of the admin group</param>
 /// <param name="ViewerGroup">Name of the viewer group</param>
+/// <param name="CookieExpirationMinutes">The number of minutes until the cookie expires after authentication</param>
 /// <param name="AccessTokenCookie">Name of the access token cookie</param>
 /// <param name="RefreshTokenCookie">Name of the refresh token cookie</param>
 /// <param name="TokenRefreshMinutes">The number of minutes until expiration an access token must have for it to be refreshed</param>
@@ -15,6 +16,7 @@
 public sealed record AuthConfiguration(
     string AdminGroup,
     string ViewerGroup,
+    int CookieExpirationMinutes,
     string AccessTokenCookie,
     string RefreshTokenCookie,
     int TokenRefreshMinutes,
