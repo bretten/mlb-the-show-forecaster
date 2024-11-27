@@ -29,23 +29,23 @@ public class AuthController : Controller
     /// <summary>
     /// Cookie options for same site cookies
     /// </summary>
-    private static readonly CookieOptions SameSiteCookie = new CookieOptions
+    private CookieOptions SameSiteCookie => new CookieOptions
     {
         HttpOnly = true,
         Secure = true,
         SameSite = SameSiteMode.Strict,
-        Expires = DateTime.UtcNow.AddMinutes(60)
+        Expires = DateTime.UtcNow.AddMinutes(_config.CookieExpirationMinutes)
     };
 
     /// <summary>
     /// Cookie options when CORS is active (development mode)
     /// </summary>
-    private static readonly CookieOptions CorsCookie = new CookieOptions
+    private CookieOptions CorsCookie => new CookieOptions
     {
         HttpOnly = true,
         Secure = true,
         SameSite = SameSiteMode.None,
-        Expires = DateTime.UtcNow.AddMinutes(60)
+        Expires = DateTime.UtcNow.AddMinutes(_config.CookieExpirationMinutes)
     };
 
     /// <summary>

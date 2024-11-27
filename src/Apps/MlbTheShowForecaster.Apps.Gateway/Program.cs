@@ -198,6 +198,7 @@ static AuthConfiguration GetAuthConfig(WebApplicationBuilder builder)
                     throw new ArgumentException("Missing admin group"),
         ViewerGroup: authConfigSection.GetValue<string>("ViewerGroup") ??
                      throw new ArgumentException("Missing viewer group"),
+        CookieExpirationMinutes: authConfigSection.GetValue<int>("CookieExpirationMinutes"),
         AccessTokenCookie: authConfigSection.GetValue<string>("AccessTokenCookie") ??
                            throw new ArgumentException("Missing access token"),
         RefreshTokenCookie: authConfigSection.GetValue<string>("RefreshTokenCookie") ??

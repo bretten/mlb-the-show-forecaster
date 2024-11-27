@@ -175,6 +175,7 @@ public class AuthControllerTests
     {
         return new AuthConfiguration(AdminGroup: "Admins",
             ViewerGroup: "Viewers",
+            CookieExpirationMinutes: 10,
             AccessTokenCookie: "jwtAccessCookie",
             RefreshTokenCookie: "jwtRefreshCookie",
             TokenRefreshMinutes: 1,
