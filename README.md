@@ -1,3 +1,8 @@
+# Further Documentation
+Please see the [wiki](https://github.com/bretten/mlb-the-show-forecaster/wiki).
+
+---
+
 # What is it?
 MLB The Show Marketplace Forecaster is an application that uses an MLB Player's real-world performance to predict the price of their card in MLB The Show.
 
