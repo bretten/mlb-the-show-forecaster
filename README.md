@@ -19,7 +19,7 @@ A card's performance in-game is based on the actual player's real-life performan
 The application monitors a player, their performance, and their corresponding card in **MLB The Show**. All relevant data for a player is combined to create a comparison between a player's real-world performance and the marketplace performance of their card in **MLB The Show**.
 
 ## Architecture?
-Primarily following DDD principles, each domain is split into its own microservice. They communicate using a message broker for events or APIs when on-demand data is needed. The microservices are deployed as containers into their own virtual network and are not accessible publicly. A separate, auth-protected [gateway app](src/Apps/MlbTheShowForecaster.Apps.Gateway/MlbTheShowForecaster.Apps.Gateway.csproj) then exposes only what needs public access to a SPA. The end user authenticates via the SPA and is able to start jobs and view player reports.
+Primarily following DDD principles, each domain is split into its own microservice. They communicate using a message broker for events or APIs when on-demand data is needed. The microservices are deployed as containers into their own virtual network and are not accessible publicly. A separate, auth-protected [gateway app](src/Apps/MlbTheShowForecaster.Apps.Gateway/) then exposes only what needs public access to a SPA. The end user authenticates via the SPA and is able to start jobs and view player reports.
 
 ---
 
