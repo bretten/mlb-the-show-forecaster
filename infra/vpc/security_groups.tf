@@ -49,7 +49,7 @@ resource "aws_vpc_security_group_ingress_rule" "sg_private_in_allow_domain_servi
   ip_protocol                  = "tcp"
   from_port                    = each.value
   to_port                      = each.value
-  referenced_security_group_id = aws_security_group.sg_public.id
+  referenced_security_group_id = aws_security_group.sg_private_access.id
 }
 
 # Security group for private subnet: Allow domain services to access each other within the private security group
