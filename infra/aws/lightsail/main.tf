@@ -23,7 +23,7 @@ terraform {
 
 # Static IP
 resource "aws_lightsail_static_ip" "static_ip" {
-  name = "mlb-the-show-forecaster-static-ip"
+  name = "${var.resource_prefix}-static-ip"
 }
 
 # Static IP attachment
@@ -59,7 +59,7 @@ resource "aws_lightsail_instance_public_ports" "public_ports" {
 }
 
 resource "aws_lightsail_instance" "instance" {
-  name              = "mlb-the-show-forecaster"
+  name              = var.resource_prefix
   availability_zone = "us-west-2a"
   blueprint_id      = "ubuntu_22_04"
   bundle_id         = "medium_3_0"
@@ -84,27 +84,16 @@ resource "aws_lightsail_instance" "instance" {
     # For non-root access, add user to docker group
     usermod -aG docker ubuntu
 
-    # ENV Vars for docker-compose
-    export Jwt__Authority="${var.jwt_authority}"
-    export Jwt__Audience="${var.jwt_audience}"
-    export Aws__Region="${var.aws_region}"
-
-    # Pull the images
-    docker pull ghcr.io/bretten/mlb-the-show-forecaster/gateway:${var.app_version}
-    docker pull ghcr.io/bretten/mlb-the-show-forecaster/marketplace-watcher:${var.app_version}
-    docker pull ghcr.io/bretten/mlb-the-show-forecaster/performance-tracker:${var.app_version}
-    docker pull ghcr.io/bretten/mlb-the-show-forecaster/player-tracker:${var.app_version}
-
     # Create the docker-compose file
     mkdir /home/ubuntu/app
     chown -R ubuntu:ubuntu /home/ubuntu/app
     cat <<EOT > /home/ubuntu/app/docker-compose.yml
     services:
       mlb-the-show-forecaster-gateway:
-        image: ghcr.io/bretten/bretten/mlb-the-show-forecaster/gateway:${var.app_version}
+        image: ${var.container_registry_url}/gateway:${var.image_tag}
         restart: always
         environment:
-          - ASPNETCORE_ENVIRONMENT=Production
+          - ASPNETCORE_ENVIRONMENT=${var.aspnetcore_environment}
           - Urls=http://*:5000
           - Auth__Jwt__Authority=${var.jwt_authority}
           - Auth__Jwt__Audience=${var.jwt_audience}
@@ -125,21 +114,21 @@ resource "aws_lightsail_instance" "instance" {
           - backend
 
       mlb-the-show-forecaster-marketplace-watcher:
-        image: ghcr.io/bretten/bretten/mlb-the-show-forecaster/marketplace-watcher:${var.app_version}
+        image: ${var.container_registry_url}/marketplace-watcher:${var.image_tag}
         restart: always
         environment:
-          - ASPNETCORE_ENVIRONMENT=Production
+          - ASPNETCORE_ENVIRONMENT=${var.aspnetcore_environment}
           - RunMigrations=true
           - Urls=http://*:5003
           - Api__Performance__BaseAddress=http://mlb-the-show-forecaster-performance-tracker:5002
           - Forecasting__PlayerMatcher__BaseAddress=http://mlb-the-show-forecaster-player-tracker:5001
-          - ConnectionStrings__Cards=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_prod;
-          - ConnectionStrings__Forecasts=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_prod;
-          - ConnectionStrings__Marketplace=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_prod;
-          - ConnectionStrings__TrendsMongoDb=mongodb://root:example@mongo:27017/?authSource=admin
+          - ConnectionStrings__Cards=Server=postgres-db;Username=${var.pgsql_user};Password=${var.pgsql_pass};Port=5432;Database=${var.pgsql_db_name};
+          - ConnectionStrings__Forecasts=Server=postgres-db;Username=${var.pgsql_user};Password=${var.pgsql_pass};Port=5432;Database=${var.pgsql_db_name};
+          - ConnectionStrings__Marketplace=Server=postgres-db;Username=${var.pgsql_user};Password=${var.pgsql_pass};Port=5432;Database=${var.pgsql_db_name};
+          - ConnectionStrings__TrendsMongoDb=mongodb://${var.mongodb_user}:${var.mongodb_pass}@mongo:27017/?authSource=admin
           - Messaging__RabbitMq__HostName=rabbitmq
-          - Messaging__RabbitMq__UserName=guest
-          - Messaging__RabbitMq__Password=guest
+          - Messaging__RabbitMq__UserName=${var.rabbitmq_user}
+          - Messaging__RabbitMq__Password=${var.rabbitmq_pass}
           - Jobs__RunOnStartup=false
         depends_on:
           postgres-db:
@@ -152,16 +141,16 @@ resource "aws_lightsail_instance" "instance" {
           - backend
 
       mlb-the-show-forecaster-performance-tracker:
-        image: ghcr.io/bretten/bretten/mlb-the-show-forecaster/performance-tracker:${var.app_version}
+        image: ${var.container_registry_url}/performance-tracker:${var.image_tag}
         restart: always
         environment:
-          - ASPNETCORE_ENVIRONMENT=Production
+          - ASPNETCORE_ENVIRONMENT=${var.aspnetcore_environment}
           - RunMigrations=true
           - Urls=http://*:5002
-          - ConnectionStrings__PlayerSeasons=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_prod;
+          - ConnectionStrings__PlayerSeasons=Server=postgres-db;Username=${var.pgsql_user};Password=${var.pgsql_pass};Port=5432;Database=${var.pgsql_db_name};
           - Messaging__RabbitMq__HostName=rabbitmq
-          - Messaging__RabbitMq__UserName=guest
-          - Messaging__RabbitMq__Password=guest
+          - Messaging__RabbitMq__UserName=${var.rabbitmq_user}
+          - Messaging__RabbitMq__Password=${var.rabbitmq_pass}
           - Jobs__RunOnStartup=false
         depends_on:
           postgres-db:
@@ -172,16 +161,16 @@ resource "aws_lightsail_instance" "instance" {
           - backend
 
       mlb-the-show-forecaster-player-tracker:
-        image: ghcr.io/bretten/bretten/mlb-the-show-forecaster/player-tracker:${var.app_version}
+        image: ${var.container_registry_url}/player-tracker:${var.image_tag}
         restart: always
         environment:
-          - ASPNETCORE_ENVIRONMENT=Production
+          - ASPNETCORE_ENVIRONMENT=${var.aspnetcore_environment}
           - RunMigrations=true
           - Urls=http://*:5001
-          - ConnectionStrings__Players=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_prod;
+          - ConnectionStrings__Players=Server=postgres-db;Username=${var.pgsql_user};Password=${var.pgsql_pass};Port=5432;Database=${var.pgsql_db_name};
           - Messaging__RabbitMq__HostName=rabbitmq
-          - Messaging__RabbitMq__UserName=guest
-          - Messaging__RabbitMq__Password=guest
+          - Messaging__RabbitMq__UserName=${var.rabbitmq_user}
+          - Messaging__RabbitMq__Password=${var.rabbitmq_pass}
           - Jobs__RunOnStartup=false
         depends_on:
           postgres-db:
@@ -197,19 +186,19 @@ resource "aws_lightsail_instance" "instance" {
         environment:
           - LANG=en_US.utf8
           - POSTGRES_INITDB_ARGS=--locale-provider=icu --icu-locale=en-US
-          - POSTGRES_DB=mlb_forecaster_prod
-          - POSTGRES_PASSWORD=postgres
+          - POSTGRES_DB=${var.pgsql_db_name}
+          - POSTGRES_PASSWORD=${var.pgsql_pass}
         ports:
           - "54320:5432"
         networks:
           - public # So the data can be debugged via a client
           - backend
         healthcheck:
-          test: [ "CMD-SHELL", "pg_isready -U postgres -d mlb_forecaster_prod" ]
+          test: [ "CMD-SHELL", "pg_isready -U postgres -d ${var.pgsql_db_name}" ]
           interval: 10s
           retries: 5
           start_period: 30s
-          timeout: 10s
+          timeout: 100s # 10s works on local machine but slow lightsail instance needs more
         volumes:
           - postgres-volume:/var/lib/postgresql/data
 
@@ -227,7 +216,7 @@ resource "aws_lightsail_instance" "instance" {
           interval: 10s
           retries: 5
           start_period: 30s
-          timeout: 10s
+          timeout: 100s # 10s works on local machine but slow lightsail instance needs more
         volumes:
           - rabbitmq-volume:/var/lib/rabbitmq
 
@@ -235,8 +224,8 @@ resource "aws_lightsail_instance" "instance" {
         image: mongo:noble
         restart: always
         environment:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: example
+          MONGO_INITDB_ROOT_USERNAME: ${var.mongodb_user}
+          MONGO_INITDB_ROOT_PASSWORD: ${var.mongodb_pass}
         ports:
           - "27017:27017"
         networks:
@@ -247,7 +236,7 @@ resource "aws_lightsail_instance" "instance" {
           interval: 10s
           retries: 5
           start_period: 30s
-          timeout: 10s
+          timeout: 100s # 10s works on local machine but slow lightsail instance needs more
         volumes:
           - mongo-volume:/data/db
 

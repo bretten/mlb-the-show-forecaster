@@ -1,13 +1,34 @@
+variable "root_tags" {
+  description = "Common tags"
+  type        = map(string)
+  default = {
+    Project = "mlb-the-show-forecaster"
+  }
+}
+
+variable "container_registry_url" {
+  description = "Container registry containing the application images"
+  type        = string
+  default     = "ghcr.io/bretten/bretten/mlb-the-show-forecaster"
+}
+
 variable "aws_region" {
   type        = string
   default     = "us-west-2"
   description = "The AWS region"
 }
 
-variable "app_version" {
+variable "resource_prefix" {
+  description = "Name to prefix to resources"
+  type        = string
+  default     = "mlb-the-show-forecaster"
+}
+
+# Read from TF_VAR_ prefixed environment variables from the system
+variable "image_tag" {
   type        = string
   default     = ""
-  description = "Version that will be deployed"
+  description = "Version of container image that will be deployed"
 }
 
 variable "my_ip" {
@@ -28,22 +49,61 @@ variable "domain_name" {
   description = "Domain name"
 }
 
-variable "root_tags" {
-  description = "Common tags"
-  type        = map(string)
-  default = {
-    Project = "mlb-the-show-forecaster"
-  }
+variable "aspnetcore_environment" {
+  description = "The ASP.NET Core environment"
+  type        = string
 }
 
 variable "jwt_authority" {
+  description = "JWT Authority"
   type        = string
   sensitive   = true
-  description = "JWT Authority"
 }
 
 variable "jwt_audience" {
+  description = "JWT Audience"
   type        = string
   sensitive   = true
-  description = "JWT Audience"
+}
+
+variable "pgsql_user" {
+  description = "PGSQL user"
+  type        = string
+  sensitive   = true
+}
+
+variable "pgsql_pass" {
+  description = "PGSQL password"
+  type        = string
+  sensitive   = true
+}
+
+variable "pgsql_db_name" {
+  description = "PGSQL dbname"
+  type        = string
+  sensitive   = true
+}
+
+variable "mongodb_user" {
+  description = "mongodb user"
+  type        = string
+  sensitive   = true
+}
+
+variable "mongodb_pass" {
+  description = "mongodb password"
+  type        = string
+  sensitive   = true
+}
+
+variable "rabbitmq_user" {
+  description = "rabbitmq user"
+  type        = string
+  sensitive   = true
+}
+
+variable "rabbitmq_pass" {
+  description = "rabbitmq password"
+  type        = string
+  sensitive   = true
 }
