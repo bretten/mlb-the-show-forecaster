@@ -69,6 +69,7 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
         // You can then start at the current calendar year and go back to the day that the game launched
         var today = _calendar.TodayPst();
         var todayDateString = today.ToString("MM/dd"); // Used to skip erroneous dates
+        var yesterdayDateString = today.AddDays(-1).ToString("MM/dd"); // Used to skip erroneous dates
         var passedErroneousDates = false; // Will be set to true once erroneous rows have been passed
         var currentYear = today.Year; // 1st price is for the current year. When 12/31 is reached, decrement year
         var previousDateString = todayDateString; // Used to handle case where data has no 12/31 date, only 12/30
@@ -89,7 +90,7 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
             var dateString = cells[0].TextContent.Trim();
 
             // Skip erroneous dates
-            if (!passedErroneousDates && dateString != todayDateString)
+            if (!passedErroneousDates && dateString != todayDateString && dateString != yesterdayDateString)
             {
                 continue;
             }
@@ -105,8 +106,7 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
             }
 
             // Parse the date and use the current year counter
-            var dateWithAutoYear = DateOnly.ParseExact(dateString, "MM/dd");
-            var date = new DateOnly(currentYear, dateWithAutoYear.Month, dateWithAutoYear.Day);
+            var date = DateOnly.ParseExact($"{dateString}/{currentYear}", "MM/dd/yyyy");
 
             // Buy price is the first number, sell price is the second
             var buyNowPrice = int.Parse(cells[1].TextContent.Trim());
