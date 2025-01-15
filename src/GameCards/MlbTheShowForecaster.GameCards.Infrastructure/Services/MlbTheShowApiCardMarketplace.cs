@@ -60,7 +60,7 @@ public sealed class MlbTheShowApiCardMarketplace : ICardMarketplace
                 $"No MLB The Show Card Listing found for UUID: {cardExternalId.Value}");
         }
 
-        return _listingMapper.Map(seasonYear, listing);
+        return _listingMapper.Map(listing);
     }
 
     /// <summary>

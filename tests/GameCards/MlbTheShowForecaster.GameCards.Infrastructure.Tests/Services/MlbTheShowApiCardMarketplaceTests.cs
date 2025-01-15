@@ -65,7 +65,7 @@ public class MlbTheShowApiCardMarketplaceTests
             .Returns(stubMlbTheShowApi.Object);
 
         var stubListingMapper = new Mock<IMlbTheShowListingMapper>();
-        stubListingMapper.Setup(x => x.Map(seasonYear, listingDto))
+        stubListingMapper.Setup(x => x.Map(listingDto))
             .Returns(expectedCardListing);
 
         var marketplace = new MlbTheShowApiCardMarketplace(stubMlbTheShowApiFactory.Object, stubListingMapper.Object);
