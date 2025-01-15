@@ -1,8 +1,11 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.Mapping.TestClasses;
+using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.Mapping;
 
@@ -11,44 +14,76 @@ public class MlbTheShowListingMapperTests
     [Fact]
     public void Map_ListingDto_ReturnsCardListing()
     {
+        /*
+         * Arrange
+         */
+        // Listing prices that emulate the erroneous data from the MLB The Show API: https://github.com/bretten/mlb-the-show-forecaster/issues/420
+        var priceHistory = new List<ListingPriceDto>();
+        var expectedPriceHistory = new List<CardListingPrice>();
+        // Erroneous December prices
+        for (int i = 31; i >= 3; i--)
+        {
+            priceHistory.Add(new ListingPriceDto($"12/{i}", BestBuyPrice: i * 10, BestSellPrice: i * 100));
+        }
+
+        // Actual price history
+        var today = new DateOnly(2025, 1, 15);
+        while (today >= new DateOnly(2024, 11, 20))
+        {
+            // The DTO input
+            priceHistory.Add(new ListingPriceDto(today.ToString("MM/dd"), BestBuyPrice: today.DayOfYear,
+                BestSellPrice: today.DayOfYear * 10));
+            // The expect price output
+            expectedPriceHistory.Add(new CardListingPrice(today, BestBuyPrice: NaturalNumber.Create(today.DayOfYear),
+                BestSellPrice: NaturalNumber.Create(today.DayOfYear * 10)));
+
+            today = today.AddDays(-1);
+        }
+
+        var listing = Faker.FakeListingDto(listingName: "name1",
+            bestBuyPrice: 20,
+            bestSellPrice: 10,
+            itemDto: Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1),
+            priceHistory: priceHistory);
+
+        var stubCalendar = new Mock<ICalendar>();
+        stubCalendar.Setup(x => x.TodayPst()).Returns(new DateOnly(2025, 1, 15));
+        var mapper = new MlbTheShowListingMapper(stubCalendar.Object);
+
+        /*
+         * Act
+         */
+        var actual = mapper.Map(listing);
+
+        /*
+         * Assert
+         */
+        Assert.Equal("name1", actual.ListingName);
+        Assert.Equal(20, actual.BestBuyPrice.Value);
+        Assert.Equal(10, actual.BestSellPrice.Value);
+        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
+        Assert.Equal(expectedPriceHistory, actual.HistoricalPrices);
+    }
+
+    [Fact]
+    public void Map_PriceWithInvalidDateString_ThrowsException()
+    {
         // Arrange
-        var seasonYear = SeasonYear.Create(2024);
         var listing = Faker.FakeListingDto(listingName: "name1",
             bestBuyPrice: 20,
             bestSellPrice: 10,
             itemDto: Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1),
             priceHistory: new List<ListingPriceDto>()
             {
-                new ListingPriceDto("04/01", BestBuyPrice: 2, BestSellPrice: 1),
-                new ListingPriceDto("04/02", BestBuyPrice: 200, BestSellPrice: 100)
+                new ListingPriceDto("01/15", BestBuyPrice: 20, BestSellPrice: 10),
+                new ListingPriceDto("abc", BestBuyPrice: 20, BestSellPrice: 10) // Invalid date string
             });
-        var mapper = new MlbTheShowListingMapper();
 
-        // Act
-        var actual = mapper.Map(seasonYear, listing);
+        var stubCalendar = new Mock<ICalendar>();
+        stubCalendar.Setup(x => x.TodayPst()).Returns(new DateOnly(2025, 1, 15));
+        var mapper = new MlbTheShowListingMapper(stubCalendar.Object);
 
-        // Assert
-        Assert.Equal("name1", actual.ListingName);
-        Assert.Equal(20, actual.BestBuyPrice.Value);
-        Assert.Equal(10, actual.BestSellPrice.Value);
-        Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
-        Assert.Equal(2, actual.HistoricalPrices.Count);
-        Assert.Equal(new DateOnly(2024, 4, 1), actual.HistoricalPrices[0].Date);
-        Assert.Equal(2, actual.HistoricalPrices[0].BestBuyPrice.Value);
-        Assert.Equal(1, actual.HistoricalPrices[0].BestSellPrice.Value);
-        Assert.Equal(new DateOnly(2024, 4, 2), actual.HistoricalPrices[1].Date);
-        Assert.Equal(200, actual.HistoricalPrices[1].BestBuyPrice.Value);
-        Assert.Equal(100, actual.HistoricalPrices[1].BestSellPrice.Value);
-    }
-
-    [Fact]
-    public void MapPrice_PriceWithInvalidDateString_ThrowsException()
-    {
-        // Arrange
-        var seasonYear = SeasonYear.Create(2024);
-        var price = new ListingPriceDto("abc", BestBuyPrice: 20, BestSellPrice: 10);
-        var mapper = new MlbTheShowListingMapper();
-        Action action = () => mapper.MapPrice(seasonYear, price);
+        Action action = () => mapper.Map(listing);
 
         // Act
         var actual = Record.Exception(action);
@@ -56,22 +91,5 @@ public class MlbTheShowListingMapperTests
         // Assert
         Assert.NotNull(actual);
         Assert.IsType<InvalidTheShowListingPriceDateFormatException>(actual);
-    }
-
-    [Fact]
-    public void MapPrice_PriceDto_ReturnsCardListingPrice()
-    {
-        // Arrange
-        var seasonYear = SeasonYear.Create(2024);
-        var price = new ListingPriceDto("04/01", BestBuyPrice: 20, BestSellPrice: 10);
-        var mapper = new MlbTheShowListingMapper();
-
-        // Act
-        var actual = mapper.MapPrice(seasonYear, price);
-
-        // Assert
-        Assert.Equal(new DateOnly(2024, 4, 1), actual.Date);
-        Assert.Equal(20, actual.BestBuyPrice.Value);
-        Assert.Equal(10, actual.BestSellPrice.Value);
     }
 }
