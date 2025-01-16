@@ -22,6 +22,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Http.Resilience;
+using Polly;
+using Polly.Retry;
+using Polly.Timeout;
 using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure;
@@ -165,6 +169,28 @@ public static class Dependencies
                 {
                     Converters = { new JsonStringEnumConverter() }
                 })
+            })
+            .ConfigurePrimaryHttpMessageHandler(() =>
+            {
+                var pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
+                    .AddRetry(new RetryStrategyOptions<HttpResponseMessage>
+                    {
+                        BackoffType = DelayBackoffType.Exponential,
+                        UseJitter = true,
+                        MaxRetryAttempts = 4,
+                        Delay = TimeSpan.FromMinutes(5),
+                        ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
+                            .Handle<TimeoutRejectedException>()
+                            .Handle<HttpRequestException>()
+                            .HandleResult(response => !response.IsSuccessStatusCode)
+                    })
+                    .AddTimeout(TimeSpan.FromMinutes(20))
+                    .Build();
+                var handler = new ResilienceHandler(pipeline)
+                {
+                    InnerHandler = new HttpClientHandler(),
+                };
+                return handler;
             })
             .ConfigureHttpClient(client =>
             {
