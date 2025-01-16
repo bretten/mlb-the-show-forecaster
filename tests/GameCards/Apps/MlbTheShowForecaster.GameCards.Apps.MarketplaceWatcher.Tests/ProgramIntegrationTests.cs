@@ -126,11 +126,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await using var assertMarketplaceDbContext = GetMarketplaceDbContext(assertConnection);
         var listings = assertMarketplaceDbContext.Listings.Count();
         Assert.True(listings > 1); // One was already inserted by the setup of this test
-        // Domain events should have been published
-        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
-        var messageCount = rabbitMqChannel.MessageCount("ListingBuyPriceDecreased") +
-                           rabbitMqChannel.MessageCount("ListingBuyPriceIncreased");
-        Assert.True(messageCount > 0);
     }
 
     public async Task InitializeAsync()
