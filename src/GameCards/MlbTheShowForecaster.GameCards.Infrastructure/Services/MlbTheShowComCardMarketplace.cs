@@ -1,4 +1,5 @@
 using AngleSharp;
+using AngleSharp.Dom;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
@@ -6,6 +7,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Exceptions;
+using Polly;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 
@@ -28,14 +30,22 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
     private readonly ICalendar _calendar;
 
     /// <summary>
+    /// Retry policy for the web client
+    /// </summary>
+    private readonly ResiliencePipeline<IDocument> _resiliencePipeline;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="context"><see cref="IBrowsingContext"/> for <see cref="AngleSharp"/></param>
     /// <param name="calendar">Gets the current date</param>
-    public MlbTheShowComCardMarketplace(IBrowsingContext context, ICalendar calendar)
+    /// <param name="resiliencePipeline">Retry policy for the web client</param>
+    public MlbTheShowComCardMarketplace(IBrowsingContext context, ICalendar calendar,
+        ResiliencePipeline<IDocument> resiliencePipeline)
     {
         _context = context;
         _calendar = calendar;
+        _resiliencePipeline = resiliencePipeline;
     }
 
     /// <inheritdoc />
@@ -46,7 +56,8 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
         var seasonDate = new DateOnly(seasonYear.Value, 1, 1);
         var url = $"https://mlb{seasonDate.ToString("yy")}.theshow.com/items/{cardExternalId.AsStringDigits}";
 
-        var doc = await _context.OpenAsync(url, cancellationToken);
+        var doc = await _resiliencePipeline.ExecuteAsync(
+            async token => await _context.OpenAsync(url, token), cancellationToken);
 
         // The site redirects if the player does not exist
         if (doc.Title == "Home - The Show Account")

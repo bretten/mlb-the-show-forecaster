@@ -1,10 +1,12 @@
 using AngleSharp;
+using AngleSharp.Dom;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.TestClasses;
+using Polly;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Services;
 
@@ -22,8 +24,9 @@ public class MlbTheShowComCardMarketplaceIntegrationTests
         var config = Configuration.Default.WithDefaultLoader();
         var context = BrowsingContext.New(config);
         var calendar = new Calendar();
+        var pipeline = new ResiliencePipelineBuilder<IDocument>().Build();
 
-        var marketplace = new MlbTheShowComCardMarketplace(context, calendar);
+        var marketplace = new MlbTheShowComCardMarketplace(context, calendar, pipeline);
 
         var action = () => marketplace.GetCardPrice(season, cardExternalId, cToken);
 
@@ -51,8 +54,9 @@ public class MlbTheShowComCardMarketplaceIntegrationTests
         var config = Configuration.Default.WithDefaultLoader();
         var context = BrowsingContext.New(config);
         var calendar = new Calendar();
+        var pipeline = new ResiliencePipelineBuilder<IDocument>().Build();
 
-        var marketplace = new MlbTheShowComCardMarketplace(context, calendar);
+        var marketplace = new MlbTheShowComCardMarketplace(context, calendar, pipeline);
 
         // Act
         var actual = await marketplace.GetCardPrice(season, cardExternalId, cToken);

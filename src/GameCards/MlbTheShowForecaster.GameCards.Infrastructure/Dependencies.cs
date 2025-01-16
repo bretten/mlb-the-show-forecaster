@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AngleSharp;
+using AngleSharp.Dom;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
@@ -34,6 +35,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
 using Npgsql;
+using Polly;
+using Polly.Retry;
 using Refit;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
@@ -163,9 +166,26 @@ public static class Dependencies
         {
             services.AddTransient<ICardMarketplace, MlbTheShowComCardMarketplace>(sp =>
             {
+                var pipeline = new ResiliencePipelineBuilder<IDocument>()
+                    .AddRetry(new RetryStrategyOptions<IDocument>
+                    {
+                        BackoffType = DelayBackoffType.Exponential,
+                        UseJitter = true,
+                        MaxRetryAttempts = 4,
+                        Delay = TimeSpan.FromMinutes(5),
+                        ShouldHandle = new PredicateBuilder<IDocument>()
+                            .HandleResult(doc =>
+                            {
+                                var isSuccessStatusCode = (int)doc.StatusCode >= 200 && (int)doc.StatusCode <= 299;
+                                return !isSuccessStatusCode;
+                            })
+                    })
+                    .AddTimeout(TimeSpan.FromMinutes(20))
+                    .Build();
+
                 var angleSharpConfig = Configuration.Default.WithDefaultLoader();
                 var browsingContext = BrowsingContext.New(angleSharpConfig);
-                return new MlbTheShowComCardMarketplace(browsingContext, sp.GetRequiredService<ICalendar>());
+                return new MlbTheShowComCardMarketplace(browsingContext, sp.GetRequiredService<ICalendar>(), pipeline);
             });
         }
         else
