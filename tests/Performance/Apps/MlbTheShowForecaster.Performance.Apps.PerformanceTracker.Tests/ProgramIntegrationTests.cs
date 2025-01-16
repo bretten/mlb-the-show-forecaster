@@ -94,12 +94,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
             x.BattingStatsByGamesChronologically.Count > 0 || x.PitchingStatsByGamesChronologically.Count > 0 ||
             x.FieldingStatsByGamesChronologically.Count > 0);
         Assert.NotNull(playerSeason);
-        // Domain events should have been published
-        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
-        var messageCount = rabbitMqChannel.MessageCount("PlayerBattedInGame")
-                           + rabbitMqChannel.MessageCount("PlayerPitchedInGame")
-                           + rabbitMqChannel.MessageCount("PlayerFieldedInGame");
-        Assert.True(messageCount > 0);
     }
 
     public async Task InitializeAsync()

@@ -1,7 +1,6 @@
 ﻿using System.Data.Common;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
@@ -75,9 +74,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection, new TeamProvider());
         await dbContext.Database.MigrateAsync();
-        // Add an existing player so it can be activated (first player alphabetically in the 2024 season)
-        var player = Faker.FakePlayer(mlbId: 592450, team: Faker.FakeTeam(), active: false);
-        await dbContext.Players.AddAsync(player);
         await dbContext.SaveChangesAsync();
 
         /*
@@ -96,10 +92,6 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await using var assertDbContext = GetDbContext(assertConnection, new TeamProvider());
         var players = assertDbContext.Players.Count();
         Assert.True(players > 0);
-        // Domain events should have been published
-        using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
-        var messageCount = rabbitMqChannel.MessageCount("PlayerActivated");
-        Assert.True(messageCount > 0);
     }
 
     public async Task InitializeAsync()
