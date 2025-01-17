@@ -82,6 +82,103 @@ public class CardListingTests
     }
 
     [Fact]
+    public void HasNewOrders_DomainListingThatIsNotUpToDate_LargerQuantity_ReturnsTrue()
+    {
+        // Arrange
+        var date = new DateTime(2025, 1, 16, 1, 2, 0, DateTimeKind.Utc);
+        var externalCardListing = Faker.FakeCardListing(completedOrders: new List<CardListingOrder>()
+            {
+                Faker.FakeCompletedOrder(date, price: 1, quantity: 3)
+            }
+        );
+        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+            {
+                Tests.TestClasses.Faker.FakeListingOrder(date, price: 1, quantity: 2)
+            }
+        );
+
+        // Act
+        var actual = externalCardListing.HasNewOrders(domainListing);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void HasNewOrders_DomainListingThatIsNotUpToDate_DifferentPrice_ReturnsTrue()
+    {
+        // Arrange
+        var date = new DateTime(2025, 1, 16, 1, 2, 0, DateTimeKind.Utc);
+        var externalCardListing = Faker.FakeCardListing(completedOrders: new List<CardListingOrder>()
+            {
+                Faker.FakeCompletedOrder(date, price: 1, quantity: 3)
+            }
+        );
+        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+            {
+                Tests.TestClasses.Faker.FakeListingOrder(date, price: 2, quantity: 3)
+            }
+        );
+
+        // Act
+        var actual = externalCardListing.HasNewOrders(domainListing);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void HasNewOrders_DomainListingThatIsNotUpToDate_NewOrder_ReturnsTrue()
+    {
+        // Arrange
+        var date1 = new DateTime(2025, 1, 16, 1, 2, 0, DateTimeKind.Utc);
+        var date2 = date1.AddMinutes(1);
+        var externalCardListing = Faker.FakeCardListing(completedOrders: new List<CardListingOrder>()
+            {
+                Faker.FakeCompletedOrder(date1, price: 1, quantity: 3),
+                Faker.FakeCompletedOrder(date2, price: 1, quantity: 3)
+            }
+        );
+        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+            {
+                Tests.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3)
+            }
+        );
+
+        // Act
+        var actual = externalCardListing.HasNewOrders(domainListing);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void HasNewOrders_DomainListingThatIsUpToDate_ReturnsFalse()
+    {
+        // Arrange
+        var date1 = new DateTime(2025, 1, 16, 1, 2, 0, DateTimeKind.Utc);
+        var date2 = date1.AddMinutes(1);
+        var externalCardListing = Faker.FakeCardListing(completedOrders: new List<CardListingOrder>()
+            {
+                Faker.FakeCompletedOrder(date1, price: 1, quantity: 3),
+                Faker.FakeCompletedOrder(date2, price: 1, quantity: 3)
+            }
+        );
+        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+            {
+                Tests.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3),
+                Tests.TestClasses.Faker.FakeListingOrder(date2, price: 1, quantity: 3),
+            }
+        );
+
+        // Act
+        var actual = externalCardListing.HasNewOrders(domainListing);
+
+        // Assert
+        Assert.False(actual);
+    }
+
+    [Fact]
     public void GetNewHistoricalPrices_DomainListingThatIsNotUpToDate_ReturnsNewHistoricalPrices()
     {
         // Arrange
@@ -124,6 +221,106 @@ public class CardListingTests
 
         // Act
         var actual = externalCardListing.GetNewHistoricalPrices(domainListing);
+
+        // Assert
+        Assert.Empty(actual);
+    }
+
+    [Fact]
+    public void GetNewOrders_DomainListingThatIsNotUpToDate_LargerQuantity_ReturnsNewOrders()
+    {
+        // Arrange
+        var date = new DateTime(2025, 1, 16, 1, 2, 0, DateTimeKind.Utc);
+        var externalCardListing = Faker.FakeCardListing(completedOrders: new List<CardListingOrder>()
+            {
+                Faker.FakeCompletedOrder(date, price: 1, quantity: 3)
+            }
+        );
+        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+            {
+                Tests.TestClasses.Faker.FakeListingOrder(date, price: 1, quantity: 2)
+            }
+        );
+
+        // Act
+        var actual = externalCardListing.GetNewOrders(domainListing);
+
+        // Assert
+        Assert.Single(actual);
+        Assert.Equal(Faker.FakeCompletedOrder(date, price: 1, quantity: 3), actual[0]);
+    }
+
+    [Fact]
+    public void GetNewOrders_DomainListingThatIsNotUpToDate_DifferentPrice_ReturnsNewOrders()
+    {
+        // Arrange
+        var date = new DateTime(2025, 1, 16, 1, 2, 0, DateTimeKind.Utc);
+        var externalCardListing = Faker.FakeCardListing(completedOrders: new List<CardListingOrder>()
+            {
+                Faker.FakeCompletedOrder(date, price: 1, quantity: 3)
+            }
+        );
+        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+            {
+                Tests.TestClasses.Faker.FakeListingOrder(date, price: 2, quantity: 3)
+            }
+        );
+
+        // Act
+        var actual = externalCardListing.GetNewOrders(domainListing);
+
+        // Assert
+        Assert.Single(actual);
+        Assert.Equal(Faker.FakeCompletedOrder(date, price: 1, quantity: 3), actual[0]);
+    }
+
+    [Fact]
+    public void GetNewOrders_DomainListingThatIsNotUpToDate_NewOrder_ReturnsNewOrders()
+    {
+        // Arrange
+        var date1 = new DateTime(2025, 1, 16, 1, 2, 0, DateTimeKind.Utc);
+        var date2 = date1.AddMinutes(1);
+        var externalCardListing = Faker.FakeCardListing(completedOrders: new List<CardListingOrder>()
+            {
+                Faker.FakeCompletedOrder(date1, price: 1, quantity: 3),
+                Faker.FakeCompletedOrder(date2, price: 2, quantity: 4)
+            }
+        );
+        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+            {
+                Tests.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3)
+            }
+        );
+
+        // Act
+        var actual = externalCardListing.GetNewOrders(domainListing);
+
+        // Assert
+        Assert.Single(actual);
+        Assert.Equal(Faker.FakeCompletedOrder(date2, price: 2, quantity: 4), actual[0]);
+    }
+
+    [Fact]
+    public void GetNewOrders_DomainListingThatIsUpToDate_ReturnsEmptyCollection()
+    {
+        // Arrange
+        var date1 = new DateTime(2025, 1, 16, 1, 2, 0, DateTimeKind.Utc);
+        var date2 = date1.AddMinutes(1);
+        var externalCardListing = Faker.FakeCardListing(completedOrders: new List<CardListingOrder>()
+            {
+                Faker.FakeCompletedOrder(date1, price: 1, quantity: 3),
+                Faker.FakeCompletedOrder(date2, price: 2, quantity: 4)
+            }
+        );
+        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+            {
+                Tests.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3),
+                Tests.TestClasses.Faker.FakeListingOrder(date2, price: 2, quantity: 4),
+            }
+        );
+
+        // Act
+        var actual = externalCardListing.GetNewOrders(domainListing);
 
         // Assert
         Assert.Empty(actual);

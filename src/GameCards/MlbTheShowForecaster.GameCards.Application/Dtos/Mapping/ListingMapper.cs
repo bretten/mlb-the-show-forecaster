@@ -19,7 +19,8 @@ public sealed class ListingMapper : IListingMapper
             listing.CardExternalId,
             listing.BestBuyPrice,
             listing.BestSellPrice,
-            listing.HistoricalPrices.Select(Map).ToList()
+            listing.HistoricalPrices.Select(Map).ToList(),
+            listing.RecentOrders.Select(Map).ToList()
         );
     }
 
@@ -34,5 +35,17 @@ public sealed class ListingMapper : IListingMapper
             buyPrice: cardListingPrice.BestBuyPrice,
             sellPrice: cardListingPrice.BestSellPrice
         );
+    }
+
+    /// <summary>
+    /// Maps <see cref="CardListingOrder"/> to <see cref="ListingOrder"/>
+    /// </summary>
+    /// <param name="cardListingOrder"><see cref="CardListingOrder"/></param>
+    /// <returns><see cref="ListingOrder"/></returns>
+    public ListingOrder Map(CardListingOrder cardListingOrder)
+    {
+        return ListingOrder.Create(cardListingOrder.Date,
+            price: cardListingOrder.Price,
+            quantity: cardListingOrder.Quantity);
     }
 }

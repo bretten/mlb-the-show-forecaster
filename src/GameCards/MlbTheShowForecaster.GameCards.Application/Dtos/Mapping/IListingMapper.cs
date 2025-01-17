@@ -21,4 +21,11 @@ public interface IListingMapper
     /// <param name="cardListingPrice">The previous prices for the listing</param>
     /// <returns><see cref="ListingHistoricalPrice"/></returns>
     ListingHistoricalPrice Map(CardListingPrice cardListingPrice);
+
+    /// <summary>
+    /// Should map <see cref="CardListingOrder"/> to <see cref="ListingOrder"/>
+    /// </summary>
+    /// <param name="cardListingOrder"><see cref="CardListingOrder"/></param>
+    /// <returns><see cref="ListingOrder"/></returns>
+    ListingOrder Map(CardListingOrder cardListingOrder);
 }

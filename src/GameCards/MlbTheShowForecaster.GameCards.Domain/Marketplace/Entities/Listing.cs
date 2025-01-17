@@ -20,6 +20,11 @@ public sealed class Listing : AggregateRoot
     private readonly List<ListingHistoricalPrice> _historicalPrices;
 
     /// <summary>
+    /// Orders for the listing
+    /// </summary>
+    private readonly List<ListingOrder> _orders;
+
+    /// <summary>
     /// The external ID of the card that this listing is for
     /// </summary>
     public CardExternalId CardExternalId { get; }
@@ -41,19 +46,36 @@ public sealed class Listing : AggregateRoot
         _historicalPrices.OrderBy(x => x.Date).ToImmutableList();
 
     /// <summary>
+    /// Orders for the listing in chronological order
+    /// </summary>
+    public IReadOnlyList<ListingOrder> OrdersChronologically =>
+        _orders.OrderBy(x => x.Date).ThenByDescending(x => x.Price).ToImmutableList();
+
+    /// <summary>
+    /// The total number of orders for the specified date
+    /// </summary>
+    /// <param name="date">The date to get orders for</param>
+    /// <returns>Total number of orders for the specified date</returns>
+    public NaturalNumber TotalOrdersFor(DateOnly date) => NaturalNumber.Create(_orders
+        .Where(x => DateOnly.FromDateTime(x.Date) == date)
+        .Sum(x => x.Quantity.Value));
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
     /// <param name="historicalPrices">The price history of this listing</param>
+    /// <param name="orders">Orders for the listing</param>
     private Listing(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice,
-        List<ListingHistoricalPrice> historicalPrices) : base(Guid.NewGuid())
+        List<ListingHistoricalPrice> historicalPrices, List<ListingOrder> orders) : base(Guid.NewGuid())
     {
         CardExternalId = cardExternalId;
         BuyPrice = buyPrice;
         SellPrice = sellPrice;
         _historicalPrices = historicalPrices;
+        _orders = orders;
     }
 
     /// <summary>
@@ -63,7 +85,7 @@ public sealed class Listing : AggregateRoot
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
     private Listing(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice)
-        : this(cardExternalId, buyPrice, sellPrice, new List<ListingHistoricalPrice>())
+        : this(cardExternalId, buyPrice, sellPrice, new List<ListingHistoricalPrice>(), new List<ListingOrder>())
     {
     }
 
@@ -99,6 +121,15 @@ public sealed class Listing : AggregateRoot
 
         BuyPrice = newBuyPrice;
         SellPrice = newSellPrice;
+    }
+
+    /// <summary>
+    /// Updates the Listing's orders with new orders
+    /// </summary>
+    /// <param name="newOrders">New orders</param>
+    public void UpdateOrders(List<ListingOrder> newOrders)
+    {
+        _orders.AddRange(newOrders);
     }
 
     /// <summary>
@@ -160,10 +191,12 @@ public sealed class Listing : AggregateRoot
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
     /// <param name="historicalPrices">The price history of this listing</param>
+    /// <param name="orders">Orders for the listing</param>
     /// <returns><see cref="Listing"/></returns>
     public static Listing Create(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice,
-        List<ListingHistoricalPrice>? historicalPrices = null)
+        List<ListingHistoricalPrice>? historicalPrices = null, List<ListingOrder>? orders = null)
     {
-        return new Listing(cardExternalId, buyPrice, sellPrice, historicalPrices ?? new List<ListingHistoricalPrice>());
+        return new Listing(cardExternalId, buyPrice, sellPrice, historicalPrices ?? new List<ListingHistoricalPrice>(),
+            orders ?? new List<ListingOrder>());
     }
 }
