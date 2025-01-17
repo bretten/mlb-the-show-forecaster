@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using System.ComponentModel.DataAnnotations.Schema;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
@@ -48,6 +49,7 @@ public sealed class Listing : AggregateRoot
     /// <summary>
     /// Orders for the listing in chronological order
     /// </summary>
+    [NotMapped]
     public IReadOnlyList<ListingOrder> OrdersChronologically =>
         _orders.OrderBy(x => x.Date).ThenByDescending(x => x.Price).ToImmutableList();
 
