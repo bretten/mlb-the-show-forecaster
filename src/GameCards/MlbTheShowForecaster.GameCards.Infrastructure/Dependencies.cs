@@ -185,7 +185,8 @@ public static class Dependencies
 
                 var angleSharpConfig = Configuration.Default.WithDefaultLoader();
                 var browsingContext = BrowsingContext.New(angleSharpConfig);
-                return new MlbTheShowComCardMarketplace(browsingContext, sp.GetRequiredService<ICalendar>(), pipeline);
+                return new MlbTheShowComCardMarketplace(browsingContext, pipeline,
+                    sp.GetRequiredService<IMlbTheShowListingMapper>());
             });
         }
         else

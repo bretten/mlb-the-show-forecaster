@@ -1,4 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
@@ -42,7 +44,10 @@ public sealed class MlbTheShowListingMapper : IMlbTheShowListingMapper
                                                       $"Could not map the {nameof(ListingDto<ItemDto>)}'s UUID since it is not valid: ${listing.Item.Uuid.RawValue}")),
             HistoricalPrices: listing.PriceHistory != null
                 ? MapPrices(listing.PriceHistory)
-                : new List<CardListingPrice>()
+                : new List<CardListingPrice>(),
+            RecentOrders: listing.CompletedOrders != null
+                ? MapOrders(listing.CompletedOrders)
+                : new List<CardListingOrder>()
         );
     }
 
@@ -109,5 +114,41 @@ public sealed class MlbTheShowListingMapper : IMlbTheShowListingMapper
         }
 
         return historicalPrices;
+    }
+
+    /// <summary>
+    /// Maps a collection of order DTOs
+    /// </summary>
+    /// <param name="orders">The orders to map</param>
+    /// <returns><see cref="CardListingOrder"/> collection</returns>
+    /// <exception cref="InvalidTheShowListingOrderDateFormatException">Thrown if an order has an invalid date string</exception>
+    private List<CardListingOrder> MapOrders(IReadOnlyCollection<ListingOrderDto> orders)
+    {
+        return orders.Select(x =>
+            {
+                try
+                {
+                    var parsedPrice = Regex.Replace(x.Price, @"[^\d]", "");
+                    var price = int.Parse(parsedPrice);
+
+                    // The dates from the API are always UTC
+                    var date = DateTime.ParseExact(x.Date, "MM/dd/yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+                    // Exclude seconds
+                    var utcDate = new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, 0,
+                        DateTimeKind.Utc);
+
+                    return (Date: utcDate, Price: price);
+                }
+                catch (FormatException)
+                {
+                    throw new InvalidTheShowListingOrderDateFormatException(
+                        $"Listing order date could not be parsed: {x.Date}");
+                }
+            }).GroupBy(x => new { x.Date, x.Price })
+            .Select(x =>
+            {
+                var quantity = NaturalNumber.Create(x.Count());
+                return new CardListingOrder(x.Key.Date, NaturalNumber.Create(x.Key.Price), quantity);
+            }).ToList();
     }
 }

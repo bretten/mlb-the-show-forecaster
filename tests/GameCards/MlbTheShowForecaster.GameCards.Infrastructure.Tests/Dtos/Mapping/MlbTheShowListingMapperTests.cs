@@ -40,11 +40,43 @@ public class MlbTheShowListingMapperTests
             today = today.AddDays(-1);
         }
 
+        // Completed orders
+        var orders = new List<ListingOrderDto>()
+        {
+            // Will be grouped together
+            new ListingOrderDto("01/16/2025 10:15:19", "1,000"),
+            new ListingOrderDto("01/16/2025 10:15:19", "1,000"),
+
+            // Will be grouped due to same minute (only seconds differ)
+            new ListingOrderDto("01/16/2025 10:15:20", "1,000"),
+
+            // Not grouped due to different price
+            new ListingOrderDto("01/16/2025 10:15:19", "1,001"),
+
+            // Not grouped due to different minute
+            new ListingOrderDto("01/16/2025 10:16:19", "1,000"),
+
+            // Another order
+            new ListingOrderDto("01/15/2025 17:24:30", "3,210"),
+        };
+        var expectedOrders = new List<CardListingOrder>()
+        {
+            new CardListingOrder(new DateTime(2025, 1, 16, 10, 15, 0, DateTimeKind.Utc), NaturalNumber.Create(1000),
+                NaturalNumber.Create(3)),
+            new CardListingOrder(new DateTime(2025, 1, 16, 10, 15, 0, DateTimeKind.Utc), NaturalNumber.Create(1001),
+                NaturalNumber.Create(1)),
+            new CardListingOrder(new DateTime(2025, 1, 16, 10, 16, 0, DateTimeKind.Utc), NaturalNumber.Create(1000),
+                NaturalNumber.Create(1)),
+            new CardListingOrder(new DateTime(2025, 1, 15, 17, 24, 0, DateTimeKind.Utc), NaturalNumber.Create(3210),
+                NaturalNumber.Create(1)),
+        };
+
         var listing = Faker.FakeListingDto(listingName: "name1",
             bestBuyPrice: 20,
             bestSellPrice: 10,
             itemDto: Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1),
-            priceHistory: priceHistory);
+            priceHistory: priceHistory,
+            completedOrders: orders);
 
         var stubCalendar = new Mock<ICalendar>();
         stubCalendar.Setup(x => x.TodayPst()).Returns(new DateOnly(2025, 1, 15));
@@ -63,6 +95,7 @@ public class MlbTheShowListingMapperTests
         Assert.Equal(10, actual.BestSellPrice.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(expectedPriceHistory, actual.HistoricalPrices);
+        Assert.Equal(expectedOrders, actual.RecentOrders);
     }
 
     [Fact]
@@ -91,5 +124,33 @@ public class MlbTheShowListingMapperTests
         // Assert
         Assert.NotNull(actual);
         Assert.IsType<InvalidTheShowListingPriceDateFormatException>(actual);
+    }
+
+    [Fact]
+    public void Map_OrderWithInvalidDateString_ThrowsException()
+    {
+        // Arrange
+        var listing = Faker.FakeListingDto(listingName: "name1",
+            bestBuyPrice: 20,
+            bestSellPrice: 10,
+            itemDto: Faker.FakeMlbCardDto(uuid: Faker.FakeGuid1),
+            priceHistory: new List<ListingPriceDto>(),
+            completedOrders: new List<ListingOrderDto>()
+            {
+                new ListingOrderDto("01/15/2025 17:24", "3,021"), // Expects HH:mm:ss not just HH:mm
+            });
+
+        var stubCalendar = new Mock<ICalendar>();
+        stubCalendar.Setup(x => x.TodayPst()).Returns(new DateOnly(2025, 1, 16));
+        var mapper = new MlbTheShowListingMapper(stubCalendar.Object);
+
+        Action action = () => mapper.Map(listing);
+
+        // Act
+        var actual = Record.Exception(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<InvalidTheShowListingOrderDateFormatException>(actual);
     }
 }

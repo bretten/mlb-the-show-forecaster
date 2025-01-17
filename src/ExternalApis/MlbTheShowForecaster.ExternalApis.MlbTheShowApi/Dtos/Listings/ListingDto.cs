@@ -11,6 +11,7 @@ namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Li
 /// <param name="BestBuyPrice">The current, best buy price</param>
 /// <param name="Item">The Item that this Listing is for</param>
 /// <param name="PriceHistory">The prices on previous days</param>
+/// <param name="CompletedOrders">Recently completed orders for the listing</param>
 /// <typeparam name="T"><see cref="ItemDto"/></typeparam>
 public sealed record ListingDto<T>(
     [property: JsonPropertyName("listing_name")]
@@ -19,8 +20,9 @@ public sealed record ListingDto<T>(
     int BestSellPrice,
     [property: JsonPropertyName("best_buy_price")]
     int BestBuyPrice,
-    [property: JsonPropertyName("item")]
-    T Item,
+    [property: JsonPropertyName("item")] T Item,
     [property: JsonPropertyName("price_history")]
-    IReadOnlyCollection<ListingPriceDto>? PriceHistory
+    IReadOnlyCollection<ListingPriceDto>? PriceHistory,
+    [property: JsonPropertyName("completed_orders")]
+    IReadOnlyCollection<ListingOrderDto>? CompletedOrders
 ) where T : ItemDto;

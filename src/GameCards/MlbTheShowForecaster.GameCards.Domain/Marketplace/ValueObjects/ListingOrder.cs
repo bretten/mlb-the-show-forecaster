@@ -17,7 +17,7 @@ public sealed class ListingOrder : ValueObject
     /// <summary>
     /// The price of the order
     /// </summary>
-    public NaturalNumber Price { get; private set; }
+    public NaturalNumber Price { get; }
 
     /// <summary>
     /// The quantity of the order

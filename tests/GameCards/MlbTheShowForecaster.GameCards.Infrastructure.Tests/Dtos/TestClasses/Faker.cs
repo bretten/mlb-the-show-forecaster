@@ -79,14 +79,16 @@ public static class Faker
     }
 
     public static CardListing FakeCardListing(string listingName = "listingName1", int bestBuyPrice = 0,
-        int bestSellPrice = 0, Guid? cardExternalId = null, IReadOnlyList<CardListingPrice>? historicalPrices = null)
+        int bestSellPrice = 0, Guid? cardExternalId = null, IReadOnlyList<CardListingPrice>? historicalPrices = null,
+        IReadOnlyList<CardListingOrder>? recentOrders = null)
     {
         return new CardListing(
             ListingName: listingName,
             BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
             BestSellPrice: NaturalNumber.Create(bestSellPrice),
             CardExternalId: FakeCardExternalId(cardExternalId),
-            HistoricalPrices: historicalPrices ?? new List<CardListingPrice>()
+            HistoricalPrices: historicalPrices ?? new List<CardListingPrice>(),
+            RecentOrders: recentOrders ?? new List<CardListingOrder>()
         );
     }
 
