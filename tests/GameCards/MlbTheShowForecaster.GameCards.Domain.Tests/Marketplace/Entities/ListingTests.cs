@@ -30,6 +30,50 @@ public class ListingTests
     }
 
     [Fact]
+    public void OrdersChronologically_MultipleOrders_ReturnsOrdersInOrderOfDate()
+    {
+        // Arrange
+        var listing = Faker.FakeListing();
+        listing.UpdateOrders(new List<ListingOrder>()
+        {
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc)), // 2
+            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc)), // 3
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc)), // 1
+        });
+
+        // Act
+        var actual = listing.OrdersChronologically;
+
+        // Assert
+        Assert.Equal(3, actual.Count);
+        Assert.Equal(new List<ListingOrder>()
+        {
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc)),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc)),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc)),
+        }, actual);
+    }
+
+    [Fact]
+    public void TotalOrdersFor_DateWithOrders_ReturnsTotalOrderQuantity()
+    {
+        // Arrange
+        var listing = Faker.FakeListing();
+        listing.UpdateOrders(new List<ListingOrder>()
+        {
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), quantity: 1),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc), quantity: 5),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), quantity: 2),
+        });
+
+        // Act
+        var actual = listing.TotalOrdersFor(new DateOnly(2025, 1, 17));
+
+        // Assert
+        Assert.Equal(3, actual.Value);
+    }
+
+    [Fact]
     public void LogHistoricalPrice_DateAlreadyExists_ThrowsException()
     {
         // Arrange

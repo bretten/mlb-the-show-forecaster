@@ -20,4 +20,12 @@ public static class Faker
     {
         return ListingHistoricalPrice.Create(date, NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice));
     }
+
+    public static ListingOrder FakeListingOrder(DateTime? date = null, int price = 0, int quantity = 0)
+    {
+        return ListingOrder.Create(date ?? new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc),
+            price: NaturalNumber.Create(price),
+            quantity: NaturalNumber.Create(quantity)
+        );
+    }
 }

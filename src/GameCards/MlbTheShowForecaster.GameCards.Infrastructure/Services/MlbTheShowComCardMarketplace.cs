@@ -1,11 +1,15 @@
+using System.Globalization;
+using System.Text.RegularExpressions;
 using AngleSharp;
 using AngleSharp.Dom;
-using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Exceptions;
 using Polly;
 
@@ -25,27 +29,27 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
     private readonly IBrowsingContext _context;
 
     /// <summary>
-    /// Gets the current date
-    /// </summary>
-    private readonly ICalendar _calendar;
-
-    /// <summary>
     /// Retry policy for the web client
     /// </summary>
     private readonly ResiliencePipeline<IDocument> _resiliencePipeline;
 
     /// <summary>
+    /// Maps MLB The Show DTOs to application-layer DTOs
+    /// </summary>
+    private readonly IMlbTheShowListingMapper _listingMapper;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="context"><see cref="IBrowsingContext"/> for <see cref="AngleSharp"/></param>
-    /// <param name="calendar">Gets the current date</param>
     /// <param name="resiliencePipeline">Retry policy for the web client</param>
-    public MlbTheShowComCardMarketplace(IBrowsingContext context, ICalendar calendar,
-        ResiliencePipeline<IDocument> resiliencePipeline)
+    /// <param name="listingMapper">Maps MLB The Show DTOs to application-layer DTOs</param>
+    public MlbTheShowComCardMarketplace(IBrowsingContext context, ResiliencePipeline<IDocument> resiliencePipeline,
+        IMlbTheShowListingMapper listingMapper)
     {
         _context = context;
-        _calendar = calendar;
         _resiliencePipeline = resiliencePipeline;
+        _listingMapper = listingMapper;
     }
 
     /// <inheritdoc />
@@ -75,18 +79,38 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
 
         var listingName = titleParts[1].Trim();
 
-        // MLB The Show's website has an issue where games from previous years will start listing prices at 12/31
-        // These seem to be erroneous and can be ignored until the current date's pricing is found
-        // You can then start at the current calendar year and go back to the day that the game launched
-        var today = _calendar.TodayPst();
-        var todayDateString = today.ToString("MM/dd"); // Used to skip erroneous dates
-        var yesterdayDateString = today.AddDays(-1).ToString("MM/dd"); // Used to skip erroneous dates
-        var passedErroneousDates = false; // Will be set to true once erroneous rows have been passed
-        var currentYear = today.Year; // 1st price is for the current year. When 12/31 is reached, decrement year
-        var previousDateString = todayDateString; // Used to handle case where data has no 12/31 date, only 12/30
+        // Parse the historical prices
+        var prices = ParseHistoricalPrices(doc, cardExternalId);
+        // Parse the orders
+        var orders = ParseCompletedOrders(doc, cardExternalId);
 
-        // Parse historical prices from the table body rows
-        var historicalPrices = new List<CardListingPrice>();
+        // Map to the MLB The Show API DTOs so we can use the same mapper
+        var listingDto = new ListingDto<ItemDto>(listingName,
+            BestSellPrice: prices.LastOrDefault()?.BestSellPrice ?? 0,
+            BestBuyPrice: prices.LastOrDefault()?.BestBuyPrice ?? 0,
+            // The ItemDto type doesn't matter, just the UUID
+            new UnlockableDto(Uuid: new UuidDto(cardExternalId.AsStringDigits), "", "", "", "", false, 0, 0),
+            prices, orders);
+
+        // The mapper parsed out the erroneous prices, so use the correct prices
+        var tempListing = _listingMapper.Map(listingDto);
+        return tempListing with
+        {
+            BestBuyPrice = NaturalNumber.Create(tempListing.HistoricalPrices.FirstOrDefault().BestBuyPrice.Value),
+            BestSellPrice = NaturalNumber.Create(tempListing.HistoricalPrices.FirstOrDefault().BestSellPrice.Value)
+        };
+    }
+
+    /// <summary>
+    /// Parses the historical prices from the HTML document
+    /// </summary>
+    /// <param name="doc">The HTML document</param>
+    /// <param name="cardExternalId">The <see cref="CardExternalId"/> of the card</param>
+    /// <returns>Historical prices</returns>
+    /// <exception cref="MlbTheShowComCardMarketplaceParsingException">Thrown when a row does not have enough cells</exception>
+    private List<ListingPriceDto> ParseHistoricalPrices(IDocument doc, CardExternalId cardExternalId)
+    {
+        var prices = new List<ListingPriceDto>();
         var rows = doc.QuerySelectorAll("#table-trends tbody tr");
         foreach (var row in rows)
         {
@@ -99,39 +123,51 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
 
             // The dates are in the format MM/dd with no year. It starts at the current calendar year and goes back to the year the game launched
             var dateString = cells[0].TextContent.Trim();
-
-            // Skip erroneous dates
-            if (!passedErroneousDates && dateString != todayDateString && dateString != yesterdayDateString)
-            {
-                continue;
-            }
-
-            // The current date has been reached, so no more skipping needed
-            passedErroneousDates = true;
-
-            // When the previous year has been reached, change the year
-            // NOTE: When looking at 2021 data for Aaron Judge, some 12/31's were missing, so use 12/30 as a fallback
-            if (previousDateString == "01/01" && (dateString == "12/31" || dateString == "12/30"))
-            {
-                currentYear--;
-            }
-
-            // Parse the date and use the current year counter
-            var date = DateOnly.ParseExact($"{dateString}/{currentYear}", "MM/dd/yyyy");
-
             // Buy price is the first number, sell price is the second
             var buyNowPrice = int.Parse(cells[1].TextContent.Trim());
             var sellNowPrice = int.Parse(cells[2].TextContent.Trim());
-
-            historicalPrices.Add(new CardListingPrice(date, NaturalNumber.Create(buyNowPrice),
-                NaturalNumber.Create(sellNowPrice)));
-
-            previousDateString = dateString;
+            prices.Add(new ListingPriceDto(dateString, buyNowPrice, sellNowPrice));
         }
 
-        var mostRecentPrice = historicalPrices.OrderByDescending(x => x.Date).First();
-        return new CardListing(listingName, BestBuyPrice: mostRecentPrice.BestBuyPrice,
-            BestSellPrice: mostRecentPrice.BestSellPrice, cardExternalId, historicalPrices);
+        return prices;
+    }
+
+    /// <summary>
+    /// Parses the completed orders from the HTML document
+    /// </summary>
+    /// <param name="doc">The HTML document</param>
+    /// <param name="cardExternalId">The <see cref="CardExternalId"/> of the card</param>
+    /// <returns>The orders for the Listing</returns>
+    /// <exception cref="MlbTheShowComCardMarketplaceParsingException">Thrown when a row does not have the right number of cells</exception>
+    private List<ListingOrderDto> ParseCompletedOrders(IDocument doc, CardExternalId cardExternalId)
+    {
+        var rows = doc.QuerySelectorAll("#table-completed-orders tbody tr");
+        return rows.Select(row =>
+        {
+            var cells = row.QuerySelectorAll("td");
+            if (cells.Length != 2)
+            {
+                throw new MlbTheShowComCardMarketplaceParsingException(
+                    $"The completed order row was not formatted correctly for {cardExternalId.AsStringDigits}");
+            }
+
+            var parsedPrice = Regex.Replace(cells[0].TextContent.Trim(), @"[^\d]", "");
+            var price = int.Parse(parsedPrice);
+
+            // Parse the date string which is in the format 1/16/2025 3:38AM PST
+            var dateString = cells[1].TextContent.Trim().Replace(" PST", "").Replace(" PDT", "");
+            var rawDateTime = DateTime.ParseExact(dateString, "M/d/yyyy h:mmtt", CultureInfo.InvariantCulture);
+
+            var tzInfo = TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
+            var dateOffset = new DateTimeOffset(rawDateTime, tzInfo.BaseUtcOffset);
+
+            // Exclude seconds
+            var utcDate = new DateTime(dateOffset.UtcDateTime.Year, dateOffset.UtcDateTime.Month,
+                dateOffset.UtcDateTime.Day, dateOffset.UtcDateTime.Hour, dateOffset.UtcDateTime.Minute, 0,
+                DateTimeKind.Utc);
+
+            return new ListingOrderDto(utcDate.ToString("MM/dd/yyyy HH:mm:ss"), price.ToString());
+        }).ToList();
     }
 
     /// <summary>

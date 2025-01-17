@@ -98,13 +98,15 @@ public static class Faker
     }
 
     public static ListingDto<ItemDto> FakeListingDto(string listingName = "name1", int bestSellPrice = 0,
-        int bestBuyPrice = 0, ItemDto? itemDto = null, IReadOnlyList<ListingPriceDto>? priceHistory = null)
+        int bestBuyPrice = 0, ItemDto? itemDto = null, IReadOnlyList<ListingPriceDto>? priceHistory = null,
+        IReadOnlyCollection<ListingOrderDto>? completedOrders = null)
     {
         return new ListingDto<ItemDto>(listingName,
             BestSellPrice: bestSellPrice,
             BestBuyPrice: bestBuyPrice,
             Item: itemDto ?? FakeMlbCardDto(),
-            PriceHistory: priceHistory ?? new List<ListingPriceDto>()
+            PriceHistory: priceHistory ?? new List<ListingPriceDto>(),
+            CompletedOrders: completedOrders ?? new List<ListingOrderDto>()
         );
     }
 

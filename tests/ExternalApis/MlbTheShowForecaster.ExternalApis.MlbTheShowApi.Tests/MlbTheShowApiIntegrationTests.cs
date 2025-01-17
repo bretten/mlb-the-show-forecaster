@@ -131,6 +131,8 @@ public class MlbTheShowApiIntegrationTests
         Assert.Equal("LAD", actualItem.TeamShortName);
         Assert.NotNull(actual.PriceHistory);
         Assert.True(0 < actual.PriceHistory.Count);
+        Assert.NotNull(actual.CompletedOrders);
+        Assert.True(0 < actual.CompletedOrders.Count);
     }
 
     [Fact]
@@ -160,6 +162,8 @@ public class MlbTheShowApiIntegrationTests
         Assert.Equal("FA", actualItem.TeamShortName);
         Assert.NotNull(actual.PriceHistory);
         Assert.True(0 < actual.PriceHistory.Count);
+        Assert.NotNull(actual.CompletedOrders);
+        Assert.True(0 < actual.CompletedOrders.Count);
     }
 
     [Fact]

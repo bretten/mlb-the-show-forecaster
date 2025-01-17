@@ -4,6 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.TestClasses;
 using Polly;
@@ -25,8 +26,9 @@ public class MlbTheShowComCardMarketplaceIntegrationTests
         var context = BrowsingContext.New(config);
         var calendar = new Calendar();
         var pipeline = new ResiliencePipelineBuilder<IDocument>().Build();
+        var mapper = new MlbTheShowListingMapper(calendar);
 
-        var marketplace = new MlbTheShowComCardMarketplace(context, calendar, pipeline);
+        var marketplace = new MlbTheShowComCardMarketplace(context, pipeline, mapper);
 
         var action = () => marketplace.GetCardPrice(season, cardExternalId, cToken);
 
@@ -55,8 +57,9 @@ public class MlbTheShowComCardMarketplaceIntegrationTests
         var context = BrowsingContext.New(config);
         var calendar = new Calendar();
         var pipeline = new ResiliencePipelineBuilder<IDocument>().Build();
+        var mapper = new MlbTheShowListingMapper(calendar);
 
-        var marketplace = new MlbTheShowComCardMarketplace(context, calendar, pipeline);
+        var marketplace = new MlbTheShowComCardMarketplace(context, pipeline, mapper);
 
         // Act
         var actual = await marketplace.GetCardPrice(season, cardExternalId, cToken);
@@ -69,5 +72,6 @@ public class MlbTheShowComCardMarketplaceIntegrationTests
         Assert.Equal(mostRecentPrice.BestSellPrice, actual.BestSellPrice);
         var oldestPrice = actual.HistoricalPrices.OrderBy(x => x.Date).First();
         Assert.Equal(year, oldestPrice.Date.Year);
+        Assert.NotEmpty(actual.RecentOrders);
     }
 }

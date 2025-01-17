@@ -78,14 +78,16 @@ public static class Faker
     }
 
     public static CardListing FakeCardListing(string listingName = "listingName1", int bestBuyPrice = 0,
-        int bestSellPrice = 0, Guid? cardExternalId = null, IReadOnlyList<CardListingPrice>? historicalPrices = null)
+        int bestSellPrice = 0, Guid? cardExternalId = null, IReadOnlyList<CardListingPrice>? historicalPrices = null,
+        IReadOnlyList<CardListingOrder>? completedOrders = null)
     {
         return new CardListing(
             ListingName: listingName,
             BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
             BestSellPrice: NaturalNumber.Create(bestSellPrice),
             CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
-            HistoricalPrices: historicalPrices ?? new List<CardListingPrice>()
+            HistoricalPrices: historicalPrices ?? new List<CardListingPrice>(),
+            RecentOrders: completedOrders ?? new List<CardListingOrder>()
         );
     }
 
@@ -96,6 +98,15 @@ public static class Faker
             Date: date ?? new DateOnly(2024, 4, 1),
             BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
             BestSellPrice: NaturalNumber.Create(bestSellPrice)
+        );
+    }
+
+    public static CardListingOrder FakeCompletedOrder(DateTime? date = null, int price = 0, int quantity = 0)
+    {
+        return new CardListingOrder(
+            Date: date ?? new DateTime(2025, 1, 16, 10, 20, 0, DateTimeKind.Utc),
+            Price: NaturalNumber.Create(price),
+            Quantity: NaturalNumber.Create(quantity)
         );
     }
 
