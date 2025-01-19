@@ -85,6 +85,42 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                     b.ToTable("listing_historical_prices", "game_cards");
                 });
 
+            modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects.ListingOrder", b =>
+                {
+                    b.Property<string>("hash")
+                        .HasColumnType("text")
+                        .HasColumnName("hash")
+                        .HasColumnOrder(0);
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("date")
+                        .HasColumnOrder(2);
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer")
+                        .HasColumnName("price")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity")
+                        .HasColumnOrder(4);
+
+                    b.Property<Guid?>("listing_id")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(1);
+
+                    b.HasKey("hash")
+                        .HasName("listing_orders_pkey");
+
+                    b.HasIndex(new[] { "listing_id" }, "listing_orders_listing_id_idx");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "listing_id" }, "listing_orders_listing_id_idx"), "btree");
+
+                    b.ToTable("listing_orders", "game_cards");
+                });
+
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects.ListingHistoricalPrice", b =>
                 {
                     b.HasOne("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities.Listing", null)
@@ -95,9 +131,19 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                         .HasConstraintName("listing_historical_prices_listings_id_fkey");
                 });
 
+            modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects.ListingOrder", b =>
+                {
+                    b.HasOne("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities.Listing", null)
+                        .WithMany("_orders")
+                        .HasForeignKey("listing_id")
+                        .HasConstraintName("listing_orders_listings_id_fkey");
+                });
+
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities.Listing", b =>
                 {
                     b.Navigation("_historicalPrices");
+
+                    b.Navigation("_orders");
                 });
 #pragma warning restore 612, 618
         }

@@ -72,6 +72,11 @@ public static class Constants
     public static class ListingHistoricalPrices
     {
         /// <summary>
+        /// The name of the field on <see cref="Listing"/> that holds this relationship
+        /// </summary>
+        public const string FieldName = "_historicalPrices";
+
+        /// <summary>
         /// Table name
         /// </summary>
         public const string TableName = "listing_historical_prices";
@@ -110,6 +115,74 @@ public static class Constants
             /// <see cref="ListingHistoricalPrice"/> references <see cref="Listing"/>
             /// </summary>
             public const string ListingsForeignKeyConstraint = $"{TableName}_{Listings.TableName}_{Listings.Id}_fkey";
+        }
+    }
+
+    /// <summary>
+    /// Table and column names for <see cref="ListingOrder"/>
+    /// </summary>
+    public static class ListingOrders
+    {
+        /// <summary>
+        /// The name of the field on <see cref="Listing"/> that holds this relationship
+        /// </summary>
+        public const string FieldName = "_orders";
+
+        /// <summary>
+        /// Table name
+        /// </summary>
+        public const string TableName = "listing_orders";
+
+        /// <summary>
+        /// Hash field
+        /// </summary>
+        public const string Hash = "hash";
+
+        /// <summary>
+        /// Foreign key column name that references <see cref="Listing"/>
+        /// </summary>
+        public const string ListingId = "listing_id";
+
+        /// <summary>
+        /// The date of the order
+        /// </summary>
+        public const string Date = "date";
+
+        /// <summary>
+        /// The order price
+        /// </summary>
+        public const string Price = "price";
+
+        /// <summary>
+        /// The order quantity
+        /// </summary>
+        public const string Quantity = "quantity";
+
+        /// <summary>
+        /// Key names for <see cref="ListingOrder"/>
+        /// </summary>
+        public static class Keys
+        {
+            /// <summary>
+            /// Primary key
+            /// </summary>
+            public const string PrimaryKey = $"{TableName}_pkey";
+
+            /// <summary>
+            /// <see cref="ListingOrder"/> references <see cref="Listing"/>
+            /// </summary>
+            public const string ListingsForeignKeyConstraint = $"{TableName}_{Listings.TableName}_{Listings.Id}_fkey";
+        }
+
+        /// <summary>
+        /// Index names for <see cref="ListingOrder"/>
+        /// </summary>
+        public static class Indexes
+        {
+            /// <summary>
+            /// For querying by Listing ID (and for the foreign key relationship)
+            /// </summary>
+            public const string ListingIdIndex = $"{TableName}_{ListingId}_idx";
         }
     }
 }

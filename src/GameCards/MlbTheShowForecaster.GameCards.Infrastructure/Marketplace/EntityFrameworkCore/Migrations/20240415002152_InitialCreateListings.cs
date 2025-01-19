@@ -53,6 +53,35 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "listing_orders",
+                schema: "game_cards",
+                columns: table => new
+                {
+                    hash = table.Column<string>(type: "text", nullable: false),
+                    listing_id = table.Column<Guid>(type: "uuid", nullable: true),
+                    date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    price = table.Column<int>(type: "integer", nullable: false),
+                    quantity = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("listing_orders_pkey", x => x.hash);
+                    table.ForeignKey(
+                        name: "listing_orders_listings_id_fkey",
+                        column: x => x.listing_id,
+                        principalSchema: "game_cards",
+                        principalTable: "listings",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "listing_orders_listing_id_idx",
+                schema: "game_cards",
+                table: "listing_orders",
+                column: "listing_id")
+                .Annotation("Npgsql:IndexMethod", "btree");
+
             migrationBuilder.CreateIndex(
                 name: "listings_card_external_id_idx",
                 schema: "game_cards",
@@ -66,6 +95,10 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
         {
             migrationBuilder.DropTable(
                 name: "listing_historical_prices",
+                schema: "game_cards");
+
+            migrationBuilder.DropTable(
+                name: "listing_orders",
                 schema: "game_cards");
 
             migrationBuilder.DropTable(

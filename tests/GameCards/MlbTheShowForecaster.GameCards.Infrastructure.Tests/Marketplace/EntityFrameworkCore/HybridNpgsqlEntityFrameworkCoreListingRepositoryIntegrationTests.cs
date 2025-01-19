@@ -99,10 +99,19 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
             Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2), buyPrice: 10, sellPrice: 20);
         var fakeHistoricalPrice3 =
             Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 3), buyPrice: 100, sellPrice: 200);
+        var order1 =
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 10, quantity: 1);
+        var order2 =
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11, quantity: 1);
+        var order3 =
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), price: 10, quantity: 1);
         var fakeListing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
             new List<ListingHistoricalPrice>()
             {
                 fakeHistoricalPrice3, fakeHistoricalPrice1, fakeHistoricalPrice2
+            }, new List<ListingOrder>()
+            {
+                order1, order2, order3
             });
 
         await using var connection = await GetDbConnection();
@@ -131,6 +140,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1000, actual.BuyPrice.Value);
         Assert.Equal(2000, actual.SellPrice.Value);
+
         Assert.Equal(3, actual.HistoricalPricesChronologically.Count);
         Assert.Equal(Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1), buyPrice: 1, sellPrice: 2),
             actual.HistoricalPricesChronologically[0]);
@@ -138,6 +148,17 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
             actual.HistoricalPricesChronologically[1]);
         Assert.Equal(Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 3), buyPrice: 100, sellPrice: 200),
             actual.HistoricalPricesChronologically[2]);
+
+        Assert.Equal(3, actual.OrdersChronologically.Count);
+        Assert.Equal(
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11, quantity: 1),
+            actual.OrdersChronologically[0]);
+        Assert.Equal(
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 10, quantity: 1),
+            actual.OrdersChronologically[1]);
+        Assert.Equal(
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), price: 10, quantity: 1),
+            actual.OrdersChronologically[2]);
     }
 
     [Fact]
@@ -149,12 +170,23 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
             Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1), buyPrice: 1, sellPrice: 2);
         var fakeHistoricalPrice2 =
             Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2), buyPrice: 10, sellPrice: 20);
+        var order1 =
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 10, quantity: 1);
+        var order2 =
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11, quantity: 1);
+        var order3 =
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), price: 10, quantity: 1);
         var fakeListing1 = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 100, sellPrice: 200,
             new List<ListingHistoricalPrice>()
             {
                 fakeHistoricalPrice2, fakeHistoricalPrice1
+            }, new List<ListingOrder>()
+            {
+                order1, order2, order3
             });
         var fakeListing2 = Faker.FakeListing(Faker.FakeGuid2, buyPrice: 8, sellPrice: 9);
+
+        var mockThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);
@@ -162,21 +194,35 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         var dbDataSource = GetNpgsqlDataSource();
         var atomicDbOperation = new DbAtomicDatabaseOperation(dbDataSource);
 
-        await dbContext.AddAsync(fakeListing1);
-        await dbContext.AddAsync(fakeListing2);
-        await dbContext.SaveChangesAsync();
-
         var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, atomicDbOperation);
-        var mockThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
+
+        await repo.Add(fakeListing1);
+        await repo.Add(fakeListing2);
+        var transaction = await atomicDbOperation.GetCurrentActiveTransaction();
+        await transaction.CommitAsync();
 
         // Act
+        await using var actConnection = await GetDbConnection();
+        await using var actDbContext = GetDbContext(actConnection);
+        await actDbContext.Database.MigrateAsync();
+        var actDbDataSource = GetNpgsqlDataSource();
+        var actAtomicDbOperation = new DbAtomicDatabaseOperation(actDbDataSource);
+
+        var actRepo = new HybridNpgsqlEntityFrameworkCoreListingRepository(actDbContext, actAtomicDbOperation);
         fakeListing1.LogHistoricalPrice(new DateOnly(2024, 4, 3), buyPrice: NaturalNumber.Create(100),
             sellPrice: NaturalNumber.Create(200));
         fakeListing1.UpdatePrices(newBuyPrice: NaturalNumber.Create(1000), newSellPrice: NaturalNumber.Create(2000),
             mockThreshold);
-        await repo.Update(fakeListing1);
-        var transaction = await atomicDbOperation.GetCurrentActiveTransaction();
-        await transaction.CommitAsync();
+        fakeListing1.UpdateOrders(new List<ListingOrder>()
+        {
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 10, quantity: 1),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11, quantity: 2),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), price: 10, quantity: 3),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 2, 3, 0, DateTimeKind.Utc), price: 20, quantity: 1),
+        });
+        await actRepo.Update(fakeListing1);
+        var actTransaction = await actAtomicDbOperation.GetCurrentActiveTransaction();
+        await actTransaction.CommitAsync();
 
         // Assert
         await using var assertConnection =
@@ -196,6 +242,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1000, actual.BuyPrice.Value);
         Assert.Equal(2000, actual.SellPrice.Value);
+
         Assert.Equal(3, actual.HistoricalPricesChronologically.Count);
         Assert.Equal(Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1), buyPrice: 1, sellPrice: 2),
             actual.HistoricalPricesChronologically[0]);
@@ -203,6 +250,20 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
             actual.HistoricalPricesChronologically[1]);
         Assert.Equal(Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 3), buyPrice: 100, sellPrice: 200),
             actual.HistoricalPricesChronologically[2]);
+
+        Assert.Equal(4, actual.OrdersChronologically.Count);
+        Assert.Equal(
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11, quantity: 2),
+            actual.OrdersChronologically[0]);
+        Assert.Equal(
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 10, quantity: 1),
+            actual.OrdersChronologically[1]);
+        Assert.Equal(
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), price: 10, quantity: 3),
+            actual.OrdersChronologically[2]);
+        Assert.Equal(
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 2, 3, 0, DateTimeKind.Utc), price: 20, quantity: 1),
+            actual.OrdersChronologically[3]);
     }
 
     [Fact]
@@ -214,10 +275,17 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
             Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1), buyPrice: 1, sellPrice: 2);
         var fakeHistoricalPrice2 =
             Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2), buyPrice: 10, sellPrice: 20);
+        var order1 =
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 10, quantity: 1);
+        var order2 =
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11, quantity: 1);
         var fakeListing1 = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 100, sellPrice: 200,
             new List<ListingHistoricalPrice>()
             {
                 fakeHistoricalPrice2, fakeHistoricalPrice1
+            }, new List<ListingOrder>()
+            {
+                order1, order2
             });
         var fakeListing2 = Faker.FakeListing(Faker.FakeGuid2, buyPrice: 8, sellPrice: 9);
 
@@ -247,11 +315,20 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(100, actual.BuyPrice.Value);
         Assert.Equal(200, actual.SellPrice.Value);
+
         Assert.Equal(2, actual.HistoricalPricesChronologically.Count);
         Assert.Equal(Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1), buyPrice: 1, sellPrice: 2),
             actual.HistoricalPricesChronologically[0]);
         Assert.Equal(Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2), buyPrice: 10, sellPrice: 20),
             actual.HistoricalPricesChronologically[1]);
+
+        Assert.Equal(2, actual.OrdersChronologically.Count);
+        Assert.Equal(
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11, quantity: 1),
+            actual.OrdersChronologically[0]);
+        Assert.Equal(
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 10, quantity: 1),
+            actual.OrdersChronologically[1]);
     }
 
     public async Task InitializeAsync() => await _container.StartAsync();
