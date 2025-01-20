@@ -71,7 +71,8 @@ public class CardPriceTrackerTests
         var cardExternalId2 = Faker.FakeCardExternalId(Faker.FakeGuid2);
         var externalListing2 = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId2.Value,
             bestBuyPrice: 2, bestSellPrice: 20,
-            historicalPrices: new List<CardListingPrice>() { Dtos.TestClasses.Faker.FakeCardListingPrice() }
+            historicalPrices: new List<CardListingPrice>() { Dtos.TestClasses.Faker.FakeCardListingPrice() },
+            completedOrders: new List<CardListingOrder>() { Dtos.TestClasses.Faker.FakeCompletedOrder() }
         );
         var domainListing2 = Faker.FakeListing(cardExternalId: cardExternalId2.Value, 2, 20);
         var domainPlayerCard2 =

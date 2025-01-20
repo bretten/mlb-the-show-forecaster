@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Security.Cryptography;
+using System.Text;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
@@ -61,6 +63,9 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         // Bulk upsert the Listing's historical prices
         await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
             cancellationToken);
+
+        // Bulk upsert the Listing's orders
+        await BulkUpsertOrders(connection, transaction, listing, _orderWriterDelegate, cancellationToken);
     }
 
     /// <summary>
@@ -84,6 +89,9 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         // Bulk upsert the Listing's historical prices
         await BulkUpsertHistoricalPrices(connection, transaction, listing, _historicalPriceWriterDelegate,
             cancellationToken);
+
+        // Bulk upsert the Listing's orders
+        await BulkUpsertOrders(connection, transaction, listing, _orderWriterDelegate, cancellationToken);
     }
 
     /// <summary>
@@ -169,6 +177,38 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     }
 
     /// <summary>
+    /// Uses an existing connection and transaction to bulk upsert a <see cref="Listing"/>'s <see cref="ListingOrder"/>s
+    /// </summary>
+    /// <param name="connection">The existing connection</param>
+    /// <param name="transaction">The existing transaction</param>
+    /// <param name="listing">The <see cref="Listing"/> to upsert <see cref="ListingOrder"/>s for</param>
+    /// <param name="orderWriterDelegate">Delegate for writing a <see cref="Listing"/>'s <see cref="ListingOrder"/>s to the Npgsql binary importer</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    private async Task BulkUpsertOrders(NpgsqlConnection connection, NpgsqlTransaction transaction, Listing listing,
+        Action<Listing, NpgsqlBinaryImporter> orderWriterDelegate, CancellationToken cancellationToken)
+    {
+        // Create a temporary table to insert the Listing's orders into
+        await using var tempTableCmd = new NpgsqlCommand(ListingOrdersCreateTempTableCommand, connection, transaction);
+        await tempTableCmd.ExecuteNonQueryAsync(cancellationToken);
+
+        // COPY the Listing's orders into the temporary table using a binary import
+        await using var importer =
+            await connection.BeginBinaryImportAsync(ListingOrdersBinaryCopyCommand, cancellationToken);
+        orderWriterDelegate(listing, importer);
+        await importer.CompleteAsync(cancellationToken);
+        await importer.CloseAsync(cancellationToken);
+
+        // Bulk update the actual orders table with data from the temporary table
+        await using var bulkUpdateCmd = new NpgsqlCommand(ListingOrdersBulkUpdateCommand, connection, transaction);
+        await bulkUpdateCmd.ExecuteNonQueryAsync(cancellationToken);
+
+        // Remove the temporary table
+        await using var dropTempTableCmd =
+            new NpgsqlCommand(ListingOrdersDropTempTableCommand, connection, transaction);
+        await dropTempTableCmd.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    /// <summary>
     /// Delegate for writing a <see cref="Listing"/>'s <see cref="ListingHistoricalPrice"/>s to the Npgsql binary
     /// importer
     /// </summary>
@@ -181,6 +221,29 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
             importer.Write(historicalPrice.Date, NpgsqlDbType.Date);
             importer.Write(historicalPrice.BuyPrice.Value, NpgsqlDbType.Integer);
             importer.Write(historicalPrice.SellPrice.Value, NpgsqlDbType.Integer);
+        }
+    };
+
+    /// <summary>
+    /// Delegate for writing a <see cref="Listing"/>'s <see cref="ListingOrder"/>s to the Npgsql binary importer
+    /// </summary>
+    private readonly Action<Listing, NpgsqlBinaryImporter> _orderWriterDelegate = (listing, importer) =>
+    {
+        foreach (var orderGroup in listing.OrdersChronologically.GroupBy(x => new { x.Date, x.Price.Value }))
+        {
+            // Get the order with the highest quantity
+            var order = orderGroup.OrderByDescending(x => x.Quantity.Value).First();
+            // Generate a hash
+            var hashBytes =
+                MD5.HashData(Encoding.UTF8.GetBytes($"{listing.Id:N}-{order.Date:yyyyMMddHHmm}-{order.Price.Value}"));
+            var hashHex = Convert.ToHexString(hashBytes);
+
+            importer.StartRow();
+            importer.Write(hashHex, NpgsqlDbType.Text);
+            importer.Write(listing.Id, NpgsqlDbType.Uuid);
+            importer.Write(order.Date, NpgsqlDbType.TimestampTz);
+            importer.Write(order.Price.Value, NpgsqlDbType.Integer);
+            importer.Write(order.Quantity.Value, NpgsqlDbType.Integer);
         }
     };
 
@@ -264,4 +327,63 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         ON CONFLICT ON CONSTRAINT {Constants.ListingHistoricalPrices.Keys.PrimaryKey} DO UPDATE
         SET {Constants.ListingHistoricalPrices.BuyPrice} = EXCLUDED.{Constants.ListingHistoricalPrices.BuyPrice},
             {Constants.ListingHistoricalPrices.SellPrice} = EXCLUDED.{Constants.ListingHistoricalPrices.SellPrice};";
+
+    /// <summary>
+    /// Name of the temporary table for <see cref="ListingOrder"/> for bulk binary imports
+    /// </summary>
+    private const string ListingOrdersTempTableName = $"{Constants.ListingOrders.TableName}_TEMP";
+
+    /// <summary>
+    /// Creates a temporary table for <see cref="ListingOrder"/> for a bulk binary import
+    /// </summary>
+    private const string ListingOrdersCreateTempTableCommand = $@"
+        CREATE TABLE {Constants.Schema}.{ListingOrdersTempTableName}
+        (
+            {Constants.ListingOrders.Hash}               text                        not null,
+            {Constants.ListingOrders.ListingId}          uuid                        not null,
+            {Constants.ListingOrders.Date}               timestamp with time zone    not null,
+            {Constants.ListingOrders.Price}              integer                     not null,
+            {Constants.ListingOrders.Quantity}           integer                     not null,
+            primary key ({Constants.ListingOrders.Hash})
+        );";
+
+    /// <summary>
+    /// Drops the temporary table for <see cref="ListingOrder"/>
+    /// </summary>
+    private const string ListingOrdersDropTempTableCommand =
+        $"DROP TABLE {Constants.Schema}.{ListingOrdersTempTableName}";
+
+    /// <summary>
+    /// Bulk binary import for <see cref="ListingOrder"/>
+    /// </summary>
+    private const string ListingOrdersBinaryCopyCommand = $@"
+        COPY {Constants.Schema}.{ListingOrdersTempTableName} (
+            {Constants.ListingOrders.Hash},
+            {Constants.ListingOrders.ListingId},
+            {Constants.ListingOrders.Date},
+            {Constants.ListingOrders.Price},
+            {Constants.ListingOrders.Quantity}
+        )
+        FROM STDIN (FORMAT BINARY)";
+
+    /// <summary>
+    /// Bulk update for the <see cref="ListingOrder"/> table using the temporary table as the source
+    /// </summary>
+    private const string ListingOrdersBulkUpdateCommand = $@"
+        INSERT INTO {Constants.Schema}.{Constants.ListingOrders.TableName} (
+            {Constants.ListingOrders.Hash},
+            {Constants.ListingOrders.ListingId},
+            {Constants.ListingOrders.Date},
+            {Constants.ListingOrders.Price},
+            {Constants.ListingOrders.Quantity}
+        )
+        SELECT
+            {Constants.ListingOrders.Hash},
+            {Constants.ListingOrders.ListingId},
+            {Constants.ListingOrders.Date},
+            {Constants.ListingOrders.Price},
+            {Constants.ListingOrders.Quantity}
+        FROM {Constants.Schema}.{ListingOrdersTempTableName}
+        ON CONFLICT ON CONSTRAINT {Constants.ListingOrders.Keys.PrimaryKey} DO UPDATE
+        SET {Constants.ListingOrders.Quantity} = EXCLUDED.{Constants.ListingOrders.Quantity};";
 }

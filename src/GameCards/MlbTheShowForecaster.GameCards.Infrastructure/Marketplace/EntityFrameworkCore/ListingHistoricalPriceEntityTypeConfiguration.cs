@@ -20,7 +20,7 @@ public sealed class ListingHistoricalPriceEntityTypeConfiguration : IEntityTypeC
         builder.ToTable(Constants.ListingHistoricalPrices.TableName, Constants.Schema);
 
         builder.HasOne<Listing>()
-            .WithMany("_historicalPrices")
+            .WithMany(Constants.ListingHistoricalPrices.FieldName)
             .HasForeignKey(Constants.ListingHistoricalPrices.ListingId)
             .HasConstraintName(Constants.ListingHistoricalPrices.Keys.ListingsForeignKeyConstraint);
 

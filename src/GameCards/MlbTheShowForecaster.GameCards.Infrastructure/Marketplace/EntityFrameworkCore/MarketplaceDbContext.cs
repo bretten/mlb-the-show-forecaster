@@ -35,7 +35,11 @@ public sealed class MarketplaceDbContext : DbContext, IMarketplaceWork
     public IQueryable<Listing> ListingsWithHistoricalPrices()
     {
         return Listings
-            .Include("_historicalPrices");
+            .Include(Constants.ListingHistoricalPrices.FieldName)
+            .Include(Constants.ListingOrders.FieldName)
+            // Split query is faster in this case due to foreign key index. Non-split query would be 'Listings' LEFT J 'Prices' LEFT J 'Orders'
+            // https://learn.microsoft.com/en-us/ef/core/querying/single-split-queries#split-queries
+            .AsSplitQuery();
     }
 
     /// <summary>
@@ -49,5 +53,6 @@ public sealed class MarketplaceDbContext : DbContext, IMarketplaceWork
         modelBuilder.HasDefaultSchema(Constants.Schema);
         modelBuilder.ApplyConfiguration(new ListingEntityTypeConfiguration());
         modelBuilder.ApplyConfiguration(new ListingHistoricalPriceEntityTypeConfiguration());
+        modelBuilder.ApplyConfiguration(new ListingOrderEntityTypeConfiguration());
     }
 }
