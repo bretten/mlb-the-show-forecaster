@@ -21,7 +21,7 @@ public class UpdateListingCommandHandlerTests
         // Arrange
         var cToken = CancellationToken.None;
         var externalCardListing = Faker.FakeCardListing();
-        var domainListing = TestClasses.Faker.FakeListing();
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing();
 
         var mockPriceChangeThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
         var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();
@@ -55,7 +55,7 @@ public class UpdateListingCommandHandlerTests
     {
         // Arrange
         var cToken = CancellationToken.None;
-        var externalId = TestClasses.Faker.FakeGuid1;
+        var externalId = Domain.Tests.Marketplace.TestClasses.Faker.FakeGuid1;
         var externalCardListing = Faker.FakeCardListing(cardExternalId: externalId,
             bestBuyPrice: 100, bestSellPrice: 200, historicalPrices: new List<CardListingPrice>()
             {
@@ -66,7 +66,8 @@ public class UpdateListingCommandHandlerTests
                 Faker.FakeCompletedOrder(new DateTime(2024, 4, 3, 10, 20, 0), price: 10, quantity: 1),
                 Faker.FakeCompletedOrder(new DateTime(2024, 4, 4, 10, 20, 0), price: 20, quantity: 2),
             });
-        var domainListing = TestClasses.Faker.FakeListing(cardExternalId: externalId, buyPrice: 1, sellPrice: 1);
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(
+            cardExternalId: externalId, buyPrice: 1, sellPrice: 1);
 
         var stubPriceChangeThreshold = new Mock<IListingPriceSignificantChangeThreshold>();
         stubPriceChangeThreshold.Setup(x => x.BuyPricePercentageChangeThreshold)
@@ -85,10 +86,10 @@ public class UpdateListingCommandHandlerTests
             .Returns(stubListingRepository.Object);
 
         var stubListingMapper = new Mock<IListingMapper>();
-        var expectedOrder1 =
-            TestClasses.Faker.FakeListingOrder(new DateTime(2024, 4, 3, 10, 20, 0), price: 10, quantity: 1);
-        var expectedOrder2 =
-            TestClasses.Faker.FakeListingOrder(new DateTime(2024, 4, 4, 10, 20, 0), price: 20, quantity: 2);
+        var expectedOrder1 = Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(
+            new DateTime(2024, 4, 3, 10, 20, 0), price: 10, quantity: 1);
+        var expectedOrder2 = Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(
+            new DateTime(2024, 4, 4, 10, 20, 0), price: 20, quantity: 2);
         stubListingMapper.Setup(x => x.Map(externalCardListing.RecentOrders[0]))
             .Returns(expectedOrder1);
         stubListingMapper.Setup(x => x.Map(externalCardListing.RecentOrders[1]))

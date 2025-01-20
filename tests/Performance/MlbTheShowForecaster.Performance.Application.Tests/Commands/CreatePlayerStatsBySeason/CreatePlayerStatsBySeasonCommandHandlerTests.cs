@@ -17,15 +17,15 @@ public class CreatePlayerStatsBySeasonCommandHandlerTests
     {
         // Arrange
         var fakePlayerSeason = Faker.FakePlayerSeason();
-        var fakePlayerStatsBySeason = TestClasses.Faker.FakePlayerStatsBySeason();
-        var scoredPlayerStatsBySeason = TestClasses.Faker.FakePlayerStatsBySeason();
+        var fakePlayerStatsBySeason = Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerStatsBySeason();
+        var scoredPlayerStatsBySeason = Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerStatsBySeason();
 
         var fakeMappedBattingStatsByGame = new List<PlayerBattingStatsByGame>()
-            { TestClasses.Faker.FakePlayerBattingStats() };
+            { Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerBattingStats() };
         var fakeMappedPitchingStatsByGame = new List<PlayerPitchingStatsByGame>()
-            { TestClasses.Faker.FakePlayerPitchingStats() };
+            { Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerPitchingStats() };
         var fakeMappedFieldingStatsByGame = new List<PlayerFieldingStatsByGame>()
-            { TestClasses.Faker.FakePlayerFieldingStats() };
+            { Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerFieldingStats() };
 
         var stubPlayerSeasonMapper = new Mock<IPlayerSeasonMapper>();
         stubPlayerSeasonMapper.Setup(x => x.Map(fakePlayerSeason))

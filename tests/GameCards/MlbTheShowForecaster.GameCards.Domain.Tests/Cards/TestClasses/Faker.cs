@@ -13,6 +13,9 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestC
 public static class Faker
 {
     public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+    public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
+    public static Guid FakeGuid3 = new("00000000-0000-0000-0000-000000000003");
+    public static Guid FakeGuid4 = new("00000000-0000-0000-0000-000000000004");
 
     public static CardExternalId FakeCardExternalId(Guid? guid = null)
     {
@@ -22,8 +25,8 @@ public static class Faker
     public static PlayerCard FakePlayerCard(ushort? year = null, Guid? externalId = null,
         CardType type = CardType.MlbCard, CardImageLocation? image = null, CardName? name = null,
         Rarity rarity = Rarity.Bronze, CardSeries series = CardSeries.Live, Position position = Position.RightField,
-        TeamShortName? teamShortName = null, int overallRating = 50,
-        PlayerCardAttributes? playerCardAttributes = null)
+        TeamShortName? teamShortName = null, int overallRating = 50, PlayerCardAttributes? playerCardAttributes = null,
+        bool isBoosted = false, int? temporaryRating = null)
     {
         var card = PlayerCard.Create(year.HasValue ? SeasonYear.Create(year.Value) : SeasonYear.Create(2024),
             FakeCardExternalId(externalId),
@@ -36,6 +39,16 @@ public static class Faker
             teamShortName ?? FakeTeamShortName(),
             FakeOverallRating(overallRating),
             playerCardAttributes ?? FakePlayerCardAttributes());
+
+        if (isBoosted)
+        {
+            card.Boost(new DateOnly(2024, 7, 17), new DateOnly(2024, 7, 19), "Hit 5 HRs", FakePlayerCardAttributes());
+        }
+        else if (temporaryRating.HasValue)
+        {
+            card.SetTemporaryRating(new DateOnly(2024, 7, 17), FakeOverallRating(temporaryRating.Value));
+        }
+
         card.ClearDomainEvents();
         return card;
     }

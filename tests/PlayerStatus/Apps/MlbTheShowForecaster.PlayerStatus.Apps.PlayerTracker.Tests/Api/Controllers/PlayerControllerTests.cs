@@ -3,7 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -63,7 +63,7 @@ public class PlayerControllerTests
     {
         // Arrange
         const string playerQuery = "Dot Spot";
-        var player = Faker.FakePlayer(1, firstName: "Dot", lastName: "Spot");
+        var player = Domain.Tests.Players.TestClasses.Faker.FakePlayer(1, firstName: "Dot", lastName: "Spot");
         var team = Faker.FakeTeam();
 
         var stubTeamProvider = new Mock<ITeamProvider>();

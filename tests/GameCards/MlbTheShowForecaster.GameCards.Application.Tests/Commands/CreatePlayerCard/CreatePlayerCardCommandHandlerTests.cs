@@ -2,10 +2,10 @@
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
 using Moq;
-using Faker = com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses.Faker;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Commands.CreatePlayerCard;
 
@@ -15,7 +15,7 @@ public class CreatePlayerCardCommandHandlerTests
     public async Task Handle_PlayerCardExists_ThrowsException()
     {
         // Arrange
-        var fakeExternalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard();
+        var fakeExternalPlayerCard = Faker.FakeMlbPlayerCard();
 
         var mockPlayerSeasonMapper = Mock.Of<IPlayerCardMapper>();
 
@@ -46,8 +46,8 @@ public class CreatePlayerCardCommandHandlerTests
     public async Task Handle_CreatePlayerCardCommand_CreatesPlayerCard()
     {
         // Arrange
-        var fakeExternalPlayerCard = Dtos.TestClasses.Faker.FakeMlbPlayerCard();
-        var fakeDomainPlayerCard = Faker.FakePlayerCard();
+        var fakeExternalPlayerCard = Faker.FakeMlbPlayerCard();
+        var fakeDomainPlayerCard = Domain.Tests.Cards.TestClasses.Faker.FakePlayerCard();
 
         var stubPlayerSeasonMapper =
             Mock.Of<IPlayerCardMapper>(x => x.Map(fakeExternalPlayerCard) == fakeDomainPlayerCard);

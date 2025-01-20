@@ -5,6 +5,7 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Ap
 using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Api.Responses;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 
@@ -42,17 +43,18 @@ public class PerformanceControllerTests
         var season = SeasonYear.Create(2024);
         var mlbId = MlbId.Create(1);
         var playerStatsBySeason = Faker.FakePlayerStatsBySeason(seasonYear: season.Value, playerMlbId: mlbId.Value);
-        var performanceMetrics = Faker.FakePlayerSeasonPerformanceMetrics(seasonYear: season.Value, mlbId: mlbId.Value,
+        var performanceMetrics = Application.Tests.Dtos.TestClasses.Faker.FakePlayerSeasonPerformanceMetrics(
+            seasonYear: season.Value, mlbId: mlbId.Value,
             new List<PerformanceMetricsByDate>()
             {
-                Faker.FakePerformanceMetricByDate(date: new DateOnly(2024, 10, 1),
+                Application.Tests.Dtos.TestClasses.Faker.FakePerformanceMetricByDate(date: new DateOnly(2024, 10, 1),
                     battingScore: 0.1m, significantBattingParticipation: false,
                     pitchingScore: 0.2m, significantPitchingParticipation: false,
                     fieldingScore: 0.3m, significantFieldingParticipation: false,
                     battingAverage: 1.1m, onBasePercentage: 1.2m, slugging: 1.3m, earnedRunAverage: 1.4m,
                     opponentsBattingAverage: 1.5m, strikeoutsPer9: 1.6m, baseOnBallsPer9: 1.7m, homeRunsPer9: 1.8m,
                     fieldingPercentage: 1.9m),
-                Faker.FakePerformanceMetricByDate(date: new DateOnly(2024, 10, 2),
+                Application.Tests.Dtos.TestClasses.Faker.FakePerformanceMetricByDate(date: new DateOnly(2024, 10, 2),
                     battingScore: 0.4m, significantBattingParticipation: true,
                     pitchingScore: 0.5m, significantPitchingParticipation: true,
                     fieldingScore: 0.6m, significantFieldingParticipation: true,

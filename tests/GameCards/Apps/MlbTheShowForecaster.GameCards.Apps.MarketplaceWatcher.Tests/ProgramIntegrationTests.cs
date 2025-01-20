@@ -1,5 +1,5 @@
 ﻿using System.Data.Common;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Tests.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -101,7 +101,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await using var marketplaceDbContext = GetMarketplaceDbContext(connection);
         await marketplaceDbContext.Database.MigrateAsync();
         // Add a Listing so price change domain events can be dispatched
-        await marketplaceDbContext.Listings.AddAsync(Faker.FakeListing(playerCardExternalId1));
+        await marketplaceDbContext.Listings.AddAsync(
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(playerCardExternalId1));
         await marketplaceDbContext.SaveChangesAsync();
 
         /*

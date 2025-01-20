@@ -3,9 +3,8 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositori
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 using Moq;
+using Faker = com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses.Faker;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.Services;
 
@@ -16,10 +15,10 @@ public class PlayerSearchServiceTests
     {
         // Arrange
         const string name = "Dot Spot Jr. III";
-        var team = TeamFaker.Fake();
+        var team = Faker.FakeTeam();
 
-        var match1 = PlayerFaker.Fake(firstName: "Dot Spot", lastName: "Jr. III", team: team);
-        var match2 = PlayerFaker.Fake(firstName: "Dot", lastName: "Spot Jr. III", team: team);
+        var match1 = TestClasses.Faker.FakePlayer(firstName: "Dot Spot", lastName: "Jr. III", team: team);
+        var match2 = TestClasses.Faker.FakePlayer(firstName: "Dot", lastName: "Spot Jr. III", team: team);
 
         var stubPlayerRepository = new Mock<IPlayerRepository>();
         stubPlayerRepository.Setup(x => x.GetAllByName(match1.FirstName, match1.LastName))
@@ -43,9 +42,9 @@ public class PlayerSearchServiceTests
     {
         // Arrange
         const string name = "Dot Spot Jr. III";
-        var team = TeamFaker.Fake();
+        var team = Faker.FakeTeam();
 
-        var match = PlayerFaker.Fake(firstName: "Dot Spot", lastName: "Jr. III", team: team);
+        var match = TestClasses.Faker.FakePlayer(firstName: "Dot Spot", lastName: "Jr. III", team: team);
 
         var stubPlayerRepository = new Mock<IPlayerRepository>();
         stubPlayerRepository.Setup(x => x.GetAllByName(match.FirstName, match.LastName))

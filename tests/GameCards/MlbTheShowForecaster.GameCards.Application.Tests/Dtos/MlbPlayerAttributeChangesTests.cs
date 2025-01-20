@@ -1,5 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Dtos;
 

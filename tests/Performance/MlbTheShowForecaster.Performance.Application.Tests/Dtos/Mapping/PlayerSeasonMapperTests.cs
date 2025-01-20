@@ -55,10 +55,10 @@ public class PlayerSeasonMapperTests
         // Assert
         var actualList = actual.ToList();
         Assert.Equal(2, actualList.Count);
-        Assert.Equal(Tests.TestClasses.Faker.FakePlayerBattingStats(scalar: 1, gameDate: new DateOnly(2024, 4, 30)),
-            actualList[0]);
-        Assert.Equal(Tests.TestClasses.Faker.FakePlayerBattingStats(scalar: 1000, gameDate: new DateOnly(2024, 5, 1)),
-            actualList[1]);
+        Assert.Equal(Domain.Tests.PlayerSeasons.TestClasses.Faker.FakeTestPlayerBattingStats(scalar: 1,
+            gameDate: new DateOnly(2024, 4, 30)), actualList[0]);
+        Assert.Equal(Domain.Tests.PlayerSeasons.TestClasses.Faker.FakeTestPlayerBattingStats(scalar: 1000,
+            gameDate: new DateOnly(2024, 5, 1)), actualList[1]);
     }
 
     [Fact]
@@ -82,12 +82,13 @@ public class PlayerSeasonMapperTests
         // Assert
         var actualList = actual.ToList();
         Assert.Equal(2, actualList.Count);
-        Assert.Equal(
-            Tests.TestClasses.Faker.FakePlayerPitchingStats(scalar: 1, gameDate: new DateOnly(2024, 4, 30), win: true,
-                gameStarted: true, shutout: true, completeGame: true), actualList[0]);
-        Assert.Equal(
-            Tests.TestClasses.Faker.FakePlayerPitchingStats(scalar: 1000, gameDate: new DateOnly(2024, 5, 1),
-                loss: true, gameFinished: true, blownSave: true, saveOpportunity: true), actualList[1]);
+        Assert.Equal(Domain.Tests.PlayerSeasons.TestClasses.Faker.FakeTestPlayerPitchingStats(scalar: 1,
+                gameDate: new DateOnly(2024, 4, 30), win: true, gameStarted: true, shutout: true, completeGame: true),
+            actualList[0]);
+        Assert.Equal(Domain.Tests.PlayerSeasons.TestClasses.Faker.FakeTestPlayerPitchingStats(scalar: 1000,
+                gameDate: new DateOnly(2024, 5, 1), loss: true, gameFinished: true, blownSave: true,
+                saveOpportunity: true),
+            actualList[1]);
     }
 
     [Fact]
@@ -111,12 +112,10 @@ public class PlayerSeasonMapperTests
         // Assert
         var actualList = actual.ToList();
         Assert.Equal(2, actualList.Count);
-        Assert.Equal(
-            Tests.TestClasses.Faker.FakePlayerFieldingStats(scalar: 1, gameDate: new DateOnly(2024, 4, 30),
-                gameStarted: true), actualList[0]);
-        Assert.Equal(
-            Tests.TestClasses.Faker.FakePlayerFieldingStats(scalar: 1000, gameDate: new DateOnly(2024, 5, 1),
-                gameStarted: false), actualList[1]);
+        Assert.Equal(Domain.Tests.PlayerSeasons.TestClasses.Faker.FakeTestPlayerFieldingStats(scalar: 1,
+            gameDate: new DateOnly(2024, 4, 30), gameStarted: true), actualList[0]);
+        Assert.Equal(Domain.Tests.PlayerSeasons.TestClasses.Faker.FakeTestPlayerFieldingStats(scalar: 1000,
+            gameDate: new DateOnly(2024, 5, 1), gameStarted: false), actualList[1]);
     }
 
     [Fact]
@@ -125,26 +124,30 @@ public class PlayerSeasonMapperTests
         // Arrange
         var day1 = new DateOnly(2024, 9, 30);
         var day2 = new DateOnly(2024, 10, 1);
-        var playerStatsBySeason = Tests.TestClasses.Faker.FakePlayerStatsBySeason(100, 2024,
+        var playerStatsBySeason = Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerStatsBySeason(100, 2024,
             battingScore: 0.1m, pitchingScore: 0.2m, fieldingScore: 0.3m,
             battingStatsByGames: new List<PlayerBattingStatsByGame>()
             {
-                Tests.TestClasses.Faker.FakePlayerBattingStats(plateAppearances: 4, atBats: 3, hits: 2, homeRuns: 1,
-                    baseOnBalls: 1, gameDate: day1),
-                Tests.TestClasses.Faker.FakePlayerBattingStats(plateAppearances: 5, atBats: 4, hits: 1, doubles: 1,
-                    baseOnBalls: 1, gameDate: day2)
+                Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerBattingStats(plateAppearances: 4, atBats: 3,
+                    hits: 2, homeRuns: 1, baseOnBalls: 1, gameDate: day1),
+                Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerBattingStats(plateAppearances: 5, atBats: 4,
+                    hits: 1, doubles: 1, baseOnBalls: 1, gameDate: day2)
             },
             pitchingStatsByGames: new List<PlayerPitchingStatsByGame>()
             {
-                Tests.TestClasses.Faker.FakePlayerPitchingStats(inningsPitched: 3, battersFaced: 10, atBats: 9,
-                    baseOnBalls: 1, strikeouts: 7, hits: 2, homeRuns: 2, earnedRuns: 2, gameDate: day1),
-                Tests.TestClasses.Faker.FakePlayerPitchingStats(inningsPitched: 2, battersFaced: 10, atBats: 5,
-                    baseOnBalls: 5, strikeouts: 4, hits: 1, homeRuns: 1, earnedRuns: 1, gameDate: day2)
+                Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerPitchingStats(inningsPitched: 3,
+                    battersFaced: 10, atBats: 9, baseOnBalls: 1, strikeouts: 7, hits: 2, homeRuns: 2, earnedRuns: 2,
+                    gameDate: day1),
+                Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerPitchingStats(inningsPitched: 2,
+                    battersFaced: 10, atBats: 5, baseOnBalls: 5, strikeouts: 4, hits: 1, homeRuns: 1, earnedRuns: 1,
+                    gameDate: day2)
             },
             fieldingStatsByGames: new List<PlayerFieldingStatsByGame>()
             {
-                Tests.TestClasses.Faker.FakePlayerFieldingStats(assists: 3, putouts: 2, errors: 1, gameDate: day1),
-                Tests.TestClasses.Faker.FakePlayerFieldingStats(assists: 5, putouts: 4, errors: 1, gameDate: day2),
+                Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerFieldingStats(assists: 3, putouts: 2, errors: 1,
+                    gameDate: day1),
+                Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerFieldingStats(assists: 5, putouts: 4, errors: 1,
+                    gameDate: day2),
             });
 
         var battingStatsDay1 = playerStatsBySeason.BattingStatsFor(day1, day1);
@@ -156,17 +159,17 @@ public class PlayerSeasonMapperTests
 
         var stubPerformanceAssessor = new Mock<IPerformanceAssessor>();
         stubPerformanceAssessor.Setup(x => x.AssessBatting(battingStatsDay1))
-            .Returns(Tests.TestClasses.Faker.FakePerformanceScore(0.1m));
+            .Returns(Domain.Tests.PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.1m));
         stubPerformanceAssessor.Setup(x => x.AssessBatting(battingStatsDay2))
-            .Returns(Tests.TestClasses.Faker.FakePerformanceScore(0.2m));
+            .Returns(Domain.Tests.PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.2m));
         stubPerformanceAssessor.Setup(x => x.AssessPitching(pitchingStatsDay1))
-            .Returns(Tests.TestClasses.Faker.FakePerformanceScore(0.3m));
+            .Returns(Domain.Tests.PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.3m));
         stubPerformanceAssessor.Setup(x => x.AssessPitching(pitchingStatsDay2))
-            .Returns(Tests.TestClasses.Faker.FakePerformanceScore(0.4m));
+            .Returns(Domain.Tests.PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.4m));
         stubPerformanceAssessor.Setup(x => x.AssessFielding(fieldingStatsDay1))
-            .Returns(Tests.TestClasses.Faker.FakePerformanceScore(0.5m));
+            .Returns(Domain.Tests.PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.5m));
         stubPerformanceAssessor.Setup(x => x.AssessFielding(fieldingStatsDay2))
-            .Returns(Tests.TestClasses.Faker.FakePerformanceScore(0.6m));
+            .Returns(Domain.Tests.PerformanceAssessment.TestClasses.Faker.FakePerformanceScore(0.6m));
 
         var stubParticipationAssessor = new Mock<IParticipationAssessor>();
         stubParticipationAssessor.Setup(x => x.AssessBatting(day1, day1, battingStatsDay1))

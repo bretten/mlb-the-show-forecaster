@@ -6,8 +6,8 @@ using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Queries.GetAllPlayerStatsBySeason;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Services;

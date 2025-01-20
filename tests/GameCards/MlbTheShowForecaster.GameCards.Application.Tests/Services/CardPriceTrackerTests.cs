@@ -8,11 +8,11 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetAllPl
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services;
@@ -65,8 +65,7 @@ public class CardPriceTrackerTests
         // Listing1 for PlayerCard1 does not exist in the domain and will be created
         var cardExternalId1 = Faker.FakeCardExternalId(Faker.FakeGuid1);
         var externalListing1 = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId1.Value);
-        var domainPlayerCard1 =
-            Faker.FakePlayerCard(year: year.Value, cardExternalId: cardExternalId1.Value);
+        var domainPlayerCard1 = Faker.FakePlayerCard(year: year.Value, externalId: cardExternalId1.Value);
         // Listing2 for PlayerCard2 exists but the external listing has new data, so it will be updated
         var cardExternalId2 = Faker.FakeCardExternalId(Faker.FakeGuid2);
         var externalListing2 = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId2.Value,
@@ -74,17 +73,16 @@ public class CardPriceTrackerTests
             historicalPrices: new List<CardListingPrice>() { Dtos.TestClasses.Faker.FakeCardListingPrice() },
             completedOrders: new List<CardListingOrder>() { Dtos.TestClasses.Faker.FakeCompletedOrder() }
         );
-        var domainListing2 = Faker.FakeListing(cardExternalId: cardExternalId2.Value, 2, 20);
-        var domainPlayerCard2 =
-            Faker.FakePlayerCard(year: year.Value, cardExternalId: cardExternalId2.Value);
+        var domainListing2 = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(
+            cardExternalId: cardExternalId2.Value, 2, 20);
+        var domainPlayerCard2 = Faker.FakePlayerCard(year: year.Value, externalId: cardExternalId2.Value);
         // Listing3 for PlayerCard3 exists, but the external listing has no new data, so no action will be taken
         var cardExternalId3 = Faker.FakeCardExternalId(Faker.FakeGuid3);
-        var externalListing3 =
-            Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId3.Value, bestBuyPrice: 3,
-                bestSellPrice: 30);
-        var domainListing3 = Faker.FakeListing(cardExternalId: cardExternalId3.Value, 3, 30);
-        var domainPlayerCard3 =
-            Faker.FakePlayerCard(year: year.Value, cardExternalId: cardExternalId3.Value);
+        var externalListing3 = Dtos.TestClasses.Faker.FakeCardListing(
+            cardExternalId: cardExternalId3.Value, bestBuyPrice: 3, bestSellPrice: 30);
+        var domainListing3 = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(
+            cardExternalId: cardExternalId3.Value, 3, 30);
+        var domainPlayerCard3 = Faker.FakePlayerCard(year: year.Value, externalId: cardExternalId3.Value);
 
         // The query that returns all PlayerCards currently in the domain
         var getAllPlayerCardsQuery = new GetAllPlayerCardsQuery(year);

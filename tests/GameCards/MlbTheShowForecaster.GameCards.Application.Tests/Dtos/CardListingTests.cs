@@ -11,7 +11,7 @@ public class CardListingTests
     {
         // Arrange
         var externalCardListing = Faker.FakeCardListing(bestBuyPrice: 10, bestSellPrice: 20);
-        var domainListing = Tests.TestClasses.Faker.FakeListing(buyPrice: 1, sellPrice: 2);
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(buyPrice: 1, sellPrice: 2);
 
         // Act
         var actual = externalCardListing.HasNewPrices(domainListing);
@@ -25,7 +25,7 @@ public class CardListingTests
     {
         // Arrange
         var externalCardListing = Faker.FakeCardListing(bestBuyPrice: 10, bestSellPrice: 20);
-        var domainListing = Tests.TestClasses.Faker.FakeListing(buyPrice: 10, sellPrice: 20);
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(buyPrice: 10, sellPrice: 20);
 
         // Act
         var actual = externalCardListing.HasNewPrices(domainListing);
@@ -44,9 +44,10 @@ public class CardListingTests
                 Faker.FakeCardListingPrice(new DateOnly(2024, 4, 2))
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(historicalPrices: new List<ListingHistoricalPrice>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(
+            historicalPrices: new List<ListingHistoricalPrice>()
             {
-                Tests.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1))
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1))
             }
         );
 
@@ -67,10 +68,11 @@ public class CardListingTests
                 Faker.FakeCardListingPrice(new DateOnly(2024, 4, 2))
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(historicalPrices: new List<ListingHistoricalPrice>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(
+            historicalPrices: new List<ListingHistoricalPrice>()
             {
-                Tests.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1)),
-                Tests.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2))
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1)),
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2))
             }
         );
 
@@ -91,9 +93,9 @@ public class CardListingTests
                 Faker.FakeCompletedOrder(date, price: 1, quantity: 3)
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
             {
-                Tests.TestClasses.Faker.FakeListingOrder(date, price: 1, quantity: 2)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date, price: 1, quantity: 2)
             }
         );
 
@@ -114,9 +116,9 @@ public class CardListingTests
                 Faker.FakeCompletedOrder(date, price: 1, quantity: 3)
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
             {
-                Tests.TestClasses.Faker.FakeListingOrder(date, price: 2, quantity: 3)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date, price: 2, quantity: 3)
             }
         );
 
@@ -139,9 +141,9 @@ public class CardListingTests
                 Faker.FakeCompletedOrder(date2, price: 1, quantity: 3)
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
             {
-                Tests.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3)
             }
         );
 
@@ -164,10 +166,10 @@ public class CardListingTests
                 Faker.FakeCompletedOrder(date2, price: 1, quantity: 3)
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
             {
-                Tests.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3),
-                Tests.TestClasses.Faker.FakeListingOrder(date2, price: 1, quantity: 3),
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3),
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date2, price: 1, quantity: 3),
             }
         );
 
@@ -188,9 +190,10 @@ public class CardListingTests
                 Faker.FakeCardListingPrice(new DateOnly(2024, 4, 2))
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(historicalPrices: new List<ListingHistoricalPrice>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(
+            historicalPrices: new List<ListingHistoricalPrice>()
             {
-                Tests.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1))
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1))
             }
         );
 
@@ -212,10 +215,11 @@ public class CardListingTests
                 Faker.FakeCardListingPrice(new DateOnly(2024, 4, 2))
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(historicalPrices: new List<ListingHistoricalPrice>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(
+            historicalPrices: new List<ListingHistoricalPrice>()
             {
-                Tests.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1)),
-                Tests.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2))
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 1)),
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2))
             }
         );
 
@@ -236,9 +240,9 @@ public class CardListingTests
                 Faker.FakeCompletedOrder(date, price: 1, quantity: 3)
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
             {
-                Tests.TestClasses.Faker.FakeListingOrder(date, price: 1, quantity: 2)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date, price: 1, quantity: 2)
             }
         );
 
@@ -260,9 +264,9 @@ public class CardListingTests
                 Faker.FakeCompletedOrder(date, price: 1, quantity: 3)
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
             {
-                Tests.TestClasses.Faker.FakeListingOrder(date, price: 2, quantity: 3)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date, price: 2, quantity: 3)
             }
         );
 
@@ -286,9 +290,9 @@ public class CardListingTests
                 Faker.FakeCompletedOrder(date2, price: 2, quantity: 4)
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
             {
-                Tests.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3)
             }
         );
 
@@ -312,10 +316,10 @@ public class CardListingTests
                 Faker.FakeCompletedOrder(date2, price: 2, quantity: 4)
             }
         );
-        var domainListing = Tests.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(orders: new List<ListingOrder>()
             {
-                Tests.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3),
-                Tests.TestClasses.Faker.FakeListingOrder(date2, price: 2, quantity: 4),
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date1, price: 1, quantity: 3),
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(date2, price: 2, quantity: 4),
             }
         );
 

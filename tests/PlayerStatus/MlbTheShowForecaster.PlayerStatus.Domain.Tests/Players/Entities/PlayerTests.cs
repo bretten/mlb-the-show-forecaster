@@ -4,8 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Entities;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Events;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
+using Faker = com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses.Faker;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.Entities;
 
@@ -25,7 +24,7 @@ public class PlayerTests
         var mlbDebutDate = new DateOnly(2010, 1, 1);
         var batSide = BatSide.Left;
         var throwArm = ThrowArm.Right;
-        var team = TeamFaker.Fake();
+        var team = Faker.FakeTeam();
         var active = true;
 
         // Act
@@ -41,9 +40,9 @@ public class PlayerTests
         Assert.Equal(new DateOnly(2010, 1, 1), actual.MlbDebutDate);
         Assert.Equal(BatSide.Left, actual.BatSide);
         Assert.Equal(ThrowArm.Right, actual.ThrowArm);
-        Assert.Equal(TeamFaker.DefaultMlbId, actual.Team?.MlbId.Value);
-        Assert.Equal(TeamFaker.DefaultTeamName, actual.Team?.Name.Value);
-        Assert.Equal(TeamFaker.DefaultTeamAbbreviation, actual.Team?.Abbreviation.Value);
+        Assert.Equal(Faker.DefaultMlbId, actual.Team?.MlbId.Value);
+        Assert.Equal(Faker.DefaultTeamName, actual.Team?.Name.Value);
+        Assert.Equal(Faker.DefaultTeamAbbreviation, actual.Team?.Abbreviation.Value);
         Assert.True(actual.Active);
     }
 
@@ -53,8 +52,8 @@ public class PlayerTests
         // Arrange
         var year = SeasonYear.Create(2024);
         Team? currentTeam = null;
-        var newTeam = TeamFaker.Fake();
-        var player = PlayerFaker.Fake(team: currentTeam);
+        var newTeam = Faker.FakeTeam();
+        var player = TestClasses.Faker.FakePlayer(team: currentTeam);
 
         // Act
         player.SignContractWithTeam(year, newTeam, Date);
@@ -72,9 +71,9 @@ public class PlayerTests
     {
         // Arrange
         var year = SeasonYear.Create(2024);
-        var currentTeam = TeamFaker.Fake();
-        var newTeam = TeamFaker.Fake(1000, "New Team", "NEW");
-        var player = PlayerFaker.Fake(team: currentTeam);
+        var currentTeam = Faker.FakeTeam();
+        var newTeam = Faker.FakeTeam(1000, "New Team", "NEW");
+        var player = TestClasses.Faker.FakePlayer(team: currentTeam);
 
         // Act
         player.SignContractWithTeam(year, newTeam, Date);
@@ -92,8 +91,8 @@ public class PlayerTests
     {
         // Arrange
         var year = SeasonYear.Create(2024);
-        var currentTeam = TeamFaker.Fake();
-        var player = PlayerFaker.Fake(team: currentTeam);
+        var currentTeam = Faker.FakeTeam();
+        var player = TestClasses.Faker.FakePlayer(team: currentTeam);
 
         // Act
         player.EnterFreeAgency(year, Date);
@@ -110,7 +109,7 @@ public class PlayerTests
     {
         // Arrange
         var year = SeasonYear.Create(2024);
-        var player = PlayerFaker.Fake(active: false);
+        var player = TestClasses.Faker.FakePlayer(active: false);
 
         // Act
         player.Activate(year, Date);
@@ -126,7 +125,7 @@ public class PlayerTests
     {
         // Arrange
         var year = SeasonYear.Create(2024);
-        var player = PlayerFaker.Fake(active: true);
+        var player = TestClasses.Faker.FakePlayer(active: true);
 
         // Act
         player.Inactivate(year, Date);

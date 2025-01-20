@@ -6,9 +6,9 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Requests;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Services;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.Services;
@@ -54,9 +54,9 @@ public class MlbApiPlayerRosterTests
         var expectedRosterEntries = new List<RosterEntry>() { fakeRosterEntry1, fakeRosterEntry2, fakeRosterEntry3 };
 
         // Fake player DTOs from the MLB API
-        var fakePlayer1 = Faker.FakePlayerDto(1);
-        var fakePlayer2 = Faker.FakePlayerDto(2);
-        var fakePlayer3 = Faker.FakePlayerDto(3);
+        var fakePlayer1 = TestClasses.Faker.FakePlayerDto(1);
+        var fakePlayer2 = TestClasses.Faker.FakePlayerDto(2);
+        var fakePlayer3 = TestClasses.Faker.FakePlayerDto(3);
         var players = new List<PlayerDto>() { fakePlayer1, fakePlayer2, fakePlayer3 };
 
         // Mock MLB API behavior to return the players

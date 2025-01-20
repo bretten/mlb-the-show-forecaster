@@ -8,9 +8,9 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -322,7 +322,7 @@ public class RosterUpdateOrchestratorTests
         // RosterUpdate1 - PlayerCard1 is already up-to-date, so no command will be sent
         var rosterUpdate1Date = new DateOnly(2024, 4, 1);
         var cardExternalId1 = Faker.FakeGuid1;
-        var playerCard1 = Faker.FakePlayerCard(cardExternalId: cardExternalId1);
+        var playerCard1 = Faker.FakePlayerCard(externalId: cardExternalId1);
         var playerCard1Rating =
             Faker.FakeBaselinePlayerCardHistoricalRating(rosterUpdate1Date, new DateOnly(2024, 4, 2));
         playerCard1.AddHistoricalRating(playerCard1Rating);
@@ -335,7 +335,7 @@ public class RosterUpdateOrchestratorTests
         // RosterUpdate2 - PlayerCard2 has both a rating change and a position change
         var rosterUpdate2Date = new DateOnly(2024, 4, 2);
         var cardExternalId2 = Faker.FakeGuid2;
-        var playerCard2 = Faker.FakePlayerCard(cardExternalId: cardExternalId2);
+        var playerCard2 = Faker.FakePlayerCard(externalId: cardExternalId2);
         var ratingChange2 =
             Dtos.TestClasses.Faker.FakePlayerRatingChange(cardExternalId: cardExternalId2, date: rosterUpdate2Date);
         var positionChange2 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId2);
@@ -343,7 +343,7 @@ public class RosterUpdateOrchestratorTests
 
         // RosterUpdate2 - PlayerCard3 only has a position change
         var cardExternalId3 = Faker.FakeGuid3;
-        var playerCard3 = Faker.FakePlayerCard(cardExternalId: cardExternalId3);
+        var playerCard3 = Faker.FakePlayerCard(externalId: cardExternalId3);
         var positionChange3 = Dtos.TestClasses.Faker.FakePlayerPositionChange(cardExternalId: cardExternalId3);
 
         var rosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(date: rosterUpdate2Date,

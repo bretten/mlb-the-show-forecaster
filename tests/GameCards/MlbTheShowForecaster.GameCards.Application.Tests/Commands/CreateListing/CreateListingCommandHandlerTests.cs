@@ -16,7 +16,7 @@ public class CreateListingCommandHandlerTests
     {
         // Arrange
         var externalCardListing = Faker.FakeCardListing();
-        var domainListing = TestClasses.Faker.FakeListing();
+        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing();
 
         var stubListingMapper = Mock.Of<IListingMapper>(x => x.Map(externalCardListing) == domainListing);
         var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();

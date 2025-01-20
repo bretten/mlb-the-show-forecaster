@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Services.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Jobs;
 using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Jobs.Io;
 using Microsoft.Extensions.Logging;
@@ -15,7 +16,7 @@ public class PerformanceTrackerJobTests
         // Arrange
         var cToken = CancellationToken.None;
         var input = new SeasonJobInput(SeasonYear.Create(2024));
-        var result = Application.Tests.Services.TestClasses.Faker.FakePerformanceTrackerResult(1, 2, 3);
+        var result = Faker.FakePerformanceTrackerResult(1, 2, 3);
 
         var stubPerformanceTracker = new Mock<IPerformanceTracker>();
         stubPerformanceTracker.Setup(x => x.TrackPlayerPerformance(input.Year, cToken))

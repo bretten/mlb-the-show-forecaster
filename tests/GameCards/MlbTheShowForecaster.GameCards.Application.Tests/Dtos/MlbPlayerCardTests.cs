@@ -79,7 +79,7 @@ public class MlbPlayerCardTests
         // Arrange
         var mlbPlayerCard = new MlbPlayerCard(
             Year: SeasonYear.Create(2024),
-            ExternalUuid: Tests.TestClasses.Faker.FakeCardExternalId(),
+            ExternalUuid: Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(),
             Type: CardType.MlbCard,
             ImageUrl: CardImageLocation.Create("img.png"),
             Name: CardName.Create("name1"),

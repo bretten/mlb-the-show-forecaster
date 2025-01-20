@@ -2,11 +2,11 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Commands.UpdatePlayer.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Repositories;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Tests.Commands.UpdatePlayer;
@@ -19,7 +19,8 @@ public class UpdatePlayerCommandHandlerTests
         // Arrange
         var year = SeasonYear.Create(2024);
         var fakeTeam = Faker.FakeTeam();
-        var fakePlayer = Faker.FakePlayer(active: true, team: fakeTeam); // Player's initial state
+        var fakePlayer = Domain.Tests.Players.TestClasses.Faker.FakePlayer(active: true,
+            team: fakeTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
         {
             PlayerStatusChangeType.Inactivated,
@@ -52,7 +53,8 @@ public class UpdatePlayerCommandHandlerTests
         // Arrange
         var year = SeasonYear.Create(2024);
         var fakeTeam = Faker.FakeTeam();
-        var fakePlayer = Faker.FakePlayer(active: false, team: Faker.NoTeam); // Player's initial state
+        var fakePlayer = Domain.Tests.Players.TestClasses.Faker.FakePlayer(active: false,
+            team: Faker.NoTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
         {
             PlayerStatusChangeType.Activated,
@@ -85,7 +87,8 @@ public class UpdatePlayerCommandHandlerTests
     {
         // Arrange
         var year = SeasonYear.Create(2024);
-        var fakePlayer = Faker.FakePlayer(active: false, team: Faker.NoTeam); // Player's initial state
+        var fakePlayer = Domain.Tests.Players.TestClasses.Faker.FakePlayer(active: false,
+            team: Faker.NoTeam); // Player's initial state
         var fakePlayerStatusChange = new PlayerStatusChanges(new List<PlayerStatusChangeType>() // Player's next state
         {
             PlayerStatusChangeType.Activated,

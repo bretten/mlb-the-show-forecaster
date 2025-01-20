@@ -9,13 +9,13 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.
 /// <summary>
 /// Fakes a Player
 /// </summary>
-public static class PlayerFaker
+public static class Faker
 {
     public const int DefaultMlbId = 1;
     public const string DefaultFirstName = "First";
     public const string DefaultLastName = "Last";
 
-    public static Player Fake(int? mlbId = null, string? firstName = null, string? lastName = null,
+    public static Player FakePlayer(int? mlbId = null, string? firstName = null, string? lastName = null,
         DateOnly birthdate = default, Position position = Position.Catcher, DateOnly mlbDebutDate = default,
         BatSide batSide = BatSide.Left, ThrowArm throwArm = ThrowArm.Left, Team? team = null, bool active = false)
     {
