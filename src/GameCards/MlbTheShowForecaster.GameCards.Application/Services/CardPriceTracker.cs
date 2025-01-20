@@ -95,7 +95,8 @@ public sealed class CardPriceTracker : ICardPriceTracker
             }
 
             // If there is new pricing information from the external source, update the domain Listing with the new data
-            if (externalPrices.HasNewPrices(domainListing) || externalPrices.HasNewHistoricalPrices(domainListing))
+            if (externalPrices.HasNewPrices(domainListing) || externalPrices.HasNewHistoricalPrices(domainListing) ||
+                externalPrices.HasNewOrders(domainListing))
             {
                 await _commandSender.Send(
                     new UpdateListingCommand(domainListing, externalPrices, _listingPriceSignificantChangeThreshold),
