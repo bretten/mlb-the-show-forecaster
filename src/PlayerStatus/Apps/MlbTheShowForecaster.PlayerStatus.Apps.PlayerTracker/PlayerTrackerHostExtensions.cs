@@ -96,7 +96,7 @@ public static class PlayerTrackerHostExtensions
     {
         services.TryAddScoped<PlayerStatusTrackerJob>();
 
-        services.AddJobManager(context.Configuration);
+        services.AddJobManager(context.Configuration, Assembly.GetExecutingAssembly());
         services.AddHostedService<ScheduledBackgroundService<IJobManager>>(sp =>
             new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(),
                 Dependencies.JobManagerWork, Dependencies.JobManagerInterval(context.Configuration)));

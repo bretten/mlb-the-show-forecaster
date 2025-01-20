@@ -1,3 +1,4 @@
+using System.Reflection;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Jobs;
@@ -14,6 +15,7 @@ public class DependenciesTests
     public void AddJobManager_ServicesCollection_RegistersJobManager()
     {
         // Arrange
+        var assembly = Assembly.GetEntryAssembly()!;
         var settings = new Dictionary<string, string?>
         {
             { "Jobs:Schedules:0", "SomeJob-00:00:00:05" },
@@ -27,7 +29,7 @@ public class DependenciesTests
         // Act
         s.AddSingleton(Mock.Of<IRealTimeCommService>());
         s.AddSingleton(Mock.Of<ILogger<ScopedSingleInstanceJobManager>>());
-        s.AddJobManager(config);
+        s.AddJobManager(config, assembly);
         var actual = s.BuildServiceProvider();
 
         /*

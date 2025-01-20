@@ -22,12 +22,13 @@ public static class Dependencies
     /// </summary>
     /// <param name="services">The registered services</param>
     /// <param name="config">Configuration for the job manager</param>
-    public static void AddJobManager(this IServiceCollection services, IConfiguration config)
+    /// <param name="assembly">The assembly where the jobs are located</param>
+    public static void AddJobManager(this IServiceCollection services, IConfiguration config, Assembly assembly)
     {
         services.TryAddSingleton<IJobManager>(sp =>
         {
             // Get the job schedules
-            var jobSchedules = CreateJobSchedules(config);
+            var jobSchedules = CreateJobSchedules(config, assembly);
 
             var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
             var commService = sp.GetRequiredService<IRealTimeCommService>();
@@ -39,10 +40,9 @@ public static class Dependencies
     /// <summary>
     /// Creates the job schedules
     /// </summary>
-    private static List<JobSchedule> CreateJobSchedules(IConfiguration config)
+    private static List<JobSchedule> CreateJobSchedules(IConfiguration config, Assembly assembly)
     {
         // Get jobs from the assembly
-        var assembly = Assembly.GetEntryAssembly()!;
         var jobTypes = assembly.GetTypes()
             .Where(t => typeof(IJob).IsAssignableFrom(t) && t.IsClass);
         var configuredSchedules = config.GetRequiredValue<string[]>("Jobs:Schedules")

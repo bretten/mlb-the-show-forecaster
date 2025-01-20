@@ -164,7 +164,7 @@ public static class MarketplaceWatcherHostExtensions
         services.TryAddScoped<RosterUpdaterJob>();
         services.TryAddScoped<TrendReporterJob>();
 
-        services.AddJobManager(context.Configuration);
+        services.AddJobManager(context.Configuration, Assembly.GetExecutingAssembly());
         services.AddHostedService<ScheduledBackgroundService<IJobManager>>(sp =>
             new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(),
                 Dependencies.JobManagerWork, Dependencies.JobManagerInterval(context.Configuration)));
