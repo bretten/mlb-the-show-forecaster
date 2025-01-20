@@ -2,10 +2,6 @@
 using System.Text.Json.Serialization;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Enums;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Exceptions;
-using Microsoft.Extensions.Http.Resilience;
-using Polly;
-using Polly.Retry;
-using Polly.Timeout;
 using Refit;
 
 namespace com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
@@ -40,31 +36,7 @@ public sealed class MlbTheShowApiFactory : IMlbTheShowApiFactory
     /// <returns><see cref="IMlbTheShowApi"/> with the specified base URL</returns>
     private static IMlbTheShowApi GetClient(string baseUrl)
     {
-        var pipeline = new ResiliencePipelineBuilder<HttpResponseMessage>()
-            .AddRetry(new RetryStrategyOptions<HttpResponseMessage>
-            {
-                BackoffType = DelayBackoffType.Exponential,
-                UseJitter = true,
-                MaxRetryAttempts = 4,
-                Delay = TimeSpan.FromMinutes(5),
-                ShouldHandle = new PredicateBuilder<HttpResponseMessage>()
-                    .Handle<TimeoutRejectedException>()
-                    .Handle<HttpRequestException>()
-                    .HandleResult(response => !response.IsSuccessStatusCode)
-            })
-            .AddTimeout(TimeSpan.FromMinutes(20))
-            .Build();
-        var handler = new ResilienceHandler(pipeline)
-        {
-            InnerHandler = new HttpClientHandler(),
-        };
-        var httpClient = new HttpClient(handler)
-        {
-            BaseAddress = new Uri(baseUrl),
-            Timeout = TimeSpan.FromMinutes(25),
-        };
-
-        return RestService.For<IMlbTheShowApi>(httpClient,
+        return RestService.For<IMlbTheShowApi>(Resiliency.ResilientClient(baseUrl),
             new RefitSettings
             {
                 ContentSerializer = new SystemTextJsonContentSerializer(

@@ -39,7 +39,8 @@ public sealed class FakeMlbApi : IMlbApi
                         Converters = { new JsonStringEnumConverter() }
                     }
                 ),
-                HttpMessageHandlerFactory = () => new ResponseFilterDelegatingHandler(new HttpClientHandler(), options)
+                HttpMessageHandlerFactory = () =>
+                    Resiliency.ResilientHandler(new ResponseFilterDelegatingHandler(new HttpClientHandler(), options))
             }
         );
     }
