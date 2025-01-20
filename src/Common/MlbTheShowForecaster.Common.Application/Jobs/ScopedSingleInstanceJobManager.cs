@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -89,9 +90,11 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
             return await ActiveJobs[jobExecution].Task;
         }
 
+        var stopwatch = new Stopwatch();
         try
         {
-            _logger.LogInformation($"Starting job {jobName}");
+            stopwatch.Start();
+            _logger.LogInformation($"Starting job {jobName} at {DateTime.Now}");
             await _commService.Broadcast(jobName, JobState.Start(), cancellationToken);
 
             // Resolve the job
@@ -116,7 +119,8 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
         }
 
         // The job is done and can be started again
-        _logger.LogInformation($"Finished job {jobName}");
+        stopwatch.Stop();
+        _logger.LogInformation($"Finished job {jobName} at {DateTime.Now} ({stopwatch.Elapsed.TotalSeconds} s)");
         ActiveJobs.TryRemove(jobExecution, out _);
 
         return await tcs.Task;
@@ -167,7 +171,7 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     private async Task BroadcastProgress(JobExecution jobExecution, CancellationToken cancellationToken)
     {
-        _logger.LogInformation($"{jobExecution.JobType.Name} in progress...");
+        _logger.LogDebug($"{jobExecution.JobType.Name} in progress...");
         await _commService.Broadcast(jobExecution.JobType.Name, JobState.InProgress(), cancellationToken);
     }
 
