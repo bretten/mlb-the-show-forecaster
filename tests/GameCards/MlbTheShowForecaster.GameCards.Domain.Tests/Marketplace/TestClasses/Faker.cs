@@ -10,10 +10,15 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Marketplace
 /// </summary>
 public static class Faker
 {
-    public static Listing FakeListing(Guid? cardExternalId = null, int buyPrice = 0, int sellPrice = 0)
+    public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
+    public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
+
+    public static Listing FakeListing(Guid? cardExternalId = null, int buyPrice = 0, int sellPrice = 0,
+        List<ListingHistoricalPrice>? historicalPrices = null, List<ListingOrder>? orders = null)
     {
         return Listing.Create(CardExternalId.Create(cardExternalId ?? Cards.TestClasses.Faker.FakeGuid1),
-            NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice));
+            NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice),
+            historicalPrices ?? new List<ListingHistoricalPrice>(), orders ?? new List<ListingOrder>());
     }
 
     public static ListingHistoricalPrice FakeListingHistoricalPrice(DateOnly date, int buyPrice = 0, int sellPrice = 0)

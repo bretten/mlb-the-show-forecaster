@@ -5,9 +5,9 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Items;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Dtos.Listings;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Requests.Listings;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Services;
@@ -54,7 +54,8 @@ public class MlbTheShowApiCardMarketplaceTests
 
         var cardExternalId = Faker.FakeCardExternalId(Faker.FakeGuid1);
         var listingDto = Dtos.Mapping.TestClasses.Faker.FakeListingDto("listing1");
-        var expectedCardListing = Faker.FakeCardListing(cardExternalId: cardExternalId.Value);
+        var expectedCardListing =
+            Application.Tests.Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId.Value);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
         stubMlbTheShowApi.Setup(x => x.GetListing(new GetListingRequest(cardExternalId.AsStringDigits)))

@@ -2,8 +2,8 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Npgsql;
@@ -53,7 +53,7 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
     {
         // Arrange
         var fakeTeam = Faker.FakeTeam();
-        var fakePlayer = Faker.FakePlayer(team: fakeTeam);
+        var fakePlayer = Domain.Tests.Players.TestClasses.Faker.FakePlayer(team: fakeTeam);
         var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.Abbreviation) == fakeTeam);
 
         await using var connection = await GetDbConnection();
@@ -78,7 +78,7 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
         // Arrange
         var year = SeasonYear.Create(2024);
         var fakeTeam = Faker.FakeTeam();
-        var fakePlayer = Faker.FakePlayer(active: false, team: fakeTeam);
+        var fakePlayer = Domain.Tests.Players.TestClasses.Faker.FakePlayer(active: false, team: fakeTeam);
         var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.Abbreviation) == fakeTeam);
 
         await using var connection = await GetDbConnection();
@@ -106,7 +106,7 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
     {
         // Arrange
         var fakeTeam = Faker.FakeTeam();
-        var fakePlayer = Faker.FakePlayer(team: fakeTeam);
+        var fakePlayer = Domain.Tests.Players.TestClasses.Faker.FakePlayer(team: fakeTeam);
         var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.Abbreviation) == fakeTeam);
 
         await using var connection = await GetDbConnection();
@@ -141,7 +141,8 @@ public class EntityFrameworkCorePlayerRepositoryIntegrationTests : IAsyncLifetim
     {
         // Arrange
         var fakeTeam = Faker.FakeTeam();
-        var fakePlayer = Faker.FakePlayer(firstName: firstName, lastName: lastName, team: fakeTeam);
+        var fakePlayer =
+            Domain.Tests.Players.TestClasses.Faker.FakePlayer(firstName: firstName, lastName: lastName, team: fakeTeam);
         var stubTeamProvider = Mock.Of<ITeamProvider>(x => x.GetBy(fakeTeam.Abbreviation) == fakeTeam);
 
         await using var connection = await GetDbConnection();

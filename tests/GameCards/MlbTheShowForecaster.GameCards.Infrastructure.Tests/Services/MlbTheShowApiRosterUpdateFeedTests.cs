@@ -68,11 +68,11 @@ public class MlbTheShowApiRosterUpdateFeedTests
         // Mocks mapping Roster Update 2 to application-level DTOs
         var stubRosterUpdateMapper = new Mock<IMlbTheShowRosterUpdateMapper>();
         // The mapped Roster Update 2
-        var expectedRosterUpdate2 = Dtos.TestClasses.Faker.FakeRosterUpdate(rosterUpdateId2.Date);
+        var expectedRosterUpdate2 = Application.Tests.Dtos.TestClasses.Faker.FakeRosterUpdate(rosterUpdateId2.Date);
         stubRosterUpdateMapper.Setup(x => x.Map(rosterUpdateId2, externalRosterUpdate2))
             .Returns(expectedRosterUpdate2);
         // The mapped Roster Update 3
-        var expectedRosterUpdate3 = Dtos.TestClasses.Faker.FakeRosterUpdate(rosterUpdateId3.Date);
+        var expectedRosterUpdate3 = Application.Tests.Dtos.TestClasses.Faker.FakeRosterUpdate(rosterUpdateId3.Date);
         stubRosterUpdateMapper.Setup(x => x.Map(rosterUpdateId3, externalRosterUpdate3))
             .Returns(expectedRosterUpdate3);
 
@@ -111,7 +111,7 @@ public class MlbTheShowApiRosterUpdateFeedTests
             .Returns(Mock.Of<ICacheEntry>());
         var feed = new MlbTheShowApiRosterUpdateFeed(Mock.Of<IMlbTheShowApiFactory>(),
             Mock.Of<IMlbTheShowRosterUpdateMapper>(), mockMemoryCache.Object);
-        var rosterUpdate = Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1));
+        var rosterUpdate = Application.Tests.Dtos.TestClasses.Faker.FakeRosterUpdate(new DateOnly(2024, 4, 1));
 
         // Act
         await feed.CompleteRosterUpdate(rosterUpdate, cToken);

@@ -6,7 +6,7 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.Te
 /// <summary>
 /// Fakes a Team
 /// </summary>
-public static class TeamFaker
+public static class Faker
 {
     public const int DefaultMlbId = 136;
     public const string DefaultTeamName = "Seattle Mariners";
@@ -14,7 +14,7 @@ public static class TeamFaker
 
     public static Team? NoTeam => null;
 
-    public static Team Fake(int? mlbId = null, string? teamName = null, string? abbreviation = null)
+    public static Team FakeTeam(int? mlbId = null, string? teamName = null, string? abbreviation = null)
     {
         return Team.Create(
             mlbId == null ? MlbId.Create(DefaultMlbId) : MlbId.Create(mlbId.Value),

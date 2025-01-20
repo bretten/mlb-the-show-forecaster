@@ -1,8 +1,8 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Queries.GetAllPlayerStatsBySeason;
-using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Entities;
 using com.brettnamba.MlbTheShowForecaster.Performance.Domain.PlayerSeasons.Repositories;
+using com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.PlayerSeasons.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Queries.GetAllPlayerStatsBySeason;

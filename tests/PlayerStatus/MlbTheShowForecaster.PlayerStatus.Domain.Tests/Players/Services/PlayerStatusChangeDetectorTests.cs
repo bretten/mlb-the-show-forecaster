@@ -1,7 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Enums;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.Services;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
-using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses;
+using Faker = com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Teams.TestClasses.Faker;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.Services;
 
@@ -12,7 +11,7 @@ public class PlayerStatusChangeDetectorTests
     {
         // Arrange
         var detector = new PlayerStatusChangeDetector();
-        var player = PlayerFaker.Fake(active: false);
+        var player = TestClasses.Faker.FakePlayer(active: false);
         var mlbReportedActiveStatus = true;
 
         // Act
@@ -27,7 +26,7 @@ public class PlayerStatusChangeDetectorTests
     {
         // Arrange
         var detector = new PlayerStatusChangeDetector();
-        var player = PlayerFaker.Fake(active: true);
+        var player = TestClasses.Faker.FakePlayer(active: true);
         var mlbReportedActiveStatus = false;
 
         // Act
@@ -42,10 +41,10 @@ public class PlayerStatusChangeDetectorTests
     {
         // Arrange
         var detector = new PlayerStatusChangeDetector();
-        var currentTeam = TeamFaker.Fake();
-        var player = PlayerFaker.Fake(team: currentTeam);
+        var currentTeam = Faker.FakeTeam();
+        var player = TestClasses.Faker.FakePlayer(team: currentTeam);
         var mlbReportedActiveStatus = true;
-        var mlbReportedTeam = TeamFaker.NoTeam;
+        var mlbReportedTeam = Faker.NoTeam;
 
         // Act
         var actual = detector.DetectChanges(player, mlbReportedActiveStatus, mlbReportedTeam);
@@ -59,10 +58,10 @@ public class PlayerStatusChangeDetectorTests
     {
         // Arrange
         var detector = new PlayerStatusChangeDetector();
-        var currentTeam = TeamFaker.NoTeam;
-        var player = PlayerFaker.Fake(team: currentTeam);
+        var currentTeam = Faker.NoTeam;
+        var player = TestClasses.Faker.FakePlayer(team: currentTeam);
         var mlbReportedActiveStatus = true;
-        var mlbReportedTeam = TeamFaker.Fake();
+        var mlbReportedTeam = Faker.FakeTeam();
 
         // Act
         var actual = detector.DetectChanges(player, mlbReportedActiveStatus, mlbReportedTeam);

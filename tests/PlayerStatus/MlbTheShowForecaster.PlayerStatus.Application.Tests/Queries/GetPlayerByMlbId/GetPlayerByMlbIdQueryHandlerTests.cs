@@ -13,7 +13,7 @@ public class GetPlayerByMlbIdQueryHandlerTests
     {
         // Arrange
         var mlbId = MlbId.Create(Faker.DefaultMlbId);
-        var fakePlayer = Faker.FakePlayer(mlbId: mlbId.Value);
+        var fakePlayer = Domain.Tests.Players.TestClasses.Faker.FakePlayer(mlbId: mlbId.Value);
         var mockPlayerRepository = new Mock<IPlayerRepository>();
         mockPlayerRepository.Setup(x => x.GetByMlbId(mlbId))
             .ReturnsAsync(fakePlayer);

@@ -6,14 +6,13 @@ using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi.Responses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.TestClasses;
 using Moq;
 using Refit;
 
@@ -27,11 +26,12 @@ public class TrendReportFactoryTests
         // Arrange
         var cToken = CancellationToken.None;
         var playerCard = Faker.FakePlayerCard(year: 2024, name: Faker.FakeCardName("Dottie"),
-            externalId: Faker.FakeGuid1, position: Position.CenterField, overallRating: OverallRating.Max());
-        var listing = Faker.FakeListing(buyPrice: 123, sellPrice: 456,
+            externalId: Faker.FakeGuid1, position: Position.CenterField, overallRating: 99);
+        var listing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(buyPrice: 123, sellPrice: 456,
             historicalPrices: new List<ListingHistoricalPrice>()
             {
-                Faker.FakeListingHistoricalPrice(new DateOnly(2024, 10, 8), buyPrice: 1, sellPrice: 2)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 10, 8),
+                    buyPrice: 1, sellPrice: 2)
             });
         PlayerCardForecast? forecast = null;
 
@@ -74,11 +74,12 @@ public class TrendReportFactoryTests
         // Arrange
         var cToken = CancellationToken.None;
         var playerCard = Faker.FakePlayerCard(year: 2024, name: Faker.FakeCardName("Dottie"),
-            externalId: Faker.FakeGuid1, position: Position.CenterField, overallRating: OverallRating.Max());
-        var listing = Faker.FakeListing(buyPrice: 123, sellPrice: 456,
+            externalId: Faker.FakeGuid1, position: Position.CenterField, overallRating: 99);
+        var listing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(buyPrice: 123, sellPrice: 456,
             historicalPrices: new List<ListingHistoricalPrice>()
             {
-                Faker.FakeListingHistoricalPrice(new DateOnly(2024, 10, 8), buyPrice: 1, sellPrice: 2)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 10, 8),
+                    buyPrice: 1, sellPrice: 2)
             });
         var forecast = Domain.Tests.Forecasts.TestClasses.Faker.FakePlayerCardForecast(mlbId: 100);
         forecast.Reassess(Domain.Tests.Forecasts.TestClasses.Faker.FakeBoostForecastImpact(
@@ -179,10 +180,11 @@ public class TrendReportFactoryTests
         // Arrange
         var cToken = CancellationToken.None;
         PlayerCard? playerCard = null;
-        var listing = Faker.FakeListing(buyPrice: 123, sellPrice: 456,
+        var listing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(buyPrice: 123, sellPrice: 456,
             historicalPrices: new List<ListingHistoricalPrice>()
             {
-                Faker.FakeListingHistoricalPrice(new DateOnly(2024, 10, 8), buyPrice: 1, sellPrice: 2)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 10, 8),
+                    buyPrice: 1, sellPrice: 2)
             });
         var forecast = Domain.Tests.Forecasts.TestClasses.Faker.FakePlayerCardForecast(mlbId: 100,
             externalId: Faker.FakeGuid1);
@@ -226,11 +228,12 @@ public class TrendReportFactoryTests
         // Arrange
         var cToken = CancellationToken.None;
         var playerCard = Faker.FakePlayerCard(year: 2024, name: Faker.FakeCardName("Dottie"),
-            externalId: Faker.FakeGuid1, position: Position.CenterField, overallRating: OverallRating.Max());
-        var listing = Faker.FakeListing(buyPrice: 123, sellPrice: 456,
+            externalId: Faker.FakeGuid1, position: Position.CenterField, overallRating: 99);
+        var listing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(buyPrice: 123, sellPrice: 456,
             historicalPrices: new List<ListingHistoricalPrice>()
             {
-                Faker.FakeListingHistoricalPrice(new DateOnly(2024, 10, 8), buyPrice: 1, sellPrice: 2)
+                Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2024, 10, 8),
+                    buyPrice: 1, sellPrice: 2)
             });
         var forecast = Domain.Tests.Forecasts.TestClasses.Faker.FakePlayerCardForecast(mlbId: 100,
             externalId: playerCard.ExternalId.Value);

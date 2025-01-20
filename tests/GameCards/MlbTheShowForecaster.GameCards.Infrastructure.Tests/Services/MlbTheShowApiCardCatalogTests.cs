@@ -55,9 +55,12 @@ public class MlbTheShowApiCardCatalogTests
         var cardDto2 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid2, series: "Rookie"); // != Live, so excluded
         var cardDto3 = Faker.FakeMlbCardDto(uuid: Faker.FakeGuid3, series: "Live");
 
-        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto1.Uuid.Value);
-        var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto2.Uuid.Value);
-        var externalCard3 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto3.Uuid.Value);
+        var externalCard1 =
+            Application.Tests.Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto1.Uuid.Value);
+        var externalCard2 =
+            Application.Tests.Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto2.Uuid.Value);
+        var externalCard3 =
+            Application.Tests.Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto3.Uuid.Value);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
         stubMlbTheShowApi.Setup(x => x.GetItems(new GetItemsRequest(1, ItemType.MlbCard)))
@@ -106,7 +109,8 @@ public class MlbTheShowApiCardCatalogTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        var cardExternalId = Dtos.TestClasses.Faker.FakeCardExternalId(Dtos.TestClasses.Faker.FakeGuid1);
+        var cardExternalId =
+            Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(Domain.Tests.Cards.TestClasses.Faker.FakeGuid1);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
         stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest(cardExternalId.AsStringDigits)))
@@ -137,10 +141,12 @@ public class MlbTheShowApiCardCatalogTests
         var cToken = CancellationToken.None;
         var seasonYear = SeasonYear.Create(2024);
 
-        var cardExternalId = Dtos.TestClasses.Faker.FakeCardExternalId(Dtos.TestClasses.Faker.FakeGuid1);
+        var cardExternalId =
+            Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(Domain.Tests.Cards.TestClasses.Faker.FakeGuid1);
         var cardDto = Faker.FakeMlbCardDto(uuid: cardExternalId.Value);
 
-        var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto.Uuid.Value);
+        var externalCard1 =
+            Application.Tests.Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardDto.Uuid.Value);
 
         var stubMlbTheShowApi = new Mock<IMlbTheShowApi>();
         stubMlbTheShowApi.Setup(x => x.GetItem(new GetItemRequest(cardDto.Uuid.ValueAsString)))

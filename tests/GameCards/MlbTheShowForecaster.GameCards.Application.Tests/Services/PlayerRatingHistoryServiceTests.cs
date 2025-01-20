@@ -5,10 +5,10 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -77,7 +77,7 @@ public class PlayerRatingHistoryServiceTests
          */
         var cToken = CancellationToken.None;
         // PlayerCard has no historical ratings
-        var playerCard = Faker.FakePlayerCard(cardExternalId: CardExternalId.Value);
+        var playerCard = Faker.FakePlayerCard(externalId: CardExternalId.Value);
 
         // Query for PlayerCard
         var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
@@ -147,7 +147,7 @@ public class PlayerRatingHistoryServiceTests
          */
         var cToken = CancellationToken.None;
         // PlayerCard has no historical ratings
-        var playerCard = Faker.FakePlayerCard(cardExternalId: CardExternalId.Value);
+        var playerCard = Faker.FakePlayerCard(externalId: CardExternalId.Value);
 
         // Query for PlayerCard
         var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
@@ -231,7 +231,7 @@ public class PlayerRatingHistoryServiceTests
          */
         var cToken = CancellationToken.None;
         // PlayerCard
-        var playerCard = Faker.FakePlayerCard(cardExternalId: CardExternalId.Value);
+        var playerCard = Faker.FakePlayerCard(externalId: CardExternalId.Value);
         // Add the card's initial state the history
         playerCard.AddHistoricalRating(RosterUpdate0.AsHistoricalRating);
         // Add RosterUpdate1's changes to the history
@@ -305,7 +305,7 @@ public class PlayerRatingHistoryServiceTests
          */
         var cToken = CancellationToken.None;
         // PlayerCard
-        var playerCard = Faker.FakePlayerCard(cardExternalId: CardExternalId.Value);
+        var playerCard = Faker.FakePlayerCard(externalId: CardExternalId.Value);
         // Add the card's initial state the history
         playerCard.AddHistoricalRating(RosterUpdate0.AsHistoricalRating);
 
@@ -356,7 +356,7 @@ public class PlayerRatingHistoryServiceTests
          */
         var cToken = CancellationToken.None;
         // PlayerCard
-        var playerCard = Faker.FakePlayerCard(cardExternalId: CardExternalId.Value);
+        var playerCard = Faker.FakePlayerCard(externalId: CardExternalId.Value);
         // Boost the card
         var boostDate = new DateOnly(2024, 5, 1);
         playerCard.Boost(boostDate, boostDate.AddDays(2), "Hit 5 HRs", Faker.FakePlayerCardAttributes(scalar: 2));

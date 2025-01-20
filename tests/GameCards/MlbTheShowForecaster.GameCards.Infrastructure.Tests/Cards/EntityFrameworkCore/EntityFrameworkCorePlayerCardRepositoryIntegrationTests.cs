@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.TestClasses;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Testcontainers.PostgreSql;

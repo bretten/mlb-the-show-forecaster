@@ -19,7 +19,7 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
     {
         // Arrange
         var fakePlayerSeason = Faker.FakePlayerSeason();
-        var fakePlayerStatsBySeason = TestClasses.Faker.FakePlayerStatsBySeason();
+        var fakePlayerStatsBySeason = Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerStatsBySeason();
 
         var stubPlayerStatsBySeasonRepository = new Mock<IPlayerStatsBySeasonRepository>();
         stubPlayerStatsBySeasonRepository.Setup(x => x.GetById(fakePlayerStatsBySeason.Id))
@@ -50,15 +50,15 @@ public class UpdatePlayerStatsBySeasonCommandHandlerTests
         // Arrange
         var fakePlayerSeason = Faker.FakePlayerSeason();
 
-        var fakePlayerStatsBySeason = TestClasses.Faker.FakePlayerStatsBySeason();
-        var updatedPlayerStatsBySeason = TestClasses.Faker.FakePlayerStatsBySeason();
+        var fakePlayerStatsBySeason = Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerStatsBySeason();
+        var updatedPlayerStatsBySeason = Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerStatsBySeason();
 
         var fakeMappedBattingStatsByGame = new List<PlayerBattingStatsByGame>()
-            { TestClasses.Faker.FakePlayerBattingStats() };
+            { Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerBattingStats() };
         var fakeMappedPitchingStatsByGame = new List<PlayerPitchingStatsByGame>()
-            { TestClasses.Faker.FakePlayerPitchingStats() };
+            { Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerPitchingStats() };
         var fakeMappedFieldingStatsByGame = new List<PlayerFieldingStatsByGame>()
-            { TestClasses.Faker.FakePlayerFieldingStats() };
+            { Domain.Tests.PlayerSeasons.TestClasses.Faker.FakePlayerFieldingStats() };
 
         var stubPlayerSeasonMapper = new Mock<IPlayerSeasonMapper>();
         stubPlayerSeasonMapper.Setup(x => x.MapBattingGames(fakePlayerSeason.GameBattingStats))

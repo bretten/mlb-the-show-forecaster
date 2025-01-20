@@ -1,8 +1,8 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetAllPlayerCards;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Queries.GetAllPlayerCards;
@@ -14,9 +14,9 @@ public class GetAllPlayerCardsQueryHandlerTests
     {
         // Arrange
         var year = SeasonYear.Create(2024);
-        var playerCard1 = Faker.FakePlayerCard(year: 2024, cardExternalId: Faker.FakeGuid1);
-        var playerCard2 = Faker.FakePlayerCard(year: 2023, cardExternalId: Faker.FakeGuid2); // Year is different, 2023
-        var playerCard3 = Faker.FakePlayerCard(year: 2024, cardExternalId: Faker.FakeGuid3);
+        var playerCard1 = Faker.FakePlayerCard(year: 2024, externalId: Faker.FakeGuid1);
+        var playerCard2 = Faker.FakePlayerCard(year: 2023, externalId: Faker.FakeGuid2); // Year is different, 2023
+        var playerCard3 = Faker.FakePlayerCard(year: 2024, externalId: Faker.FakeGuid3);
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
         stubPlayerCardRepository.Setup(x => x.GetAll(year))

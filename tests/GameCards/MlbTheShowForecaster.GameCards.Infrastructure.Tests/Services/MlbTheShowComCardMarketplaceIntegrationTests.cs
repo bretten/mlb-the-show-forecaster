@@ -3,10 +3,9 @@ using AngleSharp.Dom;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.TestClasses;
 using Polly;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Services;
@@ -20,7 +19,7 @@ public class MlbTheShowComCardMarketplaceIntegrationTests
         // Arrange
         var cToken = CancellationToken.None;
         var season = SeasonYear.Create(2024);
-        var cardExternalId = CardExternalId.Create(Faker.FakeGuid1);
+        var cardExternalId = Faker.FakeCardExternalId();
 
         var config = Configuration.Default.WithDefaultLoader();
         var context = BrowsingContext.New(config);
@@ -51,7 +50,7 @@ public class MlbTheShowComCardMarketplaceIntegrationTests
         // Arrange
         var cToken = CancellationToken.None;
         var season = SeasonYear.Create(year);
-        var cardExternalId = CardExternalId.Create(new Guid(guid));
+        var cardExternalId = Faker.FakeCardExternalId(new Guid(guid));
 
         var config = Configuration.Default.WithDefaultLoader();
         var context = BrowsingContext.New(config);

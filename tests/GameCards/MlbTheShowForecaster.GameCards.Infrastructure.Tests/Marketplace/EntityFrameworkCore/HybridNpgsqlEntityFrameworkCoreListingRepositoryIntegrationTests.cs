@@ -2,9 +2,9 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Marketplace.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.TestClasses;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Npgsql;

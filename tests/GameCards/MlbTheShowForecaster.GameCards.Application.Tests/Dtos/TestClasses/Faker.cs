@@ -31,7 +31,7 @@ public static class Faker
     {
         return new MlbPlayerCard(
             Year: SeasonYear.Create(year),
-            ExternalUuid: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
+            ExternalUuid: Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             Type: type,
             ImageUrl: CardImageLocation.Create(image),
             Name: CardName.Create(name),
@@ -85,7 +85,7 @@ public static class Faker
             ListingName: listingName,
             BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
             BestSellPrice: NaturalNumber.Create(bestSellPrice),
-            CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
+            CardExternalId: Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             HistoricalPrices: historicalPrices ?? new List<CardListingPrice>(),
             RecentOrders: completedOrders ?? new List<CardListingOrder>()
         );
@@ -156,7 +156,7 @@ public static class Faker
     {
         return new PlayerRatingChange(
             Date: date ?? new DateOnly(2024, 4, 1),
-            CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
+            CardExternalId: Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             NewRating: OverallRating.Create(newOverallRating),
             NewRarity: newRarity,
             OldRating: OverallRating.Create(oldOverallRating),
@@ -170,7 +170,7 @@ public static class Faker
     {
         return new PlayerPositionChange(
             Date: date ?? new DateOnly(2024, 4, 1),
-            CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
+            CardExternalId: Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             NewPosition: newPosition
         );
     }
@@ -180,7 +180,7 @@ public static class Faker
     {
         return new PlayerAddition(
             date: date ?? new DateOnly(2024, 4, 1),
-            cardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(cardExternalId),
+            cardExternalId: Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(cardExternalId),
             playerName: name
         );
     }
@@ -203,7 +203,7 @@ public static class Faker
     {
         return new TrendReport(
             Year: SeasonYear.Create(year),
-            CardExternalId: Tests.TestClasses.Faker.FakeCardExternalId(externalId),
+            CardExternalId: Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(externalId),
             MlbId: MlbId.Create(mlbId),
             PrimaryPosition: position,
             OverallRating: Domain.Tests.Cards.TestClasses.Faker.FakeOverallRating(overallRating),

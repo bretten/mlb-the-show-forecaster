@@ -7,8 +7,8 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services;
@@ -52,7 +52,7 @@ public class PlayerCardTrackerTests
         var seasonYear = SeasonYear.Create(2024);
         // PlayerCard1 already exists in the domain, so no action will take place
         var cardExternalId1 = Faker.FakeCardExternalId(Faker.FakeGuid1);
-        var domainPlayerCard1 = Faker.FakePlayerCard(cardExternalId: cardExternalId1.Value);
+        var domainPlayerCard1 = Faker.FakePlayerCard(externalId: cardExternalId1.Value);
         // ExternalCard1 from MLB The Show
         var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId1.Value);
         // Query to get PlayerCard1
@@ -68,7 +68,7 @@ public class PlayerCardTrackerTests
 
         // PlayerCard3 already exists in the domain, but it has a different boost status
         var cardExternalId3 = Faker.FakeCardExternalId(Faker.FakeGuid3);
-        var domainPlayerCard3 = Faker.FakePlayerCard(cardExternalId: cardExternalId3.Value, isBoosted: false);
+        var domainPlayerCard3 = Faker.FakePlayerCard(externalId: cardExternalId3.Value, isBoosted: false);
         // ExternalCard3 from MLB The Show
         var externalCard3 =
             Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId3.Value, boostReason: "Hit 5 HRs");

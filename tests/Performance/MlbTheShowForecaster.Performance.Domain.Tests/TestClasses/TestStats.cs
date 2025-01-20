@@ -1,4 +1,4 @@
-﻿namespace com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.TestClasses;
+﻿namespace com.brettnamba.MlbTheShowForecaster.Performance.Domain.Tests.TestClasses;
 
 /// <summary>
 /// Test stats

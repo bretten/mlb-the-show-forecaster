@@ -96,9 +96,9 @@ public class MlbApiPlayerStatsTests
         var fakePlayer3 = Faker.FakePlayerDto(3);
         var players = new List<PlayerDto>() { fakePlayer1, fakePlayer2, fakePlayer3 };
 
-        var fakePlayer1Season = Faker.FakePlayerSeason(fakePlayer1.Id);
-        var fakePlayer2Season = Faker.FakePlayerSeason(fakePlayer2.Id);
-        var fakePlayer3Season = Faker.FakePlayerSeason(fakePlayer3.Id);
+        var fakePlayer1Season = Application.Tests.Dtos.TestClasses.Faker.FakePlayerSeason(fakePlayer1.Id);
+        var fakePlayer2Season = Application.Tests.Dtos.TestClasses.Faker.FakePlayerSeason(fakePlayer2.Id);
+        var fakePlayer3Season = Application.Tests.Dtos.TestClasses.Faker.FakePlayerSeason(fakePlayer3.Id);
 
         var getPlayersRequest = new GetPlayersBySeasonRequest(season.Value, GameType.RegularSeason);
 

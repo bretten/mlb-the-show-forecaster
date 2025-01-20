@@ -1,8 +1,6 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
-using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
+﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Games;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
-using com.brettnamba.MlbTheShowForecaster.Performance.Application.Dtos;
 
 namespace com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.Tests.Dtos.TestClasses;
 
@@ -356,18 +354,6 @@ public static class Faker
             WildPitches: scalar * wildPitches,
             ThrowingErrors: scalar * throwingErrors,
             Pickoffs: scalar * pickoffs
-        );
-    }
-
-    public static PlayerSeason FakePlayerSeason(int playerMlbId = 1, ushort seasonYear = 2024,
-        List<PlayerGameBattingStats>? playerGameBattingStats = null,
-        List<PlayerGamePitchingStats>? playerGamePitchingStats = null,
-        List<PlayerGameFieldingStats>? playerGameFieldingStats = null)
-    {
-        return new PlayerSeason(MlbId.Create(playerMlbId), SeasonYear.Create(seasonYear),
-            playerGameBattingStats ?? new List<PlayerGameBattingStats>(),
-            playerGamePitchingStats ?? new List<PlayerGamePitchingStats>(),
-            playerGameFieldingStats ?? new List<PlayerGameFieldingStats>()
         );
     }
 }
