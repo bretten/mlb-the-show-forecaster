@@ -58,7 +58,8 @@ public sealed class FakeMlbTheShowApi : IMlbTheShowApi
         _options = options;
 
         _season = ((int)year).ToString();
-        _api = RestService.For<IMlbTheShowApi>(GetUrl(),
+        _api = RestService.For<IMlbTheShowApi>(
+            Resiliency.ResilientClient(GetUrl(), new ResponseFilterDelegatingHandler(new HttpClientHandler(), options)),
             new RefitSettings
             {
                 ContentSerializer = new SystemTextJsonContentSerializer(
@@ -67,7 +68,6 @@ public sealed class FakeMlbTheShowApi : IMlbTheShowApi
                         Converters = { new JsonStringEnumConverter() }
                     }
                 ),
-                HttpMessageHandlerFactory = () => new ResponseFilterDelegatingHandler(new HttpClientHandler(), options)
             }
         );
     }
