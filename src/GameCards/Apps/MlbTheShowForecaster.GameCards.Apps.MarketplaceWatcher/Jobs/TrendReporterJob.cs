@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs.Io;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs.Io;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
