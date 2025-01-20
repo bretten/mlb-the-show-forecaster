@@ -1,9 +1,9 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs.Io;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs.Io;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects.PlayerCards;
 using Microsoft.Extensions.Logging;

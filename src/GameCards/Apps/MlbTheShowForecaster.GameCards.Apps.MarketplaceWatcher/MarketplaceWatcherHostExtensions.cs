@@ -1,12 +1,10 @@
-﻿using System.Globalization;
-using System.Reflection;
+﻿using System.Reflection;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
-using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.FileSystems;
+using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Jobs;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.BattingStatsChange;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.FieldingStatsChange;
@@ -19,7 +17,6 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerFre
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PlayerTeamSigning;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events.PositionChange;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Jobs.Io;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.RealTime;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Events;
@@ -27,6 +24,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RabbitMQ.Client;
+using Dependencies = com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Jobs.Dependencies;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher;
 
@@ -165,59 +163,10 @@ public static class MarketplaceWatcherHostExtensions
         services.TryAddScoped<CardPriceTrackerJob>();
         services.TryAddScoped<RosterUpdaterJob>();
         services.TryAddScoped<TrendReporterJob>();
-        services.TryAddSingleton<IJobManager>(sp =>
-        {
-            var interval = ParseInterval(context.Configuration.GetRequiredValue<string>("PlayerCardTracker:Interval"));
-            var seasons = context.Configuration.GetRequiredValue<ushort[]>("PlayerCardTracker:Seasons");
-            var runOnStartup = context.Configuration.GetRequiredValue<bool>("Jobs:RunOnStartup");
-            var jobSchedules = new List<JobSchedule>();
-            foreach (var season in seasons)
-            {
-                jobSchedules.AddRange(JobsForSeason(season, interval, runOnStartup));
-            }
 
-            var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
-            var commService = sp.GetRequiredService<IRealTimeCommService>();
-            var logger = sp.GetRequiredService<ILogger<ScopedSingleInstanceJobManager>>();
-            return new ScopedSingleInstanceJobManager(scopeFactory, jobSchedules, commService, logger);
-        });
-
-        var jobManagerInterval = ParseInterval(context.Configuration.GetRequiredValue<string>("Jobs:Interval"));
-
+        services.AddJobManager(context.Configuration);
         services.AddHostedService<ScheduledBackgroundService<IJobManager>>(sp =>
-            new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(), JobManagerWork,
-                jobManagerInterval));
-    }
-
-    /// <summary>
-    /// Gets the jobs for the season
-    /// </summary>
-    private static List<JobSchedule> JobsForSeason(ushort season, TimeSpan interval, bool runOnStartup)
-    {
-        var input = new SeasonJobInput(SeasonYear.Create(season));
-        var jobs = new List<JobSchedule>()
-        {
-            new JobSchedule(JobType: typeof(PlayerCardTrackerJob), JobInput: input, Interval: interval),
-            new JobSchedule(JobType: typeof(CardPriceTrackerJob), JobInput: input, Interval: interval),
-            new JobSchedule(JobType: typeof(RosterUpdaterJob), JobInput: input, Interval: interval),
-            new JobSchedule(JobType: typeof(TrendReporterJob), JobInput: input, Interval: interval)
-        };
-        foreach (var job in jobs)
-        {
-            job.LastRun = runOnStartup ? DateTime.MinValue : DateTime.UtcNow.AddDays(1);
-        }
-
-        return jobs;
-    }
-
-    /// <summary>
-    /// The job manager will run scheduled jobs on an interval
-    /// </summary>
-    private static readonly Func<IJobManager, IServiceProvider, CancellationToken, Task>
-        JobManagerWork = async (jobManager, sp, ct) => { await jobManager.RunScheduled(ct); };
-
-    private static TimeSpan ParseInterval(string interval)
-    {
-        return TimeSpan.ParseExact(interval, "g", CultureInfo.InvariantCulture);
+            new ScheduledBackgroundService<IJobManager>(sp.GetRequiredService<IServiceScopeFactory>(),
+                Dependencies.JobManagerWork, Dependencies.JobManagerInterval(context.Configuration)));
     }
 }

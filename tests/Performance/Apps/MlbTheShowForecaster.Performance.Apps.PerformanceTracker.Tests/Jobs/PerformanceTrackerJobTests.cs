@@ -1,8 +1,8 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs.Io;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Services;
 using com.brettnamba.MlbTheShowForecaster.Performance.Application.Tests.Services.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Jobs;
-using com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracker.Jobs.Io;
 using Microsoft.Extensions.Logging;
 using Moq;
 
