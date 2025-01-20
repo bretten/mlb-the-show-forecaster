@@ -157,7 +157,7 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
     private void UpdateLastRun(JobExecution jobExecution)
     {
         var jobSchedule = _jobSchedules.FirstOrDefault(schedule =>
-            schedule.JobType == jobExecution.JobType && schedule.JobInput == jobExecution.JobInput);
+            schedule.JobType == jobExecution.JobType && schedule.JobInput.Equals(jobExecution.JobInput));
         if (jobSchedule != null)
         {
             jobSchedule.LastRun = DateTime.UtcNow;
