@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums.Extensions;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
@@ -177,8 +178,7 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// </summary>
     private bool IsPitcher()
     {
-        return PrimaryPosition is Position.Pitcher or Position.StartingPitcher or Position.ReliefPitcher
-            or Position.ClosingPitcher;
+        return PrimaryPosition.IsOnlyPitcher() || PrimaryPosition.IsTwoWayPlayer();
     }
 
     /// <summary>
@@ -186,7 +186,7 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// </summary>
     private bool IsBatter()
     {
-        return (!IsPitcher() && PrimaryPosition is not Position.None) || PrimaryPosition is Position.TwoWayPlayer;
+        return PrimaryPosition.IsOnlyBatter() || PrimaryPosition.IsTwoWayPlayer();
     }
 
     /// <summary>
