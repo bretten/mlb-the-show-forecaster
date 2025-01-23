@@ -55,6 +55,36 @@ public class ListingTests
     }
 
     [Fact]
+    public void PriceFor_DateHasPrices_ReturnsPrices()
+    {
+        // Arrange
+        var listing = Faker.FakeListing();
+        listing.LogHistoricalPrice(new DateOnly(2025, 1, 23), buyPrice: NaturalNumber.Create(2),
+            sellPrice: NaturalNumber.Create(3));
+
+        // Act
+        var actual = listing.PriceFor(new DateOnly(2025, 1, 23));
+
+        // Assert
+        Assert.Equal(Faker.FakeListingHistoricalPrice(new DateOnly(2025, 1, 23), 2, 3), actual);
+    }
+
+    [Fact]
+    public void PriceFor_DateHasNoPrices_ReturnsNull()
+    {
+        // Arrange
+        var listing = Faker.FakeListing();
+        listing.LogHistoricalPrice(new DateOnly(2025, 1, 23), buyPrice: NaturalNumber.Create(2),
+            sellPrice: NaturalNumber.Create(3));
+
+        // Act
+        var actual = listing.PriceFor(new DateOnly(2025, 1, 24));
+
+        // Assert
+        Assert.Null(actual);
+    }
+
+    [Fact]
     public void TotalOrdersFor_DateWithOrders_ReturnsTotalOrderQuantity()
     {
         // Arrange
@@ -71,6 +101,32 @@ public class ListingTests
 
         // Assert
         Assert.Equal(3, actual.Value);
+    }
+
+    [Fact]
+    public void TotalOrdersFor_DateTimeRange_ReturnsTotalOrderQuantity()
+    {
+        // Arrange
+        var listing = Faker.FakeListing();
+        listing.UpdateOrders(new List<ListingOrder>()
+        {
+            // Not in range
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), quantity: 2),
+            // In range
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), quantity: 1),
+            // In range
+            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 1, 0, DateTimeKind.Utc), quantity: 23),
+            // Not in range
+            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc), quantity: 5),
+        });
+        var start = new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc);
+        var end = new DateTime(2025, 1, 18, 1, 1, 0, DateTimeKind.Utc);
+
+        // Act
+        var actual = listing.TotalOrdersFor(start, end);
+
+        // Assert
+        Assert.Equal(24, actual.Value);
     }
 
     [Fact]

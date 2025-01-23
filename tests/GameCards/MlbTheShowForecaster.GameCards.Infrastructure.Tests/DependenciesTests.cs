@@ -278,7 +278,8 @@ public class DependenciesTests
 
         // Act
         s.AddLogging();
-        s.TryAddSingleton<ICalendar, Calendar>();
+        s.TryAddSingleton(Mock.Of<ICalendar>());
+        s.TryAddSingleton(Mock.Of<IClock>());
         var mockPlayerMatcher = Mock.Of<IPlayerMatcher>();
         s.TryAddSingleton(mockPlayerMatcher);
         s.AddGameCardsEntityFrameworkCoreRepositories(config);

@@ -39,7 +39,7 @@ public class TrendController : Controller
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="JsonResult"/> of <see cref="TrendReport"/>s</returns>
     public async Task<IActionResult> Index([FromQuery] ushort season, [FromQuery] int page, [FromQuery] int pageSize,
-        [FromQuery] ITrendReporter.SortField? sortField = null, [FromQuery] ITrendReporter.SortOrder? sortOrder = null,
+        [FromQuery] string? sortField = null, [FromQuery] ITrendReporter.SortOrder? sortOrder = null,
         CancellationToken cancellationToken = default)
     {
         var results = await _trendReporter.GetTrendReports(SeasonYear.Create(season), page, pageSize, sortField,

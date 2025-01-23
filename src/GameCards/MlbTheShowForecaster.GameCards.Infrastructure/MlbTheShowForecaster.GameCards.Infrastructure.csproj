@@ -26,4 +26,9 @@
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
     </ItemGroup>
 
+    <ItemGroup>
+        <InternalsVisibleTo Include="MlbTheShowForecaster.GameCards.Infrastructure.Tests" />
+        <InternalsVisibleTo Include="DynamicProxyGenAssembly2" /> <!-- Needed so Moq can generate implementations for internal methods: https://github.com/devlooped/moq/wiki/Quickstart#advanced-features -->
+    </ItemGroup>
+
 </Project>

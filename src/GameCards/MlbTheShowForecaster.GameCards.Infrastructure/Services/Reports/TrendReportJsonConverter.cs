@@ -30,6 +30,14 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
         int? overallRating = null;
         List<TrendMetricsByDate>? metrics = null;
         List<TrendImpact>? impacts = null;
+        int? orders1H = null;
+        int? orders24H = null;
+        int? buyPrice = null;
+        decimal? buyPriceChange24H = null;
+        int? sellPrice = null;
+        decimal? sellPriceChange24H = null;
+        decimal? score = null;
+        decimal? scoreChange2W = null;
 
         // Read property names and their values
         while (reader.Read())
@@ -91,6 +99,38 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
                     impacts = impactsArray.Deserialize<List<TrendImpact>>(options);
 
                     break;
+                case var _ when GetPropertyName(nameof(TrendReport.Orders1H), options) == propertyName:
+                    reader.Read();
+                    orders1H = reader.GetInt32();
+                    break;
+                case var _ when GetPropertyName(nameof(TrendReport.Orders24H), options) == propertyName:
+                    reader.Read();
+                    orders24H = reader.GetInt32();
+                    break;
+                case var _ when GetPropertyName(nameof(TrendReport.BuyPrice), options) == propertyName:
+                    reader.Read();
+                    buyPrice = reader.GetInt32();
+                    break;
+                case var _ when GetPropertyName(nameof(TrendReport.BuyPriceChange24H), options) == propertyName:
+                    reader.Read();
+                    buyPriceChange24H = reader.GetDecimal();
+                    break;
+                case var _ when GetPropertyName(nameof(TrendReport.SellPrice), options) == propertyName:
+                    reader.Read();
+                    sellPrice = reader.GetInt32();
+                    break;
+                case var _ when GetPropertyName(nameof(TrendReport.SellPriceChange24H), options) == propertyName:
+                    reader.Read();
+                    sellPriceChange24H = reader.GetDecimal();
+                    break;
+                case var _ when GetPropertyName(nameof(TrendReport.Score), options) == propertyName:
+                    reader.Read();
+                    score = reader.GetDecimal();
+                    break;
+                case var _ when GetPropertyName(nameof(TrendReport.ScoreChange2W), options) == propertyName:
+                    reader.Read();
+                    scoreChange2W = reader.GetDecimal();
+                    break;
             }
         }
 
@@ -109,7 +149,15 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
             PrimaryPosition: (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(position)!,
             OverallRating: OverallRating.Create(overallRating.Value),
             MetricsByDate: metrics,
-            Impacts: impacts
+            Impacts: impacts,
+            Orders1H: orders1H!.Value,
+            Orders24H: orders24H!.Value,
+            BuyPrice: buyPrice!.Value,
+            BuyPriceChange24H: buyPriceChange24H!.Value,
+            SellPrice: sellPrice!.Value,
+            SellPriceChange24H: sellPriceChange24H!.Value,
+            Score: score!.Value,
+            ScoreChange2W: scoreChange2W!.Value
         );
     }
 
@@ -137,6 +185,22 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
         // Trend impacts
         writer.WritePropertyName(GetEncodedPropertyName(nameof(TrendReport.Impacts), options));
         writer.WriteRawValue(JsonSerializer.Serialize(value.Impacts, options));
+
+        // Orders
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.Orders1H), options), value.Orders1H);
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.Orders24H), options), value.Orders24H);
+
+        // Prices
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.BuyPrice), options), value.BuyPrice);
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.BuyPriceChange24H), options),
+            value.BuyPriceChange24H);
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.SellPrice), options), value.SellPrice);
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.SellPriceChange24H), options),
+            value.SellPriceChange24H);
+
+        // Scores
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.Score), options), value.Score);
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.ScoreChange2W), options), value.ScoreChange2W);
 
         // End the whole JSON object
         writer.WriteEndObject();

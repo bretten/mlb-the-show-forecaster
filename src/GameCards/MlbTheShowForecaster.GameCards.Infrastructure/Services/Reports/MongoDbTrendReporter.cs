@@ -77,15 +77,25 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
     /// <inheritdoc />
     public async Task<PaginationResult<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize,
-        ITrendReporter.SortField? sortField, ITrendReporter.SortOrder? sortOrder, CancellationToken cancellationToken)
+        string? sortField, ITrendReporter.SortOrder? sortOrder, CancellationToken cancellationToken)
     {
         var collection = await GetCollection();
         var filter = Builders<TrendReport>.Filter.Eq(nameof(TrendReport.Year), year.Value);
 
-        var sortFieldDef = sortField switch
+        var sf = sortField?.ToLower();
+        var sortFieldDef = sf switch
         {
-            ITrendReporter.SortField.Ovr => nameof(TrendReport.OverallRating),
-            _ => nameof(TrendReport.CardName),
+            _ when nameof(TrendReport.OverallRating).ToLower() == sf => nameof(TrendReport.OverallRating),
+            _ when nameof(TrendReport.PrimaryPosition).ToLower() == sf => nameof(TrendReport.PrimaryPosition),
+            _ when nameof(TrendReport.Orders1H).ToLower() == sf => nameof(TrendReport.Orders1H),
+            _ when nameof(TrendReport.Orders24H).ToLower() == sf => nameof(TrendReport.Orders24H),
+            _ when nameof(TrendReport.BuyPrice).ToLower() == sf => nameof(TrendReport.BuyPrice),
+            _ when nameof(TrendReport.BuyPriceChange24H).ToLower() == sf => nameof(TrendReport.BuyPriceChange24H),
+            _ when nameof(TrendReport.SellPrice).ToLower() == sf => nameof(TrendReport.SellPrice),
+            _ when nameof(TrendReport.SellPriceChange24H).ToLower() == sf => nameof(TrendReport.SellPriceChange24H),
+            _ when nameof(TrendReport.Score).ToLower() == sf => nameof(TrendReport.Score),
+            _ when nameof(TrendReport.ScoreChange2W).ToLower() == sf => nameof(TrendReport.ScoreChange2W),
+            _ => nameof(TrendReport.CardName)
         };
 
         var sortOrderDef = sortOrder switch
@@ -184,12 +194,22 @@ public sealed class MongoDbTrendReporter : ITrendReporter
             int? overallRating = null;
             List<TrendMetricsByDate>? metrics = null;
             List<TrendImpact>? impacts = null;
+            int? orders1H = null;
+            int? orders24H = null;
+            int? buyPrice = null;
+            decimal? buyPriceChange24H = null;
+            int? sellPrice = null;
+            decimal? sellPriceChange24H = null;
+            decimal? score = null;
+            decimal? scoreChange2W = null;
 
             var r = context.Reader;
             r.ReadStartDocument();
             while (r.ReadBsonType() != BsonType.EndOfDocument)
             {
                 var fieldName = r.ReadName();
+                var type = r.CurrentBsonType;
+
                 switch (fieldName)
                 {
                     case nameof(TrendReport.Year):
@@ -230,6 +250,30 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
                         r.ReadEndArray();
                         break;
+                    case nameof(TrendReport.Orders1H):
+                        orders1H = r.ReadInt32();
+                        break;
+                    case nameof(TrendReport.Orders24H):
+                        orders24H = r.ReadInt32();
+                        break;
+                    case nameof(TrendReport.BuyPrice):
+                        buyPrice = r.ReadInt32();
+                        break;
+                    case nameof(TrendReport.BuyPriceChange24H):
+                        ReadDecimal(r, ref buyPriceChange24H, type);
+                        break;
+                    case nameof(TrendReport.SellPrice):
+                        sellPrice = r.ReadInt32();
+                        break;
+                    case nameof(TrendReport.SellPriceChange24H):
+                        ReadDecimal(r, ref sellPriceChange24H, type);
+                        break;
+                    case nameof(TrendReport.Score):
+                        ReadDecimal(r, ref score, type);
+                        break;
+                    case nameof(TrendReport.ScoreChange2W):
+                        ReadDecimal(r, ref scoreChange2W, type);
+                        break;
                     default:
                         r.SkipValue(); // This will be the MongoDB ID
                         break;
@@ -246,7 +290,15 @@ public sealed class MongoDbTrendReporter : ITrendReporter
                 PrimaryPosition: (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(position!)!,
                 OverallRating: OverallRating.Create(overallRating!.Value),
                 MetricsByDate: metrics!,
-                Impacts: impacts!
+                Impacts: impacts!,
+                Orders1H: orders1H!.Value,
+                Orders24H: orders24H!.Value,
+                BuyPrice: buyPrice!.Value,
+                BuyPriceChange24H: buyPriceChange24H!.Value,
+                SellPrice: sellPrice!.Value,
+                SellPriceChange24H: sellPriceChange24H!.Value,
+                Score: score!.Value,
+                ScoreChange2W: scoreChange2W!.Value
             );
         }
 
@@ -295,6 +347,30 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
             w.WriteEndArray();
 
+            w.WriteName(nameof(TrendReport.Orders1H));
+            w.WriteInt32(value.Orders1H);
+
+            w.WriteName(nameof(TrendReport.Orders24H));
+            w.WriteInt32(value.Orders24H);
+
+            w.WriteName(nameof(TrendReport.BuyPrice));
+            w.WriteInt32(value.BuyPrice);
+
+            w.WriteName(nameof(TrendReport.BuyPriceChange24H));
+            w.WriteDecimal128(value.BuyPriceChange24H);
+
+            w.WriteName(nameof(TrendReport.SellPrice));
+            w.WriteInt32(value.SellPrice);
+
+            w.WriteName(nameof(TrendReport.SellPriceChange24H));
+            w.WriteDecimal128(value.SellPriceChange24H);
+
+            w.WriteName(nameof(TrendReport.Score));
+            w.WriteDecimal128(value.Score);
+
+            w.WriteName(nameof(TrendReport.ScoreChange2W));
+            w.WriteDecimal128(value.ScoreChange2W);
+
             w.WriteEndDocument();
         }
     }
@@ -328,6 +404,8 @@ public sealed class MongoDbTrendReporter : ITrendReporter
             decimal? baseOnBallsPer9 = null;
             decimal? homeRunsPer9 = null;
             decimal? fieldingPercentage = null;
+            int? demand = null;
+            int? orderCount = null;
 
             r.ReadStartDocument();
             while (r.ReadBsonType() != BsonType.EndOfDocument)
@@ -347,49 +425,55 @@ public sealed class MongoDbTrendReporter : ITrendReporter
                         sellPrice = r.ReadInt32();
                         break;
                     case nameof(TrendMetricsByDate.BattingScore):
-                        Action(ref battingScore, type);
+                        ReadDecimal(r, ref battingScore, type);
                         break;
                     case nameof(TrendMetricsByDate.SignificantBattingParticipation):
                         significantBattingParticipation = r.ReadBoolean();
                         break;
                     case nameof(TrendMetricsByDate.PitchingScore):
-                        Action(ref pitchingScore, type);
+                        ReadDecimal(r, ref pitchingScore, type);
                         break;
                     case nameof(TrendMetricsByDate.SignificantPitchingParticipation):
                         significantPitchingParticipation = r.ReadBoolean();
                         break;
                     case nameof(TrendMetricsByDate.FieldingScore):
-                        Action(ref fieldingScore, type);
+                        ReadDecimal(r, ref fieldingScore, type);
                         break;
                     case nameof(TrendMetricsByDate.SignificantFieldingParticipation):
                         significantFieldingParticipation = r.ReadBoolean();
                         break;
                     case nameof(TrendMetricsByDate.BattingAverage):
-                        Action(ref battingAverage, type);
+                        ReadDecimal(r, ref battingAverage, type);
                         break;
                     case nameof(TrendMetricsByDate.OnBasePercentage):
-                        Action(ref onBasePercentage, type);
+                        ReadDecimal(r, ref onBasePercentage, type);
                         break;
                     case nameof(TrendMetricsByDate.Slugging):
-                        Action(ref slugging, type);
+                        ReadDecimal(r, ref slugging, type);
                         break;
                     case nameof(TrendMetricsByDate.EarnedRunAverage):
-                        Action(ref earnedRunAverage, type);
+                        ReadDecimal(r, ref earnedRunAverage, type);
                         break;
                     case nameof(TrendMetricsByDate.OpponentsBattingAverage):
-                        Action(ref opponentsBattingAverage, type);
+                        ReadDecimal(r, ref opponentsBattingAverage, type);
                         break;
                     case nameof(TrendMetricsByDate.StrikeoutsPer9):
-                        Action(ref strikeoutsPer9, type);
+                        ReadDecimal(r, ref strikeoutsPer9, type);
                         break;
                     case nameof(TrendMetricsByDate.BaseOnBallsPer9):
-                        Action(ref baseOnBallsPer9, type);
+                        ReadDecimal(r, ref baseOnBallsPer9, type);
                         break;
                     case nameof(TrendMetricsByDate.HomeRunsPer9):
-                        Action(ref homeRunsPer9, type);
+                        ReadDecimal(r, ref homeRunsPer9, type);
                         break;
                     case nameof(TrendMetricsByDate.FieldingPercentage):
-                        Action(ref fieldingPercentage, type);
+                        ReadDecimal(r, ref fieldingPercentage, type);
+                        break;
+                    case nameof(TrendMetricsByDate.Demand):
+                        demand = r.ReadInt32();
+                        break;
+                    case nameof(TrendMetricsByDate.OrderCount):
+                        orderCount = r.ReadInt32();
                         break;
                 }
             }
@@ -413,16 +497,10 @@ public sealed class MongoDbTrendReporter : ITrendReporter
                 StrikeoutsPer9: strikeoutsPer9,
                 BaseOnBallsPer9: baseOnBallsPer9,
                 HomeRunsPer9: homeRunsPer9,
-                FieldingPercentage: fieldingPercentage
+                FieldingPercentage: fieldingPercentage,
+                Demand: demand ?? 0,
+                OrderCount: orderCount ?? 0
             );
-
-            void Action(ref decimal? value, BsonType type)
-            {
-                if (type != BsonType.Null)
-                    value = new BsonDecimal128(r.ReadDecimal128()).AsDecimal;
-                else
-                    r.ReadNull();
-            }
         }
 
         /// <inheritdoc />
@@ -570,6 +648,12 @@ public sealed class MongoDbTrendReporter : ITrendReporter
                 w.WriteNull();
             }
 
+            w.WriteName(nameof(TrendMetricsByDate.Demand));
+            w.WriteInt32(value.Demand);
+
+            w.WriteName(nameof(TrendMetricsByDate.OrderCount));
+            w.WriteInt32(value.OrderCount);
+
             w.WriteEndDocument();
         }
     }
@@ -630,5 +714,19 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
             w.WriteEndDocument();
         }
+    }
+
+    /// <summary>
+    /// Reads a nullable decimal from <see cref="IBsonReader"/>
+    /// </summary>
+    /// <param name="r">The <see cref="IBsonReader"/></param>
+    /// <param name="value">The decimal variable to assign to if the value exists</param>
+    /// <param name="type">The <see cref="BsonType"/> of the value</param>
+    private static void ReadDecimal(IBsonReader r, ref decimal? value, BsonType type)
+    {
+        if (type != BsonType.Null)
+            value = new BsonDecimal128(r.ReadDecimal128()).AsDecimal;
+        else
+            r.ReadNull();
     }
 }

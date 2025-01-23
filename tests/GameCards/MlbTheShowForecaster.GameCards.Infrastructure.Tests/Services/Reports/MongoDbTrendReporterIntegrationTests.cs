@@ -51,6 +51,14 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
         // Arrange
         var cToken = CancellationToken.None;
         var trendReport = Faker.FakeTrendReport(year: 2024, externalId: Faker.FakeGuid1, mlbId: 100,
+            orders1H: 1,
+            orders24H: 2,
+            buyPrice: 3,
+            buyPriceChange24H: 4,
+            sellPrice: 5,
+            sellPriceChange24H: 6,
+            score: 7,
+            scoreChange2W: 8,
             metricsByDate: new List<TrendMetricsByDate>()
             {
                 Faker.FakeTrendMetricsByDate(new DateOnly(2024, 10, 8)),
@@ -87,6 +95,14 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
         // Arrange
         var cToken = CancellationToken.None;
         var trendReport = Faker.FakeTrendReport(year: 2024, externalId: Faker.FakeGuid1, mlbId: 100,
+            orders1H: 1,
+            orders24H: 2,
+            buyPrice: 3,
+            buyPriceChange24H: 4,
+            sellPrice: 5,
+            sellPriceChange24H: 6,
+            score: 7,
+            scoreChange2W: 8,
             metricsByDate: new List<TrendMetricsByDate>()
             {
                 Faker.FakeTrendMetricsByDate(new DateOnly(2024, 10, 8)),
@@ -123,6 +139,14 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
         // Arrange
         var cToken = CancellationToken.None;
         var trendReport = Faker.FakeTrendReport(year: 2024, externalId: Faker.FakeGuid1, mlbId: 100,
+            orders1H: 1,
+            orders24H: 2,
+            buyPrice: 3,
+            buyPriceChange24H: 4,
+            sellPrice: 5,
+            sellPriceChange24H: 6,
+            score: 7,
+            scoreChange2W: 8,
             metricsByDate: new List<TrendMetricsByDate>()
             {
                 Faker.FakeTrendMetricsByDate(new DateOnly(2024, 10, 8), 0, 0, null, false, null, false, null, false,
@@ -147,6 +171,14 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
 
         await reporter.UpdateTrendReport(trendReport.Year, trendReport.CardExternalId, cToken); // Insert
         var trendReport2 = Faker.FakeTrendReport(year: 2024, externalId: Faker.FakeGuid1, mlbId: 100, overallRating: 99,
+            orders1H: 10,
+            orders24H: 20,
+            buyPrice: 30,
+            buyPriceChange24H: 40,
+            sellPrice: 50,
+            sellPriceChange24H: 60,
+            score: 70,
+            scoreChange2W: 80,
             metricsByDate: new List<TrendMetricsByDate>()
             {
                 Faker.FakeTrendMetricsByDate(new DateOnly(2024, 10, 8)),
@@ -174,19 +206,19 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
     [Theory]
     [Trait("Category", "Integration")]
     // Name, Asc
-    [InlineData(1, 2, ITrendReporter.SortField.Name, ITrendReporter.SortOrder.Asc, new[] { "Alan", "Dot" })]
-    [InlineData(2, 2, ITrendReporter.SortField.Name, ITrendReporter.SortOrder.Asc, new[] { "èrnie" })]
+    [InlineData(1, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Asc, new[] { "Alan", "Dot" })]
+    [InlineData(2, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Asc, new[] { "èrnie" })]
     // Name, Desc
-    [InlineData(1, 2, ITrendReporter.SortField.Name, ITrendReporter.SortOrder.Desc, new[] { "èrnie", "Dot" })]
-    [InlineData(2, 2, ITrendReporter.SortField.Name, ITrendReporter.SortOrder.Desc, new[] { "Alan" })]
+    [InlineData(1, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Desc, new[] { "èrnie", "Dot" })]
+    [InlineData(2, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Desc, new[] { "Alan" })]
     // OVR, Asc
-    [InlineData(1, 2, ITrendReporter.SortField.Ovr, ITrendReporter.SortOrder.Asc, new[] { "Alan", "èrnie" })]
-    [InlineData(2, 2, ITrendReporter.SortField.Ovr, ITrendReporter.SortOrder.Asc, new[] { "Dot" })]
+    [InlineData(1, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Asc, new[] { "Alan", "èrnie" })]
+    [InlineData(2, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Asc, new[] { "Dot" })]
     // OVR, Desc
-    [InlineData(1, 2, ITrendReporter.SortField.Ovr, ITrendReporter.SortOrder.Desc, new[] { "Dot", "èrnie" })]
-    [InlineData(2, 2, ITrendReporter.SortField.Ovr, ITrendReporter.SortOrder.Desc, new[] { "Alan" })]
-    public async Task GetTrendReports_YearAndCardExternalId_InsertsReport(int page, int pageSize,
-        ITrendReporter.SortField sortField, ITrendReporter.SortOrder sortOrder, string[] expectedCardNames)
+    [InlineData(1, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Desc, new[] { "Dot", "èrnie" })]
+    [InlineData(2, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Desc, new[] { "Alan" })]
+    public async Task GetTrendReports_YearAndCardExternalId_InsertsReport(int page, int pageSize, string sortField,
+        ITrendReporter.SortOrder sortOrder, string[] expectedCardNames)
     {
         // Arrange
         var cToken = CancellationToken.None;

@@ -38,7 +38,7 @@ public interface ITrendReporter
     /// <param name="sortOrder">The sort direction</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="TrendReport"/> collection</returns>
-    Task<PaginationResult<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize, SortField? sortField,
+    Task<PaginationResult<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize, string? sortField,
         SortOrder? sortOrder, CancellationToken cancellationToken);
 
     /// <summary>
@@ -48,14 +48,5 @@ public interface ITrendReporter
     {
         Asc,
         Desc
-    }
-
-    /// <summary>
-    /// Sort field
-    /// </summary>
-    public enum SortField
-    {
-        Name,
-        Ovr
     }
 }

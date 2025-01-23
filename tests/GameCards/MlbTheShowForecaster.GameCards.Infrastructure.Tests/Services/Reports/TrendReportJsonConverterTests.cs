@@ -90,6 +90,14 @@ public class TrendReportJsonConverterTests
       ""cardName"": ""Dottie"",
       ""primaryPosition"": ""CF"",
       ""overallRating"": 99,
+      ""orders1H"": 5,
+      ""orders24H"": 50,
+      ""buyPrice"": 123,
+      ""buyPriceChange24H"": 31.2,
+      ""sellPrice"": 456,
+      ""sellPriceChange24H"": 2.15,
+      ""score"": 1,
+      ""scoreChange2W"": 3.0,
       ""metricsByDate"": [
         {
           ""date"": ""2024-10-05"",
@@ -109,7 +117,9 @@ public class TrendReportJsonConverterTests
           ""strikeoutsPer9"": 0.116,
           ""baseOnBallsPer9"": 0.117,
           ""homeRunsPer9"": 0.118,
-          ""fieldingPercentage"": 0.119
+          ""fieldingPercentage"": 0.119,
+          ""demand"": 1,
+          ""orderCount"": 10
         },
         {
           ""date"": ""2024-10-06"",
@@ -129,7 +139,9 @@ public class TrendReportJsonConverterTests
           ""strikeoutsPer9"": 0.116,
           ""baseOnBallsPer9"": 0.117,
           ""homeRunsPer9"": 0.118,
-          ""fieldingPercentage"": 0.119
+          ""fieldingPercentage"": 0.119,
+          ""demand"": 2,
+          ""orderCount"": 20
         }
       ],
       ""impacts"": [
@@ -147,10 +159,18 @@ public class TrendReportJsonConverterTests
         position: Position.CenterField,
         overallRating: 99,
         cardName: "Dottie",
-        new List<TrendMetricsByDate>()
+        orders1H: 5,
+        orders24H: 50,
+        buyPrice: 123,
+        buyPriceChange24H: 31.2m,
+        sellPrice: 456,
+        sellPriceChange24H: 2.15m,
+        score: 1,
+        scoreChange2W: 3.0m,
+        metricsByDate: new List<TrendMetricsByDate>()
         {
-            Faker.FakeTrendMetricsByDate(date: new DateOnly(2024, 10, 5)),
-            Faker.FakeTrendMetricsByDate(date: new DateOnly(2024, 10, 6)),
+            Faker.FakeTrendMetricsByDate(date: new DateOnly(2024, 10, 5), demand: 1, orderCount: 10),
+            Faker.FakeTrendMetricsByDate(date: new DateOnly(2024, 10, 6), demand: 2, orderCount: 20),
         },
         impacts: new List<TrendImpact>()
         {
