@@ -293,7 +293,7 @@ public sealed class MongoDbTrendReporter : ITrendReporter
         ///         .Ascending(nameof(TrendReport.Year))
         /// </summary>
         public bool TryGetMemberSerializationInfo(string memberName,
-            [UnscopedRef] out BsonSerializationInfo serializationInfo)
+            [UnscopedRef] out BsonSerializationInfo? serializationInfo)
         {
             switch (memberName)
             {
