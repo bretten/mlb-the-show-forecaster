@@ -1,5 +1,7 @@
 ﻿using System.Data.Common;
+using System.Diagnostics;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -74,6 +76,10 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection, new TeamProvider());
         await dbContext.Database.MigrateAsync();
+        // Add an existing player so it can be activated (first player alphabetically in the 2024 season)
+        var player = Faker.FakePlayer(mlbId: 592450, team: Domain.Tests.Teams.TestClasses.Faker.FakeTeam(),
+            active: false);
+        await dbContext.Players.AddAsync(player);
         await dbContext.SaveChangesAsync();
 
         /*
@@ -87,11 +93,31 @@ public class ProgramIntegrationTests : IAsyncLifetime
         /*
          * Assert
          */
-        // Some Players should have been added to the DB
-        await using var assertConnection = await GetDbConnection();
-        await using var assertDbContext = GetDbContext(assertConnection, new TeamProvider());
-        var players = assertDbContext.Players.Count();
-        Assert.True(players > 0);
+        var conditionsMet = false;
+        var timeLimit = new TimeSpan(0, 1, 0);
+        var stopwatch = Stopwatch.StartNew();
+        while (!conditionsMet)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(5), CancellationToken.None);
+            if (stopwatch.Elapsed > timeLimit)
+            {
+                throw new TimeoutException($"Timeout waiting {nameof(Program_PlayerTracker_ExecutesAndAddsPlayers)}");
+            }
+
+            // Some Players should have been added to the DB
+            await using var assertConnection = await GetDbConnection();
+            await using var assertDbContext = GetDbContext(assertConnection, new TeamProvider());
+            var players = assertDbContext.Players.Count();
+            var playersSaved = players > 0;
+            // Domain events should have been published
+            using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
+            var messageCount = rabbitMqChannel.MessageCount("PlayerActivated");
+            var messagesPublished = messageCount > 0;
+
+            conditionsMet = playersSaved && messagesPublished;
+        }
+
+        stopwatch.Stop();
     }
 
     public async Task InitializeAsync()

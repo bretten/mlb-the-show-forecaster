@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Diagnostics;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -86,14 +87,37 @@ public class ProgramIntegrationTests : IAsyncLifetime
         /*
          * Assert
          */
-        // The player season should have performance stats
-        await using var assertConnection = await GetDbConnection();
-        await using var assertDbContext = GetDbContext(assertConnection);
-        var playerSeasons = assertDbContext.PlayerStatsBySeasonsWithGames().ToList();
-        var playerSeason = playerSeasons.FirstOrDefault(x =>
-            x.BattingStatsByGamesChronologically.Count > 0 || x.PitchingStatsByGamesChronologically.Count > 0 ||
-            x.FieldingStatsByGamesChronologically.Count > 0);
-        Assert.NotNull(playerSeason);
+        var conditionsMet = false;
+        var timeLimit = new TimeSpan(0, 1, 0);
+        var stopwatch = Stopwatch.StartNew();
+        while (!conditionsMet)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(5), CancellationToken.None);
+            if (stopwatch.Elapsed > timeLimit)
+            {
+                throw new TimeoutException(
+                    $"Timeout waiting {nameof(Program_PerformanceTracker_ExecutesAndAddsSeasonStats)}");
+            }
+
+            // The player season should have performance stats
+            await using var assertConnection = await GetDbConnection();
+            await using var assertDbContext = GetDbContext(assertConnection);
+            var playerSeasons = assertDbContext.PlayerStatsBySeasonsWithGames().ToList();
+            var playerSeason = playerSeasons.FirstOrDefault(x =>
+                x.BattingStatsByGamesChronologically.Count > 0 || x.PitchingStatsByGamesChronologically.Count > 0 ||
+                x.FieldingStatsByGamesChronologically.Count > 0);
+            var playerSeasonSaved = playerSeason != null;
+            // Domain events should have been published
+            using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
+            var messageCount = rabbitMqChannel.MessageCount("PlayerBattedInGame")
+                               + rabbitMqChannel.MessageCount("PlayerPitchedInGame")
+                               + rabbitMqChannel.MessageCount("PlayerFieldedInGame");
+            var messagesPublished = messageCount > 0;
+
+            conditionsMet = playerSeasonSaved && messagesPublished;
+        }
+
+        stopwatch.Stop();
     }
 
     public async Task InitializeAsync()
