@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Diagnostics;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
@@ -116,17 +117,39 @@ public class ProgramIntegrationTests : IAsyncLifetime
         /*
          * Assert
          */
-        // There should be more than one player cards
-        await using var assertConnection = await GetDbConnection();
-        await using var assertCardsDbContext = GetCardsDbContext(assertConnection);
-        var playerCards = assertCardsDbContext.PlayerCards.Count();
-        // Make sure the cards inserted above exist
-        // NOTE: The time it takes to get all the MLB cards exceeds the test time, so IPlayerCardTracker may not have time to update the cards
-        Assert.True(playerCards >= 2);
-        // There should be marketplace listings
-        await using var assertMarketplaceDbContext = GetMarketplaceDbContext(assertConnection);
-        var listings = assertMarketplaceDbContext.Listings.Count();
-        Assert.True(listings > 1); // One was already inserted by the setup of this test
+        var conditionsMet = false;
+        var timeLimit = new TimeSpan(0, 1, 0);
+        var stopwatch = Stopwatch.StartNew();
+        while (!conditionsMet)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(5), CancellationToken.None);
+            if (stopwatch.Elapsed > timeLimit)
+            {
+                throw new TimeoutException(
+                    $"Timeout waiting {nameof(Program_MarketplaceWatcher_ExecutesAndAddsPlayerCardsAndListings)}");
+            }
+
+            // There should be more than one player cards
+            await using var assertConnection = await GetDbConnection();
+            await using var assertCardsDbContext = GetCardsDbContext(assertConnection);
+            var playerCards = assertCardsDbContext.PlayerCards.Count();
+            // Make sure the cards inserted above exist
+            // NOTE: The time it takes to get all the MLB cards exceeds the test time, so IPlayerCardTracker may not have time to update the cards
+            var playerCardsSaved = playerCards >= 2;
+            // There should be marketplace listings
+            await using var assertMarketplaceDbContext = GetMarketplaceDbContext(assertConnection);
+            var listings = assertMarketplaceDbContext.Listings.Count();
+            var listingsSaved = listings > 1; // One was already inserted by the setup of this test
+            // Domain events should have been published
+            using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
+            var messageCount = rabbitMqChannel.MessageCount("ListingBuyPriceDecreased") +
+                               rabbitMqChannel.MessageCount("ListingBuyPriceIncreased");
+            var messagesPublished = messageCount > 0;
+
+            conditionsMet = playerCardsSaved && listingsSaved && messagesPublished;
+        }
+
+        stopwatch.Stop();
     }
 
     public async Task InitializeAsync()

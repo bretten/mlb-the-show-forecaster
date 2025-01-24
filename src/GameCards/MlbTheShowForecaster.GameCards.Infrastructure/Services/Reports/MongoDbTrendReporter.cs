@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.Pagination;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
@@ -11,6 +12,8 @@ using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
+using Polly;
+using Polly.Retry;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 
@@ -40,6 +43,24 @@ public sealed class MongoDbTrendReporter : ITrendReporter
     private static readonly ReplaceOptions ReplaceOptions = new ReplaceOptions { IsUpsert = true };
 
     /// <summary>
+    /// Retry policy for concurrency situations
+    ///
+    /// A TrendReport can be inserted from multiple sources
+    /// When trying to insert two or more of the same TrendReport at the same time, add a retry for duplicate key errors
+    /// When retried, it will be treated as an idempotent action and will just be an additive update
+    /// </summary>
+    private static readonly ResiliencePipeline RetryPipeline = new ResiliencePipelineBuilder()
+        .AddRetry(new RetryStrategyOptions
+        {
+            BackoffType = DelayBackoffType.Exponential,
+            UseJitter = true,
+            MaxRetryAttempts = 4,
+            Delay = TimeSpan.FromSeconds(5)
+        })
+        .AddTimeout(TimeSpan.FromMinutes(1))
+        .Build();
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="trendReportFactory">Creates <see cref="TrendReport"/>s</param>
@@ -62,7 +83,8 @@ public sealed class MongoDbTrendReporter : ITrendReporter
         var trendReport = await _trendReportFactory.GetReport(year, cardExternalId, cancellationToken);
 
         // Save the report
-        await Upsert(trendReport, cancellationToken);
+        await RetryPipeline.ExecuteAsync(async _ => { await Upsert(trendReport, cancellationToken); },
+            cancellationToken);
     }
 
     /// <inheritdoc />
@@ -72,7 +94,8 @@ public sealed class MongoDbTrendReporter : ITrendReporter
         var trendReport = await _trendReportFactory.GetReport(year, mlbId, cancellationToken);
 
         // Save the report
-        await Upsert(trendReport, cancellationToken);
+        await RetryPipeline.ExecuteAsync(async _ => { await Upsert(trendReport, cancellationToken); },
+            cancellationToken);
     }
 
     /// <inheritdoc />
@@ -156,7 +179,15 @@ public sealed class MongoDbTrendReporter : ITrendReporter
             });
         }
 
-        return db.GetCollection<TrendReport>(_config.Collection);
+        var collection = db.GetCollection<TrendReport>(_config.Collection);
+
+        // Indexes
+        var index = new CreateIndexModel<TrendReport>(Builders<TrendReport>.IndexKeys
+            .Ascending(x => x.Year)
+            .Ascending(x => x.CardExternalId), new CreateIndexOptions() { Unique = true });
+        await collection.Indexes.CreateOneAsync(index);
+
+        return collection;
     }
 
     /// <summary>
@@ -177,7 +208,7 @@ public sealed class MongoDbTrendReporter : ITrendReporter
     /// <summary>
     /// BSON serializer for <see cref="TrendReport"/>
     /// </summary>
-    private sealed class TrendReportSerializer : SerializerBase<TrendReport>
+    private sealed class TrendReportSerializer : SerializerBase<TrendReport>, IBsonDocumentSerializer
     {
         /// <inheritdoc />
         public override TrendReport Deserialize(BsonDeserializationContext context, BsonDeserializationArgs args)
@@ -300,6 +331,35 @@ public sealed class MongoDbTrendReporter : ITrendReporter
                 Score: score!.Value,
                 ScoreChange2W: scoreChange2W!.Value
             );
+        }
+
+        /// <summary>
+        /// Maps members to fields
+        ///
+        /// Required when you want to refer to fields using LINQ:
+        ///     var index = new CreateIndexModel(Builders.IndexKeys
+        ///         .Ascending(x => x.Year))
+        ///
+        /// Otherwise, you need to use a string to reference the field name:
+        ///     var index = new CreateIndexModel(Builders.IndexKeys
+        ///         .Ascending(nameof(TrendReport.Year))
+        /// </summary>
+        public bool TryGetMemberSerializationInfo(string memberName,
+            [UnscopedRef] out BsonSerializationInfo? serializationInfo)
+        {
+            switch (memberName)
+            {
+                case nameof(TrendReport.Year):
+                    serializationInfo = new BsonSerializationInfo("Year", new Int32Serializer(), typeof(int));
+                    return true;
+                case nameof(TrendReport.CardExternalId):
+                    serializationInfo =
+                        new BsonSerializationInfo("CardExternalId", new StringSerializer(), typeof(string));
+                    return true;
+                default:
+                    serializationInfo = null;
+                    return false;
+            }
         }
 
         /// <inheritdoc />
