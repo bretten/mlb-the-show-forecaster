@@ -36,10 +36,11 @@ public interface ITrendReporter
     /// <param name="pageSize">The page size</param>
     /// <param name="sortField">The field to sort on</param>
     /// <param name="sortOrder">The sort direction</param>
+    /// <param name="cardFilter">The card filter to apply</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="TrendReport"/> collection</returns>
     Task<PaginationResult<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize, string? sortField,
-        SortOrder? sortOrder, CancellationToken cancellationToken);
+        SortOrder? sortOrder, CardFilter? cardFilter, CancellationToken cancellationToken);
 
     /// <summary>
     /// Sort order
@@ -48,5 +49,18 @@ public interface ITrendReporter
     {
         Asc,
         Desc
+    }
+
+    /// <summary>
+    /// Filter to determine the type of card
+    /// </summary>
+    public enum CardFilter
+    {
+        Boosted,
+        Diamond,
+        Gold,
+        Silver,
+        Bronze,
+        Common
     }
 }

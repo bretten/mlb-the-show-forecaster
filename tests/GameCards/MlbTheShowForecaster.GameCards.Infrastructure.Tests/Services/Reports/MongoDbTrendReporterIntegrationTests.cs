@@ -206,28 +206,37 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
     [Theory]
     [Trait("Category", "Integration")]
     // Name, Asc
-    [InlineData(1, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Asc, new[] { "Alan", "Dot" })]
-    [InlineData(2, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Asc, new[] { "èrnie" })]
+    [InlineData(1, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Asc, null, new[] { "Alan", "Dot" })]
+    [InlineData(2, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Asc, null, new[] { "èrnie" })]
     // Name, Desc
-    [InlineData(1, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Desc, new[] { "èrnie", "Dot" })]
-    [InlineData(2, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Desc, new[] { "Alan" })]
+    [InlineData(1, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Desc, null, new[] { "èrnie", "Dot" })]
+    [InlineData(2, 2, nameof(TrendReport.CardName), ITrendReporter.SortOrder.Desc, null, new[] { "Alan" })]
     // OVR, Asc
-    [InlineData(1, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Asc, new[] { "Alan", "èrnie" })]
-    [InlineData(2, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Asc, new[] { "Dot" })]
+    [InlineData(1, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Asc, null, new[] { "Alan", "èrnie" })]
+    [InlineData(2, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Asc, null, new[] { "Dot" })]
     // OVR, Desc
-    [InlineData(1, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Desc, new[] { "Dot", "èrnie" })]
-    [InlineData(2, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Desc, new[] { "Alan" })]
+    [InlineData(1, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Desc, null, new[] { "Dot", "èrnie" })]
+    [InlineData(2, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Desc, null, new[] { "Alan" })]
+    // Boosted
+    [InlineData(1, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Desc,
+        ITrendReporter.CardFilter.Boosted, new[] { "Dot" })]
+    // Diamond
+    [InlineData(1, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Desc,
+        ITrendReporter.CardFilter.Diamond, new[] { "Dot" })]
+    // Gold
+    [InlineData(1, 2, nameof(TrendReport.OverallRating), ITrendReporter.SortOrder.Desc, ITrendReporter.CardFilter.Gold,
+        new[] { "èrnie" })]
     public async Task GetTrendReports_YearAndCardExternalId_InsertsReport(int page, int pageSize, string sortField,
-        ITrendReporter.SortOrder sortOrder, string[] expectedCardNames)
+        ITrendReporter.SortOrder sortOrder, ITrendReporter.CardFilter? cardFilter, string[] expectedCardNames)
     {
         // Arrange
         var cToken = CancellationToken.None;
         var trendReport1 = Faker.FakeTrendReport(year: 2024, externalId: Faker.FakeGuid1, mlbId: 100, cardName: "Alan",
             overallRating: 60);
         var trendReport2 = Faker.FakeTrendReport(year: 2024, externalId: Faker.FakeGuid2, mlbId: 200, cardName: "Dot",
-            overallRating: 99);
+            overallRating: 99, isBoosted: true);
         var trendReport3 = Faker.FakeTrendReport(year: 2024, externalId: Faker.FakeGuid3, mlbId: 300, cardName: "èrnie",
-            overallRating: 70);
+            overallRating: 80);
 
         var stubTrendReportFactory = new Mock<ITrendReportFactory>();
         stubTrendReportFactory.Setup(x => x.GetReport(trendReport1.Year, trendReport1.CardExternalId, cToken))
@@ -249,7 +258,8 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
         var year = trendReport1.Year;
 
         // Act
-        var paginatedResult = await reporter.GetTrendReports(year, page, pageSize, sortField, sortOrder, cToken);
+        var paginatedResult =
+            await reporter.GetTrendReports(year, page, pageSize, sortField, sortOrder, cardFilter, cToken);
         var actual = paginatedResult.Items.ToList();
 
         // Assert

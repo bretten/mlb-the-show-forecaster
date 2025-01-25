@@ -230,6 +230,7 @@ public sealed class TrendReportFactory : ITrendReportFactory
             OverallRating: card.OverallRating,
             MetricsByDate: performance.Metrics,
             Impacts: forecast.ForecastImpactsChronologically.Select(MapForecastImpact).ToImmutableList(),
+            IsBoosted: card.IsBoosted,
             Orders1H: orderCounts.Orders1H,
             Orders24H: orderCounts.Orders24H,
             BuyPrice: prices.BuyPrice,
@@ -237,7 +238,8 @@ public sealed class TrendReportFactory : ITrendReportFactory
             SellPrice: prices.SellPrice,
             SellPriceChange24H: prices.SellPriceChange24H,
             Score: performance.Score,
-            ScoreChange2W: performance.ScoreChange2W
+            ScoreChange2W: performance.ScoreChange2W,
+            Demand: forecast.EstimateDemandFor(today).Value
         );
     }
 
@@ -269,7 +271,8 @@ public sealed class TrendReportFactory : ITrendReportFactory
             _ => $"Player's demand changed by {forecastImpact.Demand.Value}"
         };
 
-        return new TrendImpact(forecastImpact.StartDate, forecastImpact.EndDate, description);
+        return new TrendImpact(forecastImpact.StartDate, forecastImpact.EndDate, description,
+            forecastImpact.Demand.Value);
     }
 
     /// <summary>

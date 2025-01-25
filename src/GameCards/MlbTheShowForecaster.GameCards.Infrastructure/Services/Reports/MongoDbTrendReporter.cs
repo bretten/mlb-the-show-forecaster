@@ -100,10 +100,15 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
     /// <inheritdoc />
     public async Task<PaginationResult<TrendReport>> GetTrendReports(SeasonYear year, int page, int pageSize,
-        string? sortField, ITrendReporter.SortOrder? sortOrder, CancellationToken cancellationToken)
+        string? sortField, ITrendReporter.SortOrder? sortOrder, ITrendReporter.CardFilter? cardFilter,
+        CancellationToken cancellationToken)
     {
         var collection = await GetCollection();
         var filter = Builders<TrendReport>.Filter.Eq(nameof(TrendReport.Year), year.Value);
+        if (cardFilter != null)
+        {
+            filter = Builders<TrendReport>.Filter.And(filter, FilterCards(cardFilter));
+        }
 
         var sf = sortField?.ToLower();
         var sortFieldDef = sf switch
@@ -201,6 +206,32 @@ public sealed class MongoDbTrendReporter : ITrendReporter
     }
 
     /// <summary>
+    /// Builds a filter for card types
+    /// </summary>
+    /// <param name="filter">The type of filter to build</param>
+    /// <returns><see cref="FilterDefinition{TDocument}"/></returns>
+    private static FilterDefinition<TrendReport>? FilterCards(ITrendReporter.CardFilter? filter)
+    {
+        return filter switch
+        {
+            ITrendReporter.CardFilter.Boosted => Builders<TrendReport>.Filter.Eq(nameof(TrendReport.IsBoosted), true),
+            ITrendReporter.CardFilter.Diamond =>
+                Builders<TrendReport>.Filter.Gte(nameof(TrendReport.OverallRating), 85),
+            ITrendReporter.CardFilter.Gold => Builders<TrendReport>.Filter.And(
+                Builders<TrendReport>.Filter.Lt(nameof(TrendReport.OverallRating), 85),
+                Builders<TrendReport>.Filter.Gte(nameof(TrendReport.OverallRating), 80)),
+            ITrendReporter.CardFilter.Silver => Builders<TrendReport>.Filter.And(
+                Builders<TrendReport>.Filter.Lt(nameof(TrendReport.OverallRating), 80),
+                Builders<TrendReport>.Filter.Gte(nameof(TrendReport.OverallRating), 75)),
+            ITrendReporter.CardFilter.Bronze => Builders<TrendReport>.Filter.And(
+                Builders<TrendReport>.Filter.Lt(nameof(TrendReport.OverallRating), 75),
+                Builders<TrendReport>.Filter.Gte(nameof(TrendReport.OverallRating), 65)),
+            ITrendReporter.CardFilter.Common => Builders<TrendReport>.Filter.Lt(nameof(TrendReport.OverallRating), 65),
+            _ => null
+        };
+    }
+
+    /// <summary>
     /// Configuration for MongoDB
     /// </summary>
     public sealed record MongoDbTrendReporterConfig(string Database, string Collection);
@@ -225,6 +256,7 @@ public sealed class MongoDbTrendReporter : ITrendReporter
             int? overallRating = null;
             List<TrendMetricsByDate>? metrics = null;
             List<TrendImpact>? impacts = null;
+            bool isBoosted = false;
             int? orders1H = null;
             int? orders24H = null;
             int? buyPrice = null;
@@ -233,6 +265,7 @@ public sealed class MongoDbTrendReporter : ITrendReporter
             decimal? sellPriceChange24H = null;
             decimal? score = null;
             decimal? scoreChange2W = null;
+            int? demand = null;
 
             var r = context.Reader;
             r.ReadStartDocument();
@@ -281,6 +314,9 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
                         r.ReadEndArray();
                         break;
+                    case nameof(TrendReport.IsBoosted):
+                        isBoosted = r.ReadBoolean();
+                        break;
                     case nameof(TrendReport.Orders1H):
                         orders1H = r.ReadInt32();
                         break;
@@ -305,6 +341,9 @@ public sealed class MongoDbTrendReporter : ITrendReporter
                     case nameof(TrendReport.ScoreChange2W):
                         ReadDecimal(r, ref scoreChange2W, type);
                         break;
+                    case nameof(TrendReport.Demand):
+                        demand = r.ReadInt32();
+                        break;
                     default:
                         r.SkipValue(); // This will be the MongoDB ID
                         break;
@@ -322,6 +361,7 @@ public sealed class MongoDbTrendReporter : ITrendReporter
                 OverallRating: OverallRating.Create(overallRating!.Value),
                 MetricsByDate: metrics!,
                 Impacts: impacts!,
+                IsBoosted: isBoosted,
                 Orders1H: orders1H!.Value,
                 Orders24H: orders24H!.Value,
                 BuyPrice: buyPrice!.Value,
@@ -329,7 +369,8 @@ public sealed class MongoDbTrendReporter : ITrendReporter
                 SellPrice: sellPrice!.Value,
                 SellPriceChange24H: sellPriceChange24H!.Value,
                 Score: score!.Value,
-                ScoreChange2W: scoreChange2W!.Value
+                ScoreChange2W: scoreChange2W!.Value,
+                Demand: demand!.Value
             );
         }
 
@@ -407,6 +448,9 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
             w.WriteEndArray();
 
+            w.WriteName(nameof(TrendReport.IsBoosted));
+            w.WriteBoolean(value.IsBoosted);
+
             w.WriteName(nameof(TrendReport.Orders1H));
             w.WriteInt32(value.Orders1H);
 
@@ -430,6 +474,9 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
             w.WriteName(nameof(TrendReport.ScoreChange2W));
             w.WriteDecimal128(value.ScoreChange2W);
+
+            w.WriteName(nameof(TrendReport.Demand));
+            w.WriteInt32(value.Demand);
 
             w.WriteEndDocument();
         }
@@ -732,6 +779,7 @@ public sealed class MongoDbTrendReporter : ITrendReporter
             string? start = null;
             string? end = null;
             string? desc = null;
+            int? demand = null;
 
             r.ReadStartDocument();
             while (r.ReadBsonType() != BsonType.EndOfDocument)
@@ -749,12 +797,16 @@ public sealed class MongoDbTrendReporter : ITrendReporter
                     case nameof(TrendImpact.Description):
                         desc = r.ReadString();
                         break;
+                    case nameof(TrendImpact.Demand):
+                        demand = r.ReadInt32();
+                        break;
                 }
             }
 
             r.ReadEndDocument();
 
-            return new TrendImpact(Start: DateOnly.Parse(start!), End: DateOnly.Parse(end!), Description: desc!);
+            return new TrendImpact(Start: DateOnly.Parse(start!), End: DateOnly.Parse(end!), Description: desc!,
+                Demand: demand!.Value);
         }
 
         /// <inheritdoc />
@@ -771,6 +823,9 @@ public sealed class MongoDbTrendReporter : ITrendReporter
 
             w.WriteName(nameof(TrendImpact.Description));
             w.WriteString(value.Description);
+
+            w.WriteName(nameof(TrendImpact.Demand));
+            w.WriteInt32(value.Demand);
 
             w.WriteEndDocument();
         }

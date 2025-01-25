@@ -200,8 +200,8 @@ public static class Faker
     public static TrendReport FakeTrendReport(ushort year = 2024, Guid? externalId = null, int mlbId = 1,
         Position position = Position.RightField, int overallRating = 50, string cardName = "cardA",
         List<TrendMetricsByDate>? metricsByDate = null, List<TrendImpact>? impacts = null, int orders1H = 0,
-        int orders24H = 0, int buyPrice = 0, decimal buyPriceChange24H = 0, int sellPrice = 0,
-        decimal sellPriceChange24H = 0, decimal score = 0, decimal scoreChange2W = 0)
+        bool isBoosted = false, int orders24H = 0, int buyPrice = 0, decimal buyPriceChange24H = 0, int sellPrice = 0,
+        decimal sellPriceChange24H = 0, decimal score = 0, decimal scoreChange2W = 0, int demand = 0)
     {
         return new TrendReport(
             Year: SeasonYear.Create(year),
@@ -212,6 +212,7 @@ public static class Faker
             CardName: Domain.Tests.Cards.TestClasses.Faker.FakeCardName(cardName),
             MetricsByDate: metricsByDate ?? new List<TrendMetricsByDate>(),
             Impacts: impacts ?? new List<TrendImpact>(),
+            IsBoosted: isBoosted,
             Orders1H: orders1H,
             Orders24H: orders24H,
             BuyPrice: buyPrice,
@@ -219,7 +220,8 @@ public static class Faker
             SellPrice: sellPrice,
             SellPriceChange24H: sellPriceChange24H,
             Score: score,
-            ScoreChange2W: scoreChange2W
+            ScoreChange2W: scoreChange2W,
+            Demand: demand
         );
     }
 
@@ -267,11 +269,12 @@ public static class Faker
     }
 
     public static TrendImpact FakeTrendImpact(DateOnly? startDate = null, DateOnly? endDate = null,
-        string? description = null)
+        string? description = null, int demand = 0)
     {
         return new TrendImpact(Start: startDate ?? new DateOnly(2024, 10, 8),
             End: endDate ?? new DateOnly(2024, 10, 8),
-            Description: description ?? "Trend impact description");
+            Description: description ?? "Trend impact description",
+            Demand: demand);
     }
 
     public static PaginationResult<TrendReport> FakeTrendReportPaginationResult(int page = 1, int pageSize = 1,

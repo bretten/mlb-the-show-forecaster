@@ -34,7 +34,7 @@ public class TrendReportFactoryTests
         new TrendReportFactory.MetricDatesAndTimes(SeasonYear.Create(2024), Today, Now);
 
     private static PlayerCard PlayerCard() => Faker.FakePlayerCard(year: 2024, name: Faker.FakeCardName("Dottie"),
-        externalId: Faker.FakeGuid1, position: Position.CenterField, overallRating: 99);
+        externalId: Faker.FakeGuid1, position: Position.CenterField, overallRating: 99, isBoosted: true);
 
     private static Listing Listing() => Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(buyPrice: 123,
         sellPrice: 4560,
@@ -78,6 +78,7 @@ public class TrendReportFactoryTests
         CardName: Faker.FakeCardName("Dottie"),
         PrimaryPosition: Position.CenterField,
         OverallRating: Faker.FakeOverallRating(99),
+        IsBoosted: true,
         Orders1H: 1,
         Orders24H: 3,
         BuyPrice: 123,
@@ -86,6 +87,7 @@ public class TrendReportFactoryTests
         SellPriceChange24H: 900,
         Score: 0.1m,
         ScoreChange2W: -80.39m,
+        Demand: 1,
         MetricsByDate: new List<TrendMetricsByDate>()
         {
             new TrendMetricsByDate(
@@ -158,7 +160,8 @@ public class TrendReportFactoryTests
         Impacts: new List<TrendImpact>()
         {
             new TrendImpact(Start: MetricDatesAndTimes.Today, End: Tomorrow,
-                Description: "Player's card was boosted for: Hit 5 HRs")
+                Description: "Player's card was boosted for: Hit 5 HRs",
+                Demand: 3)
         }.ToImmutableList()
     );
 
@@ -337,6 +340,7 @@ public class TrendReportFactoryTests
         Assert.Equal(playerCard.Name, actual.CardName);
         Assert.Equal(playerCard.Position, actual.PrimaryPosition);
         Assert.Equal(playerCard.OverallRating, actual.OverallRating);
+        Assert.True(actual.IsBoosted);
         Assert.Equal(1, actual.Orders1H);
         Assert.Equal(24, actual.Orders24H);
         Assert.Equal(1, actual.BuyPrice);
@@ -345,6 +349,7 @@ public class TrendReportFactoryTests
         Assert.Equal(4, actual.SellPriceChange24H);
         Assert.Equal(5, actual.Score);
         Assert.Equal(25.1m, actual.ScoreChange2W);
+        Assert.Equal(1, actual.Demand);
 
         Assert.Equal(expectedMetrics, actual.MetricsByDate);
 
@@ -468,6 +473,7 @@ public class TrendReportFactoryTests
         Assert.Equal(playerCard.Name, actual.CardName);
         Assert.Equal(playerCard.Position, actual.PrimaryPosition);
         Assert.Equal(playerCard.OverallRating, actual.OverallRating);
+        Assert.True(actual.IsBoosted);
         Assert.Equal(1, actual.Orders1H);
         Assert.Equal(24, actual.Orders24H);
         Assert.Equal(1, actual.BuyPrice);
@@ -476,6 +482,7 @@ public class TrendReportFactoryTests
         Assert.Equal(4, actual.SellPriceChange24H);
         Assert.Equal(5, actual.Score);
         Assert.Equal(25.1m, actual.ScoreChange2W);
+        Assert.Equal(1, actual.Demand);
 
         Assert.Equal(expectedMetrics, actual.MetricsByDate);
 

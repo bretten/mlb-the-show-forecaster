@@ -90,6 +90,7 @@ public class TrendReportJsonConverterTests
       ""cardName"": ""Dottie"",
       ""primaryPosition"": ""CF"",
       ""overallRating"": 99,
+      ""isBoosted"": true,
       ""orders1H"": 5,
       ""orders24H"": 50,
       ""buyPrice"": 123,
@@ -98,6 +99,7 @@ public class TrendReportJsonConverterTests
       ""sellPriceChange24H"": 2.15,
       ""score"": 1,
       ""scoreChange2W"": 3.0,
+      ""demand"": 2,
       ""metricsByDate"": [
         {
           ""date"": ""2024-10-05"",
@@ -148,7 +150,8 @@ public class TrendReportJsonConverterTests
         {
           ""start"": ""2024-10-08"",
           ""end"": ""2024-10-09"",
-          ""description"": ""Trend impact description""
+          ""description"": ""Trend impact description"",
+          ""demand"": 1
         }
       ]
     }";
@@ -159,6 +162,7 @@ public class TrendReportJsonConverterTests
         position: Position.CenterField,
         overallRating: 99,
         cardName: "Dottie",
+        isBoosted: true,
         orders1H: 5,
         orders24H: 50,
         buyPrice: 123,
@@ -167,6 +171,7 @@ public class TrendReportJsonConverterTests
         sellPriceChange24H: 2.15m,
         score: 1,
         scoreChange2W: 3.0m,
+        demand: 2,
         metricsByDate: new List<TrendMetricsByDate>()
         {
             Faker.FakeTrendMetricsByDate(date: new DateOnly(2024, 10, 5), demand: 1, orderCount: 10),
@@ -175,7 +180,7 @@ public class TrendReportJsonConverterTests
         impacts: new List<TrendImpact>()
         {
             Faker.FakeTrendImpact(startDate: new DateOnly(2024, 10, 8), new DateOnly(2024, 10, 9),
-                description: "Trend impact description"),
+                description: "Trend impact description", demand: 1),
         }
     );
 }

@@ -32,6 +32,7 @@ public readonly record struct TrendReport(
     OverallRating OverallRating,
     IReadOnlyList<TrendMetricsByDate> MetricsByDate,
     IReadOnlyList<TrendImpact> Impacts,
+    bool IsBoosted,
     int Orders1H,
     int Orders24H,
     int BuyPrice,
@@ -39,4 +40,5 @@ public readonly record struct TrendReport(
     int SellPrice,
     decimal SellPriceChange24H,
     decimal Score,
-    decimal ScoreChange2W);
+    decimal ScoreChange2W,
+    int Demand);

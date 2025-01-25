@@ -30,6 +30,7 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
         int? overallRating = null;
         List<TrendMetricsByDate>? metrics = null;
         List<TrendImpact>? impacts = null;
+        bool isBoosted = false;
         int? orders1H = null;
         int? orders24H = null;
         int? buyPrice = null;
@@ -38,6 +39,7 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
         decimal? sellPriceChange24H = null;
         decimal? score = null;
         decimal? scoreChange2W = null;
+        int? demand = null;
 
         // Read property names and their values
         while (reader.Read())
@@ -99,6 +101,10 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
                     impacts = impactsArray.Deserialize<List<TrendImpact>>(options);
 
                     break;
+                case var _ when GetPropertyName(nameof(TrendReport.IsBoosted), options) == propertyName:
+                    reader.Read();
+                    isBoosted = reader.GetBoolean();
+                    break;
                 case var _ when GetPropertyName(nameof(TrendReport.Orders1H), options) == propertyName:
                     reader.Read();
                     orders1H = reader.GetInt32();
@@ -131,6 +137,10 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
                     reader.Read();
                     scoreChange2W = reader.GetDecimal();
                     break;
+                case var _ when GetPropertyName(nameof(TrendReport.Demand), options) == propertyName:
+                    reader.Read();
+                    demand = reader.GetInt32();
+                    break;
             }
         }
 
@@ -150,6 +160,7 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
             OverallRating: OverallRating.Create(overallRating.Value),
             MetricsByDate: metrics,
             Impacts: impacts,
+            IsBoosted: isBoosted,
             Orders1H: orders1H!.Value,
             Orders24H: orders24H!.Value,
             BuyPrice: buyPrice!.Value,
@@ -157,7 +168,8 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
             SellPrice: sellPrice!.Value,
             SellPriceChange24H: sellPriceChange24H!.Value,
             Score: score!.Value,
-            ScoreChange2W: scoreChange2W!.Value
+            ScoreChange2W: scoreChange2W!.Value,
+            Demand: demand!.Value
         );
     }
 
@@ -186,6 +198,9 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
         writer.WritePropertyName(GetEncodedPropertyName(nameof(TrendReport.Impacts), options));
         writer.WriteRawValue(JsonSerializer.Serialize(value.Impacts, options));
 
+        // Boost
+        writer.WriteBoolean(GetEncodedPropertyName(nameof(TrendReport.IsBoosted), options), value.IsBoosted);
+
         // Orders
         writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.Orders1H), options), value.Orders1H);
         writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.Orders24H), options), value.Orders24H);
@@ -201,6 +216,9 @@ public sealed class TrendReportJsonConverter : JsonConverter<TrendReport>
         // Scores
         writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.Score), options), value.Score);
         writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.ScoreChange2W), options), value.ScoreChange2W);
+
+        // Demand
+        writer.WriteNumber(GetEncodedPropertyName(nameof(TrendReport.Demand), options), value.Demand);
 
         // End the whole JSON object
         writer.WriteEndObject();
