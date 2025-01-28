@@ -60,7 +60,9 @@ public sealed class ListingEntityTypeConfiguration : IEntityTypeConfiguration<Li
 
         // Ignore these properties. They are not relationships/navigation properties, but just convenience methods for other members of the class
         builder.Ignore(x => x.HistoricalPricesChronologically);
+        builder.Ignore(x => x.HistoricalPrices);
         builder.Ignore(x => x.OrdersChronologically);
+        builder.Ignore(x => x.Orders);
 
         // Relation is defined on ListingHistoricalPrice end
         // builder.HasMany<ListingHistoricalPrice>("_historicalPrices")

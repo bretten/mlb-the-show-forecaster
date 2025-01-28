@@ -214,7 +214,7 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// </summary>
     private readonly Action<Listing, NpgsqlBinaryImporter> _historicalPriceWriterDelegate = (listing, importer) =>
     {
-        foreach (var historicalPrice in listing.HistoricalPricesChronologically)
+        foreach (var historicalPrice in listing.HistoricalPrices)
         {
             importer.StartRow();
             importer.Write(listing.Id, NpgsqlDbType.Uuid);
@@ -229,7 +229,7 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// </summary>
     private readonly Action<Listing, NpgsqlBinaryImporter> _orderWriterDelegate = (listing, importer) =>
     {
-        foreach (var orderGroup in listing.OrdersChronologically.GroupBy(x => new { x.Date, x.Price.Value }))
+        foreach (var orderGroup in listing.Orders.GroupBy(x => new { x.Date, x.Price.Value }))
         {
             // Get the order with the highest quantity
             var order = orderGroup.OrderByDescending(x => x.Quantity.Value).First();
