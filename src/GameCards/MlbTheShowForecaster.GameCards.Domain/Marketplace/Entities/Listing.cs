@@ -46,10 +46,20 @@ public sealed class Listing : AggregateRoot
         _historicalPrices.OrderBy(x => x.Date).ToImmutableList();
 
     /// <summary>
+    /// The price history of this listing
+    /// </summary>
+    public IReadOnlyList<ListingHistoricalPrice> HistoricalPrices => _historicalPrices;
+
+    /// <summary>
     /// Orders for the listing in chronological order
     /// </summary>
     public IReadOnlyList<ListingOrder> OrdersChronologically =>
         _orders.OrderBy(x => x.Date).ThenByDescending(x => x.Price.Value).ToImmutableList();
+
+    /// <summary>
+    /// Orders for the listing
+    /// </summary>
+    public IReadOnlyList<ListingOrder> Orders => _orders;
 
     /// <summary>
     /// The total number of orders for the specified date
