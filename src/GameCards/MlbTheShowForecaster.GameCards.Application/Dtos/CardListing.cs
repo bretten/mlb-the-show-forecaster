@@ -39,7 +39,7 @@ public readonly record struct CardListing(
     /// <param name="domainListing">The domain <see cref="Listing"/></param>
     /// <returns>True if there are new historical prices for the <see cref="Listing"/></returns>
     public bool HasNewHistoricalPrices(Listing domainListing) => HistoricalPrices
-        .Any(x => !domainListing.HistoricalPricesChronologically.Select(y => y.Date).Contains(x.Date));
+        .Any(x => !domainListing.HistoricalPrices.Select(y => y.Date).Contains(x.Date));
 
     /// <summary>
     /// Returns true if this <see cref="CardListing"/> has orders that the domain <see cref="Listing"/>
@@ -48,9 +48,9 @@ public readonly record struct CardListing(
     /// <param name="domainListing">The domain <see cref="Listing"/></param>
     /// <returns>True if there are new orders for the <see cref="Listing"/></returns>
     public bool HasNewOrders(Listing domainListing) => RecentOrders.Any(x =>
-        domainListing.OrdersChronologically.Any(y =>
+        domainListing.Orders.Any(y =>
             x.Date == y.Date && x.Price.Value == y.Price.Value && x.Quantity.Value > y.Quantity.Value) ||
-        !domainListing.OrdersChronologically.Any(y => x.Date == y.Date && x.Price.Value == y.Price.Value));
+        !domainListing.Orders.Any(y => x.Date == y.Date && x.Price.Value == y.Price.Value));
 
     /// <summary>
     /// Returns new historical prices for the <see cref="Listing"/>
@@ -60,7 +60,7 @@ public readonly record struct CardListing(
     public IReadOnlyList<CardListingPrice> GetNewHistoricalPrices(Listing domainListing)
     {
         return HistoricalPrices
-            .Where(x => !domainListing.HistoricalPricesChronologically.Select(y => y.Date).Contains(x.Date))
+            .Where(x => !domainListing.HistoricalPrices.Select(y => y.Date).Contains(x.Date))
             .ToImmutableList();
     }
 
@@ -72,9 +72,9 @@ public readonly record struct CardListing(
     public IReadOnlyList<CardListingOrder> GetNewOrders(Listing domainListing)
     {
         return RecentOrders.Where(x =>
-                domainListing.OrdersChronologically.Any(y =>
+                domainListing.Orders.Any(y =>
                     x.Date == y.Date && x.Price.Value == y.Price.Value && x.Quantity.Value > y.Quantity.Value) ||
-                !domainListing.OrdersChronologically.Any(y => x.Date == y.Date && x.Price.Value == y.Price.Value))
+                !domainListing.Orders.Any(y => x.Date == y.Date && x.Price.Value == y.Price.Value))
             .ToImmutableList();
     }
 };
