@@ -103,8 +103,9 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     public async Task<Listing?> GetByExternalId(CardExternalId externalId,
         CancellationToken cancellationToken = default)
     {
-        return await _dbContext.ListingsWithHistoricalPrices().FirstOrDefaultAsync(x => x.CardExternalId == externalId,
-            cancellationToken: cancellationToken);
+        return await _dbContext.ListingsWithHistoricalPrices()
+            .AsNoTracking() // Entities will be updated without using EF Core, so no tracking needed
+            .FirstOrDefaultAsync(x => x.CardExternalId == externalId, cancellationToken: cancellationToken);
     }
 
     /// <summary>
