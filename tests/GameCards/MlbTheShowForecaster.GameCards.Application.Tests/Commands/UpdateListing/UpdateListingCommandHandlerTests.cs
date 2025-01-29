@@ -21,22 +21,20 @@ public class UpdateListingCommandHandlerTests
         // Arrange
         var cToken = CancellationToken.None;
         var externalCardListing = Faker.FakeCardListing();
-        var domainListing = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing();
+        Listing? domainListing = null;
 
         var mockPriceChangeThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
         var mockDomainEventDispatcher = Mock.Of<IDomainEventDispatcher>();
 
-        var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(domainListing.CardExternalId, cToken))
-            .ReturnsAsync(null as Listing);
+        var mockListingRepository = Mock.Of<IListingRepository>();
 
         var stubUnitOfWork = new Mock<IUnitOfWork<IMarketplaceWork>>();
         stubUnitOfWork.Setup(x => x.GetContributor<IListingRepository>())
-            .Returns(stubListingRepository.Object);
+            .Returns(mockListingRepository);
 
         var mockListingMapper = Mock.Of<IListingMapper>();
 
-        var command = new UpdateListingCommand(domainListing, externalCardListing, mockPriceChangeThreshold);
+        var command = new UpdateListingCommand(domainListing!, externalCardListing, mockPriceChangeThreshold);
         var handler = new UpdateListingCommandHandler(stubUnitOfWork.Object, mockDomainEventDispatcher,
             mockListingMapper);
 
