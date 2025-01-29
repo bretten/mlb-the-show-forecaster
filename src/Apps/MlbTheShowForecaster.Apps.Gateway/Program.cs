@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using System.Net;
+using System.Reflection;
 using Amazon;
 using Amazon.CognitoIdentityProvider;
 using Amazon.CognitoIdentityProvider.Model;
@@ -16,6 +18,7 @@ using Ocelot.Middleware;
 const string jobHubUri = "job-hub";
 
 var builder = WebApplication.CreateBuilder(args);
+Console.WriteLine($"Running {FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()!.Location).ProductVersion}");
 
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath);
 builder.Configuration.AddJsonFile("appsettings.json", true, true)
