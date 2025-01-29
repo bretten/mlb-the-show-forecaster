@@ -61,12 +61,11 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
     public async Task Handle(UpdateListingCommand command, CancellationToken cancellationToken = default)
     {
         // The domain Listing that is being updated
-        var domainListing =
-            await _listingRepository.GetByExternalId(command.DomainListing.CardExternalId, cancellationToken);
+        var domainListing = command.DomainListing;
         if (domainListing == null)
         {
             throw new ListingNotFoundException(
-                $"{nameof(Listing)} not found for CardExternalId {command.DomainListing.CardExternalId.Value}");
+                $"{nameof(Listing)} not found for CardExternalId {command.ExternalCardListing.CardExternalId.Value}");
         }
 
         // The up-to-date listing data from the external source
