@@ -5,7 +5,12 @@ EXPOSE 5002
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG BUILD_ID
+ENV BUILD_ID=${BUILD_ID}
 WORKDIR /src
+# Build properties
+COPY Directory.Build.props .
+# Dependencies
 COPY ["src/Performance/Apps/MlbTheShowForecaster.Performance.Apps.PerformanceTracker/MlbTheShowForecaster.Performance.Apps.PerformanceTracker.csproj", "Performance/Apps/MlbTheShowForecaster.Performance.Apps.PerformanceTracker/"]
 COPY ["src/Common/Execution/MlbTheShowForecaster.Common.Execution.Host/MlbTheShowForecaster.Common.Execution.Host.csproj", "Common/Execution/MlbTheShowForecaster.Common.Execution.Host/"]
 COPY ["src/Performance/MlbTheShowForecaster.Performance.Infrastructure/MlbTheShowForecaster.Performance.Infrastructure.csproj", "Performance/MlbTheShowForecaster.Performance.Infrastructure/"]

@@ -1,0 +1,7 @@
+<Project>
+    <PropertyGroup>
+        <VersionPrefix>0.0.1</VersionPrefix>
+        <BUILD_ID Condition="'$(BUILD_ID)' == ''">no.build.checksum</BUILD_ID>
+        <VersionSuffix>$(BUILD_ID)</VersionSuffix>
+    </PropertyGroup>
+</Project>
