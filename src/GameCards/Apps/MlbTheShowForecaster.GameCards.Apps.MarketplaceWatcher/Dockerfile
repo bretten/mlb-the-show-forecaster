@@ -5,7 +5,12 @@ EXPOSE 5003
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG BUILD_ID
+ENV BUILD_ID=${BUILD_ID}
 WORKDIR /src
+# Build properties
+COPY Directory.Build.props .
+# Dependencies
 COPY ["src/GameCards/Apps/MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher/MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.csproj", "GameCards/Apps/MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher/"]
 COPY ["src/Common/Execution/MlbTheShowForecaster.Common.Execution.Host/MlbTheShowForecaster.Common.Execution.Host.csproj", "Common/Execution/MlbTheShowForecaster.Common.Execution.Host/"]
 COPY ["src/GameCards/MlbTheShowForecaster.GameCards.Infrastructure/MlbTheShowForecaster.GameCards.Infrastructure.csproj", "GameCards/MlbTheShowForecaster.GameCards.Infrastructure/"]
