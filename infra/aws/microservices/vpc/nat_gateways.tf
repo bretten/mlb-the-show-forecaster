@@ -1,6 +1,7 @@
 # Allows instances in the private subnet to access the internet without exposing them to inbound connections from the internet
 resource "aws_nat_gateway" "nat_gateway" {
-  allocation_id = aws_eip.elastic_ip_nat_gateway.allocation_id
+  count         = var.use_nat_gateway == true ? 1 : 0
+  allocation_id = aws_eip.elastic_ip_nat_gateway[count.index].allocation_id
   subnet_id     = aws_subnet.public1.id
 
   tags = merge(var.root_tags, {

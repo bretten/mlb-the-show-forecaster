@@ -20,6 +20,7 @@ module "storage" {
   subnet_id_private         = var.subnet_id_private
   aspnetcore_environment    = var.aspnetcore_environment
   capacity_provider         = var.capacity_provider
+  use_nat_gateway           = var.use_nat_gateway
   pgsql_user                = var.pgsql_user
   pgsql_pass                = var.pgsql_pass
   pgsql_db_name             = var.pgsql_db_name

@@ -35,6 +35,13 @@ resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
             name          = "${var.resource_prefix}-rabbitmq-5672-tcp"
             protocol      = "tcp"
           },
+          {
+            appProtocol   = "http"
+            containerPort = 15672
+            hostPort      = 15672
+            name          = "${var.resource_prefix}-rabbitmq-management-15672-tcp"
+            protocol      = "tcp"
+          },
         ]
         environment = [
           {
@@ -44,13 +51,23 @@ resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
           {
             name  = "RABBITMQ_DEFAULT_PASS"
             value = var.rabbitmq_pass
+          },
+          # Node name determines how data is stored and by default it is the container hostname. Set a constant value to ensure persistence. Adding @localhost prevents RabbitMQ from appending the container's @ip
+          {
+            name  = "RABBITMQ_NODENAME",
+            value = "rabbit@localhost"
           }
         ]
         environmentFiles = []
-        mountPoints      = []
-        systemControls   = []
-        ulimits          = []
-        volumesFrom      = []
+        mountPoints = [
+          {
+            sourceVolume  = "rabbitmq-volume"
+            containerPath = "/var/lib/rabbitmq"
+          }
+        ]
+        systemControls = []
+        ulimits        = []
+        volumesFrom    = []
       },
     ]
   )
@@ -60,7 +77,22 @@ resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
     operating_system_family = "LINUX"
   }
 
+  volume {
+    name = "rabbitmq-volume"
+
+    efs_volume_configuration {
+      file_system_id          = aws_efs_file_system.efs_storage.id
+      transit_encryption      = "ENABLED"
+      transit_encryption_port = 2999
+      authorization_config {
+        access_point_id = aws_efs_access_point.efs_access_storage_rabbitmq.id
+      }
+    }
+  }
+
   tags = var.root_tags
+
+  depends_on = [aws_efs_access_point.efs_access_storage_rabbitmq]
 }
 
 # Service discovery for rabbitmq
@@ -116,7 +148,7 @@ resource "aws_ecs_service" "ecs_service_rabbitmq" {
   }
 
   network_configuration {
-    assign_public_ip = false
+    assign_public_ip = !var.use_nat_gateway
     security_groups = [
       var.security_group_id_private
     ]
