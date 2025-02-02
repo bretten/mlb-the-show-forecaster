@@ -6,7 +6,11 @@ EXPOSE 5000
 # .NET Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
+ARG BUILD_ID
+ENV BUILD_ID=${BUILD_ID}
 WORKDIR /src
+# Build properties
+COPY Directory.Build.props .
 # Dependencies
 COPY ["src/Apps/MlbTheShowForecaster.Apps.Gateway/MlbTheShowForecaster.Apps.Gateway.csproj", "."]
 RUN dotnet restore "MlbTheShowForecaster.Apps.Gateway.csproj"

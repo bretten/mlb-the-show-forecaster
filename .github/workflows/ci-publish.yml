@@ -49,6 +49,8 @@ jobs:
         with:
           context: .
           file: ./src/PlayerStatus/Apps/MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker/Dockerfile
+          build-args: |
+            BUILD_ID=${{ github.sha }}
           push: true
           tags: |
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/player-tracker:${{ env.TAG_NAME }}
@@ -59,6 +61,8 @@ jobs:
         with:
           context: .
           file: ./src/Performance/Apps/MlbTheShowForecaster.Performance.Apps.PerformanceTracker/Dockerfile
+          build-args: |
+            BUILD_ID=${{ github.sha }}
           push: true
           tags: |
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/performance-tracker:${{ env.TAG_NAME }}
@@ -69,6 +73,8 @@ jobs:
         with:
           context: .
           file: ./src/GameCards/Apps/MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher/Dockerfile
+          build-args: |
+            BUILD_ID=${{ github.sha }}
           push: true
           tags: |
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/marketplace-watcher:${{ env.TAG_NAME }}
@@ -79,6 +85,8 @@ jobs:
         with:
           context: .
           file: ./src/Apps/MlbTheShowForecaster.Apps.Gateway/Dockerfile
+          build-args: |
+            BUILD_ID=${{ github.sha }}
           push: true
           tags: |
             ghcr.io/${{ github.actor }}/${{ env.IMAGE_NAME }}/gateway:${{ env.TAG_NAME }}
