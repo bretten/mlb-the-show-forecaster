@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.Jobs;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.RealTime;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Execution.Host.Services;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.FileSystems;
@@ -94,6 +95,7 @@ public static class MarketplaceWatcherHostExtensions
             AddMessaging(context, services);
 
             // MLB The Show cards and marketplace dependencies
+            services.TryAddSingleton<IClock, Clock>();
             services.AddFileSystems(context.Configuration);
             services.AddGameCardsMapping();
             services.AddGameCardsPlayerCardTracker(context.Configuration);

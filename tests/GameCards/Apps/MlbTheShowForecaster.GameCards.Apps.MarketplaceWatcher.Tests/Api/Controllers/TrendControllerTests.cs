@@ -41,7 +41,7 @@ public class TrendControllerTests
         var paginationResult = Faker.FakeTrendReportPaginationResult(page, pageSize, trendReports, 2);
 
         var stubTrendReporter = new Mock<ITrendReporter>();
-        stubTrendReporter.Setup(x => x.GetTrendReports(year, page, pageSize, null, null, cToken))
+        stubTrendReporter.Setup(x => x.GetTrendReports(year, page, pageSize, null, null, null, cToken))
             .ReturnsAsync(paginationResult);
 
         var controller = new TrendController(stubTrendReporter.Object);

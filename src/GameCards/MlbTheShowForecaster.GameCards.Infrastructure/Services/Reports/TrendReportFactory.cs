@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums.Extensions;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Extensions;
 using com.brettnamba.MlbTheShowForecaster.DomainApis.PerformanceApi;
@@ -57,6 +58,11 @@ public sealed class TrendReportFactory : ITrendReportFactory
     private readonly ICalendar _calendar;
 
     /// <summary>
+    /// Clock to get the current time
+    /// </summary>
+    private readonly IClock _clock;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="playerCardRepository">The <see cref="PlayerCard"/> repository</param>
@@ -65,16 +71,21 @@ public sealed class TrendReportFactory : ITrendReportFactory
     /// <param name="performanceApi">Performance API for querying stat metrics</param>
     /// <param name="playerMatcher">Gets player info</param>
     /// <param name="calendar">Calendar to get today's date</param>
+    /// <param name="clock">Clock to get the current time</param>
     public TrendReportFactory(IPlayerCardRepository playerCardRepository, IListingRepository listingRepository,
         IForecastRepository forecastRepository, IPerformanceApi performanceApi, IPlayerMatcher playerMatcher,
-        ICalendar calendar)
+        ICalendar calendar, IClock clock)
     {
         _playerCardRepository = playerCardRepository;
         _listingRepository = listingRepository;
         _forecastRepository = forecastRepository;
         _performanceApi = performanceApi;
         _calendar = calendar;
+        _clock = clock;
         _playerMatcher = playerMatcher;
+        _orderMap = new OrderCountMapper();
+        _priceMap = new PriceMapper();
+        _performanceMetricsMap = new PerformanceMetricMapper();
     }
 
     /// <inheritdoc />
@@ -193,55 +204,43 @@ public sealed class TrendReportFactory : ITrendReportFactory
     /// <param name="performanceMetrics"><see cref="PerformanceMetricsByDate"/> collection</param>
     /// <param name="player"><see cref="Player"/></param>
     /// <returns><see cref="TrendReport"/></returns>
-    private static TrendReport MapReport(PlayerCard card, Listing listing, PlayerCardForecast forecast, MlbId mlbId,
+    private TrendReport MapReport(PlayerCard card, Listing listing, PlayerCardForecast forecast, MlbId mlbId,
         IReadOnlyList<PerformanceMetricsByDate> performanceMetrics, Player player)
     {
+        // Reference dates and times that will determine the metrics
+        var today = _calendar.Today();
+        var now = _clock.UtcNow().UtcDateTime;
+        var datesAndTimes = new MetricDatesAndTimes(card.Year, today, now);
+
+        // Order counts
+        var orderCounts = _orderMap.Map(listing, datesAndTimes);
+
+        // Price comparisons
+        var prices = _priceMap.Map(listing, datesAndTimes);
+
+        // Performance metrics
+        var performance = _performanceMetricsMap.Map(listing, forecast, player, performanceMetrics, datesAndTimes);
+
         return new TrendReport(
             Year: card.Year,
             CardExternalId: card.ExternalId,
             MlbId: mlbId,
             CardName: card.Name,
-            PrimaryPosition: player.Position,
+            PrimaryPosition: player.Position.IsTwoWayPlayer() ? player.Position : card.Position,
             OverallRating: card.OverallRating,
-            MetricsByDate: listing.HistoricalPricesChronologically
-                // Only prices for the season
-                .Where(x => x.Date.Year == card.Year.Value && x.Date <= new DateOnly(card.Year.Value, 11, 1))
-                .Select(x => MapMetrics(x, performanceMetrics))
-                .ToImmutableList(),
-            Impacts: forecast.ForecastImpactsChronologically.Select(MapForecastImpact).ToImmutableList()
+            MetricsByDate: performance.Metrics,
+            Impacts: forecast.ForecastImpactsChronologically.Select(MapForecastImpact).ToImmutableList(),
+            IsBoosted: card.IsBoosted,
+            Orders1H: orderCounts.Orders1H,
+            Orders24H: orderCounts.Orders24H,
+            BuyPrice: prices.BuyPrice,
+            BuyPriceChange24H: prices.BuyPriceChange24H,
+            SellPrice: prices.SellPrice,
+            SellPriceChange24H: prices.SellPriceChange24H,
+            Score: performance.Score,
+            ScoreChange2W: performance.ScoreChange2W,
+            Demand: forecast.EstimateDemandFor(today).Value
         );
-    }
-
-    /// <summary>
-    /// Maps card price and player stat metrics by date
-    /// </summary>
-    /// <param name="historicalPrice">Historical card prices</param>
-    /// <param name="performanceMetrics">Stat trends</param>
-    /// <returns><see cref="TrendMetricsByDate"/></returns>
-    private static TrendMetricsByDate MapMetrics(ListingHistoricalPrice historicalPrice,
-        IReadOnlyList<PerformanceMetricsByDate> performanceMetrics)
-    {
-        var hasPerformance = performanceMetrics.Any(y => y.Date == historicalPrice.Date);
-        var p = performanceMetrics.FirstOrDefault(y => y.Date == historicalPrice.Date);
-        return new TrendMetricsByDate(
-            Date: historicalPrice.Date,
-            BuyPrice: historicalPrice.BuyPrice.Value,
-            SellPrice: historicalPrice.SellPrice.Value,
-            BattingScore: hasPerformance ? p.BattingScore : null,
-            SignificantBattingParticipation: hasPerformance && p.SignificantBattingParticipation,
-            PitchingScore: hasPerformance ? p.PitchingScore : null,
-            SignificantPitchingParticipation: hasPerformance && p.SignificantPitchingParticipation,
-            FieldingScore: hasPerformance ? p.FieldingScore : null,
-            SignificantFieldingParticipation: hasPerformance && p.SignificantFieldingParticipation,
-            BattingAverage: hasPerformance ? p.BattingAverage : null,
-            OnBasePercentage: hasPerformance ? p.OnBasePercentage : null,
-            Slugging: hasPerformance ? p.Slugging : null,
-            EarnedRunAverage: hasPerformance ? p.EarnedRunAverage : null,
-            OpponentsBattingAverage: hasPerformance ? p.OpponentsBattingAverage : null,
-            StrikeoutsPer9: hasPerformance ? p.StrikeoutsPer9 : null,
-            BaseOnBallsPer9: hasPerformance ? p.BaseOnBallsPer9 : null,
-            HomeRunsPer9: hasPerformance ? p.HomeRunsPer9 : null,
-            FieldingPercentage: hasPerformance ? p.FieldingPercentage : null);
     }
 
     /// <summary>
@@ -272,11 +271,203 @@ public sealed class TrendReportFactory : ITrendReportFactory
             _ => $"Player's demand changed by {forecastImpact.Demand.Value}"
         };
 
-        return new TrendImpact(forecastImpact.StartDate, forecastImpact.EndDate, description);
+        return new TrendImpact(forecastImpact.StartDate, forecastImpact.EndDate, description,
+            forecastImpact.Demand.Value);
     }
 
     /// <summary>
     /// The start of the season
     /// </summary>
     private static DateOnly StartOfSeason(SeasonYear year) => new(year.Value, 3, 1);
+
+    /// <summary>
+    /// <inheritdoc cref="IOrderCountMapper"/>
+    /// </summary>
+    private readonly IOrderCountMapper _orderMap;
+
+    /// <summary>
+    /// <inheritdoc cref="IPriceMapper"/>
+    /// </summary>
+    private readonly IPriceMapper _priceMap;
+
+    /// <summary>
+    /// <inheritdoc cref="IPerformanceMetricMapper"/>
+    /// </summary>
+    private readonly IPerformanceMetricMapper _performanceMetricsMap;
+
+    internal TrendReportFactory(IPlayerCardRepository playerCardRepository, IListingRepository listingRepository,
+        IForecastRepository forecastRepository, IPerformanceApi performanceApi, IPlayerMatcher playerMatcher,
+        ICalendar calendar, IClock clock, IOrderCountMapper orderMap, IPriceMapper priceMap,
+        IPerformanceMetricMapper performanceMetricsMap)
+    {
+        _playerCardRepository = playerCardRepository;
+        _listingRepository = listingRepository;
+        _forecastRepository = forecastRepository;
+        _performanceApi = performanceApi;
+        _calendar = calendar;
+        _clock = clock;
+        _playerMatcher = playerMatcher;
+        _orderMap = orderMap;
+        _priceMap = priceMap;
+        _performanceMetricsMap = performanceMetricsMap;
+    }
+
+    /// <summary>
+    /// The different dates and times that will be used to calculate metrics
+    /// </summary>
+    internal record MetricDatesAndTimes(SeasonYear Season, DateOnly Today, DateTime Now)
+    {
+        public DateOnly Yesterday = Today.AddDays(-1);
+        public DateOnly EndOfSeason = new DateOnly(Season.Value, 10, 1);
+        public DateOnly ScoreDate => Today >= EndOfSeason ? EndOfSeason : Today;
+        public DateOnly ScoreDate2W => ScoreDate.AddDays(-14);
+        public DateTime OneHourAgo = Now.AddHours(-1);
+        public DateTime OneDayAgo = Now.AddHours(-24);
+    }
+
+    /// <summary>
+    /// Order count metrics for different time frames
+    /// </summary>
+    internal readonly record struct OrderCount(int Orders1H, int Orders24H);
+
+    /// <summary>
+    /// Maps order count metrics for different time frames
+    /// </summary>
+    internal interface IOrderCountMapper
+    {
+        OrderCount Map(Listing listing, MetricDatesAndTimes times);
+    }
+
+    /// <inheritdoc />
+    internal sealed class OrderCountMapper : IOrderCountMapper
+    {
+        public OrderCount Map(Listing listing, MetricDatesAndTimes times)
+        {
+            var orders1H = listing.TotalOrdersFor(times.OneHourAgo, times.Now);
+            var orders24H = listing.TotalOrdersFor(times.OneDayAgo, times.Now);
+            return new OrderCount(Orders1H: orders1H.Value, Orders24H: orders24H.Value);
+        }
+    }
+
+    /// <summary>
+    /// Listing prices and price changes
+    /// </summary>
+    internal readonly record struct Prices(
+        int BuyPrice,
+        decimal BuyPriceChange24H,
+        int SellPrice,
+        decimal SellPriceChange24H);
+
+    /// <summary>
+    /// Maps prices and price changes
+    /// </summary>
+    internal interface IPriceMapper
+    {
+        Prices Map(Listing listing, MetricDatesAndTimes times);
+    }
+
+    /// <inheritdoc />
+    internal sealed class PriceMapper : IPriceMapper
+    {
+        public Prices Map(Listing listing, MetricDatesAndTimes times)
+        {
+            var buyPrice = listing.BuyPrice;
+            var sellPrice = listing.SellPrice;
+            var yesterdayPrice = listing.PriceFor(times.Yesterday);
+            var yesterdayBuyPrice = yesterdayPrice?.BuyPrice ?? NaturalNumber.Create(0);
+            var yesterdaySellPrice = yesterdayPrice?.SellPrice ?? NaturalNumber.Create(0);
+            var buyPricePercentageChange = yesterdayBuyPrice.Value > 0
+                ? PercentageChange.Create(yesterdayBuyPrice, buyPrice, true).PercentageChangeValue
+                : 0;
+            var sellPricePercentageChange = yesterdaySellPrice.Value > 0
+                ? PercentageChange.Create(yesterdaySellPrice, sellPrice, true).PercentageChangeValue
+                : 0;
+            return new Prices(BuyPrice: buyPrice.Value, BuyPriceChange24H: buyPricePercentageChange,
+                SellPrice: sellPrice.Value, SellPriceChange24H: sellPricePercentageChange);
+        }
+    }
+
+    /// <summary>
+    /// Player performance metrics
+    /// </summary>
+    internal readonly record struct PerformanceMetrics(
+        decimal Score,
+        decimal ScoreChange2W,
+        IReadOnlyList<TrendMetricsByDate> Metrics);
+
+    /// <summary>
+    /// Maps player performance metrics
+    /// </summary>
+    internal interface IPerformanceMetricMapper
+    {
+        PerformanceMetrics Map(Listing listing, PlayerCardForecast forecast, Player player,
+            IReadOnlyList<PerformanceMetricsByDate> performanceMetrics, MetricDatesAndTimes times);
+    }
+
+    /// <inheritdoc />
+    internal sealed class PerformanceMetricMapper : IPerformanceMetricMapper
+    {
+        public PerformanceMetrics Map(Listing listing, PlayerCardForecast forecast, Player player,
+            IReadOnlyList<PerformanceMetricsByDate> performanceMetrics, MetricDatesAndTimes times)
+        {
+            // Performance metrics by date
+            var metricsByDate = listing.HistoricalPricesChronologically
+                .Select(x => MapMetrics(x, performanceMetrics, forecast, listing.TotalOrdersFor(x.Date).Value))
+                .ToImmutableList();
+
+            // Score comparisons
+            decimal currentScore;
+            decimal score2W;
+            if (player.Position.IsOnlyPitcher())
+            {
+                currentScore = metricsByDate.FirstOrDefault(x => x.Date == times.ScoreDate).PitchingScore ?? 0;
+                score2W = metricsByDate.FirstOrDefault(x => x.Date == times.ScoreDate2W).PitchingScore ?? 0;
+            }
+            else
+            {
+                currentScore = metricsByDate.FirstOrDefault(x => x.Date == times.ScoreDate).BattingScore ?? 0;
+                score2W = metricsByDate.FirstOrDefault(x => x.Date == times.ScoreDate2W).BattingScore ?? 0;
+            }
+
+            var scorePercentageChange = PercentageChange.Create(score2W, currentScore, true);
+            return new PerformanceMetrics(currentScore, scorePercentageChange.PercentageChangeValue, metricsByDate);
+        }
+
+        /// <summary>
+        /// Maps card price and player stat metrics by date
+        /// </summary>
+        /// <param name="historicalPrice">Historical card prices</param>
+        /// <param name="performanceMetrics">Stat trends</param>
+        /// <param name="forecast"><see cref="PlayerCardForecast"/></param>
+        /// <param name="orders">Order count for the day</param>
+        /// <returns><see cref="TrendMetricsByDate"/></returns>
+        private static TrendMetricsByDate MapMetrics(ListingHistoricalPrice historicalPrice,
+            IReadOnlyList<PerformanceMetricsByDate> performanceMetrics, PlayerCardForecast forecast, int orders)
+        {
+            var p = performanceMetrics?.FirstOrDefault(y => y.Date == historicalPrice.Date);
+            var demand = forecast.EstimateDemandFor(historicalPrice.Date).Value;
+
+            return new TrendMetricsByDate(
+                Date: historicalPrice.Date,
+                BuyPrice: historicalPrice.BuyPrice.Value,
+                SellPrice: historicalPrice.SellPrice.Value,
+                BattingScore: p?.BattingScore ?? null,
+                SignificantBattingParticipation: p?.SignificantBattingParticipation ?? false,
+                PitchingScore: p?.PitchingScore ?? null,
+                SignificantPitchingParticipation: p?.SignificantPitchingParticipation ?? false,
+                FieldingScore: p?.FieldingScore ?? null,
+                SignificantFieldingParticipation: p?.SignificantFieldingParticipation ?? false,
+                BattingAverage: p?.BattingAverage ?? null,
+                OnBasePercentage: p?.OnBasePercentage ?? null,
+                Slugging: p?.Slugging ?? null,
+                EarnedRunAverage: p?.EarnedRunAverage ?? null,
+                OpponentsBattingAverage: p?.OpponentsBattingAverage ?? null,
+                StrikeoutsPer9: p?.StrikeoutsPer9 ?? null,
+                BaseOnBallsPer9: p?.BaseOnBallsPer9 ?? null,
+                HomeRunsPer9: p?.HomeRunsPer9 ?? null,
+                FieldingPercentage: p?.FieldingPercentage ?? null,
+                Demand: demand,
+                OrderCount: orders);
+        }
+    }
 }

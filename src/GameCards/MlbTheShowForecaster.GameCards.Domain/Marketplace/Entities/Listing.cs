@@ -30,12 +30,14 @@ public sealed class Listing : AggregateRoot
     public CardExternalId CardExternalId { get; }
 
     /// <summary>
-    /// The current, best buy price
+    /// The current, best buy price from a market logic perspective
+    /// The highest price offered by a buyer (the highest bid)
     /// </summary>
     public NaturalNumber BuyPrice { get; private set; }
 
     /// <summary>
-    /// The current, best sell price
+    /// The current, best sell price from a market logic perspective
+    /// The lowest price offered by a seller (the lowest ask)
     /// </summary>
     public NaturalNumber SellPrice { get; private set; }
 
@@ -62,12 +64,29 @@ public sealed class Listing : AggregateRoot
     public IReadOnlyList<ListingOrder> Orders => _orders;
 
     /// <summary>
+    /// Returns the prices on the specified date
+    /// </summary>
+    /// <param name="date">The date to get prices for</param>
+    /// <returns><see cref="ListingHistoricalPrice"/> on the specified date or null if there were no prices</returns>
+    public ListingHistoricalPrice? PriceFor(DateOnly date) => _historicalPrices.FirstOrDefault(x => x.Date == date);
+
+    /// <summary>
     /// The total number of orders for the specified date
     /// </summary>
     /// <param name="date">The date to get orders for</param>
     /// <returns>Total number of orders for the specified date</returns>
     public NaturalNumber TotalOrdersFor(DateOnly date) => NaturalNumber.Create(_orders
         .Where(x => DateOnly.FromDateTime(x.Date) == date)
+        .Sum(x => x.Quantity.Value));
+
+    /// <summary>
+    /// The total number of orders for the specified date range
+    /// </summary>
+    /// <param name="start">The date range start</param>
+    /// <param name="end">The date range end</param>
+    /// <returns>Total number of orders for the specified date range</returns>
+    public NaturalNumber TotalOrdersFor(DateTime start, DateTime end) => NaturalNumber.Create(_orders
+        .Where(x => x.Date >= start && x.Date <= end)
         .Sum(x => x.Quantity.Value));
 
     /// <summary>

@@ -22,6 +22,8 @@
 /// <param name="BaseOnBallsPer9">BB/9</param>
 /// <param name="HomeRunsPer9">HR/9</param>
 /// <param name="FieldingPercentage">Fielding %</param>
+/// <param name="Demand">A measure of the card's demand</param>
+/// <param name="OrderCount">The number of orders</param>
 public readonly record struct TrendMetricsByDate(
     DateOnly Date,
     int BuyPrice,
@@ -40,4 +42,6 @@ public readonly record struct TrendMetricsByDate(
     decimal? StrikeoutsPer9,
     decimal? BaseOnBallsPer9,
     decimal? HomeRunsPer9,
-    decimal? FieldingPercentage);
+    decimal? FieldingPercentage,
+    int Demand,
+    int OrderCount);

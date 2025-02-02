@@ -15,6 +15,14 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Reports
 /// <param name="OverallRating">The overall rating of the card</param>
 /// <param name="MetricsByDate">The player's stat trends by date</param>
 /// <param name="Impacts">Any occurrences that may have influenced the stat trends</param>
+/// <param name="Orders1H">The number of orders in the past hour</param>
+/// <param name="Orders24H">The number of orders in the past 24 hours</param>
+/// <param name="BuyPrice">The current buy price, or the highest bid</param>
+/// <param name="BuyPriceChange24H">The percentage change of the buy price over the past 24 hours</param>
+/// <param name="SellPrice">The current sell price, or the lowest ask</param>
+/// <param name="SellPriceChange24H">The percentage change of the sell price over the past 24 hours</param>
+/// <param name="Score">The player's performance score</param>
+/// <param name="Score">The percentage change of the player's performance score over the past two weeks</param>
 public readonly record struct TrendReport(
     SeasonYear Year,
     CardExternalId CardExternalId,
@@ -23,4 +31,14 @@ public readonly record struct TrendReport(
     Position PrimaryPosition,
     OverallRating OverallRating,
     IReadOnlyList<TrendMetricsByDate> MetricsByDate,
-    IReadOnlyList<TrendImpact> Impacts);
+    IReadOnlyList<TrendImpact> Impacts,
+    bool IsBoosted,
+    int Orders1H,
+    int Orders24H,
+    int BuyPrice,
+    decimal BuyPriceChange24H,
+    int SellPrice,
+    decimal SellPriceChange24H,
+    decimal Score,
+    decimal ScoreChange2W,
+    int Demand);

@@ -36,14 +36,15 @@ public class TrendController : Controller
     /// <param name="pageSize">The page size</param>
     /// <param name="sortField">The field to sort on</param>
     /// <param name="sortOrder">The sort direction</param>
+    /// <param name="cardFilter">The card filter to apply</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="JsonResult"/> of <see cref="TrendReport"/>s</returns>
     public async Task<IActionResult> Index([FromQuery] ushort season, [FromQuery] int page, [FromQuery] int pageSize,
-        [FromQuery] ITrendReporter.SortField? sortField = null, [FromQuery] ITrendReporter.SortOrder? sortOrder = null,
-        CancellationToken cancellationToken = default)
+        [FromQuery] string? sortField = null, [FromQuery] ITrendReporter.SortOrder? sortOrder = null,
+        [FromQuery] ITrendReporter.CardFilter? cardFilter = null, CancellationToken cancellationToken = default)
     {
         var results = await _trendReporter.GetTrendReports(SeasonYear.Create(season), page, pageSize, sortField,
-            sortOrder, cancellationToken);
+            sortOrder, cardFilter, cancellationToken);
         return Json(results, new JsonSerializerOptions()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
