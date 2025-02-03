@@ -136,10 +136,6 @@ resource "aws_lightsail_instance" "instance" {
           - Messaging__RabbitMq__UserName=${var.rabbitmq_user}
           - Messaging__RabbitMq__Password=${var.rabbitmq_pass}
           - Jobs__RunOnStartup=false
-          - Logging__LogLevel__Microsoft.EntityFrameworkCore.Database.Command=Warning
-          - Logging__LogLevel__Microsoft.AspNetCore=Warning
-          - Logging__LogLevel__System.Net.Http=Warning
-          - Logging__LogLevel__com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports=Error
           - CardPriceTracker__UseWebsiteForHistoricalPrices=false
         depends_on:
           postgres-db:
