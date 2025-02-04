@@ -26,27 +26,32 @@ namespace com.brettnamba.MlbTheShowForecaster.Performance.Apps.PerformanceTracke
 public static class PerformanceTrackerHostExtensions
 {
     /// <summary>
+    /// Rabbit MQ exchange
+    /// </summary>
+    private const string Exchange = "mlb-forecaster";
+
+    /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be published in this domain mapped to their corresponding
     /// RabbitMQ exchanges
     /// </summary>
-    private static readonly Dictionary<Type, string> DomainEventPublisherTypes = new()
+    private static readonly Dictionary<Type, Publisher> DomainEventPublisherTypes = new()
     {
-        { typeof(PlayerBattedInGameEvent), "PlayerBattedInGame" },
-        { typeof(PlayerFieldedInGameEvent), "PlayerFieldedInGame" },
-        { typeof(PlayerPitchedInGameEvent), "PlayerPitchedInGame" },
-        { typeof(BattingImprovementEvent), "BattingImprovement" },
-        { typeof(BattingDeclineEvent), "BattingDecline" },
-        { typeof(PitchingImprovementEvent), "PitchingImprovement" },
-        { typeof(PitchingDeclineEvent), "PitchingDecline" },
-        { typeof(FieldingImprovementEvent), "FieldingImprovement" },
-        { typeof(FieldingDeclineEvent), "FieldingDecline" }
+        { typeof(PlayerBattedInGameEvent), new Publisher(Exchange, "performance.game.batted") },
+        { typeof(PlayerFieldedInGameEvent), new Publisher(Exchange, "performance.game.fielded") },
+        { typeof(PlayerPitchedInGameEvent), new Publisher(Exchange, "performance.game.pitched") },
+        { typeof(BattingImprovementEvent), new Publisher(Exchange, "performance.batting.improved") },
+        { typeof(BattingDeclineEvent), new Publisher(Exchange, "performance.batting.declined") },
+        { typeof(PitchingImprovementEvent), new Publisher(Exchange, "performance.pitching.improved") },
+        { typeof(PitchingDeclineEvent), new Publisher(Exchange, "performance.pitching.declined") },
+        { typeof(FieldingImprovementEvent), new Publisher(Exchange, "performance.fielding.improved") },
+        { typeof(FieldingDeclineEvent), new Publisher(Exchange, "performance.fielding.declined") }
     };
 
     /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be consumed in this domain mapped to their corresponding
     /// RabbitMQ exchanges
     /// </summary>
-    private static readonly Dictionary<Type, string> DomainEventConsumerTypes = new()
+    private static readonly Dictionary<Type, Subscriber> DomainEventConsumerTypes = new()
     {
     };
 

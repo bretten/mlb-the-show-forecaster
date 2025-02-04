@@ -35,48 +35,86 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher;
 public static class MarketplaceWatcherHostExtensions
 {
     /// <summary>
+    /// Rabbit MQ exchange
+    /// </summary>
+    private const string Exchange = "mlb-forecaster";
+
+    /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be published in this domain mapped to their corresponding
     /// RabbitMQ exchanges
     /// </summary>
-    private static readonly Dictionary<Type, string> DomainEventPublisherTypes = new()
+    private static readonly Dictionary<Type, Publisher> DomainEventPublisherTypes = new()
     {
-        { typeof(NewPlayerCardEvent), "NewPlayerCard" },
-        { typeof(PlayerCardOverallRatingDeclinedEvent), "PlayerCardOverallRatingDeclined" },
-        { typeof(PlayerCardOverallRatingImprovedEvent), "PlayerCardOverallRatingImproved" },
-        { typeof(PlayerCardBoostedEvent), "PlayerCardBoostedEvent" },
-        { typeof(PlayerCardPositionChangedEvent), "PlayerCardPositionChanged" },
-        { typeof(CardDemandIncreasedEvent), "CardDemandIncreasedEvent" },
-        { typeof(CardDemandDecreasedEvent), "CardDemandDecreasedEvent" },
-        { typeof(ListingBuyPriceDecreasedEvent), "ListingBuyPriceDecreased" },
-        { typeof(ListingBuyPriceIncreasedEvent), "ListingBuyPriceIncreased" },
-        { typeof(ListingSellPriceDecreasedEvent), "ListingSellPriceDecreased" },
-        { typeof(ListingSellPriceIncreasedEvent), "ListingSellPriceIncreased" }
+        { typeof(NewPlayerCardEvent), new Publisher(Exchange, "cards.players.created") },
+        { typeof(PlayerCardOverallRatingDeclinedEvent), new Publisher(Exchange, "cards.players.declined") },
+        { typeof(PlayerCardOverallRatingImprovedEvent), new Publisher(Exchange, "cards.players.improved") },
+        { typeof(PlayerCardBoostedEvent), new Publisher(Exchange, "cards.players.boosted") },
+        { typeof(PlayerCardPositionChangedEvent), new Publisher(Exchange, "cards.players.position_changed") },
+        { typeof(CardDemandIncreasedEvent), new Publisher(Exchange, "cards.demand.increased") },
+        { typeof(CardDemandDecreasedEvent), new Publisher(Exchange, "cards.demand.decreased") },
+        { typeof(ListingBuyPriceDecreasedEvent), new Publisher(Exchange, "cards.listings.buy_price_decreased") },
+        { typeof(ListingBuyPriceIncreasedEvent), new Publisher(Exchange, "cards.listings.buy_price_increased") },
+        { typeof(ListingSellPriceDecreasedEvent), new Publisher(Exchange, "cards.listings.sell_price_decreased") },
+        { typeof(ListingSellPriceIncreasedEvent), new Publisher(Exchange, "cards.listings.sell_price_increased") },
     };
 
     /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be consumed in this domain mapped to their corresponding
     /// RabbitMQ exchanges
     /// </summary>
-    private static readonly Dictionary<Type, string> DomainEventConsumerTypes = new()
+    private static readonly Dictionary<Type, Subscriber> DomainEventConsumerTypes = new()
     {
-        { typeof(NewPlayerCardEvent), "NewPlayerCard" },
+        { typeof(NewPlayerCardEvent), new Subscriber(Exchange, "cards-new-players", "cards.players.created") },
 
-        { typeof(BattingStatsImprovementEvent), "BattingImprovement" },
-        { typeof(BattingStatsDeclineEvent), "BattingDecline" },
-        { typeof(PitchingStatsImprovementEvent), "PitchingImprovement" },
-        { typeof(PitchingStatsDeclineEvent), "PitchingDecline" },
-        { typeof(FieldingStatsImprovementEvent), "FieldingImprovement" },
-        { typeof(FieldingStatsDeclineEvent), "FieldingDecline" },
+        {
+            typeof(BattingStatsImprovementEvent),
+            new Subscriber(Exchange, "performance-batting-improvement", "performance.batting.improved")
+        },
+        {
+            typeof(BattingStatsDeclineEvent),
+            new Subscriber(Exchange, "performance-batting-decline", "performance.batting.declined")
+        },
+        {
+            typeof(PitchingStatsImprovementEvent),
+            new Subscriber(Exchange, "performance-pitching-improvement", "performance.pitching.improved")
+        },
+        {
+            typeof(PitchingStatsDeclineEvent),
+            new Subscriber(Exchange, "performance-pitching-decline", "performance.pitching.declined")
+        },
+        {
+            typeof(FieldingStatsImprovementEvent),
+            new Subscriber(Exchange, "performance-fielding-improvement", "performance.fielding.improved")
+        },
+        {
+            typeof(FieldingStatsDeclineEvent),
+            new Subscriber(Exchange, "performance-fielding-decline", "performance.fielding.declined")
+        },
 
-        { typeof(OverallRatingImprovementEvent), "PlayerCardOverallRatingImproved" },
-        { typeof(OverallRatingDeclineEvent), "PlayerCardOverallRatingDeclined" },
-        { typeof(PositionChangeEvent), "PlayerCardPositionChanged" },
+        {
+            typeof(OverallRatingImprovementEvent),
+            new Subscriber(Exchange, "cards-rating-improvement", "cards.players.improved")
+        },
+        {
+            typeof(OverallRatingDeclineEvent),
+            new Subscriber(Exchange, "cards-rating-decline", "cards.players.declined")
+        },
 
-        { typeof(PlayerCardBoostEvent), "PlayerCardBoostedEvent" },
-        { typeof(PlayerActivationEvent), "PlayerActivated" },
-        { typeof(PlayerFreeAgencyEvent), "PlayerEnteredFreeAgency" },
-        { typeof(PlayerDeactivationEvent), "PlayerInactivated" },
-        { typeof(PlayerTeamSigningEvent), "PlayerSignedContractWithTeam" },
+        {
+            typeof(PositionChangeEvent),
+            new Subscriber(Exchange, "cards-new-position", "cards.players.position_changed")
+        },
+        { typeof(PlayerCardBoostEvent), new Subscriber(Exchange, "cards-boosted", "cards.players.boosted") },
+
+        { typeof(PlayerActivationEvent), new Subscriber(Exchange, "players-activate", "players.status.activated") },
+        {
+            typeof(PlayerFreeAgencyEvent), new Subscriber(Exchange, "players-free-agents", "players.status.free_agency")
+        },
+        {
+            typeof(PlayerDeactivationEvent),
+            new Subscriber(Exchange, "players-deactivate", "players.status.deactivated")
+        },
+        { typeof(PlayerTeamSigningEvent), new Subscriber(Exchange, "players-team-sign", "players.status.team_signed") },
     };
 
     /// <summary>

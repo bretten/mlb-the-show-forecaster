@@ -42,3 +42,26 @@ public sealed class DomainEventConsumer3 : IDomainEventConsumer<EventType3>
         return Task.CompletedTask;
     }
 }
+
+/**
+ * DeadLetterEvent is used to test dead letter exchanges and queues
+ */
+public sealed record DeadLetterEvent1() : IDomainEvent;
+
+public sealed record DeadLetterEvent2() : IDomainEvent;
+
+public sealed class DeadLetterConsumer1 : IDomainEventConsumer<DeadLetterEvent1>
+{
+    public Task Handle(DeadLetterEvent1 e, CancellationToken cancellationToken = default)
+    {
+        throw new Exception();
+    }
+}
+
+public sealed class DeadLetterConsumer2 : IDomainEventConsumer<DeadLetterEvent2>
+{
+    public Task Handle(DeadLetterEvent2 e, CancellationToken cancellationToken = default)
+    {
+        throw new Exception();
+    }
+}

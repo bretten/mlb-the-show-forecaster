@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics;
+using System.Reflection;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.Messaging.RabbitMq.TestClasses;
@@ -48,18 +49,18 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
         // Assemblies that will be scanned for implementations of domain event consumers
         var assembliesToScan = new List<Assembly>() { GetType().Assembly };
         // Publisher's mapping of domain event types to their RabbitMQ exchanges
-        var publisherDomainEventsToExchanges = new Dictionary<Type, string>()
+        var domainEventPublisherTypes = new Dictionary<Type, Publisher>()
         {
-            { typeof(EventType1), "exA" },
-            { typeof(EventType2), "exB" },
-            { typeof(EventType3), "exC" }
+            { typeof(EventType1), new Publisher("exchange", "type.1") },
+            { typeof(EventType2), new Publisher("exchange", "type.2") },
+            { typeof(EventType3), new Publisher("exchange", "type.3") },
         };
-        // Consumer's mapping of domain event types to their RabbitMQ exchanges
-        var consumerDomainEventsToExchanges = new Dictionary<Type, string>()
+        // Consumer's mapping of domain event types to their RabbitMQ queues
+        var domainEventConsumerTypes = new Dictionary<Type, Subscriber>()
         {
-            { typeof(EventType1), "exA" },
-            { typeof(EventType2), "exB" },
-            { typeof(EventType3), "exC" }
+            { typeof(EventType1), new Subscriber("exchange", "type.1") },
+            { typeof(EventType2), new Subscriber("exchange", "type.2") },
+            { typeof(EventType3), new Subscriber("exchange", "type.3") },
         };
 
         // Rabbit MQ connection
@@ -70,8 +71,8 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
         };
 
         // Add RabbitMQ dependencies
-        serviceCollection.AddRabbitMq(connectionFactory, publisherDomainEventsToExchanges,
-            consumerDomainEventsToExchanges, assembliesToScan);
+        serviceCollection.AddRabbitMq(connectionFactory, domainEventPublisherTypes, domainEventConsumerTypes,
+            assembliesToScan);
 
         // Register the underlying consumers with callbacks to verify the message was called
         var consumer1Invoked = false;
@@ -152,6 +153,93 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
         Assert.True(consumer1Invoked);
         Assert.True(consumer2Invoked);
         Assert.True(consumer3Invoked);
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task RabbitMq_FailedMessage_SendsToDeadLetterQueue()
+    {
+        /*
+         * Arrange
+         */
+        // Service collection
+        var serviceCollection = new ServiceCollection();
+        serviceCollection.AddLogging();
+        // Assemblies that will be scanned for implementations of domain event consumers
+        var assembliesToScan = new List<Assembly>() { GetType().Assembly };
+        // Publisher's mapping of domain event types to their RabbitMQ exchanges
+        var domainEventPublisherTypes = new Dictionary<Type, Publisher>()
+        {
+            { typeof(DeadLetterEvent1), new Publisher("exchange", "queue-1") },
+            { typeof(DeadLetterEvent2), new Publisher("exchange", "queue-2") }
+        };
+        // Consumer's mapping of domain event types to their RabbitMQ queues
+        var domainEventConsumerTypes = new Dictionary<Type, Subscriber>()
+        {
+            { typeof(DeadLetterEvent1), new Subscriber("exchange", "queue-1") },
+            { typeof(DeadLetterEvent2), new Subscriber("exchange", "queue-2") },
+        };
+
+        // Rabbit MQ connection
+        var connectionFactory = new ConnectionFactory
+        {
+            Uri = new Uri(_container.GetConnectionString()),
+            DispatchConsumersAsync = true
+        };
+
+        // Add RabbitMQ dependencies
+        serviceCollection.AddRabbitMq(connectionFactory, domainEventPublisherTypes, domainEventConsumerTypes,
+            assembliesToScan);
+
+        // Build the services
+        var serviceProvider = serviceCollection.BuildServiceProvider();
+
+        // Resolve the dispatcher
+        var dispatcher = serviceProvider.GetRequiredService<IDomainEventDispatcher>();
+
+        // Resolve the consumer wrappers
+        var consumer1 = serviceProvider.GetRequiredService<RabbitMqDomainEventConsumer<DeadLetterEvent1>>();
+        var consumer2 = serviceProvider.GetRequiredService<RabbitMqDomainEventConsumer<DeadLetterEvent2>>();
+
+        /*
+         * Act
+         */
+        // Send a message
+        dispatcher.Dispatch(new List<IDomainEvent>()
+        {
+            new DeadLetterEvent1(),
+            new DeadLetterEvent1(),
+            new DeadLetterEvent2(),
+        });
+
+        /*
+         * Assert
+         */
+        // Make sure the messages were moved to the dead letter queues
+        var channel = serviceProvider.GetRequiredService<IModel>();
+
+        var conditionsMet = false;
+        var timeLimit = new TimeSpan(0, 1, 0);
+        var stopwatch = Stopwatch.StartNew();
+        while (!conditionsMet)
+        {
+            await Task.Delay(TimeSpan.FromSeconds(5), CancellationToken.None);
+            if (stopwatch.Elapsed > timeLimit)
+            {
+                throw new TimeoutException($"Timeout waiting {nameof(RabbitMq_FailedMessage_SendsToDeadLetterQueue)}");
+            }
+
+            // There should be no messages in the main queues
+            var mainQueueHasNoMessages = channel.MessageCount("queue-1") == 0
+                                         && channel.MessageCount("queue-2") == 0;
+            // There should be 2 messages in the dead letter queue for queue-1 and 1 for queue-2
+            var deadLetterQueueHasMessage = channel.MessageCount("queue-1-poison") == 2
+                                            && channel.MessageCount("queue-2-poison") == 1;
+
+            conditionsMet = mainQueueHasNoMessages && deadLetterQueueHasMessage;
+        }
+
+        stopwatch.Stop();
     }
 
     public async Task InitializeAsync() => await _container.StartAsync();

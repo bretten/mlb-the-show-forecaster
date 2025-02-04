@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 
 namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 
@@ -18,29 +19,28 @@ public static class Dependencies
     /// </summary>
     /// <param name="services">The <see cref="IServiceCollection"/> to add services to</param>
     /// <param name="connectionFactory">Rabbit MQ connection factory</param>
-    /// <param name="publisherDomainEventsToExchanges">Mapping of the publisher's domain event types to their exchanges</param>
-    /// <param name="consumerDomainEventsToExchanges">Mapping of the consumer domain event types to their exchanges</param>
+    /// <param name="domainEventPublisherTypes">Mapping of the publisher's domain event types to their exchanges</param>
+    /// <param name="domainEventConsumerTypes">Mapping of the consumer domain event types to their queues</param>
     /// <param name="assembliesToScan">Assemblies to scan for domain event consumers</param>
-    public static void AddRabbitMq(this IServiceCollection services,
-        IConnectionFactory connectionFactory, Dictionary<Type, string> publisherDomainEventsToExchanges,
-        Dictionary<Type, string> consumerDomainEventsToExchanges, IList<Assembly> assembliesToScan)
+    public static void AddRabbitMq(this IServiceCollection services, IConnectionFactory connectionFactory,
+        Dictionary<Type, Publisher> domainEventPublisherTypes, Dictionary<Type, Subscriber> domainEventConsumerTypes,
+        IList<Assembly> assembliesToScan)
     {
         services.TryAddSingleton(connectionFactory);
         // Register a single RabbitMQ connection. This connection will be used to create channels for the dispatcher and any consumers
         var connection = connectionFactory.CreateConnection();
         services.TryAddSingleton(connection);
 
-        // Setup the RabbitMQ exchanges
-        SetupExchanges(connection, publisherDomainEventsToExchanges.Concat(consumerDomainEventsToExchanges)
-            .GroupBy(x => x.Key)
-            .ToDictionary(k => k.Key, v => v.First().Value));
+        // Set up the RabbitMQ exchanges and queues
+        SetupExchanges(connection, domainEventPublisherTypes);
+        SetupQueues(connection, domainEventConsumerTypes);
 
         // Add the channel as a transient factory so it creates a new channel for every service that requests it
         services.TryAddTransient<IModel>(sp => connection.CreateModel());
 
         // Register the dispatcher as transient so it gets a new channel for each instance
         services.TryAddSingleton<IDomainEventDispatcher>(sp =>
-            new RabbitMqDomainEventDispatcher(sp.GetRequiredService<IModel>(), publisherDomainEventsToExchanges));
+            new RabbitMqDomainEventDispatcher(sp.GetRequiredService<IModel>(), domainEventPublisherTypes));
 
         // Register the domain event consumers
         assembliesToScan.SelectMany(a => a.GetTypes())
@@ -58,8 +58,7 @@ public static class Dependencies
                 // Get the domain event type (implementation of IDomainEvent) for the IDomainEventConsumer
                 var domainEventType = handlerInterfaceType.GetGenericArguments().First();
                 // Get the exchange for the domain event type
-                if (!consumerDomainEventsToExchanges.TryGetValue(domainEventType, out var queue) ||
-                    string.IsNullOrWhiteSpace(queue))
+                if (!domainEventConsumerTypes.TryGetValue(domainEventType, out var subscriber))
                 {
                     throw new RabbitMqExchangeNotDefinedException(
                         $"No RabbitMQ exchange mapping has been defined for {domainEventType.Name}");
@@ -72,8 +71,13 @@ public static class Dependencies
                 services.AddTransient(rabbitMqConsumerWrapperType, sp =>
                 {
                     var logger = sp.GetRequiredService(rabbitMqConsumerWrapperLoggerType);
-                    object[] parameters =
-                        [sp.GetRequiredService(handlerInterfaceType), sp.GetRequiredService<IModel>(), queue, logger];
+                    var channel = sp.GetRequiredService<IModel>();
+                    var consumer = new AsyncEventingBasicConsumer(channel);
+                    channel.BasicConsume(queue: subscriber.Queue,
+                        autoAck: false,
+                        consumer: consumer);
+
+                    object[] parameters = [sp.GetRequiredService(handlerInterfaceType), channel, consumer, logger];
                     return Activator.CreateInstance(rabbitMqConsumerWrapperType, parameters)!;
                 });
                 // Register the underlying domain event consumer for the current domain event type
@@ -85,27 +89,70 @@ public static class Dependencies
     /// Sets up the RabbitMQ exchanges for the domain events
     /// </summary>
     /// <param name="connection">The RabbitMQ connection</param>
-    /// <param name="domainEventsToExchanges">Publisher's mapping of domain event types to their exchanges</param>
-    private static void SetupExchanges(IConnection connection, Dictionary<Type, string> domainEventsToExchanges)
+    /// <param name="domainEventPublisherTypes">Mapping of the publisher's domain event types to their exchanges</param>
+    private static void SetupExchanges(IConnection connection, Dictionary<Type, Publisher> domainEventPublisherTypes)
     {
         using var channel = connection.CreateModel();
-        foreach (var e in domainEventsToExchanges)
+        foreach (var p in domainEventPublisherTypes.GroupBy(x => x.Value.Exchange))
         {
-            var exchange = e.Value;
-            var queue = e.Value;
-            var routingKey = e.Value;
+            var exchange = p.Key;
+            // Set up the exchange (idempotent)
+            channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Topic, autoDelete: false, durable: true);
+            // Set up the dead letter exchange (idempotent)
+            channel.ExchangeDeclare(exchange: GetDeadLetterName(exchange), type: ExchangeType.Direct, autoDelete: false,
+                durable: true);
+        }
+    }
 
-            // Setup the exchange
-            channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Fanout, autoDelete: true);
-            // Bind the queue to the exchange
+    /// <summary>
+    /// Sets up the RabbitMQ queues for the domain events
+    /// </summary>
+    /// <param name="connection">The RabbitMQ connection</param>
+    /// <param name="domainEventConsumerTypes">Mapping of the consumer domain event types to their queues</param>
+    private static void SetupQueues(IConnection connection, Dictionary<Type, Subscriber> domainEventConsumerTypes)
+    {
+        using var channel = connection.CreateModel();
+        foreach (var e in domainEventConsumerTypes)
+        {
+            var exchange = e.Value.Exchange;
+            var queue = e.Value.Queue;
+            var routingKey = e.Value.RoutingKey;
+
+            var deadLetterExchange = GetDeadLetterName(exchange);
+            var deadLetterQueue = GetDeadLetterName(queue);
+
+            // Declare and bind the queue to the exchange (idempotent)
             channel.QueueDeclare(queue: queue,
                 durable: true,
                 exclusive: false,
-                autoDelete: true,
-                arguments: null);
+                autoDelete: false,
+                arguments: new Dictionary<string, object>()
+                {
+                    { "x-dead-letter-exchange", deadLetterExchange },
+                });
             channel.QueueBind(queue: queue,
                 exchange: exchange,
                 routingKey: routingKey);
+
+            // Declare and bind the dead letter queue to the dead letter exchange (idempotent)
+            channel.QueueDeclare(queue: deadLetterQueue,
+                durable: true,
+                exclusive: false,
+                autoDelete: false,
+                arguments: null);
+            channel.QueueBind(queue: deadLetterQueue,
+                exchange: deadLetterExchange,
+                routingKey: routingKey);
         }
+    }
+
+    /// <summary>
+    /// Gets the dead letter equivalent name for an exchange or queue
+    /// </summary>
+    /// <param name="exchangeOrQueue">The exchange or queue</param>
+    /// <returns>The dead letter equivalent name</returns>
+    private static string GetDeadLetterName(string exchangeOrQueue)
+    {
+        return $"{exchangeOrQueue}-poison";
     }
 }

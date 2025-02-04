@@ -19,10 +19,12 @@ public class RabbitMqDomainEventConsumerTests
         // Arrange
         var mockUnderlyingConsumer = Mock.Of<IDomainEventConsumer<TestDomainEvent>>();
         var mockModel = Mock.Of<IModel>();
+        var mockConsumer = new AsyncEventingBasicConsumer(mockModel);
         var mockLogger = Mock.Of<ILogger<RabbitMqDomainEventConsumer<TestDomainEvent>>>();
 
         var consumerWrapper =
-            new RabbitMqDomainEventConsumer<TestDomainEvent>(mockUnderlyingConsumer, mockModel, "queue1", mockLogger);
+            new RabbitMqDomainEventConsumer<TestDomainEvent>(mockUnderlyingConsumer, mockModel, mockConsumer,
+                mockLogger);
 
         var body = Encoding.UTF8.GetBytes("");
         var action = async () => await consumerWrapper.ReceivedEventHandler(consumerWrapper, CreateDelivery(body));
@@ -49,10 +51,12 @@ public class RabbitMqDomainEventConsumerTests
 
         var mockUnderlyingConsumer = Mock.Of<IDomainEventConsumer<TestDomainEvent>>();
         var mockModel = Mock.Of<IModel>();
+        var mockConsumer = new AsyncEventingBasicConsumer(mockModel);
         var mockLogger = Mock.Of<ILogger<RabbitMqDomainEventConsumer<TestDomainEvent>>>();
 
         var consumerWrapper =
-            new RabbitMqDomainEventConsumer<TestDomainEvent>(mockUnderlyingConsumer, mockModel, "queue1", mockLogger);
+            new RabbitMqDomainEventConsumer<TestDomainEvent>(mockUnderlyingConsumer, mockModel, mockConsumer,
+                mockLogger);
 
         var body = JsonSerializer.SerializeToUtf8Bytes(domainEvent);
         var action = async () => await consumerWrapper.ReceivedEventHandler(consumerWrapper, CreateDelivery(body));
@@ -80,10 +84,12 @@ public class RabbitMqDomainEventConsumerTests
 
         var mockUnderlyingConsumer = Mock.Of<IDomainEventConsumer<TestDomainEvent>>();
         var mockModel = Mock.Of<IModel>();
+        var mockConsumer = new AsyncEventingBasicConsumer(mockModel);
         var mockLogger = Mock.Of<ILogger<RabbitMqDomainEventConsumer<TestDomainEvent>>>();
 
         var consumerWrapper =
-            new RabbitMqDomainEventConsumer<TestDomainEvent>(mockUnderlyingConsumer, mockModel, "queue1", mockLogger);
+            new RabbitMqDomainEventConsumer<TestDomainEvent>(mockUnderlyingConsumer, mockModel, mockConsumer,
+                mockLogger);
 
         var body = JsonSerializer.SerializeToUtf8Bytes(domainEvent);
 
@@ -95,13 +101,11 @@ public class RabbitMqDomainEventConsumerTests
     }
 
     public sealed record TestDomainEvent(
-        [property: JsonRequired]
-        string Message
+        [property: JsonRequired] string Message
     ) : IDomainEvent;
 
     public sealed record AnotherDomainEvent(
-        [property: JsonRequired]
-        int Property1,
+        [property: JsonRequired] int Property1,
         string Property2
     ) : IDomainEvent;
 

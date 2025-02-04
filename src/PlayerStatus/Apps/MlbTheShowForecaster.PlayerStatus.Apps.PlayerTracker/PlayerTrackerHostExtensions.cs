@@ -21,22 +21,27 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Apps.PlayerTracker;
 public static class PlayerTrackerHostExtensions
 {
     /// <summary>
+    /// Rabbit MQ exchange
+    /// </summary>
+    private const string Exchange = "mlb-forecaster";
+
+    /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be published in this domain mapped to their corresponding
     /// RabbitMQ exchanges
     /// </summary>
-    private static readonly Dictionary<Type, string> DomainEventPublisherTypes = new()
+    private static readonly Dictionary<Type, Publisher> DomainEventPublisherTypes = new()
     {
-        { typeof(PlayerActivatedEvent), "PlayerActivated" },
-        { typeof(PlayerEnteredFreeAgencyEvent), "PlayerEnteredFreeAgency" },
-        { typeof(PlayerInactivatedEvent), "PlayerInactivated" },
-        { typeof(PlayerSignedContractWithTeamEvent), "PlayerSignedContractWithTeam" }
+        { typeof(PlayerActivatedEvent), new Publisher(Exchange, "players.status.activated") },
+        { typeof(PlayerEnteredFreeAgencyEvent), new Publisher(Exchange, "players.status.free_agency") },
+        { typeof(PlayerInactivatedEvent), new Publisher(Exchange, "players.status.deactivated") },
+        { typeof(PlayerSignedContractWithTeamEvent), new Publisher(Exchange, "players.status.team_signed") },
     };
 
     /// <summary>
     /// The <see cref="IDomainEvent"/> types that will be consumed in this domain mapped to their corresponding
     /// RabbitMQ exchanges
     /// </summary>
-    private static readonly Dictionary<Type, string> DomainEventConsumerTypes = new()
+    private static readonly Dictionary<Type, Subscriber> DomainEventConsumerTypes = new()
     {
     };
 
