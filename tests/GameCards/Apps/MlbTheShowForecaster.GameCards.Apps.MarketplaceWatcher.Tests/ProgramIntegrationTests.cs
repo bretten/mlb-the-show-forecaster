@@ -142,8 +142,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
             var listingsSaved = listings > 1; // One was already inserted by the setup of this test
             // Domain events should have been published
             using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
-            var messageCount = rabbitMqChannel.MessageCount("ListingBuyPriceDecreased") +
-                               rabbitMqChannel.MessageCount("ListingBuyPriceIncreased");
+            var messageCount = rabbitMqChannel.MessageCount("cards.listings.buy_price_decreased") +
+                               rabbitMqChannel.MessageCount("cards.listings.buy_price_increased");
             var messagesPublished = messageCount > 0;
 
             conditionsMet = playerCardsSaved && listingsSaved && messagesPublished;

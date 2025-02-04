@@ -109,9 +109,9 @@ public class ProgramIntegrationTests : IAsyncLifetime
             var playerSeasonSaved = playerSeason != null;
             // Domain events should have been published
             using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
-            var messageCount = rabbitMqChannel.MessageCount("PlayerBattedInGame")
-                               + rabbitMqChannel.MessageCount("PlayerPitchedInGame")
-                               + rabbitMqChannel.MessageCount("PlayerFieldedInGame");
+            var messageCount = rabbitMqChannel.MessageCount("performance.game.batted")
+                               + rabbitMqChannel.MessageCount("performance.game.pitched")
+                               + rabbitMqChannel.MessageCount("performance.game.fielded");
             var messagesPublished = messageCount > 0;
 
             conditionsMet = playerSeasonSaved && messagesPublished;

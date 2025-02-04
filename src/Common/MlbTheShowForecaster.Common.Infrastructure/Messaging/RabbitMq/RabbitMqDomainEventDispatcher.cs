@@ -19,14 +19,14 @@ public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher, IDis
     /// <summary>
     /// A mapping of <see cref="IDomainEvent"/> types to their corresponding RabbitMQ exchanges
     /// </summary>
-    private readonly Dictionary<Type, string> _domainEventTypes;
+    private readonly Dictionary<Type, Publisher> _domainEventTypes;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="channel">The RabbitMQ channel</param>
     /// <param name="domainEventTypes">A mapping of <see cref="IDomainEvent"/> types to their corresponding RabbitMQ exchanges</param>
-    public RabbitMqDomainEventDispatcher(IModel channel, Dictionary<Type, string> domainEventTypes)
+    public RabbitMqDomainEventDispatcher(IModel channel, Dictionary<Type, Publisher> domainEventTypes)
     {
         _channel = channel;
         _domainEventTypes = domainEventTypes;
@@ -40,11 +40,10 @@ public sealed class RabbitMqDomainEventDispatcher : IDomainEventDispatcher, IDis
     {
         foreach (var e in events)
         {
-            var exchange = _domainEventTypes[e.GetType()];
-            var routingKey = _domainEventTypes[e.GetType()];
+            var publisher = _domainEventTypes[e.GetType()];
 
-            _channel.BasicPublish(exchange: exchange,
-                routingKey: routingKey,
+            _channel.BasicPublish(exchange: publisher.Exchange,
+                routingKey: publisher.RoutingKey,
                 body: Encoding.UTF8.GetBytes(JsonSerializer.Serialize(e, e.GetType()))
             );
         }

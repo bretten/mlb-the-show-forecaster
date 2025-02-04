@@ -14,14 +14,14 @@ public class RabbitMqDomainEventDispatcherTests
     public void DispatchEvents_EventsOfVaryingTypes_EventsDispatchedToCorrespondingConsumers()
     {
         // Arrange
-        var eventTypeToExchange = new Dictionary<Type, string>()
+        var domainEventPublisherTypes = new Dictionary<Type, Publisher>()
         {
-            { typeof(EventType1), "exA" },
-            { typeof(EventType2), "exB" },
-            { typeof(EventType3), "exC" },
+            { typeof(EventType1), new Publisher("exchange", "type.1") },
+            { typeof(EventType2), new Publisher("exchange", "type.2") },
+            { typeof(EventType3), new Publisher("exchange", "type.3") },
         };
         var mockPublisher = new Mock<IModel>();
-        var dispatcher = new RabbitMqDomainEventDispatcher(mockPublisher.Object, eventTypeToExchange);
+        var dispatcher = new RabbitMqDomainEventDispatcher(mockPublisher.Object, domainEventPublisherTypes);
 
         var events = new List<IDomainEvent>()
         {
@@ -35,9 +35,11 @@ public class RabbitMqDomainEventDispatcherTests
         var event1Body = new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new EventType1())));
         var event2Body = new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new EventType2())));
         var event3Body = new ReadOnlyMemory<byte>(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new EventType3())));
-        mockPublisher.Verify(x => x.BasicPublish("exA", "exA", false, null, ItIs(event1Body)), Times.Once);
-        mockPublisher.Verify(x => x.BasicPublish("exB", "exB", false, null, ItIs(event2Body)), Times.Exactly(2));
-        mockPublisher.Verify(x => x.BasicPublish("exC", "exC", false, null, ItIs(event3Body)), Times.Exactly(3));
+        mockPublisher.Verify(x => x.BasicPublish("exchange", "type.1", false, null, ItIs(event1Body)), Times.Once);
+        mockPublisher.Verify(x => x.BasicPublish("exchange", "type.2", false, null, ItIs(event2Body)),
+            Times.Exactly(2));
+        mockPublisher.Verify(x => x.BasicPublish("exchange", "type.3", false, null, ItIs(event3Body)),
+            Times.Exactly(3));
     }
 
     private static ReadOnlyMemory<byte> ItIs(ReadOnlyMemory<byte> byteArray)

@@ -27,11 +27,6 @@ public sealed class RabbitMqDomainEventConsumer<T> : IDisposable
     private readonly IModel _channel;
 
     /// <summary>
-    /// The queue to consume
-    /// </summary>
-    public string Queue { get; }
-
-    /// <summary>
     /// The RabbitMQ consumer
     /// </summary>
     private readonly AsyncEventingBasicConsumer _consumer;
@@ -46,20 +41,16 @@ public sealed class RabbitMqDomainEventConsumer<T> : IDisposable
     /// </summary>
     /// <param name="domainEventConsumer">The underlying domain event consumer that handles the RabbitMQ messages</param>
     /// <param name="channel">The RabbitMQ channel</param>
-    /// <param name="queue">The queue to consume</param>
+    /// <param name="consumer">The RabbitMQ consumer</param>
     /// <param name="logger">Logger</param>
-    public RabbitMqDomainEventConsumer(IDomainEventConsumer<T> domainEventConsumer, IModel channel, string queue,
-        ILogger<RabbitMqDomainEventConsumer<T>> logger)
+    public RabbitMqDomainEventConsumer(IDomainEventConsumer<T> domainEventConsumer, IModel channel,
+        AsyncEventingBasicConsumer consumer, ILogger<RabbitMqDomainEventConsumer<T>> logger)
     {
         _domainEventConsumer = domainEventConsumer;
         _channel = channel;
-        Queue = queue;
         _logger = logger;
-        _consumer = new AsyncEventingBasicConsumer(channel);
+        _consumer = consumer;
         _consumer.Received += ReceivedEventHandler;
-        _channel.BasicConsume(queue: Queue,
-            autoAck: true,
-            consumer: _consumer);
     }
 
     /// <summary>
@@ -84,11 +75,15 @@ public sealed class RabbitMqDomainEventConsumer<T> : IDisposable
         {
             _logger.LogInformation($"Consuming message {messageType}: {bodyString}");
             await _domainEventConsumer.Handle(JsonSerializer.Deserialize<T>(bodyString)!);
+            // Acknowledge the message (message is consumed)
+            _channel.BasicAck(args.DeliveryTag, false);
         }
         catch (Exception e)
         {
             var ex = new RabbitMqEventBodyCouldNotBeParsedException($"Could not parse event of type {messageType}", e);
             _logger.LogError(ex, ex.Message);
+            // Reject the message and send it to the dead letter exchange
+            _channel.BasicReject(args.DeliveryTag, false);
             throw ex;
         }
     }
