@@ -3,6 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCardForecastMlbId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -94,6 +95,9 @@ public class PlayerCardTrackerTests
         var expectedPlayerCard2Command = new CreatePlayerCardCommand(externalCard2);
         // The command sender should expect an update command for PlayerCard3
         var expectedPlayerCard3Command = new UpdatePlayerCardCommand(domainPlayerCard3, externalCard3);
+        // Expected MLB ID Forecast update commands
+        var expectedForecast1Command = new UpdatePlayerCardForecastMlbIdCommand(domainPlayerCard1);
+        var expectedForecast3Command = new UpdatePlayerCardForecastMlbIdCommand(domainPlayerCard3);
 
         // Tracker
         var tracker = new PlayerCardTracker(stubCardCatalog.Object, stubQuerySender.Object, mockCommandSender);
@@ -128,5 +132,8 @@ public class PlayerCardTrackerTests
         Mock.Get(mockCommandSender).Verify(x => x.Send(expectedPlayerCard2Command, cToken), Times.Once);
         // Was a command sent to update PlayerCard3 in this domain?
         Mock.Get(mockCommandSender).Verify(x => x.Send(expectedPlayerCard3Command, cToken), Times.Once);
+        // A command should have been sent to update the MLB ID for the forecasts of already existing player cards
+        Mock.Get(mockCommandSender).Verify(x => x.Send(expectedForecast1Command, cToken), Times.Once);
+        Mock.Get(mockCommandSender).Verify(x => x.Send(expectedForecast3Command, cToken), Times.Once);
     }
 }

@@ -34,7 +34,7 @@ public sealed class PlayerCardForecast : AggregateRoot
     /// <summary>
     /// The MLB ID of the Player
     /// </summary>
-    public MlbId? MlbId { get; }
+    public MlbId? MlbId { get; private set; }
 
     /// <summary>
     /// Player's primary position
@@ -159,7 +159,6 @@ public sealed class PlayerCardForecast : AggregateRoot
         Reassess(impact as ForecastImpact, date);
     }
 
-
     /// <summary>
     /// Estimates the demand on the specified date
     /// </summary>
@@ -171,6 +170,15 @@ public sealed class PlayerCardForecast : AggregateRoot
             .Where(x => x.StartDate <= date && x.EndDate >= date)
             .Select(x => x.DemandOn(date))
             .Aggregate(Demand.Stable(), (x, y) => x + y);
+    }
+
+    /// <summary>
+    /// Sets the MLB ID
+    /// </summary>
+    /// <param name="mlbId">The MLB ID</param>
+    public void SetMlbId(MlbId mlbId)
+    {
+        MlbId = mlbId;
     }
 
     /// <summary>
