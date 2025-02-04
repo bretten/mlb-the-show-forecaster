@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
-using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.Messaging.RabbitMq.TestClasses;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -76,39 +75,40 @@ public class DependenciesTests
             x.Lifetime == ServiceLifetime.Transient)), Times.Once);
 
         // Verify the exchange was set up
-        mockChannel.Verify(x => x.ExchangeDeclare("ex", ExchangeType.Topic, true, false, null), Times.Once);
+        mockChannel.Verify(x => x.ExchangeDeclare("ex", ExchangeType.Topic, true, false, null), Times.AtLeastOnce);
         // Verify the dead letter exchange was set up
-        mockChannel.Verify(x => x.ExchangeDeclare("ex-poison", ExchangeType.Direct, true, false, null), Times.Once);
+        mockChannel.Verify(x => x.ExchangeDeclare("ex-poison", ExchangeType.Direct, true, false, null),
+            Times.AtLeastOnce);
         // Verify the queues were set up
         mockChannel.Verify(x => x.QueueDeclare("queue-1", true, false, false, new Dictionary<string, object>()
         {
             { "x-dead-letter-exchange", "ex-poison" },
-        }), Times.Once);
+        }), Times.AtLeastOnce);
         mockChannel.Verify(x => x.QueueDeclare("queue-2", true, false, false, new Dictionary<string, object>()
         {
             { "x-dead-letter-exchange", "ex-poison" },
-        }), Times.Once);
+        }), Times.AtLeastOnce);
         mockChannel.Verify(x => x.QueueDeclare("queue-3", true, false, false, new Dictionary<string, object>()
         {
             { "x-dead-letter-exchange", "ex-poison" },
-        }), Times.Once);
+        }), Times.AtLeastOnce);
         mockChannel.Verify(x => x.QueueDeclare("queue-4", true, false, false, new Dictionary<string, object>()
         {
             { "x-dead-letter-exchange", "ex-poison" },
-        }), Times.Once);
-        mockChannel.Verify(x => x.QueueBind("queue-1", "ex", "type.1", null), Times.Once);
-        mockChannel.Verify(x => x.QueueBind("queue-2", "ex", "type.2", null), Times.Once);
-        mockChannel.Verify(x => x.QueueBind("queue-3", "ex", "type.3", null), Times.Once);
-        mockChannel.Verify(x => x.QueueBind("queue-4", "ex", "type.4", null), Times.Once);
+        }), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueBind("queue-1", "ex", "type.1", null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueBind("queue-2", "ex", "type.2", null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueBind("queue-3", "ex", "type.3", null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueBind("queue-4", "ex", "type.4", null), Times.AtLeastOnce);
         // Verify the dead letter queues were set up
-        mockChannel.Verify(x => x.QueueDeclare("queue-1-poison", true, false, false, null), Times.Once);
-        mockChannel.Verify(x => x.QueueDeclare("queue-2-poison", true, false, false, null), Times.Once);
-        mockChannel.Verify(x => x.QueueDeclare("queue-3-poison", true, false, false, null), Times.Once);
-        mockChannel.Verify(x => x.QueueDeclare("queue-4-poison", true, false, false, null), Times.Once);
-        mockChannel.Verify(x => x.QueueBind("queue-1-poison", "ex-poison", "type.1", null), Times.Once);
-        mockChannel.Verify(x => x.QueueBind("queue-2-poison", "ex-poison", "type.2", null), Times.Once);
-        mockChannel.Verify(x => x.QueueBind("queue-3-poison", "ex-poison", "type.3", null), Times.Once);
-        mockChannel.Verify(x => x.QueueBind("queue-4-poison", "ex-poison", "type.4", null), Times.Once);
+        mockChannel.Verify(x => x.QueueDeclare("queue-1-poison", true, false, false, null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueDeclare("queue-2-poison", true, false, false, null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueDeclare("queue-3-poison", true, false, false, null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueDeclare("queue-4-poison", true, false, false, null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueBind("queue-1-poison", "ex-poison", "type.1", null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueBind("queue-2-poison", "ex-poison", "type.2", null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueBind("queue-3-poison", "ex-poison", "type.3", null), Times.AtLeastOnce);
+        mockChannel.Verify(x => x.QueueBind("queue-4-poison", "ex-poison", "type.4", null), Times.AtLeastOnce);
 
         // The domain event dispatcher should be registered as a transient so it gets a new channel from the connection every time
         mockServices.Verify(s => s.Add(It.Is<ServiceDescriptor>(x =>
@@ -213,62 +213,8 @@ public class DependenciesTests
         // Resolve the dispatcher so it gets its own channel
         Assert.IsAssignableFrom<IDomainEventDispatcher>(actual.GetRequiredService<IDomainEventDispatcher>());
 
-        // The connection singleton should have CreateModel called one time for each consumer, once for the dispatcher, once to set up the exchanges, and once to set up the queues
+        // The connection singleton should have CreateModel called one time for each consumer, once for the dispatcher, and once to set up the exchanges and queues
         // The real IConnection will provide a new channel for each call to CreateModel
-        stubConnection.Verify(x => x.CreateModel(), Times.Exactly(7));
-    }
-
-    [Fact]
-    public void AddRabbitMq_ExchangeNotDefinedForConsumer_ThrowsException()
-    {
-        /*
-         * Arrange
-         */
-        // Service collection
-        var serviceCollection = new ServiceCollection();
-        // Assemblies that will be scanned for implementations of domain event consumers
-        var assembliesToScan = new List<Assembly>() { GetType().Assembly };
-        // Publisher's mapping of domain event types to their RabbitMQ exchanges
-        var domainEventPublisherTypes = new Dictionary<Type, Publisher>()
-        {
-            { typeof(EventType1), new Publisher("ex", "type.1") },
-            { typeof(EventType2), new Publisher("ex", "type.2") },
-            { typeof(EventType3), new Publisher("ex", "type.3") },
-        };
-        // Consumer's mapping of domain event types to their RabbitMQ queues
-        var domainEventConsumerTypes = new Dictionary<Type, Subscriber>()
-        {
-            { typeof(EventType1), new Subscriber("ex", "queue-1", "type.1") },
-            // { typeof(EventType2), new Subscriber("ex", "queue-2", "type.2") }, // not defined
-            { typeof(EventType3), new Subscriber("ex", "queue-3", "type.3") },
-        };
-
-        // Mock channel
-        var mockChannel = Mock.Of<IModel>();
-
-        // Stub connection
-        var stubConnection = new Mock<IConnection>();
-        stubConnection.Setup(x => x.CreateModel())
-            .Returns(mockChannel);
-
-        // Stubbed connection factory
-        var stubConnectionFactory = new Mock<IConnectionFactory>();
-        stubConnectionFactory.Setup(x => x.CreateConnection())
-            .Returns(stubConnection.Object);
-
-        // Add Rabbit MQ and register domain event consumers
-        var action = () => serviceCollection.AddRabbitMq(stubConnectionFactory.Object, domainEventPublisherTypes,
-            domainEventConsumerTypes, assembliesToScan);
-
-        /*
-         * Act
-         */
-        var actual = Record.Exception(action);
-
-        /*
-         * Assert
-         */
-        Assert.NotNull(actual);
-        Assert.IsType<RabbitMqExchangeNotDefinedException>(actual);
+        stubConnection.Verify(x => x.CreateModel(), Times.Exactly(6));
     }
 }

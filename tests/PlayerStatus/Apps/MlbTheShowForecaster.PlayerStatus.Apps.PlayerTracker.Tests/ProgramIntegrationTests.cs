@@ -111,7 +111,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
             var playersSaved = players > 0;
             // Domain events should have been published
             using var rabbitMqChannel = GetRabbitMqModel(app.Configuration);
-            var messageCount = rabbitMqChannel.MessageCount("PlayerActivated");
+            var messageCount = rabbitMqChannel.MessageCount("players.status.activated");
             var messagesPublished = messageCount > 0;
 
             conditionsMet = playersSaved && messagesPublished;

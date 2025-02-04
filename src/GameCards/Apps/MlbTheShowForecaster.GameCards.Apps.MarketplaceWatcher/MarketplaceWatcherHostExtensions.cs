@@ -64,57 +64,21 @@ public static class MarketplaceWatcherHostExtensions
     /// </summary>
     private static readonly Dictionary<Type, Subscriber> DomainEventConsumerTypes = new()
     {
-        { typeof(NewPlayerCardEvent), new Subscriber(Exchange, "cards-new-players", "cards.players.created") },
-
-        {
-            typeof(BattingStatsImprovementEvent),
-            new Subscriber(Exchange, "performance-batting-improvement", "performance.batting.improved")
-        },
-        {
-            typeof(BattingStatsDeclineEvent),
-            new Subscriber(Exchange, "performance-batting-decline", "performance.batting.declined")
-        },
-        {
-            typeof(PitchingStatsImprovementEvent),
-            new Subscriber(Exchange, "performance-pitching-improvement", "performance.pitching.improved")
-        },
-        {
-            typeof(PitchingStatsDeclineEvent),
-            new Subscriber(Exchange, "performance-pitching-decline", "performance.pitching.declined")
-        },
-        {
-            typeof(FieldingStatsImprovementEvent),
-            new Subscriber(Exchange, "performance-fielding-improvement", "performance.fielding.improved")
-        },
-        {
-            typeof(FieldingStatsDeclineEvent),
-            new Subscriber(Exchange, "performance-fielding-decline", "performance.fielding.declined")
-        },
-
-        {
-            typeof(OverallRatingImprovementEvent),
-            new Subscriber(Exchange, "cards-rating-improvement", "cards.players.improved")
-        },
-        {
-            typeof(OverallRatingDeclineEvent),
-            new Subscriber(Exchange, "cards-rating-decline", "cards.players.declined")
-        },
-
-        {
-            typeof(PositionChangeEvent),
-            new Subscriber(Exchange, "cards-new-position", "cards.players.position_changed")
-        },
-        { typeof(PlayerCardBoostEvent), new Subscriber(Exchange, "cards-boosted", "cards.players.boosted") },
-
-        { typeof(PlayerActivationEvent), new Subscriber(Exchange, "players-activate", "players.status.activated") },
-        {
-            typeof(PlayerFreeAgencyEvent), new Subscriber(Exchange, "players-free-agents", "players.status.free_agency")
-        },
-        {
-            typeof(PlayerDeactivationEvent),
-            new Subscriber(Exchange, "players-deactivate", "players.status.deactivated")
-        },
-        { typeof(PlayerTeamSigningEvent), new Subscriber(Exchange, "players-team-sign", "players.status.team_signed") },
+        { typeof(NewPlayerCardEvent), new Subscriber(Exchange, "cards.players.created") },
+        { typeof(BattingStatsImprovementEvent), new Subscriber(Exchange, "performance.batting.improved") },
+        { typeof(BattingStatsDeclineEvent), new Subscriber(Exchange, "performance.batting.declined") },
+        { typeof(PitchingStatsImprovementEvent), new Subscriber(Exchange, "performance.pitching.improved") },
+        { typeof(PitchingStatsDeclineEvent), new Subscriber(Exchange, "performance.pitching.declined") },
+        { typeof(FieldingStatsImprovementEvent), new Subscriber(Exchange, "performance.fielding.improved") },
+        { typeof(FieldingStatsDeclineEvent), new Subscriber(Exchange, "performance.fielding.declined") },
+        { typeof(OverallRatingImprovementEvent), new Subscriber(Exchange, "cards.players.improved") },
+        { typeof(OverallRatingDeclineEvent), new Subscriber(Exchange, "cards.players.declined") },
+        { typeof(PositionChangeEvent), new Subscriber(Exchange, "cards.players.position_changed") },
+        { typeof(PlayerCardBoostEvent), new Subscriber(Exchange, "cards.players.boosted") },
+        { typeof(PlayerActivationEvent), new Subscriber(Exchange, "players.status.activated") },
+        { typeof(PlayerFreeAgencyEvent), new Subscriber(Exchange, "players.status.free_agency") },
+        { typeof(PlayerDeactivationEvent), new Subscriber(Exchange, "players.status.deactivated") },
+        { typeof(PlayerTeamSigningEvent), new Subscriber(Exchange, "players.status.team_signed") },
     };
 
     /// <summary>

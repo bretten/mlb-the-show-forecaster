@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
-using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq.Exceptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -32,8 +31,7 @@ public static class Dependencies
         services.TryAddSingleton(connection);
 
         // Set up the RabbitMQ exchanges and queues
-        SetupExchanges(connection, domainEventPublisherTypes);
-        SetupQueues(connection, domainEventConsumerTypes);
+        SetupExchangesAndQueues(connection, domainEventPublisherTypes, domainEventConsumerTypes);
 
         // Add the channel as a transient factory so it creates a new channel for every service that requests it
         services.TryAddTransient<IModel>(sp => connection.CreateModel());
@@ -60,8 +58,8 @@ public static class Dependencies
                 // Get the exchange for the domain event type
                 if (!domainEventConsumerTypes.TryGetValue(domainEventType, out var subscriber))
                 {
-                    throw new RabbitMqExchangeNotDefinedException(
-                        $"No RabbitMQ exchange mapping has been defined for {domainEventType.Name}");
+                    // The domain is not subscribed to this event
+                    return;
                 }
 
                 // Register a RabbitMqDomainEventConsumer as a wrapper for the current domain event type's consumer
@@ -86,40 +84,35 @@ public static class Dependencies
     }
 
     /// <summary>
-    /// Sets up the RabbitMQ exchanges for the domain events
+    /// Sets up the RabbitMQ exchanges and queues for the domain events
     /// </summary>
     /// <param name="connection">The RabbitMQ connection</param>
     /// <param name="domainEventPublisherTypes">Mapping of the publisher's domain event types to their exchanges</param>
-    private static void SetupExchanges(IConnection connection, Dictionary<Type, Publisher> domainEventPublisherTypes)
+    /// <param name="domainEventConsumerTypes">Mapping of the consumer domain event types to their queues</param>
+    private static void SetupExchangesAndQueues(IConnection connection,
+        Dictionary<Type, Publisher> domainEventPublisherTypes, Dictionary<Type, Subscriber> domainEventConsumerTypes)
     {
         using var channel = connection.CreateModel();
-        foreach (var p in domainEventPublisherTypes.GroupBy(x => x.Value.Exchange))
+
+        var types = domainEventPublisherTypes.Select(x => new
+                { Exchange = x.Value.Exchange, Queue = x.Value.RoutingKey, RoutingKey = x.Value.RoutingKey })
+            .Concat(domainEventConsumerTypes.Select(x => new
+                { Exchange = x.Value.Exchange, Queue = x.Value.Queue, RoutingKey = x.Value.RoutingKey }));
+
+        foreach (var e in types)
         {
-            var exchange = p.Key;
+            var exchange = e.Exchange;
+            var queue = e.Queue;
+            var routingKey = e.RoutingKey;
+
+            var deadLetterExchange = GetDeadLetterName(exchange);
+            var deadLetterQueue = GetDeadLetterName(queue);
+
             // Set up the exchange (idempotent)
             channel.ExchangeDeclare(exchange: exchange, type: ExchangeType.Topic, autoDelete: false, durable: true);
             // Set up the dead letter exchange (idempotent)
             channel.ExchangeDeclare(exchange: GetDeadLetterName(exchange), type: ExchangeType.Direct, autoDelete: false,
                 durable: true);
-        }
-    }
-
-    /// <summary>
-    /// Sets up the RabbitMQ queues for the domain events
-    /// </summary>
-    /// <param name="connection">The RabbitMQ connection</param>
-    /// <param name="domainEventConsumerTypes">Mapping of the consumer domain event types to their queues</param>
-    private static void SetupQueues(IConnection connection, Dictionary<Type, Subscriber> domainEventConsumerTypes)
-    {
-        using var channel = connection.CreateModel();
-        foreach (var e in domainEventConsumerTypes)
-        {
-            var exchange = e.Value.Exchange;
-            var queue = e.Value.Queue;
-            var routingKey = e.Value.RoutingKey;
-
-            var deadLetterExchange = GetDeadLetterName(exchange);
-            var deadLetterQueue = GetDeadLetterName(queue);
 
             // Declare and bind the queue to the exchange (idempotent)
             channel.QueueDeclare(queue: queue,
