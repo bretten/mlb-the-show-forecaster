@@ -86,6 +86,7 @@ public class ScopedSingleInstanceJobManagerTests
         _ = m.Run<TestJob, TestJobOutput>(jobInput, cToken);
         _ = m.Run<TestJob, TestJobOutput>(jobInput, cToken); // Invoke again to cover already active case
         var actual = await tcs.Task;
+        await Task.Delay(jobDurationMs, cToken);
 
         // Assert
         Assert.Equal("Finished input1. Count: 1", actual.Output);
