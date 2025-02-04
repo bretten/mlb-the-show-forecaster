@@ -16,12 +16,12 @@ public static class Faker
     public static DateOnly StartDate = new DateOnly(2024, 7, 25);
     public static DateOnly EndDate = new DateOnly(2024, 7, 29);
 
-    public static PlayerCardForecast FakePlayerCardForecast(ushort year = 2024, Guid? externalId = null, int mlbId = 1,
+    public static PlayerCardForecast FakePlayerCardForecast(ushort year = 2024, Guid? externalId = null, int? mlbId = 1,
         Position position = Position.RightField, int overallRating = 50)
     {
         return PlayerCardForecast.Create(SeasonYear.Create(year),
-            Cards.TestClasses.Faker.FakeCardExternalId(externalId), MlbId.Create(mlbId), position,
-            OverallRating.Create(overallRating));
+            Cards.TestClasses.Faker.FakeCardExternalId(externalId), mlbId.HasValue ? MlbId.Create(mlbId.Value) : null,
+            position, OverallRating.Create(overallRating));
     }
 
     public static OverallRatingChangeForecastImpact FakeOverallRatingChangeForecastImpact(int oldOverallRating = 50,

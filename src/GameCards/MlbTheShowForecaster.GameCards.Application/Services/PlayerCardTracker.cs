@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreatePlayerCard;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCard;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCardForecastMlbId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetPlayerCardByExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
@@ -74,6 +75,10 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
             // If the card already exists, no further action is needed
             if (existingPlayerCard != null)
             {
+                // Update the MLB ID
+                await _commandSender.Send(new UpdatePlayerCardForecastMlbIdCommand(existingPlayerCard),
+                    cancellationToken);
+
                 // Update the card if it had a boost/temp rating added or removed
                 if (existingPlayerCard.IsBoosted != externalCard.IsBoosted ||
                     existingPlayerCard.HasTemporaryRating != externalCard.HasTemporaryRating)
