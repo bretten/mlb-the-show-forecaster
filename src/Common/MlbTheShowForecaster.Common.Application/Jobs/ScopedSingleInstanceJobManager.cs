@@ -120,7 +120,8 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
 
         // The job is done and can be started again
         stopwatch.Stop();
-        _logger.LogInformation($"Finished job {jobName} at {DateTime.Now} ({stopwatch.Elapsed.TotalSeconds} s)");
+        var logVerb = tcs.Task.IsFaulted ? "Failed" : "Finished";
+        _logger.LogInformation($"{logVerb} job {jobName} at {DateTime.Now} ({stopwatch.Elapsed.TotalSeconds} s)");
         ActiveJobs.TryRemove(jobExecution, out _);
 
         return await tcs.Task;
