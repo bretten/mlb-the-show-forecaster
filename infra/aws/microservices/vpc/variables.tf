@@ -53,6 +53,11 @@ variable "availability_zone_subnet_private" {
   type        = string
 }
 
+variable "use_nat_gateway" {
+  description = "True to use a NAT gateway, otherwise false"
+  type        = bool
+}
+
 # Domain service ports
 variable "port_gateway" {
   description = "The port for the Gateway"

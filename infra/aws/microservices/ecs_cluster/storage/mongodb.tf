@@ -47,10 +47,15 @@ resource "aws_ecs_task_definition" "task_definition_mongodb" {
           }
         ]
         environmentFiles = []
-        mountPoints      = []
-        systemControls   = []
-        ulimits          = []
-        volumesFrom      = []
+        mountPoints = [
+          {
+            sourceVolume  = "mongodb-volume"
+            containerPath = "/data/db"
+          }
+        ]
+        systemControls = []
+        ulimits        = []
+        volumesFrom    = []
       },
     ]
   )
@@ -60,7 +65,22 @@ resource "aws_ecs_task_definition" "task_definition_mongodb" {
     operating_system_family = "LINUX"
   }
 
+  volume {
+    name = "mongodb-volume"
+
+    efs_volume_configuration {
+      file_system_id          = aws_efs_file_system.efs_storage.id
+      transit_encryption      = "ENABLED"
+      transit_encryption_port = 2999
+      authorization_config {
+        access_point_id = aws_efs_access_point.efs_access_storage_mongodb.id
+      }
+    }
+  }
+
   tags = var.root_tags
+
+  depends_on = [aws_efs_access_point.efs_access_storage_mongodb]
 }
 
 # Service discovery for mongodb
@@ -116,7 +136,7 @@ resource "aws_ecs_service" "ecs_service_mongodb" {
   }
 
   network_configuration {
-    assign_public_ip = false
+    assign_public_ip = !var.use_nat_gateway
     security_groups = [
       var.security_group_id_private
     ]

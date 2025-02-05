@@ -24,6 +24,7 @@ module "vpc" {
   availability_zone_subnet_public1 = var.availability_zone_subnet_public1
   availability_zone_subnet_public2 = var.availability_zone_subnet_public2
   availability_zone_subnet_private = var.availability_zone_subnet_private
+  use_nat_gateway                  = var.use_nat_gateway
   port_gateway                     = var.port_gateway
   port_player_tracker              = var.port_player_tracker
   port_performance_tracker         = var.port_performance_tracker
@@ -68,6 +69,7 @@ module "ecs_cluster" {
   port_performance_tracker           = var.port_performance_tracker
   port_marketplace_watcher           = var.port_marketplace_watcher
   use_storage                        = var.use_storage
+  use_nat_gateway                    = var.use_nat_gateway
   capacity_provider                  = var.use_spot_instances == true ? "FARGATE_SPOT" : "FARGATE"
   jwt_authority                      = var.jwt_authority
   jwt_audience                       = var.jwt_audience

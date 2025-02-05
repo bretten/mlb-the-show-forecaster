@@ -84,7 +84,7 @@ resource "aws_ecs_service" "ecs_service_player_tracker" {
   }
 
   network_configuration {
-    assign_public_ip = false
+    assign_public_ip = !var.use_nat_gateway
     security_groups = [
       var.security_group_id_private
     ]
@@ -138,7 +138,7 @@ resource "aws_ecs_service" "ecs_service_performance_tracker" {
   }
 
   network_configuration {
-    assign_public_ip = false
+    assign_public_ip = !var.use_nat_gateway
     security_groups = [
       var.security_group_id_private
     ]
@@ -192,7 +192,7 @@ resource "aws_ecs_service" "ecs_service_marketplace_watcher" {
   }
 
   network_configuration {
-    assign_public_ip = false
+    assign_public_ip = !var.use_nat_gateway
     security_groups = [
       var.security_group_id_private
     ]

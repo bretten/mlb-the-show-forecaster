@@ -112,6 +112,12 @@ resource "aws_lightsail_instance" "instance" {
         networks:
           - public
           - backend
+        deploy:
+          resources:
+            limits:
+              memory: 150M
+            reservations:
+              memory: 150M
 
       mlb-the-show-forecaster-marketplace-watcher:
         image: ${var.container_registry_url}/marketplace-watcher:${var.image_tag}
@@ -130,6 +136,7 @@ resource "aws_lightsail_instance" "instance" {
           - Messaging__RabbitMq__UserName=${var.rabbitmq_user}
           - Messaging__RabbitMq__Password=${var.rabbitmq_pass}
           - Jobs__RunOnStartup=false
+          - CardPriceTracker__UseWebsiteForHistoricalPrices=false
         depends_on:
           postgres-db:
             condition: service_healthy
@@ -139,6 +146,12 @@ resource "aws_lightsail_instance" "instance" {
             condition: service_healthy
         networks:
           - backend
+        deploy:
+          resources:
+            limits:
+              memory: 1500M
+            reservations:
+              memory: 1000M
 
       mlb-the-show-forecaster-performance-tracker:
         image: ${var.container_registry_url}/performance-tracker:${var.image_tag}
@@ -159,6 +172,12 @@ resource "aws_lightsail_instance" "instance" {
             condition: service_healthy
         networks:
           - backend
+        deploy:
+          resources:
+            limits:
+              memory: 500M
+            reservations:
+              memory: 300M
 
       mlb-the-show-forecaster-player-tracker:
         image: ${var.container_registry_url}/player-tracker:${var.image_tag}
@@ -179,6 +198,12 @@ resource "aws_lightsail_instance" "instance" {
             condition: service_healthy
         networks:
           - backend
+        deploy:
+          resources:
+            limits:
+              memory: 200M
+            reservations:
+              memory: 100M
 
       postgres-db:
         image: postgres:16-alpine
@@ -201,6 +226,12 @@ resource "aws_lightsail_instance" "instance" {
           timeout: 100s # 10s works on local machine but slow lightsail instance needs more
         volumes:
           - postgres-volume:/var/lib/postgresql/data
+        deploy:
+          resources:
+            limits:
+              memory: 200M
+            reservations:
+              memory: 100M
 
       rabbitmq:
         image: rabbitmq:3-management
@@ -219,6 +250,12 @@ resource "aws_lightsail_instance" "instance" {
           timeout: 100s # 10s works on local machine but slow lightsail instance needs more
         volumes:
           - rabbitmq-volume:/var/lib/rabbitmq
+        deploy:
+          resources:
+            limits:
+              memory: 200M
+            reservations:
+              memory: 100M
 
       mongo:
         image: mongo:noble
@@ -239,6 +276,12 @@ resource "aws_lightsail_instance" "instance" {
           timeout: 100s # 10s works on local machine but slow lightsail instance needs more
         volumes:
           - mongo-volume:/data/db
+        deploy:
+          resources:
+            limits:
+              memory: 500M
+            reservations:
+              memory: 300M
 
     networks:
       public:

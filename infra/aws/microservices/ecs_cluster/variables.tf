@@ -83,6 +83,11 @@ variable "use_storage" {
   type        = bool
 }
 
+variable "use_nat_gateway" {
+  description = "True to use a NAT gateway, otherwise false"
+  type        = bool
+}
+
 variable "capacity_provider" {
   description = "ECS capacity provider"
   type        = string

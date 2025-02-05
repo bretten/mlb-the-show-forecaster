@@ -66,7 +66,7 @@ resource "aws_vpc_security_group_ingress_rule" "sg_private_in_allow_private_acce
 
 # Security group for private subnet: Allow communication on storage related ports within the private security group
 resource "aws_vpc_security_group_ingress_rule" "sg_private_in_allow_storage" {
-  for_each                     = toset(["5432", "27017", "5672"]) # PostgreSQL, MongoDB, RabbitMQ
+  for_each                     = toset(["5432", "27017", "5672", "15672", "2049"]) # PostgreSQL, MongoDB, RabbitMQ, RabbitMQ Management, NFS
   security_group_id            = aws_security_group.sg_private.id
   ip_protocol                  = "tcp"
   from_port                    = each.value
@@ -106,7 +106,7 @@ resource "aws_vpc_security_group_egress_rule" "sg_private_out_allow_http" {
 
 # Security group for private subnet: Allow communication on storage related ports within the private security group
 resource "aws_vpc_security_group_egress_rule" "sg_private_out_allow_storage" {
-  for_each                     = toset(["5432", "27017", "5672"]) # PostgreSQL, MongoDB, RabbitMQ
+  for_each                     = toset(["5432", "27017", "5672", "15672", "2049"]) # PostgreSQL, MongoDB, RabbitMQ, RabbitMQ Management, NFS
   security_group_id            = aws_security_group.sg_private.id
   ip_protocol                  = "tcp"
   from_port                    = each.value
@@ -126,7 +126,7 @@ resource "aws_security_group" "sg_private_access" {
   })
 }
 
-# Public security group: Allow public security group to resolve DNS when communicating with the private security group (for ECS service discovery)
+# PrivateAccess security group: Allow PrivateAccess security group to resolve DNS when communicating with the private security group (for ECS service discovery)
 resource "aws_vpc_security_group_egress_rule" "sg_private_access_out_allow_private_dns" {
   security_group_id = aws_security_group.sg_private_access.id
   ip_protocol       = "tcp"
@@ -135,7 +135,7 @@ resource "aws_vpc_security_group_egress_rule" "sg_private_access_out_allow_priva
   cidr_ipv4         = var.cidr_subnet_private
 }
 
-# Public security group: Allow outbound traffic to the domain services
+# PrivateAccess security group: Allow outbound traffic to the domain services
 resource "aws_vpc_security_group_egress_rule" "sg_private_access_out_allow_domain_services" {
   for_each = toset([
     tostring(var.port_player_tracker), tostring(var.port_performance_tracker), tostring(var.port_marketplace_watcher)

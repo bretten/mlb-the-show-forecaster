@@ -38,6 +38,11 @@ variable "subnet_id_private" {
   type        = string
 }
 
+variable "use_nat_gateway" {
+  description = "True to use a NAT gateway, otherwise false"
+  type        = bool
+}
+
 # These are used for task definition ENV variables
 variable "aspnetcore_environment" {
   description = "The ASP.NET Core environment"

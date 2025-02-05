@@ -159,6 +159,10 @@ resource "aws_ecs_task_definition" "task_definition_player_tracker" {
             value = "true"
           },
           {
+            name  = "Jobs__RunOnStartup"
+            value = "false"
+          },
+          {
             name  = "Urls"
             value = "http://*:${var.port_player_tracker}"
           },
@@ -201,8 +205,8 @@ resource "aws_ecs_task_definition" "task_definition_performance_tracker" {
   family                   = "${var.resource_prefix}-performance-tracker"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "1024"
+  memory                   = "2048"
   task_role_arn            = null
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false
@@ -242,6 +246,10 @@ resource "aws_ecs_task_definition" "task_definition_performance_tracker" {
           {
             name  = "RunMigrations"
             value = "true"
+          },
+          {
+            name  = "Jobs__RunOnStartup"
+            value = "false"
           },
           {
             name  = "Urls"
@@ -286,8 +294,8 @@ resource "aws_ecs_task_definition" "task_definition_marketplace_watcher" {
   family                   = "${var.resource_prefix}-marketplace-watcher"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "1024"
+  memory                   = "2048"
   task_role_arn            = null
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false
@@ -327,6 +335,10 @@ resource "aws_ecs_task_definition" "task_definition_marketplace_watcher" {
           {
             name  = "RunMigrations"
             value = "true"
+          },
+          {
+            name  = "Jobs__RunOnStartup"
+            value = "false"
           },
           {
             name  = "Urls"
