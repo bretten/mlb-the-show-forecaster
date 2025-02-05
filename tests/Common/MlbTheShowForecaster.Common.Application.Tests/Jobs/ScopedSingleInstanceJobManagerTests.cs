@@ -34,9 +34,13 @@ public class ScopedSingleInstanceJobManagerTests
         // Act
         var actual = await Record.ExceptionAsync(action);
 
-        // Assert
+        /*
+         * Assert
+         */
+        // Make sure the error was broadcast
         var error = ScopedSingleInstanceJobManager.JobState.Error();
         Mock.Get(mockCommService).Verify(x => x.Broadcast(jobName, error, cToken), Times.Once);
+        // Make sure the exception details were logged
         Mock.Get(mockLogger).Verify(x => x.Log(LogLevel.Error,
                 It.IsAny<EventId>(),
                 It.Is<It.IsAnyType>((o, t) => o.ToString()!.Equals("Job TestExceptionJob failed")),
@@ -44,6 +48,15 @@ public class ScopedSingleInstanceJobManagerTests
                 It.IsAny<Func<It.IsAnyType, Exception?, string>>()
             ),
             Times.Once);
+        // Make sure the logs indicated the job did not finish
+        Mock.Get(mockLogger).Verify(x => x.Log(LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => o.ToString()!.StartsWith("Failed job TestExceptionJob")),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+            ),
+            Times.Once);
+        // Make sure the exception was thrown
         Assert.NotNull(actual);
         Assert.Equal(TestExceptionJob.JobException, actual);
     }
@@ -73,9 +86,17 @@ public class ScopedSingleInstanceJobManagerTests
         _ = m.Run<TestJob, TestJobOutput>(jobInput, cToken);
         _ = m.Run<TestJob, TestJobOutput>(jobInput, cToken); // Invoke again to cover already active case
         var actual = await tcs.Task;
+        await Task.Delay(jobDurationMs, cToken);
 
         // Assert
         Assert.Equal("Finished input1. Count: 1", actual.Output);
+        Mock.Get(mockLogger).Verify(x => x.Log(LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => o.ToString()!.StartsWith("Finished job TestJob")),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+            ),
+            Times.Once);
     }
 
     [Fact]
@@ -116,6 +137,13 @@ public class ScopedSingleInstanceJobManagerTests
         // Assert
         Assert.Equal("Finished input1. Count: 1", actual.Output);
         Assert.Equal("Finished input1. Count: 2", actual2.Output);
+        Mock.Get(mockLogger).Verify(x => x.Log(LogLevel.Information,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) => o.ToString()!.StartsWith("Finished job TestJob")),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()
+            ),
+            Times.Exactly(2));
     }
 
     private static (Mock<IServiceScopeFactory> stubServiceScopeFactory, Mock<IServiceScope> stubServiceScope) MockScope(
