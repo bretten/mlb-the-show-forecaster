@@ -71,6 +71,7 @@ module "ecs_cluster" {
   use_storage                        = var.use_storage
   use_nat_gateway                    = var.use_nat_gateway
   capacity_provider                  = var.use_spot_instances == true ? "FARGATE_SPOT" : "FARGATE"
+  admin_email                        = var.admin_email
   jwt_authority                      = var.jwt_authority
   jwt_audience                       = var.jwt_audience
   aspnetcore_environment             = var.aspnetcore_environment

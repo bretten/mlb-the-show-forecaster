@@ -18,8 +18,7 @@ resource "aws_ecs_task_definition" "task_definition_gateway" {
         logConfiguration = {
           logDriver = "awslogs"
           options = {
-            awslogs-create-group  = "true"
-            awslogs-group         = "/ecs/${var.resource_prefix}-gateway"
+            awslogs-group         = aws_cloudwatch_log_group.logs_gateway.name
             awslogs-region        = var.aws_region
             awslogs-stream-prefix = "ecs"
             max-buffer-size       = "25m"
@@ -131,8 +130,7 @@ resource "aws_ecs_task_definition" "task_definition_player_tracker" {
         logConfiguration = {
           logDriver = "awslogs"
           options = {
-            awslogs-create-group  = "true"
-            awslogs-group         = "/ecs/${var.resource_prefix}-player-tracker"
+            awslogs-group         = aws_cloudwatch_log_group.logs_player_tracker.name
             awslogs-region        = var.aws_region
             awslogs-stream-prefix = "ecs"
             max-buffer-size       = "25m"
@@ -220,8 +218,7 @@ resource "aws_ecs_task_definition" "task_definition_performance_tracker" {
         logConfiguration = {
           logDriver = "awslogs"
           options = {
-            awslogs-create-group  = "true"
-            awslogs-group         = "/ecs/${var.resource_prefix}-performance-tracker"
+            awslogs-group         = aws_cloudwatch_log_group.logs_performance_tracker.name
             awslogs-region        = var.aws_region
             awslogs-stream-prefix = "ecs"
             max-buffer-size       = "25m"
@@ -309,8 +306,7 @@ resource "aws_ecs_task_definition" "task_definition_marketplace_watcher" {
         logConfiguration = {
           logDriver = "awslogs"
           options = {
-            awslogs-create-group  = "true"
-            awslogs-group         = "/ecs/${var.resource_prefix}-marketplace-watcher"
+            awslogs-group         = aws_cloudwatch_log_group.logs_marketplace.name
             awslogs-region        = var.aws_region
             awslogs-stream-prefix = "ecs"
             max-buffer-size       = "25m"

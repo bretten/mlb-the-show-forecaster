@@ -184,3 +184,8 @@ variable "container_registry_url" {
   type        = string
   default     = "ghcr.io/bretten/bretten/mlb-the-show-forecaster"
 }
+
+variable "admin_email" {
+  description = "Admin email"
+  type        = string
+}

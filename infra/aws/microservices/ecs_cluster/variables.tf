@@ -93,6 +93,11 @@ variable "capacity_provider" {
   type        = string
 }
 
+variable "admin_email" {
+  description = "Admin email"
+  type        = string
+}
+
 # Domain service ports
 variable "port_gateway" {
   description = "The port for the Gateway"
