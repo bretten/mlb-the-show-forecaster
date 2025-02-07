@@ -63,8 +63,8 @@ resource "aws_lb_target_group" "target_group_gateway" {
     enabled             = true
     healthy_threshold   = 5
     interval            = 30
-    matcher             = "200"
-    path                = "/"
+    matcher             = "401" # This checks both if the endpoint is available and authentication is enabled
+    path                = "/healthz"
     port                = "traffic-port"
     protocol            = "HTTP"
     timeout             = 5

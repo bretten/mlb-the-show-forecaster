@@ -190,3 +190,21 @@ resource "aws_cloudwatch_metric_alarm" "job_failed_alert" {
 
   tags = var.root_tags
 }
+
+# Alert for the gateway
+resource "aws_cloudwatch_metric_alarm" "gateway_unavailable_alert" {
+  alarm_name                = "Gateway Health Check"
+  comparison_operator       = "LessThanThreshold"
+  evaluation_periods        = 1
+  metric_name               = "UnHealthyHostCount"
+  namespace                 = "AWS/ApplicationELB"
+  period                    = 60
+  statistic                 = "Sum"
+  threshold                 = 1
+  treat_missing_data        = "breaching"
+  alarm_description         = "Alerts if the gateway is not available"
+  insufficient_data_actions = []
+  alarm_actions             = [aws_sns_topic.job_alerts.arn]
+
+  tags = var.root_tags
+}

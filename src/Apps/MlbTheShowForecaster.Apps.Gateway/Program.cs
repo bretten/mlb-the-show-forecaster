@@ -40,6 +40,7 @@ builder.ConfigureOcelot(gatewayConfig);
 builder.Services.AddLogging();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
+builder.Services.AddHealthChecks();
 
 // AWS Cognito
 builder.Services.AddTransient<IAmazonCognitoIdentityProvider, AmazonCognitoIdentityProviderClient>(_ =>
@@ -148,6 +149,8 @@ static async Task UseOnlyGateway(IApplicationBuilder app)
         {
             routeBuilder.MapControllers();
             routeBuilder.MapHub<GatewayHub>($"/{jobHubUri}");
+            routeBuilder.MapHealthChecks("/healthz")
+                .RequireAuthorization();
         });
 #pragma warning restore ASP0014
 
@@ -191,6 +194,11 @@ static void UseSpaAndGateway(IApplicationBuilder app, string sourcePath, string[
     }
 
     app.Map("/api", ApiMapping);
+    app.UseEndpoints(routeBuilder =>
+    {
+        routeBuilder.MapHealthChecks("/healthz")
+            .RequireAuthorization();
+    });
 }
 
 static AuthConfiguration GetAuthConfig(WebApplicationBuilder builder)
