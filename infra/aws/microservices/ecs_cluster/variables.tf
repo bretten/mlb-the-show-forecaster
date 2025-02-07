@@ -93,8 +93,8 @@ variable "capacity_provider" {
   type        = string
 }
 
-variable "admin_email" {
-  description = "Admin email"
+variable "health_alerts_arn" {
+  description = "ARN for health alerts SNS topic"
   type        = string
 }
 

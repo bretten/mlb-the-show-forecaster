@@ -120,51 +120,37 @@ resource "aws_cloudwatch_log_metric_filter" "metric_trend_reporter_job_health" {
   }
 }
 
-# Handles alerts for job health
-resource "aws_sns_topic" "job_alerts" {
-  name = "${var.resource_prefix}-job-alerts"
-
-  tags = var.root_tags
-}
-
-# Subscription to the alerts for the admin
-resource "aws_sns_topic_subscription" "job_alert_admin_subscription" {
-  topic_arn = aws_sns_topic.job_alerts.arn
-  protocol  = "email"
-  endpoint  = var.admin_email
-}
-
 locals {
   alerts = [
     {
       name      = aws_cloudwatch_log_metric_filter.metric_player_tracker_job_health.metric_transformation[0].name,
       namespace = aws_cloudwatch_log_metric_filter.metric_player_tracker_job_health.metric_transformation[0].namespace,
-      period    = 3600 + 300
+      period    = 3600 + 1800
     },
     {
       name      = aws_cloudwatch_log_metric_filter.metric_performance_tracker_job_health.metric_transformation[0].name,
       namespace = aws_cloudwatch_log_metric_filter.metric_performance_tracker_job_health.metric_transformation[0].namespace,
-      period    = 14400 + 300
+      period    = 10800 + 1800
     },
     {
       name      = aws_cloudwatch_log_metric_filter.metric_card_tracker_job_health.metric_transformation[0].name,
       namespace = aws_cloudwatch_log_metric_filter.metric_card_tracker_job_health.metric_transformation[0].namespace,
-      period    = 7200 + 300
+      period    = 3600 + 1800
     },
     {
       name      = aws_cloudwatch_log_metric_filter.metric_card_price_tracker_job_health.metric_transformation[0].name,
       namespace = aws_cloudwatch_log_metric_filter.metric_card_price_tracker_job_health.metric_transformation[0].namespace,
-      period    = 3600 + 300
+      period    = 3600 + 1800
     },
     {
       name      = aws_cloudwatch_log_metric_filter.metric_roster_updater_job_health.metric_transformation[0].name,
       namespace = aws_cloudwatch_log_metric_filter.metric_roster_updater_job_health.metric_transformation[0].namespace,
-      period    = 86400 + 3600
+      period    = 86400 + 14400
     },
     {
       name      = aws_cloudwatch_log_metric_filter.metric_trend_reporter_job_health.metric_transformation[0].name,
       namespace = aws_cloudwatch_log_metric_filter.metric_trend_reporter_job_health.metric_transformation[0].namespace,
-      period    = 3600 + 300
+      period    = 3600 + 1800
     },
   ]
 }
@@ -186,25 +172,8 @@ resource "aws_cloudwatch_metric_alarm" "job_failed_alert" {
   treat_missing_data        = "breaching"
   alarm_description         = "Alerts when no job activity for: ${each.value.name}"
   insufficient_data_actions = []
-  alarm_actions             = [aws_sns_topic.job_alerts.arn]
-
-  tags = var.root_tags
-}
-
-# Alert for the gateway
-resource "aws_cloudwatch_metric_alarm" "gateway_unavailable_alert" {
-  alarm_name                = "Gateway Health Check"
-  comparison_operator       = "LessThanThreshold"
-  evaluation_periods        = 1
-  metric_name               = "UnHealthyHostCount"
-  namespace                 = "AWS/ApplicationELB"
-  period                    = 60
-  statistic                 = "Sum"
-  threshold                 = 1
-  treat_missing_data        = "breaching"
-  alarm_description         = "Alerts if the gateway is not available"
-  insufficient_data_actions = []
-  alarm_actions             = [aws_sns_topic.job_alerts.arn]
+  alarm_actions             = [var.health_alerts_arn]
+  ok_actions                = [var.health_alerts_arn]
 
   tags = var.root_tags
 }

@@ -157,10 +157,6 @@ resource "aws_ecs_task_definition" "task_definition_player_tracker" {
             value = "true"
           },
           {
-            name  = "Jobs__RunOnStartup"
-            value = "false"
-          },
-          {
             name  = "Urls"
             value = "http://*:${var.port_player_tracker}"
           },
@@ -245,10 +241,6 @@ resource "aws_ecs_task_definition" "task_definition_performance_tracker" {
             value = "true"
           },
           {
-            name  = "Jobs__RunOnStartup"
-            value = "false"
-          },
-          {
             name  = "Urls"
             value = "http://*:${var.port_performance_tracker}"
           },
@@ -331,10 +323,6 @@ resource "aws_ecs_task_definition" "task_definition_marketplace_watcher" {
           {
             name  = "RunMigrations"
             value = "true"
-          },
-          {
-            name  = "Jobs__RunOnStartup"
-            value = "false"
           },
           {
             name  = "Urls"

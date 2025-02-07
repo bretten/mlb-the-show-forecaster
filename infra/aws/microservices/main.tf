@@ -42,6 +42,7 @@ module "load_balancer" {
   vpc_id            = module.vpc.vpc_id
   certificate_arn   = aws_acm_certificate.cert.arn
   port_gateway      = var.port_gateway
+  health_alerts_arn = aws_sns_topic.health_alerts.arn
   depends_on        = [module.vpc]
 }
 
@@ -71,7 +72,7 @@ module "ecs_cluster" {
   use_storage                        = var.use_storage
   use_nat_gateway                    = var.use_nat_gateway
   capacity_provider                  = var.use_spot_instances == true ? "FARGATE_SPOT" : "FARGATE"
-  admin_email                        = var.admin_email
+  health_alerts_arn                  = aws_sns_topic.health_alerts.arn
   jwt_authority                      = var.jwt_authority
   jwt_audience                       = var.jwt_audience
   aspnetcore_environment             = var.aspnetcore_environment

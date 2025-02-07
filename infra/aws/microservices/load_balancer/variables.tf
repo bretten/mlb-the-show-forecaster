@@ -37,3 +37,8 @@ variable "port_gateway" {
   description = "The port for the Gateway"
   type        = number
 }
+
+variable "health_alerts_arn" {
+  description = "ARN for health alerts SNS topic"
+  type        = string
+}
