@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdatePlayerCardForecastImpacts;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects;
 
@@ -54,13 +55,20 @@ public abstract class BaseForecastImpactEventConsumer<T> : IDomainEventConsumer<
             new UpdatePlayerCardForecastImpactsCommand(e.Year, e.CardExternalId, e.MlbId, CreateImpact(e)),
             cancellationToken);
 
-        if (e.CardExternalId != null)
+        try
         {
-            await TrendReporter.UpdateTrendReport(e.Year, e.CardExternalId, cancellationToken);
-            return;
-        }
+            if (e.CardExternalId != null)
+            {
+                await TrendReporter.UpdateTrendReport(e.Year, e.CardExternalId, cancellationToken);
+                return;
+            }
 
-        await TrendReporter.UpdateTrendReport(e.Year, e.MlbId!, cancellationToken);
+            await TrendReporter.UpdateTrendReport(e.Year, e.MlbId!, cancellationToken);
+        }
+        catch (TrendReportFactoryMissingDataException)
+        {
+            // Can gracefully ignore these because they are expected, any other exceptions will be thrown
+        }
     }
 
     /// <summary>
