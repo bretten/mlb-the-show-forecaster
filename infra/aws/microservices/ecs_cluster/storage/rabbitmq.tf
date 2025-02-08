@@ -43,6 +43,13 @@ resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
             protocol      = "tcp"
           },
         ]
+        healthCheck = {
+          command     = ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+          interval    = 300
+          retries     = 5
+          startPeriod = 30
+          timeout     = 60
+        }
         environment = [
           {
             name  = "RABBITMQ_DEFAULT_USER"

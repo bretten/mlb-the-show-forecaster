@@ -36,6 +36,13 @@ resource "aws_ecs_task_definition" "task_definition_mongodb" {
             protocol      = "tcp"
           },
         ]
+        healthCheck = {
+          command     = ["CMD-SHELL", "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"]
+          interval    = 300
+          retries     = 5
+          startPeriod = 30
+          timeout     = 60
+        }
         environment = [
           {
             name  = "MONGO_INITDB_ROOT_USERNAME"

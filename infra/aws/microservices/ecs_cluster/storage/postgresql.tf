@@ -36,6 +36,13 @@ resource "aws_ecs_task_definition" "task_definition_postgresql" {
             protocol      = "tcp"
           },
         ]
+        healthCheck = {
+          command     = ["CMD-SHELL", "pg_isready -U postgres -d ${var.pgsql_db_name}"]
+          interval    = 300
+          retries     = 5
+          startPeriod = 30
+          timeout     = 60
+        }
         environment = [
           {
             name  = "LANG"
