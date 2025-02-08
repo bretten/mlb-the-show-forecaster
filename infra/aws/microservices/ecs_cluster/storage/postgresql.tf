@@ -1,10 +1,18 @@
+# postgresql logs
+resource "aws_cloudwatch_log_group" "logs_postgresql" {
+  name              = "/ecs/${var.resource_prefix}-postgresql"
+  retention_in_days = 7
+
+  tags = var.root_tags
+}
+
 # postgresql
 resource "aws_ecs_task_definition" "task_definition_postgresql" {
   family                   = "${var.resource_prefix}-postgresql"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "512"
+  memory                   = "1024"
   task_role_arn            = null
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false
@@ -18,8 +26,7 @@ resource "aws_ecs_task_definition" "task_definition_postgresql" {
         logConfiguration = {
           logDriver = "awslogs"
           options = {
-            awslogs-create-group  = "true"
-            awslogs-group         = "/ecs/${var.resource_prefix}-postgresql"
+            awslogs-group         = aws_cloudwatch_log_group.logs_postgresql.name
             awslogs-region        = var.aws_region
             awslogs-stream-prefix = "ecs"
             max-buffer-size       = "25m"
@@ -69,7 +76,12 @@ resource "aws_ecs_task_definition" "task_definition_postgresql" {
           "postgres",
           "-c", "log_connections=on",
           "-c", "log_disconnections=on",
-          "-c", "log_statement=all"
+          "-c", "log_statement=none",
+          "-c", "log_min_messages=ERROR",
+          "-c", "client_min_messages=ERROR",
+          "-c", "max_connections=300",
+          "-c", "shared_buffers=256MB",
+          "-c", "statement_timeout=240000",
         ]
         environmentFiles = []
         mountPoints = [
