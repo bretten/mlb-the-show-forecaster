@@ -62,13 +62,15 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
         }
 
         // Log new games
-        foreach (var statsByGame in newStatsByGames)
+        foreach (var statsByGame in newStatsByGames.OrderBy(x => x.GameDate))
         {
             playerStatsBySeason.LogBattingGame(statsByGame);
+            if (statsByGame.GameDate.DayOfWeek == DayOfWeek.Thursday) // Assess one day before roster update day
+            {
+                // Assess performance to date
+                playerStatsBySeason.AssessBattingPerformance(_performanceAssessor);
+            }
         }
-
-        // Assess performance to date
-        playerStatsBySeason.AssessBattingPerformance(_performanceAssessor);
     }
 
     /// <summary>
@@ -89,14 +91,15 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
             return;
         }
 
-        // Log new games
-        foreach (var statsByGame in newStatsByGames)
+        foreach (var statsByGame in newStatsByGames.OrderBy(x => x.GameDate))
         {
             playerStatsBySeason.LogPitchingGame(statsByGame);
+            if (statsByGame.GameDate.DayOfWeek == DayOfWeek.Thursday) // Assess one day before roster update day
+            {
+                // Assess performance to date
+                playerStatsBySeason.AssessPitchingPerformance(_performanceAssessor);
+            }
         }
-
-        // Assess performance to date
-        playerStatsBySeason.AssessPitchingPerformance(_performanceAssessor);
     }
 
     /// <summary>
@@ -117,13 +120,14 @@ public sealed class PlayerSeasonScorekeeper : IPlayerSeasonScorekeeper
             return;
         }
 
-        // Log new games
-        foreach (var statsByGame in newStatsByGames)
+        foreach (var statsByGame in newStatsByGames.OrderBy(x => x.GameDate))
         {
             playerStatsBySeason.LogFieldingGame(statsByGame);
+            if (statsByGame.GameDate.DayOfWeek == DayOfWeek.Thursday) // Assess one day before roster update day
+            {
+                // Assess performance to date
+                playerStatsBySeason.AssessFieldingPerformance(_performanceAssessor);
+            }
         }
-
-        // Assess performance to date
-        playerStatsBySeason.AssessFieldingPerformance(_performanceAssessor);
     }
 }
