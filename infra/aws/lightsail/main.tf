@@ -136,7 +136,6 @@ resource "aws_lightsail_instance" "instance" {
           - Messaging__RabbitMq__UserName=${var.rabbitmq_user}
           - Messaging__RabbitMq__Password=${var.rabbitmq_pass}
           - Jobs__RunOnStartup=false
-          - CardPriceTracker__UseWebsiteForHistoricalPrices=false
         depends_on:
           postgres-db:
             condition: service_healthy

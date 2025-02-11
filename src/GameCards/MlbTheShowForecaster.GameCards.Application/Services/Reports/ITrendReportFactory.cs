@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Reports;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
@@ -16,6 +17,7 @@ public interface ITrendReportFactory
     /// <param name="cardExternalId">The card external ID</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="TrendReport"/></returns>
+    /// <exception cref="TrendReportFactoryMissingDataException">Thrown if report data could not be retrieved</exception>
     Task<TrendReport> GetReport(SeasonYear year, CardExternalId cardExternalId, CancellationToken cancellationToken);
 
     /// <summary>
@@ -25,5 +27,6 @@ public interface ITrendReportFactory
     /// <param name="mlbId">MLB ID</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns><see cref="TrendReport"/></returns>
+    /// <exception cref="TrendReportFactoryMissingDataException">Thrown if report data could not be retrieved</exception>
     Task<TrendReport> GetReport(SeasonYear year, MlbId mlbId, CancellationToken cancellationToken);
 }

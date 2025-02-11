@@ -5,17 +5,17 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 
-namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports.Exceptions;
+namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports.Exceptions;
 
 /// <summary>
-/// Thrown when <see cref="TrendReportFactory"/> cannot create a report due to missing data
+/// Thrown when <see cref="ITrendReportFactory"/> cannot create a report due to missing data
 /// </summary>
 public sealed class TrendReportFactoryMissingDataException : Exception
 {
     public TrendReportFactoryMissingDataException(PlayerCard? card, Listing? listing, PlayerCardForecast? forecast,
         MlbId? mlbId, SeasonYear year, CardExternalId cardExternalId)
     {
-        var b = new StringBuilder($"{nameof(TrendReportFactory)} could not build report. Card data was missing for");
+        var b = new StringBuilder($"{nameof(ITrendReportFactory)} could not build report. Card data was missing for");
         b.Append($"{year.Value} and {cardExternalId.Value.ToString()}: ");
         if (card == null) b.Append($"{nameof(PlayerCard)} ");
         if (listing == null) b.Append($"{nameof(Listing)} ");

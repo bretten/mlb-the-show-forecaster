@@ -1,3 +1,11 @@
+# mongodb logs
+resource "aws_cloudwatch_log_group" "logs_mongodb" {
+  name              = "/ecs/${var.resource_prefix}-mongodb"
+  retention_in_days = 7
+
+  tags = var.root_tags
+}
+
 # mongodb
 resource "aws_ecs_task_definition" "task_definition_mongodb" {
   family                   = "${var.resource_prefix}-mongodb"
@@ -18,8 +26,7 @@ resource "aws_ecs_task_definition" "task_definition_mongodb" {
         logConfiguration = {
           logDriver = "awslogs"
           options = {
-            awslogs-create-group  = "true"
-            awslogs-group         = "/ecs/${var.resource_prefix}-mongodb"
+            awslogs-group         = aws_cloudwatch_log_group.logs_mongodb.name
             awslogs-region        = var.aws_region
             awslogs-stream-prefix = "ecs"
             max-buffer-size       = "25m"
@@ -36,6 +43,13 @@ resource "aws_ecs_task_definition" "task_definition_mongodb" {
             protocol      = "tcp"
           },
         ]
+        healthCheck = {
+          command     = ["CMD-SHELL", "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"]
+          interval    = 300
+          retries     = 5
+          startPeriod = 30
+          timeout     = 60
+        }
         environment = [
           {
             name  = "MONGO_INITDB_ROOT_USERNAME"

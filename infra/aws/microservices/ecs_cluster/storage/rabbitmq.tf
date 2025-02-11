@@ -1,3 +1,11 @@
+# rabbitmq logs
+resource "aws_cloudwatch_log_group" "logs_rabbitmq" {
+  name              = "/ecs/${var.resource_prefix}-rabbitmq"
+  retention_in_days = 7
+
+  tags = var.root_tags
+}
+
 # rabbitmq
 resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
   family                   = "${var.resource_prefix}-rabbitmq"
@@ -18,8 +26,7 @@ resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
         logConfiguration = {
           logDriver = "awslogs"
           options = {
-            awslogs-create-group  = "true"
-            awslogs-group         = "/ecs/${var.resource_prefix}-rabbitmq"
+            awslogs-group         = aws_cloudwatch_log_group.logs_rabbitmq.name
             awslogs-region        = var.aws_region
             awslogs-stream-prefix = "ecs"
             max-buffer-size       = "25m"
@@ -43,6 +50,13 @@ resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
             protocol      = "tcp"
           },
         ]
+        healthCheck = {
+          command     = ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
+          interval    = 300
+          retries     = 5
+          startPeriod = 30
+          timeout     = 60
+        }
         environment = [
           {
             name  = "RABBITMQ_DEFAULT_USER"

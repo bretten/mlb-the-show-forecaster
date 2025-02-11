@@ -93,6 +93,11 @@ variable "capacity_provider" {
   type        = string
 }
 
+variable "health_alerts_arn" {
+  description = "ARN for health alerts SNS topic"
+  type        = string
+}
+
 # Domain service ports
 variable "port_gateway" {
   description = "The port for the Gateway"
