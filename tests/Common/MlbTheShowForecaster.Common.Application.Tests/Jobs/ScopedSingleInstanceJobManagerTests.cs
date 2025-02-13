@@ -62,6 +62,39 @@ public class ScopedSingleInstanceJobManagerTests
     }
 
     [Fact]
+    public async Task Run_JobTaskCancelled_ThrowsException()
+    {
+        // Arrange
+        var cts = new CancellationTokenSource();
+        cts.CancelAfter(50);
+        var cToken = cts.Token;
+        const int jobDurationMs = 100;
+        var tcs = new TaskCompletionSource<TestJobOutput>();
+        var jobInput = new TestJobInput("input1");
+        var job = new TestJob(jobDurationMs, tcs);
+        var jobSchedules = new List<JobSchedule>()
+        {
+            new JobSchedule(job.GetType(), jobInput, TimeSpan.FromMinutes(1))
+        };
+
+        var (stubServiceScopeFactory, stubServiceScope) = MockScope(new List<IJob>() { job });
+        var mockCommService = Mock.Of<IRealTimeCommService>();
+        var mockLogger = Mock.Of<ILogger<ScopedSingleInstanceJobManager>>();
+
+        var m = new ScopedSingleInstanceJobManager(stubServiceScopeFactory.Object, jobSchedules, mockCommService,
+            mockLogger);
+
+        var action = async () => await m.Run<TestJob, TestJobOutput>(jobInput, cToken);
+
+        // Act
+        var actual = await Record.ExceptionAsync(action);
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.IsType<TaskCanceledException>(actual);
+    }
+
+    [Fact]
     public async Task Run_JobInput_RunsAndTracksState()
     {
         // Arrange
