@@ -95,26 +95,29 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
         {
             stopwatch.Start();
             _logger.LogInformation($"Starting job {jobName} at {DateTime.Now}");
-            await _commService.Broadcast(jobName, JobState.Start(), cancellationToken);
+            await BroadcastProgress(jobExecution, JobState.Start(), cancellationToken);
 
             // Resolve the job
             var scope = _serviceScopeFactory.CreateScope();
             var job = scope.ServiceProvider.GetRequiredService(jobType) as IJob;
 
+            // If the job is cancelled, let it be handled the same way as an error
+            cancellationToken.ThrowIfCancellationRequested();
+
             // Run the job
             var result = await job!.Execute(input, cancellationToken);
-            await BroadcastProgress(jobExecution, cancellationToken);
+            await BroadcastProgress(jobExecution, JobState.InProgress(), cancellationToken);
 
             // When the job has finished, update the TaskCompletionSource result
             tcs.SetResult(result);
             UpdateLastRun(jobExecution);
 
-            await _commService.Broadcast(jobName, JobState.Done(data: result), cancellationToken);
+            await BroadcastProgress(jobExecution, JobState.Done(data: result), cancellationToken);
         }
         catch (Exception e)
         {
             _logger.LogError(e, $"Job {jobName} failed");
-            await _commService.Broadcast(jobName, JobState.Error(), cancellationToken);
+            await BroadcastProgress(jobExecution, JobState.Error(), CancellationToken.None); // Don't allow canceling
             tcs.SetException(e);
         }
 
@@ -147,7 +150,7 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
 
         foreach (var activeJob in ActiveJobs)
         {
-            await BroadcastProgress(activeJob.Key, cancellationToken);
+            await BroadcastProgress(activeJob.Key, JobState.InProgress(), cancellationToken);
         }
     }
 
@@ -169,11 +172,12 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
     /// Broadcasts the progress of the job
     /// </summary>
     /// <param name="jobExecution">The running job</param>
+    /// <param name="state">The current progress of the job</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
-    private async Task BroadcastProgress(JobExecution jobExecution, CancellationToken cancellationToken)
+    private async Task BroadcastProgress(JobExecution jobExecution, JobState state, CancellationToken cancellationToken)
     {
-        _logger.LogDebug($"{jobExecution.JobType.Name} in progress...");
-        await _commService.Broadcast(jobExecution.JobType.Name, JobState.InProgress(), cancellationToken);
+        _logger.LogDebug($"{jobExecution.JobType.Name} is {state.State}: {state.Message}");
+        await _commService.Broadcast(jobExecution.JobType.Name, state, cancellationToken);
     }
 
     /// <summary>
