@@ -46,17 +46,12 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithPortBinding(RabbitMqPort, true)
                 .WithPortBinding(15672, true)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
-                .WithWaitStrategy(Wait.ForUnixContainer().UntilMessageIsLogged("Time to start RabbitMQ")
-                    .UntilPortIsAvailable(RabbitMqPort).UntilCommandIsCompleted(
-                        ["rabbitmq-diagnostics", "-q", "check_running"], o => o.WithTimeout(TimeSpan.FromMinutes(1))))
                 .Build();
             _mongoDbContainer = new MongoDbBuilder()
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername(MongoUser)
                 .WithPassword(MongoPass)
                 .WithPortBinding(MongoPort, true)
-                .WithWaitStrategy(Wait.ForUnixContainer().UntilCommandIsCompleted(
-                    ["mongosh", "--eval", "db.runCommand(\"ping\").ok"], o => o.WithTimeout(TimeSpan.FromMinutes(1))))
                 .Build();
         }
         catch (ArgumentException e)
