@@ -3,6 +3,7 @@ using System.Diagnostics;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Tests.Players.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Players.EntityFrameworkCore;
+using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
@@ -31,6 +32,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithUsername("postgres")
                 .WithPassword("password99")
                 .WithPortBinding(PostgreSqlPort, true)
+                .WithWaitStrategy(Wait.ForUnixContainer().UntilCommandIsCompleted(
+                    ["pg_isready", "-U", "postgres", "-d", "postgres"], o => o.WithTimeout(TimeSpan.FromMinutes(1))))
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
