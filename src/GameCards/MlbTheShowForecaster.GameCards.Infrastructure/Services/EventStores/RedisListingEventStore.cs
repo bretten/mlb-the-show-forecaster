@@ -72,6 +72,14 @@ public sealed class RedisListingEventStore : IListingEventStore
         $"listings:prices:{year.Value}:recent:{externalId.AsStringDigits}";
 
     /// <summary>
+    /// Key for storing the last available price for a Listing
+    /// </summary>
+    /// <param name="year">The year of the listing</param>
+    /// <param name="externalId">The ID of the listing</param>
+    internal static string LastPriceKey(SeasonYear year, CardExternalId externalId) =>
+        $"listings:prices:{year.Value}:last:{externalId.AsStringDigits}";
+
+    /// <summary>
     /// Key for the Listing orders event store
     /// </summary>
     /// <param name="year">The year of the listing</param>
@@ -129,6 +137,7 @@ public sealed class RedisListingEventStore : IListingEventStore
         var recentKey = RecentPricesKey(year, cardListing.CardExternalId);
 
         // Check for new prices
+        CardListingPrice? lastPrice = null;
         foreach (var price in cardListing.HistoricalPrices.OrderBy(x => x.Date))
         {
             // Uniquely identifies the card pricing
@@ -151,6 +160,19 @@ public sealed class RedisListingEventStore : IListingEventStore
             // Add to the set indicating it has been appended
             await db.SortedSetAddAsync(recentKey, id,
                 new DateTimeOffset(price.Date.ToDateTime(TimeOnly.MinValue)).ToUnixTimeSeconds());
+
+            // Set the price until we end up with the last price to prevent multiple iterations
+            lastPrice = price;
+        }
+
+        // Store the Listing's last price
+        if (lastPrice != null)
+        {
+            await db.HashSetAsync(LastPriceKey(year, cardListing.CardExternalId), [
+                new HashEntry("date", lastPrice.Value.Date.ToString(DateFormat)),
+                new HashEntry("buy_price", lastPrice.Value.BestBuyPrice.Value),
+                new HashEntry("sell_price", lastPrice.Value.BestSellPrice.Value),
+            ]);
         }
     }
 
@@ -260,6 +282,18 @@ public sealed class RedisListingEventStore : IListingEventStore
     public async Task AcknowledgeOrders(SeasonYear year, string lastAcknowledgedId)
     {
         await UpdateCheckpoint(LastAcknowledgedOrderKey(year), lastAcknowledgedId);
+    }
+
+    /// <inheritdoc />
+    public async Task<CardListingPrice> PeekLastPrice(SeasonYear year, CardExternalId cardExternalId)
+    {
+        var db = _redisConnection.GetDatabase();
+
+        var values = await db.HashGetAsync(LastPriceKey(year, cardExternalId), ["date", "buy_price", "sell_price"]);
+        var date = DateOnly.ParseExact(values[0].ToString(), DateFormat, CultureInfo.InvariantCulture);
+        values[1].TryParse(out int buyPrice);
+        values[2].TryParse(out int sellPrice);
+        return new CardListingPrice(date, NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice));
     }
 
     /// <summary>

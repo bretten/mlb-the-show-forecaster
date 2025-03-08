@@ -1,5 +1,6 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.EventStores;
@@ -48,4 +49,12 @@ public interface IListingEventStore
     /// <param name="lastAcknowledgedId">The ID of the last acknowledged order</param>
     /// <returns>The completed task</returns>
     Task AcknowledgeOrders(SeasonYear year, string lastAcknowledgedId);
+
+    /// <summary>
+    /// Gets the last price appended to the event store for the specified Listing without acknowledging it as consumed
+    /// </summary>
+    /// <param name="year">The year of the listing</param>
+    /// <param name="cardExternalId">The <see cref="CardExternalId"/> to get the price for</param>
+    /// <returns><see cref="CardListingPrice"/></returns>
+    Task<CardListingPrice> PeekLastPrice(SeasonYear year, CardExternalId cardExternalId);
 }

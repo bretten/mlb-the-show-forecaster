@@ -218,6 +218,32 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
         Assert.Equal(nextPoll.Checkpoint, actual.Checkpoint);
     }
 
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task PeekLastPrice_NewPrices_ReturnsChronologicallyLastPrice()
+    {
+        // Arrange
+        var year = SeasonYear.Create(2025);
+        var cardListing = Faker.FakeCardListing(historicalPrices: new List<CardListingPrice>()
+        {
+            Faker.FakeCardListingPrice(new DateOnly(2025, 3, 25), bestBuyPrice: 1, 2),
+            Faker.FakeCardListingPrice(new DateOnly(2025, 3, 26), bestBuyPrice: 10, 20),
+        }, completedOrders: new List<CardListingOrder>());
+
+        var connection = await GetConnection();
+        var eventStore = new RedisListingEventStore(connection);
+
+        await eventStore.AppendNewPricesAndOrders(year, cardListing);
+
+        // Act
+        var actual = await eventStore.PeekLastPrice(year, cardListing.CardExternalId);
+
+        // Assert
+        Assert.Equal(new DateOnly(2025, 3, 26), actual.Date);
+        Assert.Equal(10, actual.BestBuyPrice.Value);
+        Assert.Equal(20, actual.BestSellPrice.Value);
+    }
+
     private async Task<string> AddPriceToEventStore(IDatabase db, SeasonYear year, CardExternalId cardExternalId,
         CardListingPrice price)
     {
