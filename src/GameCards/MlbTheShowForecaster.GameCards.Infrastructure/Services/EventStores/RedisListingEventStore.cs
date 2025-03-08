@@ -226,9 +226,10 @@ public sealed class RedisListingEventStore : IListingEventStore
 
         // Read new prices that were appended after the last acknowledged ID
         var entries = await db.StreamReadAsync(PricesEventStoreKey(year), checkpoint, count: count);
-        var newPrices = new Dictionary<ListingHistoricalPrice, CardExternalId>();
+        var newPrices = new Dictionary<CardExternalId, List<ListingHistoricalPrice>>();
         foreach (var entry in entries)
         {
+            // Parse the price
             var externalId = entry["card_external_id"].ToString();
             var date = DateOnly.ParseExact(entry["date"].ToString(), DateFormat, CultureInfo.InvariantCulture);
             entry["buy_price"].TryParse(out int buyPrice);
@@ -237,11 +238,20 @@ public sealed class RedisListingEventStore : IListingEventStore
             var cardExternalId = CardExternalId.Create(new Guid(externalId));
             var price = ListingHistoricalPrice.Create(date, NaturalNumber.Create(buyPrice),
                 NaturalNumber.Create(sellPrice));
-            newPrices.Add(price, cardExternalId);
+
+            // Add the price to the result
+            if (!newPrices.TryGetValue(cardExternalId, out var listingPrices))
+            {
+                listingPrices = new List<ListingHistoricalPrice>();
+                newPrices[cardExternalId] = listingPrices;
+            }
+
+            newPrices[cardExternalId].Add(price);
+
             checkpoint = entry.Id.ToString();
         }
 
-        return new NewPriceEvents(checkpoint, newPrices);
+        return new NewPriceEvents(checkpoint, newPrices.ToDictionary(x => x.Key, x => x.Value.AsReadOnly()));
     }
 
     /// <inheritdoc />
@@ -254,9 +264,10 @@ public sealed class RedisListingEventStore : IListingEventStore
 
         // Read new orders that were appended after the last acknowledged ID
         var entries = await db.StreamReadAsync(OrdersEventStoreKey(year), checkpoint, count: count);
-        var newOrders = new Dictionary<ListingOrder, CardExternalId>();
+        var newOrders = new Dictionary<CardExternalId, List<ListingOrder>>();
         foreach (var entry in entries)
         {
+            // Parse the order
             var externalId = entry["card_external_id"].ToString();
             var date = DateTime.ParseExact(entry["date"].ToString(), DateTimeFormat, CultureInfo.InvariantCulture,
                 DateTimeStyles.AssumeUniversal).ToUniversalTime();
@@ -265,11 +276,21 @@ public sealed class RedisListingEventStore : IListingEventStore
 
             var cardExternalId = CardExternalId.Create(new Guid(externalId));
             var order = ListingOrder.Create(date, NaturalNumber.Create(price), NaturalNumber.Create(quantity));
-            newOrders.Add(order, cardExternalId);
+
+            // Add the order to the result
+            if (!newOrders.TryGetValue(cardExternalId, out var ordersForListing))
+            {
+                ordersForListing = new List<ListingOrder>();
+                newOrders[cardExternalId] = ordersForListing;
+            }
+
+            newOrders[cardExternalId].Add(order);
+
+            // Will chronologically be the last entry, so keep reassigning
             checkpoint = entry.Id.ToString();
         }
 
-        return new NewOrderEvents(checkpoint, newOrders);
+        return new NewOrderEvents(checkpoint, newOrders.ToDictionary(k => k.Key, v => v.Value.AsReadOnly()));
     }
 
     /// <inheritdoc />

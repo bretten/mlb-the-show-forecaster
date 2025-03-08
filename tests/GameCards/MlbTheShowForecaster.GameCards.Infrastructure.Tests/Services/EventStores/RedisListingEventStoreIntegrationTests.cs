@@ -154,10 +154,12 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
         // The new price was polled
         Assert.Equal(id2, actual.Checkpoint);
         Assert.Single(actual.Prices);
+
+        // The new prices for cardExternalId
+        Assert.Single(actual.Prices[cardExternalId]);
         var expectedPrice2 =
             Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2025, 3, 26), 10, 20);
-        Assert.Contains(expectedPrice2, actual.Prices.Keys);
-        Assert.Equal(cardExternalId, actual.Prices[expectedPrice2]);
+        Assert.Contains(expectedPrice2, actual.Prices[cardExternalId]);
 
         // The new prices were acknowledged and are no longer returned when polled
         var nextPoll = await eventStore.PollNewPrices(year, 100);
@@ -202,15 +204,16 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
          */
         // The new orders were polled
         Assert.Equal(id3, actual.Checkpoint);
-        Assert.Equal(2, actual.Orders.Count);
+        Assert.Single(actual.Orders);
+
+        // The new orders for cardExternalId
+        Assert.Equal(2, actual.Orders[cardExternalId].Count);
         var expectedOrder2 =
             Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 2);
-        Assert.Contains(expectedOrder2, actual.Orders.Keys);
-        Assert.Equal(cardExternalId, actual.Orders[expectedOrder2]);
+        Assert.Contains(expectedOrder2, actual.Orders[cardExternalId]);
         var expectedOrder3 =
             Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2025, 3, 1, 1, 2, 4), 100, 1);
-        Assert.Contains(expectedOrder3, actual.Orders.Keys);
-        Assert.Equal(cardExternalId, actual.Orders[expectedOrder3]);
+        Assert.Contains(expectedOrder3, actual.Orders[cardExternalId]);
 
         // The new orders were acknowledged and are no longer returned when polled
         var nextPoll = await eventStore.PollNewOrders(year, 100);
