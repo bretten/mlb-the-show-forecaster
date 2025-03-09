@@ -16,6 +16,7 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi.Fakes;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.EventStores;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
@@ -27,6 +28,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.EventStores;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
@@ -38,6 +40,7 @@ using Npgsql;
 using Polly;
 using Polly.Retry;
 using Refit;
+using StackExchange.Redis;
 using IConfiguration = Microsoft.Extensions.Configuration.IConfiguration;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure;
@@ -71,6 +74,11 @@ public static class Dependencies
         /// Trends MongoDB connection string key
         /// </summary>
         public const string TrendsMongoDbConnection = "TrendsMongoDb";
+
+        /// <summary>
+        /// Redis connection string key
+        /// </summary>
+        public const string RedisConnection = "Redis";
 
         /// <summary>
         /// Use fake MLB The Show API config key
@@ -193,6 +201,11 @@ public static class Dependencies
         {
             services.TryAddTransient<ICardMarketplace, MlbTheShowApiCardMarketplace>();
         }
+
+        services.TryAddSingleton<IConnectionMultiplexer>(sp =>
+            ConnectionMultiplexer.Connect(config.GetRequiredConnectionString(ConfigKeys.RedisConnection)));
+
+        services.TryAddSingleton<IListingEventStore, RedisListingEventStore>();
 
         services.TryAddTransient<ICardPriceTracker, CardPriceTracker>();
     }
