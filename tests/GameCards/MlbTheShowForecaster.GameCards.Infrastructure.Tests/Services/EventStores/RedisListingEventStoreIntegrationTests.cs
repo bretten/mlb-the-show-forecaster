@@ -223,15 +223,20 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
 
     [Fact]
     [Trait("Category", "Integration")]
-    public async Task PeekLastPrice_NewPrices_ReturnsChronologicallyLastPrice()
+    public async Task PeekListing_AppendListingPricesAndOrders_ReturnsRecentListingState()
     {
         // Arrange
         var year = SeasonYear.Create(2025);
-        var cardListing = Faker.FakeCardListing(historicalPrices: new List<CardListingPrice>()
+        var cardListing = Faker.FakeCardListing("name1", 10, 20, historicalPrices: new List<CardListingPrice>()
         {
             Faker.FakeCardListingPrice(new DateOnly(2025, 3, 25), bestBuyPrice: 1, 2),
             Faker.FakeCardListingPrice(new DateOnly(2025, 3, 26), bestBuyPrice: 10, 20),
-        }, completedOrders: new List<CardListingOrder>());
+        }, completedOrders: new List<CardListingOrder>()
+        {
+            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 1),
+            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3, DateTimeKind.Utc), 10, 2),
+            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 4, DateTimeKind.Local), 100, 1)
+        });
 
         var connection = await GetConnection();
         var eventStore = new RedisListingEventStore(connection);
@@ -239,12 +244,15 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
         await eventStore.AppendNewPricesAndOrders(year, cardListing);
 
         // Act
-        var actual = await eventStore.PeekLastPrice(year, cardListing.CardExternalId);
+        var actual = await eventStore.PeekListing(year, cardListing.CardExternalId);
 
         // Assert
-        Assert.Equal(new DateOnly(2025, 3, 26), actual.Date);
-        Assert.Equal(10, actual.BestBuyPrice.Value);
-        Assert.Equal(20, actual.BestSellPrice.Value);
+        Assert.Equal(cardListing.ListingName, actual.ListingName);
+        Assert.Equal(cardListing.BestBuyPrice, actual.BestBuyPrice);
+        Assert.Equal(cardListing.BestSellPrice, actual.BestSellPrice);
+        Assert.Equal(cardListing.CardExternalId, actual.CardExternalId);
+        Assert.Equal(cardListing.HistoricalPrices, actual.HistoricalPrices);
+        Assert.Equal(cardListing.RecentOrders, actual.RecentOrders);
     }
 
     private async Task<string> AddPriceToEventStore(IDatabase db, SeasonYear year, CardExternalId cardExternalId,
