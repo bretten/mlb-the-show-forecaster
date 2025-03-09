@@ -29,7 +29,9 @@ public class JobControllerTests
     [Theory]
     [InlineData(nameof(PlayerCardTrackerJob))]
     [InlineData(nameof(CardPriceTrackerJob))]
+    [InlineData(nameof(CardListingImporterJob))]
     [InlineData(nameof(RosterUpdaterJob))]
+    [InlineData(nameof(TrendReporterJob))]
     public void Start_JobAndSeason_RunsJobAndReturnsNoContent(string jobName)
     {
         // Arrange

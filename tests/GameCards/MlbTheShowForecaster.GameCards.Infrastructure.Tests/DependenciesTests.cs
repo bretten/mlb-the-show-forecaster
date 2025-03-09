@@ -9,6 +9,7 @@ using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbTheShowApi;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Events;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.EventStores;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Repositories;
@@ -20,6 +21,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.EventStores;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +29,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
 using Moq;
+using StackExchange.Redis;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests;
 
@@ -141,7 +144,10 @@ public class DependenciesTests
         s.AddGameCardsPriceTracker(config);
         var actual = s.BuildServiceProvider();
 
-        // Assert
+        /*
+         * Assert
+         */
+        // Make sure services are registered
         var threshold = actual.GetRequiredService<IListingPriceSignificantChangeThreshold>();
         Assert.Equal(ServiceLifetime.Singleton,
             s.First(x => x.ServiceType == typeof(IListingPriceSignificantChangeThreshold)).Lifetime);
@@ -161,6 +167,15 @@ public class DependenciesTests
 
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardPriceTracker)).Lifetime);
         Assert.IsType<CardPriceTracker>(actual.GetRequiredService<ICardPriceTracker>());
+
+        // Assert redis services without resolving because that will start a connection
+        var isRedisConnectionRegistered = s.Any(x =>
+            x.ServiceType == typeof(IConnectionMultiplexer) && x.Lifetime == ServiceLifetime.Singleton);
+        Assert.True(isRedisConnectionRegistered);
+        var isListingEventStoreRegistered = s.Any(x =>
+            x.ServiceType == typeof(IListingEventStore) && x.ImplementationType == typeof(RedisListingEventStore) &&
+            x.Lifetime == ServiceLifetime.Singleton);
+        Assert.True(isListingEventStoreRegistered);
     }
 
     [Fact]

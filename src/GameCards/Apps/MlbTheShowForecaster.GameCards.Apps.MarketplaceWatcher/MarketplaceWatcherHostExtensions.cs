@@ -165,6 +165,7 @@ public static class MarketplaceWatcherHostExtensions
     {
         services.TryAddScoped<PlayerCardTrackerJob>();
         services.TryAddScoped<CardPriceTrackerJob>();
+        services.TryAddScoped<CardListingImporterJob>();
         services.TryAddScoped<RosterUpdaterJob>();
         services.TryAddScoped<TrendReporterJob>();
 
