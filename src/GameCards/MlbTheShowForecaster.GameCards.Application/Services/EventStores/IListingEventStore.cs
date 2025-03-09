@@ -51,10 +51,11 @@ public interface IListingEventStore
     Task AcknowledgeOrders(SeasonYear year, string lastAcknowledgedId);
 
     /// <summary>
-    /// Gets the last price appended to the event store for the specified Listing without acknowledging it as consumed
+    /// Gets the most recent state of a Listing without rebuilding it from the event store's history or progressing
+    /// the checkpoint
     /// </summary>
     /// <param name="year">The year of the listing</param>
     /// <param name="cardExternalId">The <see cref="CardExternalId"/> to get the price for</param>
-    /// <returns><see cref="CardListingPrice"/></returns>
-    Task<CardListingPrice> PeekLastPrice(SeasonYear year, CardExternalId cardExternalId);
+    /// <returns><see cref="CardListing"/></returns>
+    Task<CardListing> PeekListing(SeasonYear year, CardExternalId cardExternalId);
 }

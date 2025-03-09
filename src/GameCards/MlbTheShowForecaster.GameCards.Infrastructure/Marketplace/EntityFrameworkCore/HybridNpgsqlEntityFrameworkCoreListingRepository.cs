@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Collections.ObjectModel;
+using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
@@ -106,6 +107,21 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         return await _dbContext.ListingsWithHistoricalPrices()
             .AsNoTracking() // Entities will be updated without using EF Core, so no tracking needed
             .FirstOrDefaultAsync(x => x.CardExternalId == externalId, cancellationToken: cancellationToken);
+    }
+
+    public Task Add(Dictionary<CardExternalId, Listing> listings,
+        Dictionary<CardExternalId, ReadOnlyCollection<ListingHistoricalPrice>> prices,
+        CancellationToken cancellationToken)
+    {
+        // Will be implemented in #478
+        throw new NotImplementedException();
+    }
+
+    public Task Add(Dictionary<CardExternalId, Listing> listings,
+        Dictionary<CardExternalId, ReadOnlyCollection<ListingOrder>> orders, CancellationToken cancellationToken)
+    {
+        // Will be implemented in #478
+        throw new NotImplementedException();
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.EventStores;
@@ -51,6 +52,14 @@ public sealed class RedisListingEventStore : IListingEventStore
     }
 
     /// <summary>
+    /// Key for storing the most recent state of a listing for peeking purposes
+    /// </summary>
+    /// <param name="year">The year of the listing</param>
+    /// <param name="externalId">The ID of the listing</param>
+    internal static string ListingKey(SeasonYear year, CardExternalId externalId) =>
+        $"listings:{year.Value}:{externalId.AsStringDigits}";
+
+    /// <summary>
     /// Key for the Listing prices event store
     /// </summary>
     /// <param name="year">The year of the listing</param>
@@ -70,14 +79,6 @@ public sealed class RedisListingEventStore : IListingEventStore
     /// <param name="externalId">The ID of the listing</param>
     internal static string RecentPricesKey(SeasonYear year, CardExternalId externalId) =>
         $"listings:prices:{year.Value}:recent:{externalId.AsStringDigits}";
-
-    /// <summary>
-    /// Key for storing the last available price for a Listing
-    /// </summary>
-    /// <param name="year">The year of the listing</param>
-    /// <param name="externalId">The ID of the listing</param>
-    internal static string LastPriceKey(SeasonYear year, CardExternalId externalId) =>
-        $"listings:prices:{year.Value}:last:{externalId.AsStringDigits}";
 
     /// <summary>
     /// Key for the Listing orders event store
@@ -137,7 +138,6 @@ public sealed class RedisListingEventStore : IListingEventStore
         var recentKey = RecentPricesKey(year, cardListing.CardExternalId);
 
         // Check for new prices
-        CardListingPrice? lastPrice = null;
         foreach (var price in cardListing.HistoricalPrices.OrderBy(x => x.Date))
         {
             // Uniquely identifies the card pricing
@@ -160,20 +160,10 @@ public sealed class RedisListingEventStore : IListingEventStore
             // Add to the set indicating it has been appended
             await db.SortedSetAddAsync(recentKey, id,
                 new DateTimeOffset(price.Date.ToDateTime(TimeOnly.MinValue)).ToUnixTimeSeconds());
-
-            // Set the price until we end up with the last price to prevent multiple iterations
-            lastPrice = price;
         }
 
-        // Store the Listing's last price
-        if (lastPrice != null)
-        {
-            await db.HashSetAsync(LastPriceKey(year, cardListing.CardExternalId), [
-                new HashEntry("date", lastPrice.Value.Date.ToString(DateFormat)),
-                new HashEntry("buy_price", lastPrice.Value.BestBuyPrice.Value),
-                new HashEntry("sell_price", lastPrice.Value.BestSellPrice.Value),
-            ]);
-        }
+        // Store the Listing's recent state
+        await db.StringSetAsync(ListingKey(year, cardListing.CardExternalId), JsonSerializer.Serialize(cardListing));
     }
 
     /// <summary>
@@ -226,9 +216,10 @@ public sealed class RedisListingEventStore : IListingEventStore
 
         // Read new prices that were appended after the last acknowledged ID
         var entries = await db.StreamReadAsync(PricesEventStoreKey(year), checkpoint, count: count);
-        var newPrices = new Dictionary<ListingHistoricalPrice, CardExternalId>();
+        var newPrices = new Dictionary<CardExternalId, List<ListingHistoricalPrice>>();
         foreach (var entry in entries)
         {
+            // Parse the price
             var externalId = entry["card_external_id"].ToString();
             var date = DateOnly.ParseExact(entry["date"].ToString(), DateFormat, CultureInfo.InvariantCulture);
             entry["buy_price"].TryParse(out int buyPrice);
@@ -237,11 +228,20 @@ public sealed class RedisListingEventStore : IListingEventStore
             var cardExternalId = CardExternalId.Create(new Guid(externalId));
             var price = ListingHistoricalPrice.Create(date, NaturalNumber.Create(buyPrice),
                 NaturalNumber.Create(sellPrice));
-            newPrices.Add(price, cardExternalId);
+
+            // Add the price to the result
+            if (!newPrices.TryGetValue(cardExternalId, out var listingPrices))
+            {
+                listingPrices = new List<ListingHistoricalPrice>();
+                newPrices[cardExternalId] = listingPrices;
+            }
+
+            newPrices[cardExternalId].Add(price);
+
             checkpoint = entry.Id.ToString();
         }
 
-        return new NewPriceEvents(checkpoint, newPrices);
+        return new NewPriceEvents(checkpoint, newPrices.ToDictionary(x => x.Key, x => x.Value.AsReadOnly()));
     }
 
     /// <inheritdoc />
@@ -254,9 +254,10 @@ public sealed class RedisListingEventStore : IListingEventStore
 
         // Read new orders that were appended after the last acknowledged ID
         var entries = await db.StreamReadAsync(OrdersEventStoreKey(year), checkpoint, count: count);
-        var newOrders = new Dictionary<ListingOrder, CardExternalId>();
+        var newOrders = new Dictionary<CardExternalId, List<ListingOrder>>();
         foreach (var entry in entries)
         {
+            // Parse the order
             var externalId = entry["card_external_id"].ToString();
             var date = DateTime.ParseExact(entry["date"].ToString(), DateTimeFormat, CultureInfo.InvariantCulture,
                 DateTimeStyles.AssumeUniversal).ToUniversalTime();
@@ -265,11 +266,21 @@ public sealed class RedisListingEventStore : IListingEventStore
 
             var cardExternalId = CardExternalId.Create(new Guid(externalId));
             var order = ListingOrder.Create(date, NaturalNumber.Create(price), NaturalNumber.Create(quantity));
-            newOrders.Add(order, cardExternalId);
+
+            // Add the order to the result
+            if (!newOrders.TryGetValue(cardExternalId, out var ordersForListing))
+            {
+                ordersForListing = new List<ListingOrder>();
+                newOrders[cardExternalId] = ordersForListing;
+            }
+
+            newOrders[cardExternalId].Add(order);
+
+            // Will chronologically be the last entry, so keep reassigning
             checkpoint = entry.Id.ToString();
         }
 
-        return new NewOrderEvents(checkpoint, newOrders);
+        return new NewOrderEvents(checkpoint, newOrders.ToDictionary(k => k.Key, v => v.Value.AsReadOnly()));
     }
 
     /// <inheritdoc />
@@ -285,15 +296,12 @@ public sealed class RedisListingEventStore : IListingEventStore
     }
 
     /// <inheritdoc />
-    public async Task<CardListingPrice> PeekLastPrice(SeasonYear year, CardExternalId cardExternalId)
+    public async Task<CardListing> PeekListing(SeasonYear year, CardExternalId cardExternalId)
     {
         var db = _redisConnection.GetDatabase();
 
-        var values = await db.HashGetAsync(LastPriceKey(year, cardExternalId), ["date", "buy_price", "sell_price"]);
-        var date = DateOnly.ParseExact(values[0].ToString(), DateFormat, CultureInfo.InvariantCulture);
-        values[1].TryParse(out int buyPrice);
-        values[2].TryParse(out int sellPrice);
-        return new CardListingPrice(date, NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice));
+        var strValue = await db.StringGetAsync(ListingKey(year, cardExternalId));
+        return JsonSerializer.Deserialize<CardListing>(strValue!);
     }
 
     /// <summary>
