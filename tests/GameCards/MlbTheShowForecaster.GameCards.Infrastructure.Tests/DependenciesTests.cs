@@ -20,6 +20,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityF
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.Npgsql;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.EventStores;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
@@ -101,6 +102,7 @@ public class DependenciesTests
         // Act
         s.AddSingleton<ICalendar, Calendar>();
         s.AddGameCardsPriceTracker(config);
+        s.AddSingleton(Mock.Of<IListingEventStore>());
         var actual = s.BuildServiceProvider();
 
         // Assert
@@ -142,11 +144,24 @@ public class DependenciesTests
         // Act
         s.TryAddSingleton<ICalendar, Calendar>();
         s.AddGameCardsPriceTracker(config);
-        var actual = s.BuildServiceProvider();
 
         /*
          * Assert
          */
+        // Assert redis services without resolving because that will start a connection
+        var isRedisConnectionRegistered = s.Any(x =>
+            x.ServiceType == typeof(IConnectionMultiplexer) && x.Lifetime == ServiceLifetime.Singleton);
+        Assert.True(isRedisConnectionRegistered);
+        var isListingEventStoreRegistered = s.Any(x =>
+            x.ServiceType == typeof(IListingEventStore) && x.ImplementationType == typeof(RedisListingEventStore) &&
+            x.Lifetime == ServiceLifetime.Singleton);
+        Assert.True(isListingEventStoreRegistered);
+
+        // Replace the event store so it doesn't try to resolve
+        s.AddSingleton(Mock.Of<IConnectionMultiplexer>());
+        s.AddSingleton(Mock.Of<IListingEventStore>());
+        var actual = s.BuildServiceProvider();
+
         // Make sure services are registered
         var threshold = actual.GetRequiredService<IListingPriceSignificantChangeThreshold>();
         Assert.Equal(ServiceLifetime.Singleton,
@@ -167,15 +182,6 @@ public class DependenciesTests
 
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(ICardPriceTracker)).Lifetime);
         Assert.IsType<CardPriceTracker>(actual.GetRequiredService<ICardPriceTracker>());
-
-        // Assert redis services without resolving because that will start a connection
-        var isRedisConnectionRegistered = s.Any(x =>
-            x.ServiceType == typeof(IConnectionMultiplexer) && x.Lifetime == ServiceLifetime.Singleton);
-        Assert.True(isRedisConnectionRegistered);
-        var isListingEventStoreRegistered = s.Any(x =>
-            x.ServiceType == typeof(IListingEventStore) && x.ImplementationType == typeof(RedisListingEventStore) &&
-            x.Lifetime == ServiceLifetime.Singleton);
-        Assert.True(isListingEventStoreRegistered);
     }
 
     [Fact]
@@ -355,9 +361,8 @@ public class DependenciesTests
         Assert.IsType<EntityFrameworkCorePlayerCardRepository>(actual.GetRequiredService<IPlayerCardRepository>());
         Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IForecastRepository)).Lifetime);
         Assert.IsType<EntityFrameworkCoreForecastRepository>(actual.GetRequiredService<IForecastRepository>());
-        Assert.Equal(ServiceLifetime.Transient, s.First(x => x.ServiceType == typeof(IListingRepository)).Lifetime);
-        Assert.IsType<HybridNpgsqlEntityFrameworkCoreListingRepository>(
-            actual.GetRequiredService<IListingRepository>());
+        Assert.Equal(ServiceLifetime.Singleton, s.First(x => x.ServiceType == typeof(IListingRepository)).Lifetime);
+        Assert.IsType<NpgsqlListingRepository>(actual.GetRequiredService<IListingRepository>());
 
         Assert.Equal(ServiceLifetime.Scoped, s.First(x => x.ServiceType == typeof(IAtomicDatabaseOperation)).Lifetime);
         Assert.IsType<DbAtomicDatabaseOperation>(actual.GetRequiredService<IAtomicDatabaseOperation>());

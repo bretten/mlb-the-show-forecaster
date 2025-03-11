@@ -19,14 +19,14 @@ public class GetListingByCardExternalIdQueryHandlerTests
             cardExternalId: cardExternalId.Value);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(cardExternalId, cToken))
+        stubListingRepository.Setup(x => x.GetByExternalId(cardExternalId, true, cToken))
             .ReturnsAsync(domainListing);
 
         var stubUnitOfWork = new Mock<IUnitOfWork<IMarketplaceWork>>();
         stubUnitOfWork.Setup(x => x.GetContributor<IListingRepository>())
             .Returns(stubListingRepository.Object);
 
-        var query = new GetListingByCardExternalIdQuery(cardExternalId);
+        var query = new GetListingByCardExternalIdQuery(cardExternalId, true);
         var handler = new GetListingByCardExternalIdQueryHandler(stubUnitOfWork.Object);
 
         // Act

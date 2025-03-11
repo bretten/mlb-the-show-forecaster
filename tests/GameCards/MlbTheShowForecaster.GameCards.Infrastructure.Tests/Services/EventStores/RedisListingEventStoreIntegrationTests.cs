@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Globalization;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
@@ -28,8 +29,8 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithImage("redis/redis-stack:latest")
                 .WithEnvironment("REDIS_ARGS", "--requirepass mypassword --appendonly yes")
-                .WithPortBinding(6379, 6379)
-                .WithPortBinding(8001, 8001)
+                .WithPortBinding(6379, true)
+                .WithPortBinding(8001, true)
                 .Build();
         }
         catch (ArgumentException e)
@@ -57,9 +58,9 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
             Faker.FakeCardListingPrice(new DateOnly(2025, 3, 26), bestBuyPrice: 10, 20),
         }, completedOrders: new List<CardListingOrder>()
         {
+            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 0),
             Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 1),
-            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 2),
-            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 4), 100, 1),
+            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 4), 100, 0),
         });
 
         var connection = await GetConnection();
@@ -79,43 +80,40 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
          * Assert
          */
         // The prices have been added to the event store
-        var prices = await GetPricesFromEventStore(db, year);
+        var allPrices = await GetPricesFromEventStore(db, year);
+        var prices = allPrices[cardListing.CardExternalId];
         Assert.Equal(2, prices.Count);
         var expectedPrice1 =
             Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2025, 3, 25), 1, 2);
-        Assert.Contains(expectedPrice1, prices.Keys);
-        Assert.Equal(cardListing.CardExternalId, prices[expectedPrice1]);
+        Assert.Contains(expectedPrice1, prices);
         var expectedPrice2 =
             Domain.Tests.Marketplace.TestClasses.Faker.FakeListingHistoricalPrice(new DateOnly(2025, 3, 26), 10, 20);
-        Assert.Contains(expectedPrice2, prices.Keys);
-        Assert.Equal(cardListing.CardExternalId, prices[expectedPrice2]);
+        Assert.Contains(expectedPrice2, prices);
         // The prices have been marked as appended so they aren't duplicated later on
         Assert.True(await SortedSetEntryExists(db,
             RedisListingEventStore.RecentPricesKey(year, cardListing.CardExternalId), "2025-03-25"));
         Assert.True(await SortedSetEntryExists(db,
             RedisListingEventStore.RecentPricesKey(year, cardListing.CardExternalId), "2025-03-26"));
         // The orders have been added to the event store
-        var orders = await GetOrdersFromEventStore(db, year);
+        var allOrders = await GetOrdersFromEventStore(db, year);
+        var orders = allOrders[cardListing.CardExternalId];
         Assert.Equal(3, orders.Count);
         var expectedOrder1 = Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(
-            new DateTime(2025, 3, 1, 1, 2, 3, DateTimeKind.Utc), 10, 1);
-        Assert.Contains(expectedOrder1, orders.Keys);
-        Assert.Equal(cardListing.CardExternalId, orders[expectedOrder1]);
+            new DateTime(2025, 3, 1, 1, 2, 3, DateTimeKind.Utc), 10);
+        Assert.Contains(expectedOrder1, orders);
         var expectedOrder2 = Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(
-            new DateTime(2025, 3, 1, 1, 2, 3, DateTimeKind.Utc), 10, 2);
-        Assert.Contains(expectedOrder2, orders.Keys);
-        Assert.Equal(cardListing.CardExternalId, orders[expectedOrder2]);
+            new DateTime(2025, 3, 1, 1, 2, 3, DateTimeKind.Utc), 10);
+        Assert.Contains(expectedOrder2, orders);
         var expectedOrder3 = Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(
-            new DateTime(2025, 3, 1, 1, 2, 4, DateTimeKind.Utc), 100, 1);
-        Assert.Contains(expectedOrder3, orders.Keys);
-        Assert.Equal(cardListing.CardExternalId, orders[expectedOrder3]);
+            new DateTime(2025, 3, 1, 1, 2, 4, DateTimeKind.Utc), 100);
+        Assert.Contains(expectedOrder3, orders);
         // The orders have been marked as appended so they aren't duplicated later on
+        Assert.True(await SortedSetEntryExists(db,
+            RedisListingEventStore.RecentOrdersKey(year, cardListing.CardExternalId), "2025-03-01T01:02:03-10-0"));
         Assert.True(await SortedSetEntryExists(db,
             RedisListingEventStore.RecentOrdersKey(year, cardListing.CardExternalId), "2025-03-01T01:02:03-10-1"));
         Assert.True(await SortedSetEntryExists(db,
-            RedisListingEventStore.RecentOrdersKey(year, cardListing.CardExternalId), "2025-03-01T01:02:03-10-2"));
-        Assert.True(await SortedSetEntryExists(db,
-            RedisListingEventStore.RecentOrdersKey(year, cardListing.CardExternalId), "2025-03-01T01:02:04-100-1"));
+            RedisListingEventStore.RecentOrdersKey(year, cardListing.CardExternalId), "2025-03-01T01:02:04-100-0"));
     }
 
     [Fact]
@@ -175,9 +173,10 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
          * Arrange
          */
         var year = SeasonYear.Create(2025);
-        var order1 = Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 1);
-        var order2 = Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3, DateTimeKind.Utc), 10, 2);
-        var order3 = Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 4, DateTimeKind.Local), 100, 1);
+        var order1 = Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 0);
+        var order2 = Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3, DateTimeKind.Utc), 10, 1);
+        var order3 = Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 4, DateTimeKind.Local), 100, 0);
+        var order4 = Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 4, DateTimeKind.Local), 100, 1);
         var cardExternalId = Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId();
 
         var connection = await GetConnection();
@@ -192,6 +191,7 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
         // Add the new orders but don't acknowledge them
         var id2 = await AddOrderToEventStore(db, year, cardExternalId, order2);
         var id3 = await AddOrderToEventStore(db, year, cardExternalId, order3);
+        var id4 = await AddOrderToEventStore(db, year, cardExternalId, order4);
 
         /*
          * Act
@@ -203,17 +203,20 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
          * Assert
          */
         // The new orders were polled
-        Assert.Equal(id3, actual.Checkpoint);
+        Assert.Equal(id4, actual.Checkpoint);
         Assert.Single(actual.Orders);
 
         // The new orders for cardExternalId
-        Assert.Equal(2, actual.Orders[cardExternalId].Count);
+        Assert.Equal(3, actual.Orders[cardExternalId].Count);
         var expectedOrder2 =
-            Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 2);
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10);
         Assert.Contains(expectedOrder2, actual.Orders[cardExternalId]);
         var expectedOrder3 =
-            Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2025, 3, 1, 1, 2, 4), 100, 1);
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2025, 3, 1, 1, 2, 4), 100);
         Assert.Contains(expectedOrder3, actual.Orders[cardExternalId]);
+        var expectedOrder4 =
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2025, 3, 1, 1, 2, 4), 100);
+        Assert.Contains(expectedOrder4, actual.Orders[cardExternalId]);
 
         // The new orders were acknowledged and are no longer returned when polled
         var nextPoll = await eventStore.PollNewOrders(year, 100);
@@ -285,19 +288,19 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
             new NameValueEntry("card_external_id", cardExternalId.Value.ToString(RedisListingEventStore.GuidFormat)),
             new NameValueEntry("date", order.Date.ToString(RedisListingEventStore.DateTimeFormat)),
             new NameValueEntry("price", order.Price.Value),
-            new NameValueEntry("quantity", order.Quantity.Value)
+            new NameValueEntry("sequence_number", order.SequenceNumber.Value)
         ]);
         await db.SortedSetAddAsync(recentKey, id, new DateTimeOffset(order.Date).ToUnixTimeSeconds());
 
         return checkpoint.ToString();
     }
 
-    private async Task<Dictionary<ListingHistoricalPrice, CardExternalId>> GetPricesFromEventStore(IDatabase db,
-        SeasonYear year, string checkpoint = "0", int count = 100)
+    private async Task<Dictionary<CardExternalId, ReadOnlyCollection<ListingHistoricalPrice>>> GetPricesFromEventStore(
+        IDatabase db, SeasonYear year, string checkpoint = "0", int count = 100)
     {
         var entries =
             await db.StreamReadAsync(RedisListingEventStore.PricesEventStoreKey(year), checkpoint, count: count);
-        var newPrices = new Dictionary<ListingHistoricalPrice, CardExternalId>();
+        var newPrices = new Dictionary<CardExternalId, List<ListingHistoricalPrice>>();
         foreach (var entry in entries)
         {
             var externalId = entry["card_external_id"].ToString();
@@ -307,34 +310,45 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
             entry["sell_price"].TryParse(out int sellPrice);
 
             var cardExternalId = CardExternalId.Create(new Guid(externalId));
+            if (!newPrices.TryGetValue(cardExternalId, out var listingPrices))
+            {
+                listingPrices = new List<ListingHistoricalPrice>();
+                newPrices[cardExternalId] = listingPrices;
+            }
+
             var price = ListingHistoricalPrice.Create(date, NaturalNumber.Create(buyPrice),
                 NaturalNumber.Create(sellPrice));
-            newPrices.Add(price, cardExternalId);
+            newPrices[cardExternalId].Add(price);
         }
 
-        return newPrices;
+        return newPrices.ToDictionary(k => k.Key, v => v.Value.AsReadOnly());
     }
 
-    private async Task<Dictionary<ListingOrder, CardExternalId>> GetOrdersFromEventStore(IDatabase db, SeasonYear year,
-        string checkpoint = "0", int count = 100)
+    private async Task<Dictionary<CardExternalId, ReadOnlyCollection<ListingOrder>>> GetOrdersFromEventStore(
+        IDatabase db, SeasonYear year, string checkpoint = "0", int count = 100)
     {
         var entries =
             await db.StreamReadAsync(RedisListingEventStore.OrdersEventStoreKey(year), checkpoint, count: count);
-        var newOrders = new Dictionary<ListingOrder, CardExternalId>();
+        var newOrders = new Dictionary<CardExternalId, List<ListingOrder>>();
         foreach (var entry in entries)
         {
             var externalId = entry["card_external_id"].ToString();
             var date = DateTime.ParseExact(entry["date"].ToString(), RedisListingEventStore.DateTimeFormat,
                 CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal).ToUniversalTime();
             entry["price"].TryParse(out int price);
-            entry["quantity"].TryParse(out int quantity);
 
             var cardExternalId = CardExternalId.Create(new Guid(externalId));
-            var order = ListingOrder.Create(date, NaturalNumber.Create(price), NaturalNumber.Create(quantity));
-            newOrders.Add(order, cardExternalId);
+            if (!newOrders.TryGetValue(cardExternalId, out var listingOrders))
+            {
+                listingOrders = new List<ListingOrder>();
+                newOrders[cardExternalId] = listingOrders;
+            }
+
+            var order = ListingOrder.Create(date, NaturalNumber.Create(price));
+            newOrders[cardExternalId].Add(order);
         }
 
-        return newOrders;
+        return newOrders.ToDictionary(k => k.Key, v => v.Value.AsReadOnly());
     }
 
     private async Task<bool> SortedSetEntryExists(IDatabase db, string key, string member)

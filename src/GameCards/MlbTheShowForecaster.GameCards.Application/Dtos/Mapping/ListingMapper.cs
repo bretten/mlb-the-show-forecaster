@@ -44,8 +44,6 @@ public sealed class ListingMapper : IListingMapper
     /// <returns><see cref="ListingOrder"/></returns>
     public ListingOrder Map(CardListingOrder cardListingOrder)
     {
-        return ListingOrder.Create(cardListingOrder.Date,
-            price: cardListingOrder.Price,
-            quantity: cardListingOrder.Quantity);
+        return ListingOrder.Create(cardListingOrder.Date, price: cardListingOrder.Price);
     }
 }

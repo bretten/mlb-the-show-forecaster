@@ -101,12 +101,12 @@ public static class Faker
         );
     }
 
-    public static CardListingOrder FakeCompletedOrder(DateTime? date = null, int price = 0, int quantity = 0)
+    public static CardListingOrder FakeCompletedOrder(DateTime? date = null, int price = 0, int sequenceNumber = 0)
     {
         return new CardListingOrder(
             Date: date ?? new DateTime(2025, 1, 16, 10, 20, 0, DateTimeKind.Utc),
             Price: NaturalNumber.Create(price),
-            Quantity: NaturalNumber.Create(quantity)
+            SequenceNumber: NaturalNumber.Create(sequenceNumber)
         );
     }
 

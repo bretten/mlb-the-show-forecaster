@@ -91,9 +91,13 @@ public class ListingTests
         var listing = Faker.FakeListing();
         listing.UpdateOrders(new List<ListingOrder>()
         {
-            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), quantity: 1),
-            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc), quantity: 5),
-            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), quantity: 2),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc)),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc)),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc)),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc)),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc)),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc)),
+            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc)),
         });
 
         // Act
@@ -106,19 +110,36 @@ public class ListingTests
     [Fact]
     public void TotalOrdersFor_DateTimeRange_ReturnsTotalOrderQuantity()
     {
-        // Arrange
+        /*
+         * Arrange
+         */
         var listing = Faker.FakeListing();
-        listing.UpdateOrders(new List<ListingOrder>()
+        var ordersToAdd = new List<ListingOrder>();
+        // Not in range
+        for (int i = 0; i < 2; i++)
         {
-            // Not in range
-            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), quantity: 2),
-            // In range
-            Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), quantity: 1),
-            // In range
-            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 1, 0, DateTimeKind.Utc), quantity: 23),
-            // Not in range
-            Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc), quantity: 5),
-        });
+            ordersToAdd.Add(Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc)));
+        }
+
+        // In range
+        for (int i = 0; i < 1; i++)
+        {
+            ordersToAdd.Add(Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc)));
+        }
+
+        // In range
+        for (int i = 0; i < 23; i++)
+        {
+            ordersToAdd.Add(Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 1, 0, DateTimeKind.Utc)));
+        }
+
+        // Not in range
+        for (int i = 0; i < 5; i++)
+        {
+            ordersToAdd.Add(Faker.FakeListingOrder(new DateTime(2025, 1, 18, 1, 2, 0, DateTimeKind.Utc)));
+        }
+
+        listing.UpdateOrders(ordersToAdd);
         var start = new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc);
         var end = new DateTime(2025, 1, 18, 1, 1, 0, DateTimeKind.Utc);
 

@@ -1,8 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Data.Common;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using AngleSharp;
 using AngleSharp.Dom;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
@@ -27,6 +29,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityF
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.Npgsql;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.EventStores;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
@@ -104,6 +107,11 @@ public static class Dependencies
         /// Config key that determines if the website should be used for historical prices
         /// </summary>
         public const string UseWebsiteForHistoricalPrices = "CardPriceTracker:UseWebsiteForHistoricalPrices";
+
+        /// <summary>
+        /// Config key for the prices and orders batch update size
+        /// </summary>
+        public const string PricesAndOrdersBatchSize = "CardPriceTracker:PricesAndOrdersBatchSize";
 
         /// <summary>
         /// PlayerStatus API base address config key
@@ -207,7 +215,12 @@ public static class Dependencies
 
         services.TryAddSingleton<IListingEventStore, RedisListingEventStore>();
 
-        services.TryAddTransient<ICardPriceTracker, CardPriceTracker>();
+        services.AddTransient<ICardPriceTracker, CardPriceTracker>(sp => new CardPriceTracker(
+            sp.GetRequiredService<IListingEventStore>(),
+            sp.GetRequiredService<IQuerySender>(),
+            sp.GetRequiredService<ICommandSender>(),
+            sp.GetRequiredService<IListingPriceSignificantChangeThreshold>(),
+            config.GetValue<int>(ConfigKeys.PricesAndOrdersBatchSize)));
     }
 
     /// <summary>
@@ -303,15 +316,15 @@ public static class Dependencies
         // Add repositories
         services.AddTransient<IPlayerCardRepository, EntityFrameworkCorePlayerCardRepository>();
         services.AddTransient<IForecastRepository, EntityFrameworkCoreForecastRepository>();
-        services.AddTransient<IListingRepository, HybridNpgsqlEntityFrameworkCoreListingRepository>();
+        // Marketplace repo uses just Npgsql
+        var dataSource =
+            new NpgsqlDataSourceBuilder(config.GetRequiredConnectionString(ConfigKeys.MarketplaceConnection)).Build();
+        services.AddSingleton(dataSource);
+        services.AddSingleton<DbDataSource>(dataSource);
+        services.AddSingleton<IListingRepository, NpgsqlListingRepository>();
+
         // UnitOfWork
-        services.AddScoped<IAtomicDatabaseOperation, DbAtomicDatabaseOperation>(sp =>
-        {
-            var dataSource =
-                new NpgsqlDataSourceBuilder(config.GetRequiredConnectionString(ConfigKeys.MarketplaceConnection))
-                    .Build();
-            return new DbAtomicDatabaseOperation(dataSource);
-        });
+        services.AddScoped<IAtomicDatabaseOperation, DbAtomicDatabaseOperation>();
         services.AddTransient<IUnitOfWork<ICardWork>, UnitOfWork<CardsDbContext>>();
         services.AddTransient<IUnitOfWork<IForecastWork>, UnitOfWork<ForecastsDbContext>>();
         services.AddTransient<IUnitOfWork<IMarketplaceWork>, DbUnitOfWork<MarketplaceDbContext>>();

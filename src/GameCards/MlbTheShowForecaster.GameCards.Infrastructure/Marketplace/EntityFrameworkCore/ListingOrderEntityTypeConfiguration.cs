@@ -30,14 +30,14 @@ public class ListingOrderEntityTypeConfiguration : IEntityTypeConfiguration<List
 
         var columnOrder = 0;
 
-        builder.Property<string>(Constants.ListingOrders.Hash)
+        builder.Property<long>(Constants.ListingOrders.Id)
             .IsRequired()
-            .HasColumnType("text")
-            .HasColumnName(Constants.ListingOrders.Hash)
+            .HasColumnType("bigint")
+            .HasColumnName(Constants.ListingOrders.Id)
             .HasColumnOrder(columnOrder++);
 
         // Must be after property declaration so it knows the type
-        builder.HasKey(Constants.ListingOrders.Hash)
+        builder.HasKey(Constants.ListingOrders.Id)
             .HasName(Constants.ListingOrders.Keys.PrimaryKey);
 
         builder.Property(Constants.ListingOrders.ListingId)
@@ -53,14 +53,6 @@ public class ListingOrderEntityTypeConfiguration : IEntityTypeConfiguration<List
             .IsRequired()
             .HasColumnType("integer")
             .HasColumnName(Constants.ListingOrders.Price)
-            .HasColumnOrder(columnOrder++)
-            .HasConversion(v => v.Value,
-                v => NaturalNumber.Create(v));
-
-        builder.Property(e => e.Quantity)
-            .IsRequired()
-            .HasColumnType("integer")
-            .HasColumnName(Constants.ListingOrders.Quantity)
             .HasColumnOrder(columnOrder++)
             .HasConversion(v => v.Value,
                 v => NaturalNumber.Create(v));

@@ -134,9 +134,9 @@ public static class Constants
         public const string TableName = "listing_orders";
 
         /// <summary>
-        /// Hash field
+        /// ID field
         /// </summary>
-        public const string Hash = "hash";
+        public const string Id = "id";
 
         /// <summary>
         /// Foreign key column name that references <see cref="Listing"/>
@@ -152,11 +152,6 @@ public static class Constants
         /// The order price
         /// </summary>
         public const string Price = "price";
-
-        /// <summary>
-        /// The order quantity
-        /// </summary>
-        public const string Quantity = "quantity";
 
         /// <summary>
         /// Key names for <see cref="ListingOrder"/>

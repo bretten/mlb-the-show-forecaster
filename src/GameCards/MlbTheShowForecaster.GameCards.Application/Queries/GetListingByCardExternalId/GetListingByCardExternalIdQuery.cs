@@ -8,6 +8,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetL
 /// Query that retrieves a <see cref="Listing"/> by its <see cref="CardExternalId"/>
 /// </summary>
 /// <param name="CardExternalId">The <see cref="CardExternalId"/> of the <see cref="Listing"/></param>
+/// <param name="IncludeRelated">True to include associated prices and orders, otherwise false</param>
 internal readonly record struct GetListingByCardExternalIdQuery(
-    CardExternalId CardExternalId
+    CardExternalId CardExternalId,
+    bool IncludeRelated
 ) : IQuery<Listing?>;
