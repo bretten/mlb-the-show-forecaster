@@ -3,6 +3,7 @@ using System.Reflection;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Messaging.RabbitMq;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Tests.Messaging.RabbitMq.TestClasses;
+using DotNet.Testcontainers.Builders;
 using Microsoft.Extensions.DependencyInjection;
 using RabbitMQ.Client;
 using Testcontainers.RabbitMq;
@@ -23,6 +24,9 @@ public class RabbitMqDomainEventIntegrationTests : IAsyncLifetime
                 .WithPortBinding(5672, true)
                 .WithPortBinding(15672, true)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(5672, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
         }
         catch (ArgumentException e)

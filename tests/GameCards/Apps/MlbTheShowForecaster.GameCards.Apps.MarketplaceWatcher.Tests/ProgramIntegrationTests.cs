@@ -44,7 +44,8 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithWaitStrategy(Wait.ForUnixContainer()
                     .UntilPortIsAvailable(PostgreSqlPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
                     .UntilCommandIsCompleted(["pg_isready", "-U", "postgres", "-d", "postgres"],
-                        o => o.WithTimeout(TimeSpan.FromMinutes(1))))
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
@@ -114,6 +115,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         builder.Configuration["ConnectionStrings:TrendsMongoDb"] = _mongoDbContainer.GetConnectionString();
         builder.Configuration["ConnectionStrings:Redis"] =
             $"{_redisContainer.GetConnectionString()},password=mypassword";
+        builder.Configuration["Messaging:RabbitMq:HostName"] = _rabbitMqContainer.Hostname;
         builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
         builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
         builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();

@@ -3,6 +3,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Forecasts.ValueObjects.AdministrativeImpacts;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Forecasts.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts.EntityFrameworkCore;
+using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Testcontainers.PostgreSql;
@@ -26,6 +27,11 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
                 .WithUsername("postgres")
                 .WithPassword("password99")
                 .WithPortBinding(5432, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(5432, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                    .UntilCommandIsCompleted(["pg_isready", "-U", "postgres", "-d", "postgres"],
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
         }
         catch (ArgumentException e)

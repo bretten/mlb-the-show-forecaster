@@ -9,6 +9,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Marketplace.Tes
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.Npgsql;
+using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Npgsql;
@@ -33,6 +34,11 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
                 .WithUsername("postgres")
                 .WithPassword("password99")
                 .WithPortBinding(5432, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(5432, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                    .UntilCommandIsCompleted(["pg_isready", "-U", "postgres", "-d", "postgres"],
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
         }
         catch (ArgumentException e)

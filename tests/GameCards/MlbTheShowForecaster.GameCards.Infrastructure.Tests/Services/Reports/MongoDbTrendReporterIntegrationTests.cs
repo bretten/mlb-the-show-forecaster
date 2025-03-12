@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Services.Reports;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Tests.Dtos.TestClasses;
+using DotNet.Testcontainers.Builders;
 using MongoDB.Driver;
 using Moq;
 using Testcontainers.MongoDb;
@@ -31,6 +32,9 @@ public class MongoDbTrendReporterIntegrationTests : IAsyncLifetime
                 .WithUsername(U)
                 .WithPassword(P)
                 .WithPortBinding(27017, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(27017, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
         }
         catch (ArgumentException e)
