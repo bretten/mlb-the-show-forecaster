@@ -130,7 +130,7 @@ public sealed class TrendReportFactory : ITrendReportFactory
     private async Task<(PlayerCard, Listing, PlayerCardForecast, MlbId)> GetCard(SeasonYear year,
         CardExternalId cardExternalId, CancellationToken cancellationToken)
     {
-        var card = await _playerCardRepository.GetByExternalId(cardExternalId);
+        var card = await _playerCardRepository.GetByExternalId(year, cardExternalId);
         var forecast = await _forecastRepository.GetBy(year, cardExternalId);
         var listing = await _listingRepository.GetByExternalId(cardExternalId, true, cancellationToken);
 
@@ -155,7 +155,7 @@ public sealed class TrendReportFactory : ITrendReportFactory
         CancellationToken cancellationToken)
     {
         var forecast = await _forecastRepository.GetBy(year, mlbId);
-        var card = await _playerCardRepository.GetByExternalId(forecast?.CardExternalId!);
+        var card = await _playerCardRepository.GetByExternalId(year, forecast?.CardExternalId!);
         var listing = await _listingRepository.GetByExternalId(forecast?.CardExternalId!, true, cancellationToken);
 
         if (forecast == null || card == null || listing == null)

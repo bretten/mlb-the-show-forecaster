@@ -36,6 +36,6 @@ internal sealed class GetPlayerCardByExternalIdQueryHandler : IQueryHandler<GetP
     /// <returns>The <see cref="PlayerCard"/> corresponding to the <see cref="CardExternalId"/> in the query, or null if no match is found</returns>
     public async Task<PlayerCard?> Handle(GetPlayerCardByExternalIdQuery query, CancellationToken cancellationToken)
     {
-        return await _repository.GetByExternalId(query.CardExternalId);
+        return await _repository.GetByExternalId(query.Season, query.CardExternalId);
     }
 }

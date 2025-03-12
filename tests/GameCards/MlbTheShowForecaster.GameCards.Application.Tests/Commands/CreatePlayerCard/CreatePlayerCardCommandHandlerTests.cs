@@ -20,7 +20,7 @@ public class CreatePlayerCardCommandHandlerTests
         var mockPlayerSeasonMapper = Mock.Of<IPlayerCardMapper>();
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
-        stubPlayerCardRepository.Setup(x => x.Exists(fakeExternalPlayerCard.ExternalUuid))
+        stubPlayerCardRepository.Setup(x => x.Exists(fakeExternalPlayerCard.Year, fakeExternalPlayerCard.ExternalUuid))
             .ReturnsAsync(true);
 
         var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
@@ -52,10 +52,13 @@ public class CreatePlayerCardCommandHandlerTests
         var stubPlayerSeasonMapper =
             Mock.Of<IPlayerCardMapper>(x => x.Map(fakeExternalPlayerCard) == fakeDomainPlayerCard);
 
-        var mockPlayerCardRepository = Mock.Of<IPlayerCardRepository>();
+        var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
+        stubPlayerCardRepository.Setup(x => x.Exists(fakeExternalPlayerCard.Year, fakeExternalPlayerCard.ExternalUuid))
+            .ReturnsAsync(false);
+
         var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
         stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())
-            .Returns(mockPlayerCardRepository);
+            .Returns(stubPlayerCardRepository.Object);
 
         var cToken = CancellationToken.None;
         var command = new CreatePlayerCardCommand(fakeExternalPlayerCard);
@@ -66,7 +69,7 @@ public class CreatePlayerCardCommandHandlerTests
         await handler.Handle(command, cToken);
 
         // Assert
-        Mock.Get(mockPlayerCardRepository).Verify(x => x.Add(fakeDomainPlayerCard), Times.Once);
+        stubPlayerCardRepository.Verify(x => x.Add(fakeDomainPlayerCard), Times.Once);
         stubUnitOfWork.Verify(x => x.CommitAsync(cToken), Times.Once);
     }
 }

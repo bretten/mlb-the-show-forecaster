@@ -242,7 +242,7 @@ public class TrendReportFactoryTests
         PlayerCardForecast? forecast = null;
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
-        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.Year, playerCard.ExternalId))
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
@@ -287,7 +287,7 @@ public class TrendReportFactoryTests
         var player = Player();
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
-        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.Year, playerCard.ExternalId))
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
@@ -375,7 +375,7 @@ public class TrendReportFactoryTests
         var forecast = Forecast();
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
-        stubPlayerCardRepository.Setup(x => x.GetByExternalId(forecast.CardExternalId))
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(forecast.Year, forecast.CardExternalId))
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
@@ -420,7 +420,7 @@ public class TrendReportFactoryTests
         var player = Player();
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
-        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.Year, playerCard.ExternalId))
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();

@@ -25,7 +25,7 @@ public class PlayerRatingHistoryServiceTests
         var cToken = CancellationToken.None;
         // RatingChange has no corresponding PlayerCard
         PlayerCard? playerCard = null;
-        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
+        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(Year, CardExternalId);
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
@@ -80,7 +80,7 @@ public class PlayerRatingHistoryServiceTests
         var playerCard = Faker.FakePlayerCard(externalId: CardExternalId.Value);
 
         // Query for PlayerCard
-        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
+        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(Year, CardExternalId);
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
@@ -150,7 +150,7 @@ public class PlayerRatingHistoryServiceTests
         var playerCard = Faker.FakePlayerCard(externalId: CardExternalId.Value);
 
         // Query for PlayerCard
-        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
+        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(Year, CardExternalId);
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
@@ -238,7 +238,7 @@ public class PlayerRatingHistoryServiceTests
         playerCard.AddHistoricalRating(RosterUpdate1.AsHistoricalRating);
 
         // Query for PlayerCard
-        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
+        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(Year, CardExternalId);
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
@@ -310,7 +310,7 @@ public class PlayerRatingHistoryServiceTests
         playerCard.AddHistoricalRating(RosterUpdate0.AsHistoricalRating);
 
         // Query for PlayerCard
-        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
+        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(Year, CardExternalId);
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();
@@ -362,7 +362,7 @@ public class PlayerRatingHistoryServiceTests
         playerCard.Boost(boostDate, boostDate.AddDays(2), "Hit 5 HRs", Faker.FakePlayerCardAttributes(scalar: 2));
 
         // Query for PlayerCard
-        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(CardExternalId);
+        var getPlayerCardQuery = new GetPlayerCardByExternalIdQuery(Year, CardExternalId);
 
         // Query sender
         var stubQuerySender = new Mock<IQuerySender>();

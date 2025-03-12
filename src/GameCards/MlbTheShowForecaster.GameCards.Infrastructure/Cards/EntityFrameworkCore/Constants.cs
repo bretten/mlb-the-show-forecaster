@@ -235,20 +235,10 @@ public static class Constants
             public const string PrimaryKey = $"{TableName}_pkey";
 
             /// <summary>
-            /// Card External ID key. Enforces the uniqueness of <see cref="Cards.ExternalId"/> and adds an index
+            /// Enforces the composite uniqueness of <see cref="Cards.Year"/> and <see cref="Cards.ExternalId"/>.
+            /// Adds an index
             /// </summary>
-            public const string ExternalIdKey = $"{TableName}_{Cards.ExternalId}_key";
-        }
-
-        /// <summary>
-        /// Index names for <see cref="PlayerCard"/>
-        /// </summary>
-        public static class Indexes
-        {
-            /// <summary>
-            /// For querying by game year and then the card's external ID
-            /// </summary>
-            public const string YearAndExternalId = $"{TableName}_{Cards.Year}_{Cards.ExternalId}_idx";
+            public const string YearAndExternalId = $"{TableName}_{Cards.Year}_{Cards.ExternalId}_key";
         }
     }
 

@@ -26,12 +26,12 @@ public sealed class PlayerCardForecastEntityTypeConfiguration : IEntityTypeConfi
         builder.HasKey(e => e.Id)
             .HasName(Constants.PlayerCardForecasts.Keys.PrimaryKey);
 
-        // Index for querying by game year and then the card's external ID
-        builder.HasIndex(e => new { e.Year, e.CardExternalId }, Constants.PlayerCardForecasts.Indexes.YearAndExternalId)
-            .HasMethod("btree");
+        // Unique constraint and index for Year and External ID
+        builder.HasAlternateKey(nameof(PlayerCardForecast.Year), nameof(PlayerCardForecast.CardExternalId))
+            .HasName(Constants.PlayerCardForecasts.Keys.YearAndExternalId);
         // Index for querying by game year and then the MLB ID
         builder.HasIndex(e => new { e.Year, e.MlbId }, Constants.PlayerCardForecasts.Indexes.YearAndMlbId)
-            .HasMethod("btree");
+            .IsUnique();
 
         var columnOrder = 0;
 

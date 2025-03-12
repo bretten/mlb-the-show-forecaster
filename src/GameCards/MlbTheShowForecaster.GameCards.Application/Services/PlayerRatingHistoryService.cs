@@ -128,7 +128,8 @@ public sealed class PlayerRatingHistoryService : IPlayerRatingHistoryService
         CancellationToken cancellationToken)
     {
         // Get the corresponding player card
-        var playerCard = await _querySender.Send(new GetPlayerCardByExternalIdQuery(cardExternalId), cancellationToken);
+        var playerCard = await _querySender.Send(new GetPlayerCardByExternalIdQuery(seasonYear, cardExternalId),
+            cancellationToken);
         if (playerCard == null)
         {
             throw new NoPlayerCardFoundForRosterUpdateException(

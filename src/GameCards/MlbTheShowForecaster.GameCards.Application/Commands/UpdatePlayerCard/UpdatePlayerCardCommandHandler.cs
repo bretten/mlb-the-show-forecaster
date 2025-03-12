@@ -52,7 +52,8 @@ internal sealed class UpdatePlayerCardCommandHandler : ICommandHandler<UpdatePla
     public async Task Handle(UpdatePlayerCardCommand command, CancellationToken cancellationToken = default)
     {
         // The domain PlayerCard that is being updated
-        var domainPlayerCard = await _playerCardRepository.GetByExternalId(command.PlayerCard.ExternalId);
+        var domainPlayerCard =
+            await _playerCardRepository.GetByExternalId(command.PlayerCard.Year, command.PlayerCard.ExternalId);
         if (domainPlayerCard == null)
         {
             throw new PlayerCardNotFoundException(
