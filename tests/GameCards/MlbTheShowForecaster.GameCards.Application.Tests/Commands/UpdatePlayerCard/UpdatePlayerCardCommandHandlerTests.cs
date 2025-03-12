@@ -24,7 +24,7 @@ public class UpdatePlayerCardCommandHandlerTests
         var positionChange = Dtos.TestClasses.Faker.FakePlayerPositionChange();
 
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
-        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId))
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCard.Year, playerCard.ExternalId))
             .ReturnsAsync(null as PlayerCard);
 
         var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
@@ -77,7 +77,7 @@ public class UpdatePlayerCardCommandHandlerTests
         // Returns the matching card from the repository
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
         var playerCard = Faker.FakePlayerCard(overallRating: 80, position: Position.RightField);
-        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCardInCommand.ExternalId))
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(playerCardInCommand.Year, playerCardInCommand.ExternalId))
             .ReturnsAsync(playerCard);
 
         // Unit of work
@@ -205,7 +205,7 @@ public class UpdatePlayerCardCommandHandlerTests
     private (Mock<IUnitOfWork<ICardWork>>, Mock<IPlayerCardRepository>) GetStubUnitOfWorkForCard(PlayerCard card)
     {
         var stubPlayerCardRepository = new Mock<IPlayerCardRepository>();
-        stubPlayerCardRepository.Setup(x => x.GetByExternalId(card.ExternalId))
+        stubPlayerCardRepository.Setup(x => x.GetByExternalId(card.Year, card.ExternalId))
             .ReturnsAsync(card);
         var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
         stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())

@@ -95,7 +95,7 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
         CancellationToken cancellationToken)
     {
         // Get tasks for all rating changes, position changes, and player additions in this roster update
-        var tasks = PreparePlayerCardChanges(rosterUpdate.RatingChanges, rosterUpdate.PositionChanges,
+        var tasks = PreparePlayerCardChanges(seasonYear, rosterUpdate.RatingChanges, rosterUpdate.PositionChanges,
                 cancellationToken)
             .Concat(PreparePlayerAdditions(seasonYear, rosterUpdate.NewPlayers, cancellationToken));
 
@@ -126,12 +126,14 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
     /// <summary>
     /// Prepares player rating changes and position changes to the domain by getting tasks for all of them
     /// </summary>
+    /// <param name="seasonYear">The season of the roster update</param>
     /// <param name="ratingChanges">A collection of rating changes for different player cards</param>
     /// <param name="positionChanges">A collection of position changes for different player cards</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>A collection of Tasks that will execute the roster update changes</returns>
-    private IEnumerable<Task> PreparePlayerCardChanges(IReadOnlyList<PlayerRatingChange> ratingChanges,
-        IReadOnlyList<PlayerPositionChange> positionChanges, CancellationToken cancellationToken)
+    private IEnumerable<Task> PreparePlayerCardChanges(SeasonYear seasonYear,
+        IReadOnlyList<PlayerRatingChange> ratingChanges, IReadOnlyList<PlayerPositionChange> positionChanges,
+        CancellationToken cancellationToken)
     {
         // Hash set is used to check if we already applied the position change in the rating change loop for a given player card
         var appliedPositionChangeCardExternalIds = new HashSet<CardExternalId>();
@@ -148,7 +150,7 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
                 appliedPositionChangeCardExternalIds.Add(ratingChange.CardExternalId);
             }
 
-            yield return ApplyRatingChange(ratingChange, positionChange, cancellationToken);
+            yield return ApplyRatingChange(seasonYear, ratingChange, positionChange, cancellationToken);
         }
 
         // Now (after applying rating changes), apply pending position changes
@@ -160,7 +162,7 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
                 continue;
             }
 
-            yield return ApplyPositionChange(positionChange, cancellationToken);
+            yield return ApplyPositionChange(seasonYear, positionChange, cancellationToken);
         }
     }
 
@@ -183,16 +185,17 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
     /// <summary>
     /// Applies a rating change and a position change (if there is one)
     /// </summary>
+    /// <param name="seasonYear">The season of the roster update</param>
     /// <param name="ratingChange">The rating change to apply</param>
     /// <param name="positionChange">The position change to apply if there is one</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <exception cref="NoPlayerCardFoundForRosterUpdateException">Thrown if no <see cref="PlayerCard"/> could be found in the domain to apply the updates to</exception>
-    private async Task ApplyRatingChange(PlayerRatingChange ratingChange, PlayerPositionChange? positionChange,
-        CancellationToken cancellationToken)
+    private async Task ApplyRatingChange(SeasonYear seasonYear, PlayerRatingChange ratingChange,
+        PlayerPositionChange? positionChange, CancellationToken cancellationToken)
     {
         // Get the corresponding player card
-        var playerCard = await _querySender.Send(new GetPlayerCardByExternalIdQuery(ratingChange.CardExternalId),
-            cancellationToken);
+        var playerCard = await _querySender.Send(
+            new GetPlayerCardByExternalIdQuery(seasonYear, ratingChange.CardExternalId), cancellationToken);
         if (playerCard == null)
         {
             throw new NoPlayerCardFoundForRosterUpdateException(
@@ -217,14 +220,16 @@ public sealed class RosterUpdateOrchestrator : IRosterUpdateOrchestrator
     /// <summary>
     /// Applies a position change
     /// </summary>
+    /// <param name="seasonYear">The season of the roster update</param>
     /// <param name="positionChange">The position change to apply</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <exception cref="NoPlayerCardFoundForRosterUpdateException">Thrown if no <see cref="PlayerCard"/> could be found in the domain to apply the updates to</exception>
-    private async Task ApplyPositionChange(PlayerPositionChange positionChange, CancellationToken cancellationToken)
+    private async Task ApplyPositionChange(SeasonYear seasonYear, PlayerPositionChange positionChange,
+        CancellationToken cancellationToken)
     {
         // Get the corresponding player card
-        var playerCard = await _querySender.Send(new GetPlayerCardByExternalIdQuery(positionChange.CardExternalId),
-            cancellationToken);
+        var playerCard = await _querySender.Send(
+            new GetPlayerCardByExternalIdQuery(seasonYear, positionChange.CardExternalId), cancellationToken);
         if (playerCard == null)
         {
             throw new NoPlayerCardFoundForRosterUpdateException(
