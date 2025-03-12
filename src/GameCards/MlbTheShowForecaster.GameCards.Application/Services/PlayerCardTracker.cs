@@ -69,9 +69,8 @@ public sealed class PlayerCardTracker : IPlayerCardTracker
         externalCards = externalCards.Where(x => x.IsSupported).OrderByDescending(x => x.Priority).ToList();
         await Parallel.ForEachAsync(externalCards, options, async (externalCard, token) =>
         {
-            var existingPlayerCard =
-                await _querySender.Send(new GetPlayerCardByExternalIdQuery(externalCard.ExternalUuid),
-                    cancellationToken);
+            var existingPlayerCard = await _querySender.Send(
+                new GetPlayerCardByExternalIdQuery(externalCard.Year, externalCard.ExternalUuid), cancellationToken);
             // If the card already exists, no further action is needed
             if (existingPlayerCard != null)
             {

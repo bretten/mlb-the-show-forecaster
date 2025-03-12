@@ -64,7 +64,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                 constraints: table =>
                 {
                     table.PrimaryKey("player_cards_pkey", x => x.id);
-                    table.UniqueConstraint("player_cards_external_id_key", x => x.external_id);
+                    table.UniqueConstraint("player_cards_year_external_id_key", x => new { x.year, x.external_id });
                 });
 
             migrationBuilder.CreateTable(
@@ -117,13 +117,6 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "player_cards_year_external_id_idx",
-                schema: "game_cards",
-                table: "player_cards",
-                columns: new[] { "year", "external_id" })
-                .Annotation("Npgsql:IndexMethod", "btree");
         }
 
         /// <inheritdoc />

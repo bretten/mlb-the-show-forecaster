@@ -63,13 +63,11 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Forecasts
                     b.HasKey("Id")
                         .HasName("player_card_forecasts_pkey");
 
-                    b.HasIndex(new[] { "Year", "CardExternalId" }, "player_card_forecasts_year_card_external_id_idx");
+                    b.HasAlternateKey("Year", "CardExternalId")
+                        .HasName("player_card_forecasts_year_card_external_id_key");
 
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "Year", "CardExternalId" }, "player_card_forecasts_year_card_external_id_idx"), "btree");
-
-                    b.HasIndex(new[] { "Year", "MlbId" }, "player_card_forecasts_year_player_mlb_id_idx");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "Year", "MlbId" }, "player_card_forecasts_year_player_mlb_id_idx"), "btree");
+                    b.HasIndex(new[] { "Year", "MlbId" }, "player_card_forecasts_year_player_mlb_id_idx")
+                        .IsUnique();
 
                     b.ToTable("player_card_forecasts", "game_cards");
                 });

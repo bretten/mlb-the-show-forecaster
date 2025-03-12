@@ -17,21 +17,22 @@ public class GetPlayerCardByExternalIdQueryHandlerTests
         var fakeDomainPlayerCard = Faker.FakePlayerCard(externalId: cardExternalId.Value);
 
         var stubPlayerCardRepository = Mock.Of<IPlayerCardRepository>(x =>
-            x.GetByExternalId(cardExternalId) == Task.FromResult(fakeDomainPlayerCard));
+            x.GetByExternalId(fakeDomainPlayerCard.Year, cardExternalId) == Task.FromResult(fakeDomainPlayerCard));
 
         var stubUnitOfWork = new Mock<IUnitOfWork<ICardWork>>();
         stubUnitOfWork.Setup(x => x.GetContributor<IPlayerCardRepository>())
             .Returns(stubPlayerCardRepository);
 
         var cToken = CancellationToken.None;
-        var query = new GetPlayerCardByExternalIdQuery(cardExternalId);
+        var query = new GetPlayerCardByExternalIdQuery(fakeDomainPlayerCard.Year, cardExternalId);
         var handler = new GetPlayerCardByExternalIdQueryHandler(stubUnitOfWork.Object);
 
         // Act
         var actual = await handler.Handle(query, cToken);
 
         // Assert
-        Mock.Get(stubPlayerCardRepository).Verify(x => x.GetByExternalId(cardExternalId), Times.Once);
+        Mock.Get(stubPlayerCardRepository)
+            .Verify(x => x.GetByExternalId(fakeDomainPlayerCard.Year, cardExternalId), Times.Once);
         Assert.NotNull(actual);
         Assert.Equal(fakeDomainPlayerCard, actual);
     }

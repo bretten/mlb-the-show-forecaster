@@ -63,6 +63,12 @@ public static class Constants
             /// Primary key
             /// </summary>
             public const string PrimaryKey = $"{TableName}_pkey";
+
+            /// <summary>
+            /// Enforces the composite uniqueness of <see cref="PlayerCardForecast.Year"/>
+            /// and <see cref="PlayerCardForecast.CardExternalId"/>. Adds an index
+            /// </summary>
+            public const string YearAndExternalId = $"{TableName}_{Year}_{CardExternalId}_key";
         }
 
         /// <summary>
@@ -70,11 +76,6 @@ public static class Constants
         /// </summary>
         public static class Indexes
         {
-            /// <summary>
-            /// For querying by the card's year and external ID
-            /// </summary>
-            public const string YearAndExternalId = $"{TableName}_{Year}_{CardExternalId}_idx";
-
             /// <summary>
             /// For querying by the card's year and MLB ID
             /// </summary>

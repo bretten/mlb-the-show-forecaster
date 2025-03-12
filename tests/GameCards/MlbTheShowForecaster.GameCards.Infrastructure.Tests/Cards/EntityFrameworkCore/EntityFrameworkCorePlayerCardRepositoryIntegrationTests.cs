@@ -146,7 +146,7 @@ public class EntityFrameworkCorePlayerCardRepositoryIntegrationTests : IAsyncLif
         var repo = new EntityFrameworkCorePlayerCardRepository(dbContext);
 
         // Act
-        var actual = await repo.GetByExternalId(Faker.FakeCardExternalId(Faker.FakeGuid1));
+        var actual = await repo.GetByExternalId(fakePlayerCard.Year, fakePlayerCard.ExternalId);
 
         // Assert
         Assert.NotNull(actual);
@@ -175,7 +175,7 @@ public class EntityFrameworkCorePlayerCardRepositoryIntegrationTests : IAsyncLif
         var repo = new EntityFrameworkCorePlayerCardRepository(assertDbContext);
 
         // Act
-        var actual = await repo.Exists(Faker.FakeCardExternalId(Faker.FakeGuid1));
+        var actual = await repo.Exists(fakePlayerCard.Year, fakePlayerCard.ExternalId);
 
         // Assert
         Assert.True(actual);
@@ -193,7 +193,7 @@ public class EntityFrameworkCorePlayerCardRepositoryIntegrationTests : IAsyncLif
         var repo = new EntityFrameworkCorePlayerCardRepository(dbContext);
 
         // Act
-        var actual = await repo.Exists(Faker.FakeCardExternalId(Faker.FakeGuid1));
+        var actual = await repo.Exists(SeasonYear.Create(2024), Faker.FakeCardExternalId(Faker.FakeGuid1));
 
         // Assert
         Assert.False(actual);

@@ -67,7 +67,7 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
     public async Task Update_PlayerCardForecast_UpdatesPlayerCardForecastInDbContextSet()
     {
         // Arrange
-        var fakePlayerCardForecast = Faker.FakePlayerCardForecast(externalId: Faker.FakeGuid1);
+        var fakePlayerCardForecast = Faker.FakePlayerCardForecast(externalId: Faker.FakeGuid1, mlbId: null);
 
         await using var connection = await GetDbConnection();
         await using var dbContext = GetDbContext(connection);
@@ -79,6 +79,7 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
         var repo = new EntityFrameworkCoreForecastRepository(dbContext);
 
         // Act
+        fakePlayerCardForecast.SetMlbId(MlbId.Create(5));
         fakePlayerCardForecast.Reassess(Faker.FakePlayerActivationForecastImpact(), Faker.EndDate.AddDays(-5));
         await repo.Update(fakePlayerCardForecast);
         await dbContext.SaveChangesAsync();
@@ -92,6 +93,7 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
         var actual = await assertRepo.GetBy(fakePlayerCardForecast.Year, fakePlayerCardForecast.CardExternalId);
         Assert.NotNull(actual);
         Assert.Equal(fakePlayerCardForecast, actual);
+        Assert.Equal(5, actual.MlbId!.Value);
         Assert.Equal(1, actual.ForecastImpactsChronologically.Count);
         Assert.IsType<PlayerActivationForecastImpact>(actual.ForecastImpactsChronologically[0]);
         Assert.Equal(Faker.StartDate, actual.ForecastImpactsChronologically[0].StartDate);
@@ -168,9 +170,12 @@ public class EntityFrameworkCoreForecastRepositoryIntegrationTests : IAsyncLifet
          * Arrange
          */
         var seasonYear = SeasonYear.Create(2024);
-        var fakePlayerCardForecast1 = Faker.FakePlayerCardForecast(year: seasonYear.Value, externalId: Faker.FakeGuid1);
-        var fakePlayerCardForecast2 = Faker.FakePlayerCardForecast(year: seasonYear.Value, externalId: Faker.FakeGuid2);
-        var fakePlayerCardForecast3 = Faker.FakePlayerCardForecast(year: seasonYear.Value, externalId: Faker.FakeGuid3);
+        var fakePlayerCardForecast1 =
+            Faker.FakePlayerCardForecast(year: seasonYear.Value, externalId: Faker.FakeGuid1, mlbId: 1);
+        var fakePlayerCardForecast2 =
+            Faker.FakePlayerCardForecast(year: seasonYear.Value, externalId: Faker.FakeGuid2, mlbId: 2);
+        var fakePlayerCardForecast3 =
+            Faker.FakePlayerCardForecast(year: seasonYear.Value, externalId: Faker.FakeGuid3, mlbId: 3);
 
         var today = new DateOnly(2024, 8, 13);
         var dateHasPassed = new DateOnly(2024, 4, 1);
