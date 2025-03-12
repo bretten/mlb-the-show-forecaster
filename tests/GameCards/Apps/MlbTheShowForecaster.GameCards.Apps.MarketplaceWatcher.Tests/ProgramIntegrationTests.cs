@@ -37,8 +37,11 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithUsername("postgres")
                 .WithPassword("password99")
                 .WithPortBinding(PostgreSqlPort, true)
-                .WithWaitStrategy(Wait.ForUnixContainer().UntilCommandIsCompleted(
-                    ["pg_isready", "-U", "postgres", "-d", "postgres"], o => o.WithTimeout(TimeSpan.FromMinutes(1))))
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(PostgreSqlPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                    .UntilCommandIsCompleted(["pg_isready", "-U", "postgres", "-d", "postgres"],
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
@@ -46,12 +49,18 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithPortBinding(RabbitMqPort, true)
                 .WithPortBinding(15672, true)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(RabbitMqPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
             _mongoDbContainer = new MongoDbBuilder()
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername(MongoUser)
                 .WithPassword(MongoPass)
                 .WithPortBinding(MongoPort, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(MongoPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
         }
         catch (ArgumentException e)
@@ -83,6 +92,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         builder.Configuration["ConnectionStrings:Forecasts"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:TrendsMongoDb"] = _mongoDbContainer.GetConnectionString();
+        builder.Configuration["Messaging:RabbitMq:HostName"] = _rabbitMqContainer.Hostname;
         builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
         builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
         builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();
