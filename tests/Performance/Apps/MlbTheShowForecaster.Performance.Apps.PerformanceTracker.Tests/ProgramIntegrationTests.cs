@@ -74,6 +74,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         builder.Configuration["Jobs:RunOnStartup"] = "true";
         builder.Configuration["ConnectionStrings:PlayerSeasons"] =
             _dbContainer.GetConnectionString() + ";Pooling=false;";
+        builder.Configuration["Messaging:RabbitMq:HostName"] = _rabbitMqContainer.Hostname;
         builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
         builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
         builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();
