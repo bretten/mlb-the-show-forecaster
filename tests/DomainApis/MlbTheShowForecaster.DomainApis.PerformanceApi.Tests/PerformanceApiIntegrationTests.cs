@@ -26,6 +26,9 @@ public class PerformanceApiIntegrationTests : IAsyncLifetime
                 .WithEnvironment("MOCKSERVER_LOG_LEVEL", "TRACE")
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithPortBinding(Port, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(Port, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
         }
         catch (ArgumentException e)
