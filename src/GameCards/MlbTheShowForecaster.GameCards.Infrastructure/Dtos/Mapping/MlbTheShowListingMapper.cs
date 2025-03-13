@@ -145,10 +145,19 @@ public sealed class MlbTheShowListingMapper : IMlbTheShowListingMapper
                         $"Listing order date could not be parsed: {x.Date}");
                 }
             }).GroupBy(x => new { x.Date, x.Price })
-            .Select(x =>
+            .SelectMany(x =>
             {
-                var quantity = NaturalNumber.Create(x.Count());
-                return new CardListingOrder(x.Key.Date, NaturalNumber.Create(x.Key.Price), quantity);
+                // Add a 0-based sequence number to each order that has the same price and date so they can be differentiated
+                if (x.Count() == 1)
+                {
+                    // No duplicates, so create one with a sequence of 0
+                    return x.Select(y =>
+                        new CardListingOrder(y.Date, NaturalNumber.Create(y.Price), NaturalNumber.Create(0)));
+                }
+
+                // Use the index in Select to set the sequence for duplicates
+                return x.Select((y, index) =>
+                    new CardListingOrder(y.Date, NaturalNumber.Create(y.Price), NaturalNumber.Create(index)));
             }).ToList();
     }
 }

@@ -61,7 +61,6 @@ public sealed class DbAtomicDatabaseOperation : IAtomicDatabaseOperation
     {
         _dbTransaction?.Dispose();
         _dbConnection?.Dispose();
-        _dataSource.Dispose();
     }
 
     /// <summary>
@@ -78,7 +77,5 @@ public sealed class DbAtomicDatabaseOperation : IAtomicDatabaseOperation
         {
             await _dbConnection.DisposeAsync();
         }
-
-        await _dataSource.DisposeAsync();
     }
 }

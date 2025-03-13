@@ -61,14 +61,21 @@ public class MlbTheShowListingMapperTests
         };
         var expectedOrders = new List<CardListingOrder>()
         {
+            // All are the same
             new CardListingOrder(new DateTime(2025, 1, 16, 10, 15, 0, DateTimeKind.Utc), NaturalNumber.Create(1000),
-                NaturalNumber.Create(3)),
+                NaturalNumber.Create(0)),
+            new CardListingOrder(new DateTime(2025, 1, 16, 10, 15, 0, DateTimeKind.Utc), NaturalNumber.Create(1000),
+                NaturalNumber.Create(1)),
+            new CardListingOrder(new DateTime(2025, 1, 16, 10, 15, 0, DateTimeKind.Utc), NaturalNumber.Create(1000),
+                NaturalNumber.Create(2)),
+
+            // All are different
             new CardListingOrder(new DateTime(2025, 1, 16, 10, 15, 0, DateTimeKind.Utc), NaturalNumber.Create(1001),
-                NaturalNumber.Create(1)),
+                NaturalNumber.Create(0)),
             new CardListingOrder(new DateTime(2025, 1, 16, 10, 16, 0, DateTimeKind.Utc), NaturalNumber.Create(1000),
-                NaturalNumber.Create(1)),
+                NaturalNumber.Create(0)),
             new CardListingOrder(new DateTime(2025, 1, 15, 17, 24, 0, DateTimeKind.Utc), NaturalNumber.Create(3210),
-                NaturalNumber.Create(1)),
+                NaturalNumber.Create(0)),
         };
 
         var listing = Faker.FakeListingDto(listingName: "name1",

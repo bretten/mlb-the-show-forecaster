@@ -51,13 +51,21 @@ public class TrendReportFactoryTests
         {
             // Included in past hour
             Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2024, 9, 8, 9, 0, 0,
-                DateTimeKind.Utc), price: 10, quantity: 1),
+                DateTimeKind.Utc), price: 10),
             // Included in past 24 hours
             Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2024, 9, 7, 10, 0, 0,
-                DateTimeKind.Utc), price: 20, quantity: 2),
+                DateTimeKind.Utc), price: 20),
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2024, 9, 7, 10, 0, 0,
+                DateTimeKind.Utc), price: 20),
             // Not included
             Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2024, 9, 7, 9, 0, 0,
-                DateTimeKind.Utc), price: 40, quantity: 4),
+                DateTimeKind.Utc), price: 40),
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2024, 9, 7, 9, 0, 0,
+                DateTimeKind.Utc), price: 40),
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2024, 9, 7, 9, 0, 0,
+                DateTimeKind.Utc), price: 40),
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListingOrder(new DateTime(2024, 9, 7, 9, 0, 0,
+                DateTimeKind.Utc), price: 40),
         });
 
     private static PlayerCardForecast Forecast()
@@ -238,7 +246,7 @@ public class TrendReportFactoryTests
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId, cToken))
+        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId, true, cToken))
             .ReturnsAsync(listing);
 
         var stubForecastRepository = new Mock<IForecastRepository>();
@@ -283,7 +291,7 @@ public class TrendReportFactoryTests
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId, cToken))
+        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId, true, cToken))
             .ReturnsAsync(listing);
 
         var stubForecastRepository = new Mock<IForecastRepository>();
@@ -371,7 +379,7 @@ public class TrendReportFactoryTests
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(forecast.CardExternalId, cToken))
+        stubListingRepository.Setup(x => x.GetByExternalId(forecast.CardExternalId, true, cToken))
             .ReturnsAsync(listing);
 
         var stubForecastRepository = new Mock<IForecastRepository>();
@@ -416,7 +424,7 @@ public class TrendReportFactoryTests
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId, cToken))
+        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId, true, cToken))
             .ReturnsAsync(listing);
 
         var stubForecastRepository = new Mock<IForecastRepository>();

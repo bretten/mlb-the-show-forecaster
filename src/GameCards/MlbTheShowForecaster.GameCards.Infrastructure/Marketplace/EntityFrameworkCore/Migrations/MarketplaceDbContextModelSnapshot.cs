@@ -87,10 +87,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects.ListingOrder", b =>
                 {
-                    b.Property<string>("hash")
-                        .HasColumnType("text")
-                        .HasColumnName("hash")
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
                         .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone")
@@ -102,16 +105,11 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                         .HasColumnName("price")
                         .HasColumnOrder(3);
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantity")
-                        .HasColumnOrder(4);
-
                     b.Property<Guid?>("listing_id")
                         .HasColumnType("uuid")
                         .HasColumnOrder(1);
 
-                    b.HasKey("hash")
+                    b.HasKey("id")
                         .HasName("listing_orders_pkey");
 
                     b.HasIndex(new[] { "listing_id" }, "listing_orders_listing_id_idx");

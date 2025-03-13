@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -58,15 +59,15 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                 schema: "game_cards",
                 columns: table => new
                 {
-                    hash = table.Column<string>(type: "text", nullable: false),
+                    id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     listing_id = table.Column<Guid>(type: "uuid", nullable: true),
                     date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    price = table.Column<int>(type: "integer", nullable: false),
-                    quantity = table.Column<int>(type: "integer", nullable: false)
+                    price = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("listing_orders_pkey", x => x.hash);
+                    table.PrimaryKey("listing_orders_pkey", x => x.id);
                     table.ForeignKey(
                         name: "listing_orders_listings_id_fkey",
                         column: x => x.listing_id,

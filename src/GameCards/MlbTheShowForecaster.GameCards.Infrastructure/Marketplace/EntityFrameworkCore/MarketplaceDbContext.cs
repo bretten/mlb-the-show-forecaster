@@ -29,6 +29,11 @@ public sealed class MarketplaceDbContext : DbContext, IMarketplaceWork
     public DbSet<ListingHistoricalPrice> ListingHistoricalPrices { get; private init; } = null!;
 
     /// <summary>
+    /// DB set for <see cref="ListingOrder"/>
+    /// </summary>
+    public DbSet<ListingOrder> ListingOrders { get; private init; } = null!;
+
+    /// <summary>
     /// Returns the <see cref="Listing"/> DB set with <see cref="ListingHistoricalPrice"/>s included
     /// </summary>
     /// <returns><see cref="IQueryable"/> for <see cref="Listing"/></returns>

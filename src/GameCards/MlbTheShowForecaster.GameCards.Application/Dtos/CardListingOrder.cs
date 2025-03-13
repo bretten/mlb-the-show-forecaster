@@ -7,5 +7,5 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// </summary>
 /// <param name="Date">The order date</param>
 /// <param name="Price">The order price</param>
-/// <param name="Quantity">The order quantity</param>
-public readonly record struct CardListingOrder(DateTime Date, NaturalNumber Price, NaturalNumber Quantity);
+/// <param name="SequenceNumber">The 0-indexed sequence number, which will increment for orders with the same date and price</param>
+public readonly record struct CardListingOrder(DateTime Date, NaturalNumber Price, NaturalNumber SequenceNumber);

@@ -116,7 +116,7 @@ public sealed class RedisListingEventStore : IListingEventStore
     /// <param name="order"><see cref="CardListingOrder"/></param>
     /// <returns>An ID that uniquely identifies the <see cref="CardListingOrder"/></returns>
     internal static string OrderId(CardListingOrder order) =>
-        $"{order.Date:s}-{order.Price.Value}-{order.Quantity.Value}";
+        $"{order.Date:s}-{order.Price.Value}-{order.SequenceNumber.Value}";
 
     /// <inheritdoc />
     public async Task AppendNewPricesAndOrders(SeasonYear year, CardListing cardListing)
@@ -196,7 +196,7 @@ public sealed class RedisListingEventStore : IListingEventStore
                 new NameValueEntry("card_external_id", cardListing.CardExternalId.Value.ToString(GuidFormat)),
                 new NameValueEntry("date", order.Date.ToString(DateTimeFormat)),
                 new NameValueEntry("price", order.Price.Value),
-                new NameValueEntry("quantity", order.Quantity.Value)
+                new NameValueEntry("sequence_number", order.SequenceNumber.Value)
             ]);
             // Add to the set indicating it has been appended
             await db.SortedSetAddAsync(recentKey, id, new DateTimeOffset(order.Date).ToUnixTimeSeconds());
@@ -262,10 +262,9 @@ public sealed class RedisListingEventStore : IListingEventStore
             var date = DateTime.ParseExact(entry["date"].ToString(), DateTimeFormat, CultureInfo.InvariantCulture,
                 DateTimeStyles.AssumeUniversal).ToUniversalTime();
             entry["price"].TryParse(out int price);
-            entry["quantity"].TryParse(out int quantity);
 
             var cardExternalId = CardExternalId.Create(new Guid(externalId));
-            var order = ListingOrder.Create(date, NaturalNumber.Create(price), NaturalNumber.Create(quantity));
+            var order = ListingOrder.Create(date, NaturalNumber.Create(price));
 
             // Add the order to the result
             if (!newOrders.TryGetValue(cardExternalId, out var ordersForListing))

@@ -11,6 +11,7 @@ using RabbitMQ.Client;
 using Testcontainers.MongoDb;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
+using Testcontainers.Redis;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Tests;
 
@@ -19,12 +20,15 @@ public class ProgramIntegrationTests : IAsyncLifetime
     private readonly PostgreSqlContainer _dbContainer;
     private readonly RabbitMqContainer _rabbitMqContainer;
     private readonly MongoDbContainer _mongoDbContainer;
+    private readonly RedisContainer _redisContainer;
 
     private const int PostgreSqlPort = 5432;
     private const int RabbitMqPort = 5672;
     private const string MongoUser = "mongo";
     private const string MongoPass = "password99";
     private const int MongoPort = 27017;
+    private const int RedisPort = 6379;
+    private const int RedisManagementPort = 8001;
 
     private int HostRabbitMqPort => _rabbitMqContainer.GetMappedPublicPort(RabbitMqPort);
 
@@ -62,6 +66,17 @@ public class ProgramIntegrationTests : IAsyncLifetime
                     .UntilPortIsAvailable(MongoPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
                 )
                 .Build();
+            _redisContainer = new RedisBuilder()
+                .WithName(GetType().Name + Guid.NewGuid())
+                .WithImage("redis/redis-stack:latest")
+                .WithEnvironment("REDIS_ARGS", "--requirepass mypassword --appendonly yes")
+                .WithPortBinding(RedisPort, true)
+                .WithPortBinding(RedisManagementPort, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(RedisPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                    .UntilCommandIsCompleted(["redis-cli", "-a", "mypassword", "ping"],
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1))))
+                .Build();
         }
         catch (ArgumentException e)
         {
@@ -88,10 +103,18 @@ public class ProgramIntegrationTests : IAsyncLifetime
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
         builder.Configuration["Jobs:RunOnStartup"] = "true";
+        // Run all jobs often during the test
+        builder.Configuration["Jobs:Schedules:0"] = "PlayerCardTrackerJob-00:00:00:01";
+        builder.Configuration["Jobs:Schedules:1"] = "CardPriceTrackerJob-00:00:00:01";
+        builder.Configuration["Jobs:Schedules:2"] = "CardListingImporterJob-00:00:00:01";
+        builder.Configuration["Jobs:Schedules:3"] = "RosterUpdaterJob-00:00:00:01";
+        builder.Configuration["Jobs:Schedules:4"] = "TrendReporterJob-00:00:00:01";
         builder.Configuration["ConnectionStrings:Cards"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Forecasts"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:TrendsMongoDb"] = _mongoDbContainer.GetConnectionString();
+        builder.Configuration["ConnectionStrings:Redis"] =
+            $"{_redisContainer.GetConnectionString()},password=mypassword";
         builder.Configuration["Messaging:RabbitMq:HostName"] = _rabbitMqContainer.Hostname;
         builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
         builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
@@ -170,6 +193,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await _dbContainer.StartAsync();
         await _rabbitMqContainer.StartAsync();
         await _mongoDbContainer.StartAsync();
+        await _redisContainer.StartAsync();
     }
 
     public async Task DisposeAsync()
@@ -177,6 +201,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await _dbContainer.DisposeAsync();
         await _rabbitMqContainer.DisposeAsync();
         await _mongoDbContainer.DisposeAsync();
+        await _redisContainer.DisposeAsync();
     }
 
     private async Task<NpgsqlConnection> GetDbConnection()
