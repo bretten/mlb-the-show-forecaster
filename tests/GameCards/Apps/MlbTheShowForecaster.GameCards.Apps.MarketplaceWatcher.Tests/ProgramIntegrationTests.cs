@@ -98,12 +98,14 @@ public class ProgramIntegrationTests : IAsyncLifetime
          */
         // Command line arguments when running the program
         var args = Array.Empty<string>();
+        const ushort season = 2024;
 
         // Builder
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
         builder.Configuration["Jobs:RunOnStartup"] = "true";
         // Run all jobs often during the test
+        builder.Configuration["Jobs:Seasons:0"] = season.ToString();
         builder.Configuration["Jobs:Schedules:0"] = "PlayerCardTrackerJob-00:00:00:01";
         builder.Configuration["Jobs:Schedules:1"] = "CardPriceTrackerJob-00:00:00:01";
         builder.Configuration["Jobs:Schedules:2"] = "CardListingImporterJob-00:00:00:01";
@@ -128,10 +130,10 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await cardsDbContext.Database.MigrateAsync();
         // Add a PlayerCard (and a listing below) so the ICardPriceTracker can update the listing and dispatch price change domain events
         var playerCardExternalId1 = Guid.Parse("7d6c7d95a1e5e861c54d20002585a809");
-        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId1));
+        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(season, playerCardExternalId1));
         // Add another PlayerCard (with no listing) so the ICardPriceTracker can create a new listing
         var playerCardExternalId2 = Guid.Parse("da757117dff1551f109453a8b80f28c8");
-        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId2));
+        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(season, playerCardExternalId2));
         await cardsDbContext.SaveChangesAsync();
 
         // Setup the marketplace database
@@ -139,7 +141,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await marketplaceDbContext.Database.MigrateAsync();
         // Add a Listing so price change domain events can be dispatched
         await marketplaceDbContext.Listings.AddAsync(
-            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(playerCardExternalId1));
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(season, playerCardExternalId1));
         await marketplaceDbContext.SaveChangesAsync();
 
         /*

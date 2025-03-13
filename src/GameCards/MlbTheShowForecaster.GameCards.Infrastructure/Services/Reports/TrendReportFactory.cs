@@ -132,7 +132,7 @@ public sealed class TrendReportFactory : ITrendReportFactory
     {
         var card = await _playerCardRepository.GetByExternalId(year, cardExternalId);
         var forecast = await _forecastRepository.GetBy(year, cardExternalId);
-        var listing = await _listingRepository.GetByExternalId(cardExternalId, true, cancellationToken);
+        var listing = await _listingRepository.GetByExternalId(year, cardExternalId, true, cancellationToken);
 
         if (card == null || listing == null || forecast == null || forecast.MlbId == null)
         {
@@ -156,7 +156,8 @@ public sealed class TrendReportFactory : ITrendReportFactory
     {
         var forecast = await _forecastRepository.GetBy(year, mlbId);
         var card = await _playerCardRepository.GetByExternalId(year, forecast?.CardExternalId!);
-        var listing = await _listingRepository.GetByExternalId(forecast?.CardExternalId!, true, cancellationToken);
+        var listing =
+            await _listingRepository.GetByExternalId(year, forecast?.CardExternalId!, true, cancellationToken);
 
         if (forecast == null || card == null || listing == null)
         {

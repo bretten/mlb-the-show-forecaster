@@ -77,12 +77,13 @@ public static class Faker
         );
     }
 
-    public static CardListing FakeCardListing(string listingName = "listingName1", int bestBuyPrice = 0,
+    public static CardListing FakeCardListing(ushort year = 2024, string name = "listingName1", int bestBuyPrice = 0,
         int bestSellPrice = 0, Guid? cardExternalId = null, IReadOnlyList<CardListingPrice>? historicalPrices = null,
         IReadOnlyList<CardListingOrder>? completedOrders = null)
     {
         return new CardListing(
-            ListingName: listingName,
+            Year: SeasonYear.Create(year),
+            ListingName: name,
             BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
             BestSellPrice: NaturalNumber.Create(bestSellPrice),
             CardExternalId: Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(cardExternalId),

@@ -7,6 +7,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObje
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Marketplace.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.Npgsql;
+using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Npgsql;
@@ -31,6 +32,11 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
                 .WithUsername("postgres")
                 .WithPassword("password99")
                 .WithPortBinding(5432, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(5432, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                    .UntilCommandIsCompleted(["pg_isready", "-U", "postgres", "-d", "postgres"],
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
         }
         catch (ArgumentException e)
@@ -49,7 +55,7 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
     public async Task Add_Listing_InsertsListing()
     {
         // Arrange
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000);
+        var listing = Faker.FakeListing(2025, Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000);
 
         var dataSource = GetNpgsqlDataSource();
         var repo = new NpgsqlListingRepository(dataSource);
@@ -61,6 +67,7 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
         var listings = await GetListingsFromDb();
         var actual = listings.First();
         Assert.Equal(listing, actual);
+        Assert.Equal(2025, actual.Year.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1000, actual.BuyPrice.Value);
         Assert.Equal(2000, actual.SellPrice.Value);
@@ -71,7 +78,7 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
     public async Task Update_ListingPricesChanged_UpdatesListing()
     {
         // Arrange
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000);
+        var listing = Faker.FakeListing(2025, Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000);
         await AddListingToDb(listing);
 
         var dataSource = GetNpgsqlDataSource();
@@ -87,6 +94,7 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
         var listings = await GetListingsFromDb();
         var actual = listings.First();
         Assert.Equal(listing, actual);
+        Assert.Equal(2025, actual.Year.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1111, actual.BuyPrice.Value);
         Assert.Equal(2222, actual.SellPrice.Value);
@@ -97,7 +105,7 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
     public async Task GetByExternalId_ExcludeRelated_ReturnsJustListing()
     {
         // Arrange
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
+        var listing = Faker.FakeListing(2025, Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
             new List<ListingHistoricalPrice>()
             {
                 Faker.FakeListingHistoricalPrice(new DateOnly(2025, 3, 9), 1, 2),
@@ -113,10 +121,11 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
         var repo = new NpgsqlListingRepository(dataSource);
 
         // Act
-        var actual = await repo.GetByExternalId(CardExternalId.Create(Faker.FakeGuid1), false);
+        var actual = await repo.GetByExternalId(SeasonYear.Create(2025), CardExternalId.Create(Faker.FakeGuid1), false);
 
         // Assert
         Assert.NotNull(actual);
+        Assert.Equal(2025, actual.Year.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1000, actual.BuyPrice.Value);
         Assert.Equal(2000, actual.SellPrice.Value);
@@ -129,7 +138,7 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
     public async Task GetByExternalId_IncludeRelated_ReturnsListingWithRelated()
     {
         // Arrange
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
+        var listing = Faker.FakeListing(2025, Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
             new List<ListingHistoricalPrice>()
             {
                 Faker.FakeListingHistoricalPrice(new DateOnly(2025, 3, 9), 1, 2),
@@ -145,10 +154,11 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
         var repo = new NpgsqlListingRepository(dataSource);
 
         // Act
-        var actual = await repo.GetByExternalId(CardExternalId.Create(Faker.FakeGuid1), true);
+        var actual = await repo.GetByExternalId(SeasonYear.Create(2025), CardExternalId.Create(Faker.FakeGuid1), true);
 
         // Assert
         Assert.NotNull(actual);
+        Assert.Equal(2025, actual.Year.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1000, actual.BuyPrice.Value);
         Assert.Equal(2000, actual.SellPrice.Value);
@@ -174,7 +184,7 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
         var price2 = Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2), buyPrice: 10, sellPrice: 20);
         var price3 = Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 3), buyPrice: 100, sellPrice: 200);
         // Associated Listing
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000);
+        var listing = Faker.FakeListing();
         // Add the listing to the DB
         await AddListingToDb(listing);
 
@@ -229,7 +239,7 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
         var order2 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11);
         var order3 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), price: 10);
         // Associated Listing
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000);
+        var listing = Faker.FakeListing();
         // Add the listing to the DB
         await AddListingToDb(listing);
 
@@ -354,12 +364,14 @@ public class NpgsqlListingRepositoryIntegrationTests : IAsyncLifetime
         while (await reader.ReadAsync())
         {
             var id = reader.GetGuid(0);
-            var cardExternalId = reader.GetGuid(1);
-            var buyPrice = reader.GetInt32(2);
-            var sellPrice = reader.GetInt32(3);
+            var year = (ushort)reader.GetInt16(1);
+            var cardExternalId = reader.GetGuid(2);
+            var buyPrice = reader.GetInt32(3);
+            var sellPrice = reader.GetInt32(4);
 
-            var listing = Listing.Create(CardExternalId.Create(cardExternalId), NaturalNumber.Create(buyPrice),
-                NaturalNumber.Create(sellPrice), new List<ListingHistoricalPrice>(), new List<ListingOrder>(), id);
+            var listing = Listing.Create(SeasonYear.Create(year), CardExternalId.Create(cardExternalId),
+                NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice), new List<ListingHistoricalPrice>(),
+                new List<ListingOrder>(), id);
             listings.Add(listing);
         }
 

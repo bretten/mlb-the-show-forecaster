@@ -78,6 +78,7 @@ public class MlbTheShowListingMapperTests
                 NaturalNumber.Create(0)),
         };
 
+        var year = SeasonYear.Create(2025);
         var listing = Faker.FakeListingDto(listingName: "name1",
             bestBuyPrice: 20,
             bestSellPrice: 10,
@@ -92,11 +93,12 @@ public class MlbTheShowListingMapperTests
         /*
          * Act
          */
-        var actual = mapper.Map(listing);
+        var actual = mapper.Map(year, listing);
 
         /*
          * Assert
          */
+        Assert.Equal(2025, actual.Year.Value);
         Assert.Equal("name1", actual.ListingName);
         Assert.Equal(20, actual.BestBuyPrice.Value);
         Assert.Equal(10, actual.BestSellPrice.Value);
@@ -109,6 +111,7 @@ public class MlbTheShowListingMapperTests
     public void Map_PriceWithInvalidDateString_ThrowsException()
     {
         // Arrange
+        var year = SeasonYear.Create(2025);
         var listing = Faker.FakeListingDto(listingName: "name1",
             bestBuyPrice: 20,
             bestSellPrice: 10,
@@ -123,7 +126,7 @@ public class MlbTheShowListingMapperTests
         stubCalendar.Setup(x => x.TodayPst()).Returns(new DateOnly(2025, 1, 15));
         var mapper = new MlbTheShowListingMapper(stubCalendar.Object);
 
-        Action action = () => mapper.Map(listing);
+        Action action = () => mapper.Map(year, listing);
 
         // Act
         var actual = Record.Exception(action);
@@ -137,6 +140,7 @@ public class MlbTheShowListingMapperTests
     public void Map_OrderWithInvalidDateString_ThrowsException()
     {
         // Arrange
+        var year = SeasonYear.Create(2025);
         var listing = Faker.FakeListingDto(listingName: "name1",
             bestBuyPrice: 20,
             bestSellPrice: 10,
@@ -151,7 +155,7 @@ public class MlbTheShowListingMapperTests
         stubCalendar.Setup(x => x.TodayPst()).Returns(new DateOnly(2025, 1, 16));
         var mapper = new MlbTheShowListingMapper(stubCalendar.Object);
 
-        Action action = () => mapper.Map(listing);
+        Action action = () => mapper.Map(year, listing);
 
         // Act
         var actual = Record.Exception(action);

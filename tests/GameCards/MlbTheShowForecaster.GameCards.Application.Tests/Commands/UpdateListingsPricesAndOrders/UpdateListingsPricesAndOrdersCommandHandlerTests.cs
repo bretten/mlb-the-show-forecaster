@@ -19,8 +19,8 @@ public class UpdateListingsPricesAndOrdersCommandHandlerTests
         // Arrange
         var cToken = CancellationToken.None;
         var year = SeasonYear.Create(2025);
-        var listing1 = Faker.FakeListing(Faker.FakeGuid1);
-        var listing2 = Faker.FakeListing(Faker.FakeGuid2);
+        var listing1 = Faker.FakeListing(year.Value, Faker.FakeGuid1);
+        var listing2 = Faker.FakeListing(year.Value, Faker.FakeGuid2);
         var command = new UpdateListingsPricesAndOrdersCommand(year, new Dictionary<CardExternalId, Listing>()
         {
             { listing1.CardExternalId, listing1 },

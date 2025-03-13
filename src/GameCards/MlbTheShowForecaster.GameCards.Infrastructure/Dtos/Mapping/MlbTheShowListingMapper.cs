@@ -32,11 +32,12 @@ public sealed class MlbTheShowListingMapper : IMlbTheShowListingMapper
     /// <summary>
     /// Maps a <see cref="ListingDto{T}"/> to a <see cref="CardListing"/>
     /// </summary>
+    /// <param name="year">The year of MLB The Show</param>
     /// <param name="listing">The <see cref="ListingDto{T}"/> to map</param>
     /// <returns><see cref="CardListing"/></returns>
-    public CardListing Map(ListingDto<ItemDto> listing)
+    public CardListing Map(SeasonYear year, ListingDto<ItemDto> listing)
     {
-        return new CardListing(listing.ListingName,
+        return new CardListing(year, listing.ListingName,
             BestBuyPrice: NaturalNumber.Create(listing.BestBuyPrice),
             BestSellPrice: NaturalNumber.Create(listing.BestSellPrice),
             CardExternalId: CardExternalId.Create(listing.Item.Uuid.Value ??

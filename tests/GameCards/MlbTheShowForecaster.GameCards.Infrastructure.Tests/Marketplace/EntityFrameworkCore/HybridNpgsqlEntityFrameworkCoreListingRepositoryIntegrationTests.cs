@@ -112,7 +112,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         var order1 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 10);
         var order2 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11);
         var order3 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), price: 10);
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
+        var listing = Faker.FakeListing(2025, Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
             new List<ListingHistoricalPrice>()
             {
                 price3, price1, price2
@@ -143,6 +143,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         Assert.Single(assertDbContext.ListingsWithHistoricalPrices());
         var actual = assertDbContext.ListingsWithHistoricalPrices().First();
         Assert.Equal(listing, actual);
+        Assert.Equal(2025, actual.Year.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1000, actual.BuyPrice.Value);
         Assert.Equal(2000, actual.SellPrice.Value);
@@ -182,7 +183,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         var order1 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 10);
         var order2 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11);
         var order3 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), price: 10);
-        var listing1 = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 100, sellPrice: 200,
+        var listing1 = Faker.FakeListing(2025, Faker.FakeGuid1, buyPrice: 100, sellPrice: 200,
             new List<ListingHistoricalPrice>()
             {
                 price2, price1
@@ -191,7 +192,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
                 order1, order2, order3
             });
         // The Listing that will remain unchanged
-        var listing2 = Faker.FakeListing(Faker.FakeGuid2, buyPrice: 8, sellPrice: 9);
+        var listing2 = Faker.FakeListing(2025, Faker.FakeGuid2, buyPrice: 8, sellPrice: 9);
 
         // Set up the database
         var (dbContext, atomicOperation) = await CreateDatabase();
@@ -240,6 +241,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         // Verify Listing1 was updated
         var actual = assertDbContext.ListingsWithHistoricalPrices().First(x => x.Id == listingId1);
         Assert.Equal(listing1, actual);
+        Assert.Equal(2025, actual.Year.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1000, actual.BuyPrice.Value);
         Assert.Equal(2000, actual.SellPrice.Value);
@@ -275,7 +277,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
     public async Task GetByExternalId_ExcludeRelated_ReturnsJustListing()
     {
         // Arrange
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
+        var listing = Faker.FakeListing(2025, Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
             new List<ListingHistoricalPrice>()
             {
                 Faker.FakeListingHistoricalPrice(new DateOnly(2025, 3, 9), 1, 2),
@@ -291,10 +293,11 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         await AddListingToDb(dbContext, listing);
 
         // Act
-        var actual = await repo.GetByExternalId(CardExternalId.Create(Faker.FakeGuid1), false);
+        var actual = await repo.GetByExternalId(SeasonYear.Create(2025), CardExternalId.Create(Faker.FakeGuid1), false);
 
         // Assert
         Assert.NotNull(actual);
+        Assert.Equal(2025, actual.Year.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1000, actual.BuyPrice.Value);
         Assert.Equal(2000, actual.SellPrice.Value);
@@ -307,7 +310,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
     public async Task GetByExternalId_IncludeRelated_ReturnsListingWithRelated()
     {
         // Arrange
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
+        var listing = Faker.FakeListing(2025, Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000,
             new List<ListingHistoricalPrice>()
             {
                 Faker.FakeListingHistoricalPrice(new DateOnly(2025, 3, 9), 1, 2),
@@ -323,10 +326,11 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         await AddListingToDb(dbContext, listing);
 
         // Act
-        var actual = await repo.GetByExternalId(CardExternalId.Create(Faker.FakeGuid1), true);
+        var actual = await repo.GetByExternalId(SeasonYear.Create(2025), CardExternalId.Create(Faker.FakeGuid1), true);
 
         // Assert
         Assert.NotNull(actual);
+        Assert.Equal(2025, actual.Year.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(1000, actual.BuyPrice.Value);
         Assert.Equal(2000, actual.SellPrice.Value);
@@ -352,7 +356,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         var price2 = Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 2), buyPrice: 10, sellPrice: 20);
         var price3 = Faker.FakeListingHistoricalPrice(new DateOnly(2024, 4, 3), buyPrice: 100, sellPrice: 200);
         // Associated Listing
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000);
+        var listing = Faker.FakeListing();
         // Set up the DB
         var (dbContext, atomicOperation) = await CreateDatabase();
         var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, atomicOperation);
@@ -410,7 +414,7 @@ public class HybridNpgsqlEntityFrameworkCoreListingRepositoryIntegrationTests : 
         var order2 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 2, 0, DateTimeKind.Utc), price: 11);
         var order3 = Faker.FakeListingOrder(new DateTime(2025, 1, 17, 1, 3, 0, DateTimeKind.Utc), price: 10);
         // Associated Listing
-        var listing = Faker.FakeListing(Faker.FakeGuid1, buyPrice: 1000, sellPrice: 2000);
+        var listing = Faker.FakeListing();
         // Set up the DB
         var (dbContext, atomicOperation) = await CreateDatabase();
         var repo = new HybridNpgsqlEntityFrameworkCoreListingRepository(dbContext, atomicOperation);

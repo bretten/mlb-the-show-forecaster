@@ -11,7 +11,7 @@ public class ListingMapperTests
     public void Map_CardListingDto_ReturnsListing()
     {
         // Arrange
-        var cardListing = new CardListing(
+        var cardListing = new CardListing(SeasonYear.Create(2024),
             "listingName",
             BestBuyPrice: NaturalNumber.Create(10),
             BestSellPrice: NaturalNumber.Create(20),
@@ -53,6 +53,7 @@ public class ListingMapperTests
         var actual = mapper.Map(cardListing);
 
         // Assert
+        Assert.Equal(2024, actual.Year.Value);
         Assert.Equal("listingName", cardListing.ListingName);
         Assert.Equal(10, actual.BuyPrice.Value);
         Assert.Equal(20, actual.SellPrice.Value);

@@ -230,16 +230,17 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
     {
         // Arrange
         var year = SeasonYear.Create(2025);
-        var cardListing = Faker.FakeCardListing("name1", 10, 20, historicalPrices: new List<CardListingPrice>()
-        {
-            Faker.FakeCardListingPrice(new DateOnly(2025, 3, 25), bestBuyPrice: 1, 2),
-            Faker.FakeCardListingPrice(new DateOnly(2025, 3, 26), bestBuyPrice: 10, 20),
-        }, completedOrders: new List<CardListingOrder>()
-        {
-            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 1),
-            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3, DateTimeKind.Utc), 10, 2),
-            Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 4, DateTimeKind.Local), 100, 1)
-        });
+        var cardListing = Faker.FakeCardListing(year.Value, "name1", 10, 20,
+            historicalPrices: new List<CardListingPrice>()
+            {
+                Faker.FakeCardListingPrice(new DateOnly(2025, 3, 25), bestBuyPrice: 1, 2),
+                Faker.FakeCardListingPrice(new DateOnly(2025, 3, 26), bestBuyPrice: 10, 20),
+            }, completedOrders: new List<CardListingOrder>()
+            {
+                Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3), 10, 1),
+                Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 3, DateTimeKind.Utc), 10, 2),
+                Faker.FakeCompletedOrder(new DateTime(2025, 3, 1, 1, 2, 4, DateTimeKind.Local), 100, 1)
+            });
 
         var connection = await GetConnection();
         var eventStore = new RedisListingEventStore(connection);

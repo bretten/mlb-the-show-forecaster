@@ -246,7 +246,7 @@ public class TrendReportFactoryTests
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId, true, cToken))
+        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.Year, playerCard.ExternalId, true, cToken))
             .ReturnsAsync(listing);
 
         var stubForecastRepository = new Mock<IForecastRepository>();
@@ -291,7 +291,7 @@ public class TrendReportFactoryTests
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId, true, cToken))
+        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.Year, playerCard.ExternalId, true, cToken))
             .ReturnsAsync(listing);
 
         var stubForecastRepository = new Mock<IForecastRepository>();
@@ -379,7 +379,7 @@ public class TrendReportFactoryTests
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(forecast.CardExternalId, true, cToken))
+        stubListingRepository.Setup(x => x.GetByExternalId(forecast.Year, forecast.CardExternalId, true, cToken))
             .ReturnsAsync(listing);
 
         var stubForecastRepository = new Mock<IForecastRepository>();
@@ -424,7 +424,7 @@ public class TrendReportFactoryTests
             .ReturnsAsync(playerCard);
 
         var stubListingRepository = new Mock<IListingRepository>();
-        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.ExternalId, true, cToken))
+        stubListingRepository.Setup(x => x.GetByExternalId(playerCard.Year, playerCard.ExternalId, true, cToken))
             .ReturnsAsync(listing);
 
         var stubForecastRepository = new Mock<IForecastRepository>();

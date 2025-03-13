@@ -13,12 +13,13 @@ public static class Faker
     public static Guid FakeGuid1 = new("00000000-0000-0000-0000-000000000001");
     public static Guid FakeGuid2 = new("00000000-0000-0000-0000-000000000002");
 
-    public static Listing FakeListing(Guid? cardExternalId = null, int buyPrice = 0, int sellPrice = 0,
-        List<ListingHistoricalPrice>? historicalPrices = null, List<ListingOrder>? orders = null)
+    public static Listing FakeListing(ushort year = 2024, Guid? cardExternalId = null, int buyPrice = 0,
+        int sellPrice = 0, List<ListingHistoricalPrice>? historicalPrices = null, List<ListingOrder>? orders = null)
     {
-        return Listing.Create(CardExternalId.Create(cardExternalId ?? Cards.TestClasses.Faker.FakeGuid1),
-            NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice),
-            historicalPrices ?? new List<ListingHistoricalPrice>(), orders ?? new List<ListingOrder>());
+        return Listing.Create(SeasonYear.Create(year),
+            CardExternalId.Create(cardExternalId ?? Cards.TestClasses.Faker.FakeGuid1), NaturalNumber.Create(buyPrice),
+            NaturalNumber.Create(sellPrice), historicalPrices ?? new List<ListingHistoricalPrice>(),
+            orders ?? new List<ListingOrder>());
     }
 
     public static ListingHistoricalPrice FakeListingHistoricalPrice(DateOnly date, int buyPrice = 0, int sellPrice = 0)

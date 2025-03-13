@@ -36,6 +36,7 @@ internal sealed class GetListingByCardExternalIdQueryHandler : IQueryHandler<Get
     /// <returns>The <see cref="Listing"/> that matches the specified <see cref="CardExternalId"/></returns>
     public async Task<Listing?> Handle(GetListingByCardExternalIdQuery query, CancellationToken cancellationToken)
     {
-        return await _listingRepository.GetByExternalId(query.CardExternalId, query.IncludeRelated, cancellationToken);
+        return await _listingRepository.GetByExternalId(query.Year, query.CardExternalId, query.IncludeRelated,
+            cancellationToken);
     }
 }

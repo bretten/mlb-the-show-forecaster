@@ -16,6 +16,7 @@ public sealed class ListingMapper : IListingMapper
     public Listing Map(CardListing listing)
     {
         return Listing.Create(
+            listing.Year,
             listing.CardExternalId,
             listing.BestBuyPrice,
             listing.BestSellPrice,
