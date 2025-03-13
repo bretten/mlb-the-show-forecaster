@@ -36,24 +36,28 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                     b.Property<int>("BuyPrice")
                         .HasColumnType("integer")
                         .HasColumnName("buy_price")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<Guid>("CardExternalId")
                         .HasColumnType("uuid")
                         .HasColumnName("card_external_id")
-                        .HasColumnOrder(1);
+                        .HasColumnOrder(2);
 
                     b.Property<int>("SellPrice")
                         .HasColumnType("integer")
                         .HasColumnName("sell_price")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
+
+                    b.Property<ushort>("Year")
+                        .HasColumnType("smallint")
+                        .HasColumnName("year")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id")
                         .HasName("listings_pkey");
 
-                    b.HasIndex(new[] { "CardExternalId" }, "listings_card_external_id_idx");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "CardExternalId" }, "listings_card_external_id_idx"), "btree");
+                    b.HasAlternateKey("Year", "CardExternalId")
+                        .HasName("listings_year_card_external_id_key");
 
                     b.ToTable("listings", "game_cards");
                 });

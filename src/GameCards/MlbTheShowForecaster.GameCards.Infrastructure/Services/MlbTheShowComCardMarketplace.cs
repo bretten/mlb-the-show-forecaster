@@ -93,7 +93,7 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
             prices, orders);
 
         // The mapper parsed out the erroneous prices, so use the correct prices
-        var tempListing = _listingMapper.Map(listingDto);
+        var tempListing = _listingMapper.Map(seasonYear, listingDto);
         return tempListing with
         {
             BestBuyPrice = NaturalNumber.Create(tempListing.HistoricalPrices.FirstOrDefault().BestBuyPrice.Value),

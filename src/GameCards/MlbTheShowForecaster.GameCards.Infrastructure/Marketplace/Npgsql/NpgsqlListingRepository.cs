@@ -39,6 +39,7 @@ public sealed class NpgsqlListingRepository : IListingRepository
         // INSERT the Listing
         await using var command = new NpgsqlCommand(ListingsInsertCommand, connection);
         command.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
+        command.Parameters.Add(new NpgsqlParameter { Value = (short)listing.Year.Value, DbType = DbType.Int16 });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.CardExternalId.Value, DbType = DbType.Guid });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
@@ -60,12 +61,13 @@ public sealed class NpgsqlListingRepository : IListingRepository
     }
 
     /// <inheritdoc />
-    public async Task<Listing?> GetByExternalId(CardExternalId externalId, bool includeRelated,
+    public async Task<Listing?> GetByExternalId(SeasonYear year, CardExternalId externalId, bool includeRelated,
         CancellationToken cancellationToken = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
 
         await using var command = new NpgsqlCommand(ListingSelectByCardExternalIdCommand, connection);
+        command.Parameters.AddWithValue("year", (short)year.Value);
         command.Parameters.AddWithValue("id", externalId.Value);
 
         // Read the Listing
@@ -93,7 +95,7 @@ public sealed class NpgsqlListingRepository : IListingRepository
 
         await connection.CloseAsync();
 
-        return Listing.Create(externalId, NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice), prices,
+        return Listing.Create(year, externalId, NaturalNumber.Create(buyPrice), NaturalNumber.Create(sellPrice), prices,
             orders, id);
     }
 
@@ -248,7 +250,7 @@ public sealed class NpgsqlListingRepository : IListingRepository
             {Constants.Listings.BuyPrice},
             {Constants.Listings.SellPrice}
         FROM {Constants.Schema}.{Constants.Listings.TableName}
-        WHERE {Constants.Listings.CardExternalId} = @id LIMIT 1";
+        WHERE {Constants.Listings.Year} = @year AND {Constants.Listings.CardExternalId} = @id LIMIT 1";
 
     /// <summary>
     /// Inserts a new <see cref="Listing"/>
@@ -256,11 +258,12 @@ public sealed class NpgsqlListingRepository : IListingRepository
     private const string ListingsInsertCommand = $@"
         INSERT INTO {Constants.Schema}.{Constants.Listings.TableName} (
             {Constants.Listings.Id},
+            {Constants.Listings.Year},
             {Constants.Listings.CardExternalId},
             {Constants.Listings.BuyPrice},
             {Constants.Listings.SellPrice}
         )
-        VALUES ($1, $2, $3, $4)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING {Constants.Listings.Id};";
 
     /// <summary>

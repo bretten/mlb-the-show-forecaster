@@ -7,6 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// <summary>
 /// Represents a Listing from the MLB The Show
 /// </summary>
+/// <param name="Year">The year of MLB The Show</param>
 /// <param name="ListingName">The name of the Listing</param>
 /// <param name="BestBuyPrice">The current, best buy price</param>
 /// <param name="BestSellPrice">The current, best sell price</param>
@@ -14,6 +15,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// <param name="HistoricalPrices">The prices on the card for previous days</param>
 /// <param name="RecentOrders">Recent orders</param>
 public readonly record struct CardListing(
+    SeasonYear Year,
     string ListingName,
     NaturalNumber BestBuyPrice,
     NaturalNumber BestSellPrice,

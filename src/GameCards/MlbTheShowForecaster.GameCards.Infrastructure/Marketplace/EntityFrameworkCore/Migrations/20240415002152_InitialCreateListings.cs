@@ -23,6 +23,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                 columns: table => new
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
+                    year = table.Column<short>(type: "smallint", nullable: false),
                     card_external_id = table.Column<Guid>(type: "uuid", nullable: false),
                     buy_price = table.Column<int>(type: "integer", nullable: false),
                     sell_price = table.Column<int>(type: "integer", nullable: false)
@@ -30,6 +31,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                 constraints: table =>
                 {
                     table.PrimaryKey("listings_pkey", x => x.id);
+                    table.UniqueConstraint("listings_year_card_external_id_key", x => new { x.year, x.card_external_id });
                 });
 
             migrationBuilder.CreateTable(
@@ -81,13 +83,6 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                 schema: "game_cards",
                 table: "listing_orders",
                 column: "listing_id")
-                .Annotation("Npgsql:IndexMethod", "btree");
-
-            migrationBuilder.CreateIndex(
-                name: "listings_card_external_id_idx",
-                schema: "game_cards",
-                table: "listings",
-                column: "card_external_id")
                 .Annotation("Npgsql:IndexMethod", "btree");
         }
 

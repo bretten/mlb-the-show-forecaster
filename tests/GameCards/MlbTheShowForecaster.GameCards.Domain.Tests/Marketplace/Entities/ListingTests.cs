@@ -321,6 +321,7 @@ public class ListingTests
     public void Create_ValidValues_ReturnsListing()
     {
         // Arrange
+        var year = SeasonYear.Create(2024);
         var cardExternalId = Cards.TestClasses.Faker.FakeCardExternalId(Cards.TestClasses.Faker.FakeGuid1);
         const int buyPrice = 10;
         const int sellPrice = 20;
@@ -328,7 +329,7 @@ public class ListingTests
             buyPrice: 1, sellPrice: 2);
 
         // Act
-        var actual = Listing.Create(cardExternalId,
+        var actual = Listing.Create(year, cardExternalId,
             buyPrice: NaturalNumber.Create(buyPrice),
             sellPrice: NaturalNumber.Create(sellPrice),
             new List<ListingHistoricalPrice>()
@@ -337,6 +338,7 @@ public class ListingTests
             });
 
         // Assert
+        Assert.Equal(2024, actual.Year.Value);
         Assert.Equal(new Guid("00000000-0000-0000-0000-000000000001"), actual.CardExternalId.Value);
         Assert.Equal(10, actual.BuyPrice.Value);
         Assert.Equal(20, actual.SellPrice.Value);

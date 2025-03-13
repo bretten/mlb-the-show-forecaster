@@ -92,9 +92,9 @@ public sealed class CardPriceTracker : ICardPriceTracker
         await Parallel.ForEachAsync(domainPlayerCards, options, async (domainPlayerCard, token) =>
         {
             // Get the Listing for the card as it currently exists in the domain
-            var domainListing =
-                await _querySender.Send(new GetListingByCardExternalIdQuery(domainPlayerCard.ExternalId, false),
-                    cancellationToken);
+            var domainListing = await _querySender.Send(
+                new GetListingByCardExternalIdQuery(domainPlayerCard.Year, domainPlayerCard.ExternalId, false),
+                cancellationToken);
 
             // Get the pricing information from the external card marketplace
             var externalPrices = await _listingEventStore.PeekListing(year, domainPlayerCard.ExternalId);
@@ -106,7 +106,8 @@ public sealed class CardPriceTracker : ICardPriceTracker
                 Interlocked.Increment(ref newListings);
 
                 var addedListing = await _querySender.Send(
-                    new GetListingByCardExternalIdQuery(domainPlayerCard.ExternalId, false), cancellationToken);
+                    new GetListingByCardExternalIdQuery(domainPlayerCard.Year, domainPlayerCard.ExternalId, false),
+                    cancellationToken);
                 listings.TryAdd(domainPlayerCard.ExternalId, addedListing!);
 
                 return;

@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Data;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
@@ -55,6 +56,7 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         // INSERT the Listing
         await using var command = new NpgsqlCommand(ListingsInsertCommand, connection, transaction);
         command.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
+        command.Parameters.Add(new NpgsqlParameter { Value = (short)listing.Year.Value, DbType = DbType.Int16 });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.CardExternalId.Value, DbType = DbType.Guid });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
@@ -97,23 +99,26 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// <summary>
     /// Returns a <see cref="Listing"/> for the specified <see cref="CardExternalId"/>
     /// </summary>
+    /// <param name="year">The year of the <see cref="Listing"/></param>
     /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="Listing"/></param>
     /// <param name="includeRelated">True to include associated prices and orders, otherwise false</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The corresponding <see cref="Listing"/></returns>
-    public async Task<Listing?> GetByExternalId(CardExternalId externalId, bool includeRelated,
+    public async Task<Listing?> GetByExternalId(SeasonYear year, CardExternalId externalId, bool includeRelated,
         CancellationToken cancellationToken = default)
     {
         if (!includeRelated)
         {
             return await _dbContext.Listings
                 .AsNoTracking() // Entities will be updated without using EF Core, so no tracking needed
-                .FirstOrDefaultAsync(x => x.CardExternalId == externalId, cancellationToken: cancellationToken);
+                .FirstOrDefaultAsync(x => x.Year == year && x.CardExternalId == externalId,
+                    cancellationToken: cancellationToken);
         }
 
         return await _dbContext.ListingsWithHistoricalPrices()
             .AsNoTracking() // Entities will be updated without using EF Core, so no tracking needed
-            .FirstOrDefaultAsync(x => x.CardExternalId == externalId, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.Year == year && x.CardExternalId == externalId,
+                cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -346,11 +351,12 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     private const string ListingsInsertCommand = $@"
         INSERT INTO {Constants.Schema}.{Constants.Listings.TableName} (
             {Constants.Listings.Id},
+            {Constants.Listings.Year},
             {Constants.Listings.CardExternalId},
             {Constants.Listings.BuyPrice},
             {Constants.Listings.SellPrice}
         )
-        VALUES ($1, $2, $3, $4)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING {Constants.Listings.Id};";
 
     /// <summary>

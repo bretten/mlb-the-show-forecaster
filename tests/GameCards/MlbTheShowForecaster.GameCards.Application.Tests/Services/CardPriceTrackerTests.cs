@@ -64,24 +64,24 @@ public class CardPriceTrackerTests
         var stubPriceChangeThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
         // Listing1 for PlayerCard1 does not exist in the domain and will be created
         var cardExternalId1 = Faker.FakeCardExternalId(Faker.FakeGuid1);
-        var externalListing1 = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId1.Value,
+        var externalListing1 = Dtos.TestClasses.Faker.FakeCardListing(year.Value, cardExternalId: cardExternalId1.Value,
             bestBuyPrice: 1, bestSellPrice: 10);
         var domainListing1 =
-            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(cardExternalId: cardExternalId1.Value, 1, 10);
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(year.Value, cardExternalId1.Value, 1, 10);
         var domainPlayerCard1 = Faker.FakePlayerCard(year: year.Value, externalId: cardExternalId1.Value);
         // Listing2 for PlayerCard2 exists but the external listing has new data, so it will be updated
         var cardExternalId2 = Faker.FakeCardExternalId(Faker.FakeGuid2);
-        var externalListing2 = Dtos.TestClasses.Faker.FakeCardListing(cardExternalId: cardExternalId2.Value,
+        var externalListing2 = Dtos.TestClasses.Faker.FakeCardListing(year.Value, cardExternalId: cardExternalId2.Value,
             bestBuyPrice: 21, bestSellPrice: 210);
-        var domainListing2 = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(
-            cardExternalId: cardExternalId2.Value, 2, 20);
+        var domainListing2 =
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(year.Value, cardExternalId2.Value, 2, 20);
         var domainPlayerCard2 = Faker.FakePlayerCard(year: year.Value, externalId: cardExternalId2.Value);
         // Listing3 for PlayerCard3 exists, but the external listing has no new data, so no action will be taken
         var cardExternalId3 = Faker.FakeCardExternalId(Faker.FakeGuid3);
-        var externalListing3 = Dtos.TestClasses.Faker.FakeCardListing(
-            cardExternalId: cardExternalId3.Value, bestBuyPrice: 3, bestSellPrice: 30);
-        var domainListing3 = Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(
-            cardExternalId: cardExternalId3.Value, 3, 30);
+        var externalListing3 = Dtos.TestClasses.Faker.FakeCardListing(year.Value, cardExternalId: cardExternalId3.Value,
+            bestBuyPrice: 3, bestSellPrice: 30);
+        var domainListing3 =
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(year.Value, cardExternalId3.Value, 3, 30);
         var domainPlayerCard3 = Faker.FakePlayerCard(year: year.Value, externalId: cardExternalId3.Value);
 
         // The query that returns all PlayerCards currently in the domain
@@ -102,14 +102,14 @@ public class CardPriceTrackerTests
         var stubQuerySender = new Mock<IQuerySender>();
         stubQuerySender.Setup(x => x.Send(getAllPlayerCardsQuery, cToken))
             .ReturnsAsync(getAllPlayerCardsQueryResult);
-        var getListing1Query = new GetListingByCardExternalIdQuery(cardExternalId1, false);
+        var getListing1Query = new GetListingByCardExternalIdQuery(year, cardExternalId1, false);
         stubQuerySender.SetupSequence(x => x.Send(getListing1Query, cToken))
             .ReturnsAsync((Listing?)null)
             .ReturnsAsync(domainListing1);
-        var getListing2Query = new GetListingByCardExternalIdQuery(cardExternalId2, false);
+        var getListing2Query = new GetListingByCardExternalIdQuery(year, cardExternalId2, false);
         stubQuerySender.Setup(x => x.Send(getListing2Query, cToken))
             .ReturnsAsync(domainListing2);
-        var getListing3Query = new GetListingByCardExternalIdQuery(cardExternalId3, false);
+        var getListing3Query = new GetListingByCardExternalIdQuery(year, cardExternalId3, false);
         stubQuerySender.Setup(x => x.Send(getListing3Query, cToken))
             .ReturnsAsync(domainListing3);
 

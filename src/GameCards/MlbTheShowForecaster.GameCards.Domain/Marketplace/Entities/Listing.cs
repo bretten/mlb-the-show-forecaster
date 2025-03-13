@@ -25,6 +25,11 @@ public sealed class Listing : AggregateRoot
     private readonly List<ListingOrder> _orders;
 
     /// <summary>
+    /// The year of MLB The Show
+    /// </summary>
+    public SeasonYear Year { get; }
+
+    /// <summary>
     /// The external ID of the card that this listing is for
     /// </summary>
     public CardExternalId CardExternalId { get; }
@@ -90,14 +95,16 @@ public sealed class Listing : AggregateRoot
     /// <summary>
     /// Constructor
     /// </summary>
+    /// <param name="year">The year of MLB The Show</param>
     /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
     /// <param name="historicalPrices">The price history of this listing</param>
     /// <param name="orders">Orders for the listing</param>
-    private Listing(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice,
+    private Listing(SeasonYear year, CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice,
         List<ListingHistoricalPrice> historicalPrices, List<ListingOrder> orders) : base(Guid.NewGuid())
     {
+        Year = year;
         CardExternalId = cardExternalId;
         BuyPrice = buyPrice;
         SellPrice = sellPrice;
@@ -108,11 +115,12 @@ public sealed class Listing : AggregateRoot
     /// <summary>
     /// Constructor
     /// </summary>
+    /// <param name="year">The year of MLB The Show</param>
     /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
-    private Listing(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice)
-        : this(cardExternalId, buyPrice, sellPrice, new List<ListingHistoricalPrice>(), new List<ListingOrder>())
+    private Listing(SeasonYear year, CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice) :
+        this(year, cardExternalId, buyPrice, sellPrice, new List<ListingHistoricalPrice>(), new List<ListingOrder>())
     {
     }
 
@@ -120,14 +128,16 @@ public sealed class Listing : AggregateRoot
     /// Constructor
     /// </summary>
     /// <param name="id">The ID</param>
+    /// <param name="year">The year of MLB The Show</param>
     /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
     /// <param name="historicalPrices">The price history of this listing</param>
     /// <param name="orders">Orders for the listing</param>
-    private Listing(Guid id, CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice,
-        List<ListingHistoricalPrice> historicalPrices, List<ListingOrder> orders) : base(id)
+    private Listing(Guid id, SeasonYear year, CardExternalId cardExternalId, NaturalNumber buyPrice,
+        NaturalNumber sellPrice, List<ListingHistoricalPrice> historicalPrices, List<ListingOrder> orders) : base(id)
     {
+        Year = year;
         CardExternalId = cardExternalId;
         BuyPrice = buyPrice;
         SellPrice = sellPrice;
@@ -233,6 +243,7 @@ public sealed class Listing : AggregateRoot
     /// <summary>
     /// Creates a <see cref="Listing"/>
     /// </summary>
+    /// <param name="year">The year of MLB The Show</param>
     /// <param name="cardExternalId">The external ID of the card that this listing is for</param>
     /// <param name="buyPrice">The current, best buy price</param>
     /// <param name="sellPrice">The current, best sell price</param>
@@ -240,16 +251,17 @@ public sealed class Listing : AggregateRoot
     /// <param name="orders">Orders for the listing</param>
     /// <param name="id">The ID</param>
     /// <returns><see cref="Listing"/></returns>
-    public static Listing Create(CardExternalId cardExternalId, NaturalNumber buyPrice, NaturalNumber sellPrice,
-        List<ListingHistoricalPrice>? historicalPrices = null, List<ListingOrder>? orders = null, Guid? id = null)
+    public static Listing Create(SeasonYear year, CardExternalId cardExternalId, NaturalNumber buyPrice,
+        NaturalNumber sellPrice, List<ListingHistoricalPrice>? historicalPrices = null,
+        List<ListingOrder>? orders = null, Guid? id = null)
     {
         if (id.HasValue)
         {
-            return new Listing(id.Value, cardExternalId, buyPrice, sellPrice,
+            return new Listing(id.Value, year, cardExternalId, buyPrice, sellPrice,
                 historicalPrices ?? new List<ListingHistoricalPrice>(), orders ?? new List<ListingOrder>());
         }
 
-        return new Listing(cardExternalId, buyPrice, sellPrice, historicalPrices ?? new List<ListingHistoricalPrice>(),
-            orders ?? new List<ListingOrder>());
+        return new Listing(year, cardExternalId, buyPrice, sellPrice,
+            historicalPrices ?? new List<ListingHistoricalPrice>(), orders ?? new List<ListingOrder>());
     }
 }
