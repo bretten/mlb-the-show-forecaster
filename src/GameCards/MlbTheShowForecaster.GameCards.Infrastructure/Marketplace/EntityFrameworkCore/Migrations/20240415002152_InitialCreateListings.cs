@@ -79,6 +79,13 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                 });
 
             migrationBuilder.CreateIndex(
+                name: "listing_historical_prices_listing_id_idx",
+                schema: "game_cards",
+                table: "listing_historical_prices",
+                column: "listing_id")
+                .Annotation("Npgsql:IndexMethod", "btree");
+
+            migrationBuilder.CreateIndex(
                 name: "listing_orders_listing_id_idx",
                 schema: "game_cards",
                 table: "listing_orders",

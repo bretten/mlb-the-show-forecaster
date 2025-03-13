@@ -116,6 +116,17 @@ public static class Constants
             /// </summary>
             public const string ListingsForeignKeyConstraint = $"{TableName}_{Listings.TableName}_{Listings.Id}_fkey";
         }
+
+        /// <summary>
+        /// Index names for <see cref="ListingHistoricalPrice"/>
+        /// </summary>
+        public static class Indexes
+        {
+            /// <summary>
+            /// For querying by Listing ID (and for the foreign key relationship)
+            /// </summary>
+            public const string ListingIdIndex = $"{TableName}_{ListingId}_idx";
+        }
     }
 
     /// <summary>

@@ -87,6 +87,10 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                     b.HasKey("listing_id", "Date")
                         .HasName("listing_historical_prices_pkey");
 
+                    b.HasIndex(new[] { "listing_id" }, "listing_historical_prices_listing_id_idx");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "listing_id" }, "listing_historical_prices_listing_id_idx"), "btree");
+
                     b.ToTable("listing_historical_prices", "game_cards");
                 });
 

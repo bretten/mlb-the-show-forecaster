@@ -27,6 +27,11 @@ public sealed class ListingHistoricalPriceEntityTypeConfiguration : IEntityTypeC
         builder.HasKey([Constants.ListingHistoricalPrices.ListingId, nameof(ListingHistoricalPrice.Date)])
             .HasName(Constants.ListingHistoricalPrices.Keys.PrimaryKey);
 
+        // Index for the foreign key relationship
+        builder.HasIndex([Constants.ListingHistoricalPrices.ListingId],
+                Constants.ListingHistoricalPrices.Indexes.ListingIdIndex)
+            .HasMethod("btree");
+
         var columnOrder = 0;
 
         builder.Property(Constants.ListingHistoricalPrices.ListingId)
