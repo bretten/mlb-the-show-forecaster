@@ -52,25 +52,30 @@ public sealed class RedisListingEventStore : IListingEventStore
     }
 
     /// <summary>
+    /// Key prefix
+    /// </summary>
+    /// <param name="year">The year of the listing</param>
+    internal static string KeyPrefix(SeasonYear year) => $"listings:{year.Value}";
+
+    /// <summary>
     /// Key for storing the most recent state of a listing for peeking purposes
     /// </summary>
     /// <param name="year">The year of the listing</param>
     /// <param name="externalId">The ID of the listing</param>
     internal static string ListingKey(SeasonYear year, CardExternalId externalId) =>
-        $"listings:{year.Value}:{externalId.AsStringDigits}";
+        $"{KeyPrefix(year)}:last_state:{externalId.AsStringDigits}";
 
     /// <summary>
     /// Key for the Listing prices event store
     /// </summary>
     /// <param name="year">The year of the listing</param>
-    internal static string PricesEventStoreKey(SeasonYear year) => $"listings:prices:{year.Value}";
+    internal static string PricesEventStoreKey(SeasonYear year) => $"{KeyPrefix(year)}:prices:event_store";
 
     /// <summary>
     /// Key for the chronologically last acknowledged Listing price in the event store
     /// </summary>
     /// <param name="year">The year of the listing</param>
-    internal static string LastAcknowledgedPriceKey(SeasonYear year) =>
-        $"listings:prices:{year.Value}:last_acknowledged";
+    internal static string LastAcknowledgedPriceKey(SeasonYear year) => $"{KeyPrefix(year)}:prices:last_acknowledged";
 
     /// <summary>
     /// Key for keeping track of Listing prices that were recently added to the event store so duplicates aren't re-added
@@ -78,20 +83,19 @@ public sealed class RedisListingEventStore : IListingEventStore
     /// <param name="year">The year of the listing</param>
     /// <param name="externalId">The ID of the listing</param>
     internal static string RecentPricesKey(SeasonYear year, CardExternalId externalId) =>
-        $"listings:prices:{year.Value}:recent:{externalId.AsStringDigits}";
+        $"{KeyPrefix(year)}:prices:recent:{externalId.AsStringDigits}";
 
     /// <summary>
     /// Key for the Listing orders event store
     /// </summary>
     /// <param name="year">The year of the listing</param>
-    internal static string OrdersEventStoreKey(SeasonYear year) => $"listings:orders:{year.Value}";
+    internal static string OrdersEventStoreKey(SeasonYear year) => $"{KeyPrefix(year)}:orders:event_store";
 
     /// <summary>
     /// Key for the chronologically last acknowledged Listing order in the event store
     /// </summary>
     /// <param name="year">The year of the listing</param>
-    internal static string LastAcknowledgedOrderKey(SeasonYear year) =>
-        $"listings:orders:{year.Value}:last_acknowledged";
+    internal static string LastAcknowledgedOrderKey(SeasonYear year) => $"{KeyPrefix(year)}:orders:last_acknowledged";
 
     /// <summary>
     /// Key for keeping track of Listing orders that were recently added to the event store so duplicates aren't re-added
@@ -99,7 +103,7 @@ public sealed class RedisListingEventStore : IListingEventStore
     /// <param name="year">The year of the listing</param>
     /// <param name="externalId">The ID of the listing</param>
     internal static string RecentOrdersKey(SeasonYear year, CardExternalId externalId) =>
-        $"listings:orders:{year.Value}:recent:{externalId.AsStringDigits}";
+        $"{KeyPrefix(year)}:orders:recent:{externalId.AsStringDigits}";
 
     /// <summary>
     /// Uniquely identifies a price in the Redis data type that tracks prices recently added to the event store (<see cref="RecentPricesKey"/>)
