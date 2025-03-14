@@ -10,6 +10,7 @@ public class MlbTheShowApiFactoryTests
     [InlineData(2022, Constants.BaseUrl2022)]
     [InlineData(2023, Constants.BaseUrl2023)]
     [InlineData(2024, Constants.BaseUrl2024)]
+    [InlineData(2025, Constants.BaseUrl2025)]
     public void GetClient_Year_ReturnsClientForSpecifiedYear(int year, string expectedBaseUrl)
     {
         // Arrange

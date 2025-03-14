@@ -8,5 +8,6 @@ public enum Year
     Season2021 = 2021,
     Season2022 = 2022,
     Season2023 = 2023,
-    Season2024 = 2024
+    Season2024 = 2024,
+    Season2025 = 2025,
 }
