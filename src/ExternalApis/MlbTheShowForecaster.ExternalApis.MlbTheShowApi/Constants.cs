@@ -6,6 +6,11 @@
 public static class Constants
 {
     /// <summary>
+    /// Base URL for MLB the Show 2025
+    /// </summary>
+    public const string BaseUrl2025 = "https://mlb25.theshow.com";
+
+    /// <summary>
     /// Base URL for MLB the Show 2024
     /// </summary>
     public const string BaseUrl2024 = "https://mlb24.theshow.com";
