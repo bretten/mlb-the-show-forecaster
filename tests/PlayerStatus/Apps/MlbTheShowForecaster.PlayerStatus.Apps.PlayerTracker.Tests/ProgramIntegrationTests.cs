@@ -69,10 +69,12 @@ public class ProgramIntegrationTests : IAsyncLifetime
          */
         // Command line arguments when running the program
         var args = Array.Empty<string>();
+        const ushort season = 2024;
 
         // Builder
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
+        builder.Configuration["Jobs:Seasons:0"] = season.ToString();
         builder.Configuration["Jobs:RunOnStartup"] = "true";
         builder.Configuration["ConnectionStrings:Players"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["Messaging:RabbitMq:HostName"] = _rabbitMqContainer.Hostname;
