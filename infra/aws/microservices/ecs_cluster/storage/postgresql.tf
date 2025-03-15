@@ -44,7 +44,7 @@ resource "aws_ecs_task_definition" "task_definition_postgresql" {
           },
         ]
         healthCheck = {
-          command     = ["CMD-SHELL", "pg_isready -U postgres -d ${var.pgsql_db_name}"]
+          command     = ["CMD-SHELL", "pg_isready -U ${var.pgsql_user} -d ${var.pgsql_db_name}"]
           interval    = 300
           retries     = 5
           startPeriod = 30
