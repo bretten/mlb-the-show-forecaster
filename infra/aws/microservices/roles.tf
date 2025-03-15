@@ -12,10 +12,20 @@ resource "aws_iam_role" "role_ecs_task_execution" {
           }
           Sid = ""
         },
+        {
+          Action = "sts:AssumeRole"
+          Effect = "Allow"
+          Principal = {
+            Service = "backup.amazonaws.com"
+          }
+          Sid = ""
+        },
       ]
       Version = "2008-10-17"
     }
   )
+
+  tags = var.root_tags
 }
 
 # Policy for creating log groups
@@ -61,4 +71,10 @@ resource "aws_iam_role_policy" "policy_register_load_balancer" {
 resource "aws_iam_role_policy_attachment" "attachment_ecs_task_execution" {
   role       = aws_iam_role.role_ecs_task_execution.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# Managed policy for backups
+resource "aws_iam_role_policy_attachment" "attachment_backup" {
+  role       = aws_iam_role.role_ecs_task_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
 }

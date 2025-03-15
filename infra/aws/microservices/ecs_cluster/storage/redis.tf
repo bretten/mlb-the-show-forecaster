@@ -1,18 +1,18 @@
-# postgresql logs
-resource "aws_cloudwatch_log_group" "logs_postgresql" {
-  name              = "/ecs/${var.resource_prefix}-postgresql"
+# redis logs
+resource "aws_cloudwatch_log_group" "logs_redis" {
+  name              = "/ecs/${var.resource_prefix}-redis"
   retention_in_days = 7
 
   tags = var.root_tags
 }
 
-# postgresql
-resource "aws_ecs_task_definition" "task_definition_postgresql" {
-  family                   = "${var.resource_prefix}-postgresql"
+# redis
+resource "aws_ecs_task_definition" "task_definition_redis" {
+  family                   = "${var.resource_prefix}-redis"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "512"
-  memory                   = "1024"
+  cpu                      = "1024"
+  memory                   = "2048"
   task_role_arn            = null
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false
@@ -21,12 +21,12 @@ resource "aws_ecs_task_definition" "task_definition_postgresql" {
     [
       {
         essential = true
-        name      = "${var.resource_prefix}-postgresql"
-        image     = "postgres:16-alpine"
+        name      = "${var.resource_prefix}-redis"
+        image     = "redis/redis-stack:7.4.0-v3"
         logConfiguration = {
           logDriver = "awslogs"
           options = {
-            awslogs-group         = aws_cloudwatch_log_group.logs_postgresql.name
+            awslogs-group         = aws_cloudwatch_log_group.logs_redis.name
             awslogs-region        = var.aws_region
             awslogs-stream-prefix = "ecs"
             max-buffer-size       = "25m"
@@ -37,14 +37,21 @@ resource "aws_ecs_task_definition" "task_definition_postgresql" {
         portMappings = [
           {
             appProtocol   = "http"
-            containerPort = 5432
-            hostPort      = 5432
-            name          = "${var.resource_prefix}-postgresql-5432-tcp"
+            containerPort = 6379
+            hostPort      = 6379
+            name          = "${var.resource_prefix}-redis-6379-tcp"
+            protocol      = "tcp"
+          },
+          {
+            appProtocol   = "http"
+            containerPort = 8001
+            hostPort      = 8001
+            name          = "${var.resource_prefix}-redis-insight-8001-tcp"
             protocol      = "tcp"
           },
         ]
         healthCheck = {
-          command     = ["CMD-SHELL", "pg_isready -U postgres -d ${var.pgsql_db_name}"]
+          command     = ["CMD-SHELL", "redis-cli -a ${var.redis_pass} ping"]
           interval    = 300
           retries     = 5
           startPeriod = 30
@@ -52,42 +59,15 @@ resource "aws_ecs_task_definition" "task_definition_postgresql" {
         }
         environment = [
           {
-            name  = "LANG"
-            value = "en_US.utf8"
-          },
-          {
-            name  = "POSTGRES_INITDB_ARGS"
-            value = "--locale-provider=icu --icu-locale=en-US"
-          },
-          {
-            name  = "POSTGRES_DB"
-            value = var.pgsql_db_name
-          },
-          {
-            name  = "POSTGRES_USER"
-            value = var.pgsql_user
-          },
-          {
-            name  = "POSTGRES_PASSWORD"
-            value = var.pgsql_pass
+            name  = "REDIS_ARGS"
+            value = "--requirepass ${var.redis_pass} --appendonly yes"
           }
-        ]
-        command = [
-          "postgres",
-          "-c", "log_connections=on",
-          "-c", "log_disconnections=on",
-          "-c", "log_statement=none",
-          "-c", "log_min_messages=ERROR",
-          "-c", "client_min_messages=ERROR",
-          "-c", "max_connections=300",
-          "-c", "shared_buffers=256MB",
-          "-c", "statement_timeout=240000",
         ]
         environmentFiles = []
         mountPoints = [
           {
-            sourceVolume  = "postgres-volume"
-            containerPath = "/var/lib/postgresql/data"
+            sourceVolume  = "redis-volume"
+            containerPath = "/data"
           }
         ]
         systemControls = []
@@ -103,26 +83,26 @@ resource "aws_ecs_task_definition" "task_definition_postgresql" {
   }
 
   volume {
-    name = "postgres-volume"
+    name = "redis-volume"
 
     efs_volume_configuration {
       file_system_id          = aws_efs_file_system.efs_storage.id
       transit_encryption      = "ENABLED"
       transit_encryption_port = 2999
       authorization_config {
-        access_point_id = aws_efs_access_point.efs_access_storage_postgres.id
+        access_point_id = aws_efs_access_point.efs_access_storage_redis.id
       }
     }
   }
 
   tags = var.root_tags
 
-  depends_on = [aws_efs_access_point.efs_access_storage_postgres]
+  depends_on = [aws_efs_access_point.efs_access_storage_redis]
 }
 
-# Service discovery for Postgresql
-resource "aws_service_discovery_service" "discovery_service_postgresql" {
-  name          = "postgresql"
+# Service discovery for redis
+resource "aws_service_discovery_service" "discovery_service_redis" {
+  name          = "redis"
   description   = null
   namespace_id  = var.private_dns_namespace_id
   force_destroy = false
@@ -144,11 +124,11 @@ resource "aws_service_discovery_service" "discovery_service_postgresql" {
   tags = var.root_tags
 }
 
-# Postgresql service
-resource "aws_ecs_service" "ecs_service_postgresql" {
-  name            = "${var.resource_prefix}-postgresql"
+# redis service
+resource "aws_ecs_service" "ecs_service_redis" {
+  name            = "${var.resource_prefix}-redis"
   cluster         = var.main_cluster_id
-  task_definition = aws_ecs_task_definition.task_definition_postgresql.arn
+  task_definition = aws_ecs_task_definition.task_definition_redis.arn
   desired_count   = 1
 
   deployment_maximum_percent         = 200
@@ -186,7 +166,7 @@ resource "aws_ecs_service" "ecs_service_postgresql" {
     container_name = null
     container_port = 0
     port           = 0
-    registry_arn   = aws_service_discovery_service.discovery_service_postgresql.arn
+    registry_arn   = aws_service_discovery_service.discovery_service_redis.arn
   }
 
   capacity_provider_strategy {

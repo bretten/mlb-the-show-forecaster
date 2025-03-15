@@ -75,3 +75,24 @@ resource "aws_efs_access_point" "efs_access_storage_rabbitmq" {
 
   tags = var.root_tags
 }
+
+# Access point for Redis
+resource "aws_efs_access_point" "efs_access_storage_redis" {
+  file_system_id = aws_efs_file_system.efs_storage.id
+
+  posix_user {
+    gid = 1000 # 1000/999 is the user/group for the redis Docker image
+    uid = 999
+  }
+
+  root_directory {
+    creation_info {
+      owner_gid   = 1000
+      owner_uid   = 999
+      permissions = "755"
+    }
+    path = "/redis-data"
+  }
+
+  tags = var.root_tags
+}
