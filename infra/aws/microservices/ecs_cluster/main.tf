@@ -20,6 +20,7 @@ module "storage" {
   subnet_id_private         = var.subnet_id_private
   aspnetcore_environment    = var.aspnetcore_environment
   capacity_provider         = var.capacity_provider
+  backup_vault_name         = var.backup_vault_name
   use_nat_gateway           = var.use_nat_gateway
   pgsql_user                = var.pgsql_user
   pgsql_pass                = var.pgsql_pass
@@ -28,4 +29,5 @@ module "storage" {
   mongodb_pass              = var.mongodb_pass
   rabbitmq_user             = var.rabbitmq_user
   rabbitmq_pass             = var.rabbitmq_pass
+  redis_pass                = var.redis_pass
 }

@@ -65,6 +65,7 @@ module "ecs_cluster" {
   subnet_id_public1                  = module.vpc.subnet_id_public1
   subnet_id_public2                  = module.vpc.subnet_id_public2
   subnet_id_private                  = module.vpc.subnet_id_private
+  backup_vault_name                  = aws_backup_vault.backup_vault_storage.name
   port_gateway                       = var.port_gateway
   port_player_tracker                = var.port_player_tracker
   port_performance_tracker           = var.port_performance_tracker
@@ -84,5 +85,6 @@ module "ecs_cluster" {
   mongodb_pass                       = var.mongodb_pass
   rabbitmq_user                      = var.rabbitmq_user
   rabbitmq_pass                      = var.rabbitmq_pass
+  redis_pass                         = var.redis_pass
   depends_on                         = [module.vpc, module.load_balancer]
 }

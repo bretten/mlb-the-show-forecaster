@@ -107,3 +107,9 @@ variable "rabbitmq_pass" {
   type        = string
   sensitive   = true
 }
+
+variable "redis_pass" {
+  description = "redis password"
+  type        = string
+  sensitive   = true
+}

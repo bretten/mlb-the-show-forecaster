@@ -98,6 +98,11 @@ variable "health_alerts_arn" {
   type        = string
 }
 
+variable "backup_vault_name" {
+  description = "Backup vault"
+  type        = string
+}
+
 # Domain service ports
 variable "port_gateway" {
   description = "The port for the Gateway"
@@ -180,6 +185,12 @@ variable "rabbitmq_user" {
 
 variable "rabbitmq_pass" {
   description = "rabbitmq password"
+  type        = string
+  sensitive   = true
+}
+
+variable "redis_pass" {
+  description = "redis password"
   type        = string
   sensitive   = true
 }
