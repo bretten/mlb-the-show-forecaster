@@ -38,7 +38,7 @@ public class ScopedSingleInstanceJobManagerTests
          * Assert
          */
         // Make sure the error was broadcast
-        var error = ScopedSingleInstanceJobManager.JobState.Error();
+        var error = ScopedSingleInstanceJobManager.JobState.Error(jobInput);
         Mock.Get(mockCommService).Verify(x => x.Broadcast(jobName, error, cToken), Times.Once);
         // Make sure the exception details were logged
         Mock.Get(mockLogger).Verify(x => x.Log(LogLevel.Error,
