@@ -95,7 +95,7 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
         {
             stopwatch.Start();
             _logger.LogInformation($"Starting job {jobName} at {DateTime.Now}");
-            await BroadcastProgress(jobExecution, JobState.Start(), cancellationToken);
+            await BroadcastProgress(jobExecution, JobState.Start(input), cancellationToken);
 
             // Resolve the job
             var scope = _serviceScopeFactory.CreateScope();
@@ -106,18 +106,19 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
 
             // Run the job
             var result = await job!.Execute(input, cancellationToken);
-            await BroadcastProgress(jobExecution, JobState.InProgress(), cancellationToken);
+            await BroadcastProgress(jobExecution, JobState.InProgress(input), cancellationToken);
 
             // When the job has finished, update the TaskCompletionSource result
             tcs.SetResult(result);
             UpdateLastRun(jobExecution);
 
-            await BroadcastProgress(jobExecution, JobState.Done(data: result), cancellationToken);
+            await BroadcastProgress(jobExecution, JobState.Done(input, data: result), cancellationToken);
         }
         catch (Exception e)
         {
             _logger.LogError(e, $"Job {jobName} failed");
-            await BroadcastProgress(jobExecution, JobState.Error(), CancellationToken.None); // Don't allow canceling
+            // CancellationToken.None = don't allow canceling
+            await BroadcastProgress(jobExecution, JobState.Error(input), CancellationToken.None);
             tcs.SetException(e);
         }
 
@@ -150,7 +151,7 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
 
         foreach (var activeJob in ActiveJobs)
         {
-            await BroadcastProgress(activeJob.Key, JobState.InProgress(), cancellationToken);
+            await BroadcastProgress(activeJob.Key, JobState.InProgress(activeJob.Key.JobInput), cancellationToken);
         }
     }
 
@@ -201,6 +202,11 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
         public string State => _state.ToString();
 
         /// <summary>
+        /// The input to the job
+        /// </summary>
+        public object Input { get; }
+
+        /// <summary>
         /// Message about the state
         /// </summary>
         public string Message { get; }
@@ -210,31 +216,32 @@ public sealed class ScopedSingleInstanceJobManager : IJobManager
         /// </summary>
         public object? Data { get; }
 
-        private JobState(StateType state, string message, object? data)
+        private JobState(StateType state, object input, string message, object? data)
         {
             _state = state;
+            Input = input;
             Message = message;
             Data = data;
         }
 
-        public static JobState Start(string? message = null, object? data = null)
+        public static JobState Start(object input, string? message = null, object? data = null)
         {
-            return new JobState(StateType.Start, message ?? StateType.Start.GetDisplayName(), data);
+            return new JobState(StateType.Start, input, message ?? StateType.Start.GetDisplayName(), data);
         }
 
-        public static JobState InProgress(string? message = null, object? data = null)
+        public static JobState InProgress(object input, string? message = null, object? data = null)
         {
-            return new JobState(StateType.InProgress, message ?? StateType.InProgress.GetDisplayName(), data);
+            return new JobState(StateType.InProgress, input, message ?? StateType.InProgress.GetDisplayName(), data);
         }
 
-        public static JobState Done(string? message = null, object? data = null)
+        public static JobState Done(object input, string? message = null, object? data = null)
         {
-            return new JobState(StateType.Done, message ?? StateType.Done.GetDisplayName(), data);
+            return new JobState(StateType.Done, input, message ?? StateType.Done.GetDisplayName(), data);
         }
 
-        public static JobState Error(string? message = null, object? data = null)
+        public static JobState Error(object input, string? message = null, object? data = null)
         {
-            return new JobState(StateType.Error, message ?? StateType.Error.GetDisplayName(), data);
+            return new JobState(StateType.Error, input, message ?? StateType.Error.GetDisplayName(), data);
         }
     }
 
