@@ -192,7 +192,7 @@ resource "aws_ecs_service" "ecs_service_postgresql" {
   capacity_provider_strategy {
     base              = 1
     weight            = 100
-    capacity_provider = var.capacity_provider
+    capacity_provider = "FARGATE"
   }
 
   tags = var.root_tags

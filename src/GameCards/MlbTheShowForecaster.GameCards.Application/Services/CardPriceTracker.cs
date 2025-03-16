@@ -1,12 +1,17 @@
-﻿using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
+﻿using System.Collections.Concurrent;
+using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreateListing;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListingsPricesAndOrders;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetAllPlayerCards;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.EventStores;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.Results;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -17,9 +22,9 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 public sealed class CardPriceTracker : ICardPriceTracker
 {
     /// <summary>
-    /// Service that will retrieve marketplace pricing information for card listings
+    /// Retrieves marketplace pricing information for card listings
     /// </summary>
-    private readonly ICardMarketplace _cardMarketplace;
+    private readonly IListingEventStore _listingEventStore;
 
     /// <summary>
     /// Sends queries to retrieve state from the system
@@ -37,19 +42,27 @@ public sealed class CardPriceTracker : ICardPriceTracker
     private readonly IListingPriceSignificantChangeThreshold _listingPriceSignificantChangeThreshold;
 
     /// <summary>
+    /// Batch size for prices and orders
+    /// </summary>
+    private readonly int _batchSize;
+
+    /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="cardMarketplace">Service that will retrieve marketplace pricing information for card listings</param>
+    /// <param name="listingEventStore">Retrieves marketplace pricing information for card listings</param>
     /// <param name="querySender">Sends queries to retrieve state from the system</param>
     /// <param name="commandSender">Sends commands to mutate the system</param>
     /// <param name="listingPriceSignificantChangeThreshold">The percentage change threshold that determines significant listing price changes</param>
-    public CardPriceTracker(ICardMarketplace cardMarketplace, IQuerySender querySender, ICommandSender commandSender,
-        IListingPriceSignificantChangeThreshold listingPriceSignificantChangeThreshold)
+    /// <param name="batchSize">Batch size for prices and orders</param>
+    public CardPriceTracker(IListingEventStore listingEventStore, IQuerySender querySender,
+        ICommandSender commandSender, IListingPriceSignificantChangeThreshold listingPriceSignificantChangeThreshold,
+        int batchSize)
     {
-        _cardMarketplace = cardMarketplace;
+        _listingEventStore = listingEventStore;
         _querySender = querySender;
         _commandSender = commandSender;
         _listingPriceSignificantChangeThreshold = listingPriceSignificantChangeThreshold;
+        _batchSize = batchSize;
     }
 
     /// <summary>
@@ -75,28 +88,35 @@ public sealed class CardPriceTracker : ICardPriceTracker
         var newListings = 0;
         var updatedListings = 0;
         var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount };
+        var listings = new ConcurrentDictionary<CardExternalId, Listing>();
         await Parallel.ForEachAsync(domainPlayerCards, options, async (domainPlayerCard, token) =>
         {
             // Get the Listing for the card as it currently exists in the domain
-            var domainListing =
-                await _querySender.Send(new GetListingByCardExternalIdQuery(domainPlayerCard.ExternalId),
-                    cancellationToken);
+            var domainListing = await _querySender.Send(
+                new GetListingByCardExternalIdQuery(domainPlayerCard.Year, domainPlayerCard.ExternalId, false),
+                cancellationToken);
 
             // Get the pricing information from the external card marketplace
-            var externalPrices =
-                await _cardMarketplace.GetCardPrice(year, domainPlayerCard.ExternalId, cancellationToken);
+            var externalPrices = await _listingEventStore.PeekListing(year, domainPlayerCard.ExternalId);
 
             // If the Listing doesn't exist in this domain yet, create it
             if (domainListing == null)
             {
                 await _commandSender.Send(new CreateListingCommand(externalPrices), cancellationToken);
                 Interlocked.Increment(ref newListings);
+
+                var addedListing = await _querySender.Send(
+                    new GetListingByCardExternalIdQuery(domainPlayerCard.Year, domainPlayerCard.ExternalId, false),
+                    cancellationToken);
+                listings.TryAdd(domainPlayerCard.ExternalId, addedListing!);
+
                 return;
             }
 
+            listings.TryAdd(domainPlayerCard.ExternalId, domainListing);
+
             // If there is new pricing information from the external source, update the domain Listing with the new data
-            if (externalPrices.HasNewPrices(domainListing) || externalPrices.HasNewHistoricalPrices(domainListing) ||
-                externalPrices.HasNewOrders(domainListing))
+            if (externalPrices.HasNewPrices(domainListing))
             {
                 await _commandSender.Send(
                     new UpdateListingCommand(domainListing, externalPrices, _listingPriceSignificantChangeThreshold),
@@ -105,6 +125,10 @@ public sealed class CardPriceTracker : ICardPriceTracker
                 Interlocked.Increment(ref updatedListings);
             }
         });
+
+        // Batch insert orders and prices
+        await _commandSender.Send(new UpdateListingsPricesAndOrdersCommand(year, listings.ToDictionary(), _batchSize),
+            cancellationToken);
 
         return new CardPriceTrackerResult(TotalCards: domainPlayerCards.Count,
             TotalNewListings: newListings,
@@ -117,6 +141,5 @@ public sealed class CardPriceTracker : ICardPriceTracker
     /// </summary>
     public void Dispose()
     {
-        _cardMarketplace.Dispose();
     }
 }

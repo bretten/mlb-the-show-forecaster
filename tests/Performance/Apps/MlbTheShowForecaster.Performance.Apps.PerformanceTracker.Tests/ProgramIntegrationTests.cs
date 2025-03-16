@@ -1,6 +1,7 @@
 ﻿using System.Data.Common;
 using System.Diagnostics;
 using com.brettnamba.MlbTheShowForecaster.Performance.Infrastructure.PlayerSeasons.EntityFrameworkCore;
+using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
@@ -29,6 +30,11 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithUsername("postgres")
                 .WithPassword("password99")
                 .WithPortBinding(PostgreSqlPort, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(PostgreSqlPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                    .UntilCommandIsCompleted(["pg_isready", "-U", "postgres", "-d", "postgres"],
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
@@ -36,6 +42,9 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithPortBinding(RabbitMqPort, true)
                 .WithPortBinding(15672, true)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(RabbitMqPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
         }
         catch (ArgumentException e)
@@ -58,13 +67,16 @@ public class ProgramIntegrationTests : IAsyncLifetime
          */
         // Command line arguments when running the program
         var args = Array.Empty<string>();
+        const ushort season = 2024;
 
         // Builder
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
+        builder.Configuration["Jobs:Seasons:0"] = season.ToString();
         builder.Configuration["Jobs:RunOnStartup"] = "true";
         builder.Configuration["ConnectionStrings:PlayerSeasons"] =
             _dbContainer.GetConnectionString() + ";Pooling=false;";
+        builder.Configuration["Messaging:RabbitMq:HostName"] = _rabbitMqContainer.Hostname;
         builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
         builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
         builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();

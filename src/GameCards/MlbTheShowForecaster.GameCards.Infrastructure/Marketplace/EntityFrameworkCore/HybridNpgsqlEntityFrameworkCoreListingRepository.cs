@@ -1,12 +1,13 @@
-﻿using System.Data;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System.Collections.ObjectModel;
+using System.Data;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Database;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.Npgsql;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using NpgsqlTypes;
@@ -55,6 +56,7 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         // INSERT the Listing
         await using var command = new NpgsqlCommand(ListingsInsertCommand, connection, transaction);
         command.Parameters.Add(new NpgsqlParameter { Value = listing.Id, DbType = DbType.Guid });
+        command.Parameters.Add(new NpgsqlParameter { Value = (short)listing.Year.Value, DbType = DbType.Int16 });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.CardExternalId.Value, DbType = DbType.Guid });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.BuyPrice.Value, DbType = DbType.Int32 });
         command.Parameters.Add(new NpgsqlParameter { Value = listing.SellPrice.Value, DbType = DbType.Int32 });
@@ -97,15 +99,71 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// <summary>
     /// Returns a <see cref="Listing"/> for the specified <see cref="CardExternalId"/>
     /// </summary>
+    /// <param name="year">The year of the <see cref="Listing"/></param>
     /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="Listing"/></param>
+    /// <param name="includeRelated">True to include associated prices and orders, otherwise false</param>
     /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
     /// <returns>The corresponding <see cref="Listing"/></returns>
-    public async Task<Listing?> GetByExternalId(CardExternalId externalId,
+    public async Task<Listing?> GetByExternalId(SeasonYear year, CardExternalId externalId, bool includeRelated,
         CancellationToken cancellationToken = default)
     {
+        if (!includeRelated)
+        {
+            return await _dbContext.Listings
+                .AsNoTracking() // Entities will be updated without using EF Core, so no tracking needed
+                .FirstOrDefaultAsync(x => x.Year == year && x.CardExternalId == externalId,
+                    cancellationToken: cancellationToken);
+        }
+
         return await _dbContext.ListingsWithHistoricalPrices()
             .AsNoTracking() // Entities will be updated without using EF Core, so no tracking needed
-            .FirstOrDefaultAsync(x => x.CardExternalId == externalId, cancellationToken: cancellationToken);
+            .FirstOrDefaultAsync(x => x.Year == year && x.CardExternalId == externalId,
+                cancellationToken: cancellationToken);
+    }
+
+    /// <summary>
+    /// Adds the specified <see cref="ListingHistoricalPrice"/>s
+    /// </summary>
+    /// <param name="listings">The <see cref="Listing"/>s that the <see cref="ListingHistoricalPrice"/>s belong to</param>
+    /// <param name="prices">The prices to add</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <returns>The completed task</returns>
+    public async Task Add(Dictionary<CardExternalId, Listing> listings,
+        Dictionary<CardExternalId, ReadOnlyCollection<ListingHistoricalPrice>> prices,
+        CancellationToken cancellationToken = default)
+    {
+        // Open a connection and begin a transaction
+        var connection = await GetConnection(cancellationToken);
+        var transaction = await GetTransaction(cancellationToken);
+
+        await using var importer = await connection.BeginBinaryImportAsync(
+            ListingHistoricalPricesBinaryCopyCommand(Constants.ListingHistoricalPrices.TableName), cancellationToken);
+        _batchHistoricalPriceWriterDelegate(listings, prices, importer);
+        await importer.CompleteAsync(cancellationToken);
+        await importer.CloseAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Adds the specified <see cref="ListingOrder"/>s
+    /// </summary>
+    /// /// <param name="listings">The <see cref="Listing"/>s that the <see cref="ListingOrder"/>s belong to</param>
+    /// <param name="orders">The orders to add</param>
+    /// <param name="cancellationToken">A <see cref="CancellationToken" /> to observe while waiting for the task to complete</param>
+    /// <returns>The completed task</returns>
+    public async Task Add(Dictionary<CardExternalId, Listing> listings,
+        Dictionary<CardExternalId, ReadOnlyCollection<ListingOrder>> orders,
+        CancellationToken cancellationToken = default)
+    {
+        // Open a connection and begin a transaction
+        var connection = await GetConnection(cancellationToken);
+        var transaction = await GetTransaction(cancellationToken);
+
+        await using var importer =
+            await connection.BeginBinaryImportAsync(ListingOrdersBinaryCopyCommand(Constants.ListingOrders.TableName),
+                cancellationToken);
+        _batchOrderWriterDelegate(listings, orders, importer);
+        await importer.CompleteAsync(cancellationToken);
+        await importer.CloseAsync(cancellationToken);
     }
 
     /// <summary>
@@ -160,8 +218,8 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
         await tempTableCmd.ExecuteNonQueryAsync(cancellationToken);
 
         // COPY the Listing's historical prices into the temporary table using a binary import
-        await using var importer =
-            await connection.BeginBinaryImportAsync(ListingHistoricalPricesBinaryCopyCommand, cancellationToken);
+        await using var importer = await connection.BeginBinaryImportAsync(
+            ListingHistoricalPricesBinaryCopyCommand(ListingHistoricalPricesTempTableName), cancellationToken);
         historicalPriceWriterDelegate(listing, importer);
         await importer.CompleteAsync(cancellationToken);
         await importer.CloseAsync(cancellationToken);
@@ -194,7 +252,8 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
 
         // COPY the Listing's orders into the temporary table using a binary import
         await using var importer =
-            await connection.BeginBinaryImportAsync(ListingOrdersBinaryCopyCommand, cancellationToken);
+            await connection.BeginBinaryImportAsync(ListingOrdersBinaryCopyCommand(ListingOrdersTempTableName),
+                cancellationToken);
         orderWriterDelegate(listing, importer);
         await importer.CompleteAsync(cancellationToken);
         await importer.CloseAsync(cancellationToken);
@@ -230,23 +289,61 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// </summary>
     private readonly Action<Listing, NpgsqlBinaryImporter> _orderWriterDelegate = (listing, importer) =>
     {
-        foreach (var orderGroup in listing.Orders.GroupBy(x => new { x.Date, x.Price.Value }))
+        foreach (var order in listing.Orders)
         {
-            // Get the order with the highest quantity
-            var order = orderGroup.OrderByDescending(x => x.Quantity.Value).First();
-            // Generate a hash
-            var hashBytes =
-                MD5.HashData(Encoding.UTF8.GetBytes($"{listing.Id:N}-{order.Date:yyyyMMddHHmm}-{order.Price.Value}"));
-            var hashHex = Convert.ToHexString(hashBytes);
-
             importer.StartRow();
-            importer.Write(hashHex, NpgsqlDbType.Text);
             importer.Write(listing.Id, NpgsqlDbType.Uuid);
             importer.Write(order.Date, NpgsqlDbType.TimestampTz);
             importer.Write(order.Price.Value, NpgsqlDbType.Integer);
-            importer.Write(order.Quantity.Value, NpgsqlDbType.Integer);
         }
     };
+
+    /// <summary>
+    /// Delegate for writing a batch of <see cref="ListingHistoricalPrice"/>s to the Npgsql binary importer
+    /// </summary>
+    private readonly
+        Action<Dictionary<CardExternalId, Listing>,
+            Dictionary<CardExternalId, ReadOnlyCollection<ListingHistoricalPrice>>,
+            NpgsqlBinaryImporter> _batchHistoricalPriceWriterDelegate = (listings, pricesMap, importer) =>
+        {
+            foreach (var (cardExternalId, prices) in pricesMap)
+            {
+                foreach (var historicalPrice in prices)
+                {
+                    // Get the corresponding listing
+                    var listing = listings[cardExternalId];
+
+                    importer.StartRow();
+                    importer.Write(listing.Id, NpgsqlDbType.Uuid);
+                    importer.Write(historicalPrice.Date, NpgsqlDbType.Date);
+                    importer.Write(historicalPrice.BuyPrice.Value, NpgsqlDbType.Integer);
+                    importer.Write(historicalPrice.SellPrice.Value, NpgsqlDbType.Integer);
+                }
+            }
+        };
+
+    /// <summary>
+    /// Delegate for writing a batch of <see cref="ListingOrder"/>s to the Npgsql binary importer
+    /// </summary>
+    private readonly
+        Action<Dictionary<CardExternalId, Listing>, Dictionary<CardExternalId, ReadOnlyCollection<ListingOrder>>,
+            NpgsqlBinaryImporter>
+        _batchOrderWriterDelegate = (listings, ordersMap, importer) =>
+        {
+            foreach (var (cardExternalId, orders) in ordersMap)
+            {
+                foreach (var order in orders)
+                {
+                    // Get the corresponding listing
+                    var listing = listings[cardExternalId];
+
+                    importer.StartRow();
+                    importer.Write(listing.Id, NpgsqlDbType.Uuid);
+                    importer.Write(order.Date, NpgsqlDbType.TimestampTz);
+                    importer.Write(order.Price.Value, NpgsqlDbType.Integer);
+                }
+            }
+        };
 
     /// <summary>
     /// Inserts a new <see cref="Listing"/>
@@ -254,11 +351,12 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     private const string ListingsInsertCommand = $@"
         INSERT INTO {Constants.Schema}.{Constants.Listings.TableName} (
             {Constants.Listings.Id},
+            {Constants.Listings.Year},
             {Constants.Listings.CardExternalId},
             {Constants.Listings.BuyPrice},
             {Constants.Listings.SellPrice}
         )
-        VALUES ($1, $2, $3, $4)
+        VALUES ($1, $2, $3, $4, $5)
         RETURNING {Constants.Listings.Id};";
 
     /// <summary>
@@ -300,8 +398,8 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// <summary>
     /// Bulk binary import for <see cref="ListingHistoricalPrice"/>
     /// </summary>
-    private const string ListingHistoricalPricesBinaryCopyCommand = $@"
-        COPY {Constants.Schema}.{ListingHistoricalPricesTempTableName} (
+    private string ListingHistoricalPricesBinaryCopyCommand(string table) => $@"
+        COPY {Constants.Schema}.{table} (
             {Constants.ListingHistoricalPrices.ListingId},
             {Constants.ListingHistoricalPrices.Date},
             {Constants.ListingHistoricalPrices.BuyPrice},
@@ -340,12 +438,9 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     private const string ListingOrdersCreateTempTableCommand = $@"
         CREATE TABLE {Constants.Schema}.{ListingOrdersTempTableName}
         (
-            {Constants.ListingOrders.Hash}               text                        not null,
             {Constants.ListingOrders.ListingId}          uuid                        not null,
             {Constants.ListingOrders.Date}               timestamp with time zone    not null,
-            {Constants.ListingOrders.Price}              integer                     not null,
-            {Constants.ListingOrders.Quantity}           integer                     not null,
-            primary key ({Constants.ListingOrders.Hash})
+            {Constants.ListingOrders.Price}              integer                     not null
         );";
 
     /// <summary>
@@ -357,34 +452,28 @@ public sealed class HybridNpgsqlEntityFrameworkCoreListingRepository : IListingR
     /// <summary>
     /// Bulk binary import for <see cref="ListingOrder"/>
     /// </summary>
-    private const string ListingOrdersBinaryCopyCommand = $@"
-        COPY {Constants.Schema}.{ListingOrdersTempTableName} (
-            {Constants.ListingOrders.Hash},
+    private string ListingOrdersBinaryCopyCommand(string table) => $@"
+        COPY {Constants.Schema}.{table} (
             {Constants.ListingOrders.ListingId},
             {Constants.ListingOrders.Date},
-            {Constants.ListingOrders.Price},
-            {Constants.ListingOrders.Quantity}
+            {Constants.ListingOrders.Price}
         )
         FROM STDIN (FORMAT BINARY)";
 
     /// <summary>
     /// Bulk update for the <see cref="ListingOrder"/> table using the temporary table as the source
+    ///
+    /// NOTE: Deprecated by <see cref="NpgsqlListingRepository"/>. This originally relied on a unique hash which included order quantity
     /// </summary>
     private const string ListingOrdersBulkUpdateCommand = $@"
         INSERT INTO {Constants.Schema}.{Constants.ListingOrders.TableName} (
-            {Constants.ListingOrders.Hash},
             {Constants.ListingOrders.ListingId},
             {Constants.ListingOrders.Date},
-            {Constants.ListingOrders.Price},
-            {Constants.ListingOrders.Quantity}
+            {Constants.ListingOrders.Price}
         )
         SELECT
-            {Constants.ListingOrders.Hash},
             {Constants.ListingOrders.ListingId},
             {Constants.ListingOrders.Date},
-            {Constants.ListingOrders.Price},
-            {Constants.ListingOrders.Quantity}
-        FROM {Constants.Schema}.{ListingOrdersTempTableName}
-        ON CONFLICT ON CONSTRAINT {Constants.ListingOrders.Keys.PrimaryKey} DO UPDATE
-        SET {Constants.ListingOrders.Quantity} = EXCLUDED.{Constants.ListingOrders.Quantity};";
+            {Constants.ListingOrders.Price}
+        FROM {Constants.Schema}.{ListingOrdersTempTableName};";
 }

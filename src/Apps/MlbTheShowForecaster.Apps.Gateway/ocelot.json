@@ -13,11 +13,7 @@
           "Host": "localhost",
           "Port": 5003
         }
-      ],
-      "AuthenticationOptions": {
-        "AuthenticationProviderKey": "Bearer",
-        "AllowedScopes": []
-      }
+      ]
     },
     {
       "Target": "MarketplaceWatcher",

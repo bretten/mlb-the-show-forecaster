@@ -240,12 +240,8 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.Ent
                     b.HasKey("Id")
                         .HasName("player_cards_pkey");
 
-                    b.HasAlternateKey("ExternalId")
-                        .HasName("player_cards_external_id_key");
-
-                    b.HasIndex(new[] { "Year", "ExternalId" }, "player_cards_year_external_id_idx");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "Year", "ExternalId" }, "player_cards_year_external_id_idx"), "btree");
+                    b.HasAlternateKey("Year", "ExternalId")
+                        .HasName("player_cards_year_external_id_key");
 
                     b.ToTable("player_cards", "game_cards");
                 });

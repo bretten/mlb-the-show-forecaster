@@ -3,6 +3,7 @@ using System.Diagnostics;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketplace.EntityFrameworkCore;
+using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
@@ -10,6 +11,7 @@ using RabbitMQ.Client;
 using Testcontainers.MongoDb;
 using Testcontainers.PostgreSql;
 using Testcontainers.RabbitMq;
+using Testcontainers.Redis;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Apps.MarketplaceWatcher.Tests;
 
@@ -18,12 +20,15 @@ public class ProgramIntegrationTests : IAsyncLifetime
     private readonly PostgreSqlContainer _dbContainer;
     private readonly RabbitMqContainer _rabbitMqContainer;
     private readonly MongoDbContainer _mongoDbContainer;
+    private readonly RedisContainer _redisContainer;
 
     private const int PostgreSqlPort = 5432;
     private const int RabbitMqPort = 5672;
     private const string MongoUser = "mongo";
     private const string MongoPass = "password99";
     private const int MongoPort = 27017;
+    private const int RedisPort = 6379;
+    private const int RedisManagementPort = 8001;
 
     private int HostRabbitMqPort => _rabbitMqContainer.GetMappedPublicPort(RabbitMqPort);
 
@@ -36,6 +41,11 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithUsername("postgres")
                 .WithPassword("password99")
                 .WithPortBinding(PostgreSqlPort, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(PostgreSqlPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                    .UntilCommandIsCompleted(["pg_isready", "-U", "postgres", "-d", "postgres"],
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
             _rabbitMqContainer = new RabbitMqBuilder()
                 .WithImage("rabbitmq:3-management")
@@ -43,12 +53,29 @@ public class ProgramIntegrationTests : IAsyncLifetime
                 .WithPortBinding(RabbitMqPort, true)
                 .WithPortBinding(15672, true)
                 .WithCommand("rabbitmq-server", "rabbitmq-plugins enable --offline rabbitmq_management")
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(RabbitMqPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
             _mongoDbContainer = new MongoDbBuilder()
                 .WithName(GetType().Name + Guid.NewGuid())
                 .WithUsername(MongoUser)
                 .WithPassword(MongoPass)
                 .WithPortBinding(MongoPort, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(MongoPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
+                .Build();
+            _redisContainer = new RedisBuilder()
+                .WithName(GetType().Name + Guid.NewGuid())
+                .WithImage("redis/redis-stack:latest")
+                .WithEnvironment("REDIS_ARGS", "--requirepass mypassword --appendonly yes")
+                .WithPortBinding(RedisPort, true)
+                .WithPortBinding(RedisManagementPort, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(RedisPort, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                    .UntilCommandIsCompleted(["redis-cli", "-a", "mypassword", "ping"],
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1))))
                 .Build();
         }
         catch (ArgumentException e)
@@ -71,15 +98,26 @@ public class ProgramIntegrationTests : IAsyncLifetime
          */
         // Command line arguments when running the program
         var args = Array.Empty<string>();
+        const ushort season = 2024;
 
         // Builder
         var builder = AppBuilder.CreateBuilder(args);
         // Config overrides
         builder.Configuration["Jobs:RunOnStartup"] = "true";
+        // Run all jobs often during the test
+        builder.Configuration["Jobs:Seasons:0"] = season.ToString();
+        builder.Configuration["Jobs:Schedules:0"] = "PlayerCardTrackerJob-00:00:00:01";
+        builder.Configuration["Jobs:Schedules:1"] = "CardPriceTrackerJob-00:00:00:01";
+        builder.Configuration["Jobs:Schedules:2"] = "CardListingImporterJob-00:00:00:01";
+        builder.Configuration["Jobs:Schedules:3"] = "RosterUpdaterJob-00:00:00:01";
+        builder.Configuration["Jobs:Schedules:4"] = "TrendReporterJob-00:00:00:01";
         builder.Configuration["ConnectionStrings:Cards"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Forecasts"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:Marketplace"] = _dbContainer.GetConnectionString() + ";Pooling=false;";
         builder.Configuration["ConnectionStrings:TrendsMongoDb"] = _mongoDbContainer.GetConnectionString();
+        builder.Configuration["ConnectionStrings:Redis"] =
+            $"{_redisContainer.GetConnectionString()},password=mypassword";
+        builder.Configuration["Messaging:RabbitMq:HostName"] = _rabbitMqContainer.Hostname;
         builder.Configuration["Messaging:RabbitMq:UserName"] = "rabbitmq"; // Default for RabbitMqBuilder
         builder.Configuration["Messaging:RabbitMq:Password"] = "rabbitmq";
         builder.Configuration["Messaging:RabbitMq:Port"] = HostRabbitMqPort.ToString();
@@ -92,10 +130,10 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await cardsDbContext.Database.MigrateAsync();
         // Add a PlayerCard (and a listing below) so the ICardPriceTracker can update the listing and dispatch price change domain events
         var playerCardExternalId1 = Guid.Parse("7d6c7d95a1e5e861c54d20002585a809");
-        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId1));
+        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(season, playerCardExternalId1));
         // Add another PlayerCard (with no listing) so the ICardPriceTracker can create a new listing
         var playerCardExternalId2 = Guid.Parse("da757117dff1551f109453a8b80f28c8");
-        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(externalId: playerCardExternalId2));
+        await cardsDbContext.PlayerCards.AddAsync(Faker.FakePlayerCard(season, playerCardExternalId2));
         await cardsDbContext.SaveChangesAsync();
 
         // Setup the marketplace database
@@ -103,7 +141,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await marketplaceDbContext.Database.MigrateAsync();
         // Add a Listing so price change domain events can be dispatched
         await marketplaceDbContext.Listings.AddAsync(
-            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(playerCardExternalId1));
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(season, playerCardExternalId1));
         await marketplaceDbContext.SaveChangesAsync();
 
         /*
@@ -157,6 +195,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await _dbContainer.StartAsync();
         await _rabbitMqContainer.StartAsync();
         await _mongoDbContainer.StartAsync();
+        await _redisContainer.StartAsync();
     }
 
     public async Task DisposeAsync()
@@ -164,6 +203,7 @@ public class ProgramIntegrationTests : IAsyncLifetime
         await _dbContainer.DisposeAsync();
         await _rabbitMqContainer.DisposeAsync();
         await _mongoDbContainer.DisposeAsync();
+        await _redisContainer.DisposeAsync();
     }
 
     private async Task<NpgsqlConnection> GetDbConnection()

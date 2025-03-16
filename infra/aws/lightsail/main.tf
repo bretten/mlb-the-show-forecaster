@@ -48,7 +48,7 @@ resource "aws_lightsail_instance_public_ports" "public_ports" {
 
   # Private
   dynamic "port_info" {
-    for_each = [22, 54320, 27017, 5672, 15672] // SSH, PostgreSQL, MongoDB, RabbitMQ, RabbitMQ Management
+    for_each = [22, 54320, 27017, 5672, 15672, 6379, 8001] // SSH, PostgreSQL, MongoDB, RabbitMQ, RabbitMQ Management, Redis, Redis Insight
     content {
       protocol  = "tcp"
       from_port = port_info.value
@@ -62,7 +62,7 @@ resource "aws_lightsail_instance" "instance" {
   name              = var.resource_prefix
   availability_zone = "us-west-2a"
   blueprint_id      = "ubuntu_22_04"
-  bundle_id         = "medium_3_0"
+  bundle_id         = "large_3_0"
   key_pair_name     = "LightsailDefaultKeyPair"
   ip_address_type   = "dualstack"
 
@@ -132,6 +132,7 @@ resource "aws_lightsail_instance" "instance" {
           - ConnectionStrings__Forecasts=Server=postgres-db;Username=${var.pgsql_user};Password=${var.pgsql_pass};Port=5432;Database=${var.pgsql_db_name};
           - ConnectionStrings__Marketplace=Server=postgres-db;Username=${var.pgsql_user};Password=${var.pgsql_pass};Port=5432;Database=${var.pgsql_db_name};
           - ConnectionStrings__TrendsMongoDb=mongodb://${var.mongodb_user}:${var.mongodb_pass}@mongo:27017/?authSource=admin
+          - ConnectionStrings__Redis=redis,password=${var.redis_pass}
           - Messaging__RabbitMq__HostName=rabbitmq
           - Messaging__RabbitMq__UserName=${var.rabbitmq_user}
           - Messaging__RabbitMq__Password=${var.rabbitmq_pass}
@@ -281,6 +282,30 @@ resource "aws_lightsail_instance" "instance" {
               memory: 500M
             reservations:
               memory: 300M
+
+      redis:
+        image: redis/redis-stack:7.4.0-v3
+        restart: always
+        environment:
+          REDIS_ARGS: --requirepass ${var.redis_pass} --appendonly yes
+        ports:
+          - "6379:6379"
+          - "8001:8001"
+        networks:
+          - public # So the data can be debugged via a client
+          - backend
+        healthcheck:
+          test: redis-cli -a ${var.redis_pass} ping
+          interval: 10s
+          retries: 5
+          start_period: 30s
+          timeout: 100s # 10s works on local machine but slow lightsail instance needs more
+        deploy:
+          resources:
+            limits:
+              memory: 2000M
+            reservations:
+              memory: 1000M
 
     networks:
       public:

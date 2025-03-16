@@ -2,7 +2,6 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Events;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing.Exceptions;
-using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos.Mapping;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Repositories;
@@ -33,22 +32,15 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
     private readonly IListingRepository _listingRepository;
 
     /// <summary>
-    /// Maps incoming DTOs to the <see cref="Listing"/> and related entities
-    /// </summary>
-    private readonly IListingMapper _listingMapper;
-
-    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="unitOfWork">The unit of work that encapsulates all actions for updating a <see cref="Listing"/></param>
     /// <param name="domainEventDispatcher">Publishes all domain events that were raised by the <see cref="Listing"/></param>
-    /// <param name="listingMapper">Maps incoming DTOs to the <see cref="Listing"/> and related entities</param>
     public UpdateListingCommandHandler(IUnitOfWork<IMarketplaceWork> unitOfWork,
-        IDomainEventDispatcher domainEventDispatcher, IListingMapper listingMapper)
+        IDomainEventDispatcher domainEventDispatcher)
     {
         _unitOfWork = unitOfWork;
         _domainEventDispatcher = domainEventDispatcher;
-        _listingMapper = listingMapper;
         _listingRepository = unitOfWork.GetContributor<IListingRepository>();
     }
 
@@ -71,24 +63,11 @@ internal sealed class UpdateListingCommandHandler : ICommandHandler<UpdateListin
         // The up-to-date listing data from the external source
         var externalCardListing = command.ExternalCardListing;
 
-        // Get new historical prices that are in the external source but not the domain Listing
-        var newHistoricalPrices = externalCardListing.GetNewHistoricalPrices(domainListing);
-        foreach (var newHistoricalPrice in newHistoricalPrices)
-        {
-            domainListing.LogHistoricalPrice(newHistoricalPrice.Date, buyPrice: newHistoricalPrice.BestBuyPrice,
-                sellPrice: newHistoricalPrice.BestSellPrice);
-        }
-
-        // Update orders
-        var newOrders = externalCardListing.GetNewOrders(domainListing);
-        domainListing.UpdateOrders(newOrders.Select(_listingMapper.Map).ToList());
-
         // Update the domain Listing's current prices
         domainListing.UpdatePrices(newBuyPrice: externalCardListing.BestBuyPrice,
             newSellPrice: externalCardListing.BestSellPrice, command.PriceChangeThreshold);
 
         await _listingRepository.Update(domainListing, cancellationToken);
-        await _unitOfWork.CommitAsync(cancellationToken);
         _domainEventDispatcher.Dispatch(domainListing.DomainEvents);
     }
 }

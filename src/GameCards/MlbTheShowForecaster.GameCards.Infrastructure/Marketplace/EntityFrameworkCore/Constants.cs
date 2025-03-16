@@ -29,6 +29,11 @@ public static class Constants
         public const string Id = "id";
 
         /// <summary>
+        /// The year of MLB The Show
+        /// </summary>
+        public const string Year = "year";
+
+        /// <summary>
         /// The external ID of the card that this listing is for
         /// </summary>
         public const string CardExternalId = "card_external_id";
@@ -52,17 +57,12 @@ public static class Constants
             /// Primary key
             /// </summary>
             public const string PrimaryKey = $"{TableName}_pkey";
-        }
 
-        /// <summary>
-        /// Index names for <see cref="Listing"/>
-        /// </summary>
-        public static class Indexes
-        {
             /// <summary>
-            /// For querying by the card's external ID
+            /// Enforces the composite uniqueness of <see cref="Listing.Year"/> and <see cref="Listing.CardExternalId"/>.
+            /// Adds an index
             /// </summary>
-            public const string ExternalId = $"{TableName}_{CardExternalId}_idx";
+            public const string YearAndExternalId = $"{TableName}_{Year}_{CardExternalId}_key";
         }
     }
 
@@ -116,6 +116,17 @@ public static class Constants
             /// </summary>
             public const string ListingsForeignKeyConstraint = $"{TableName}_{Listings.TableName}_{Listings.Id}_fkey";
         }
+
+        /// <summary>
+        /// Index names for <see cref="ListingHistoricalPrice"/>
+        /// </summary>
+        public static class Indexes
+        {
+            /// <summary>
+            /// For querying by Listing ID (and for the foreign key relationship)
+            /// </summary>
+            public const string ListingIdIndex = $"{TableName}_{ListingId}_idx";
+        }
     }
 
     /// <summary>
@@ -134,9 +145,9 @@ public static class Constants
         public const string TableName = "listing_orders";
 
         /// <summary>
-        /// Hash field
+        /// ID field
         /// </summary>
-        public const string Hash = "hash";
+        public const string Id = "id";
 
         /// <summary>
         /// Foreign key column name that references <see cref="Listing"/>
@@ -152,11 +163,6 @@ public static class Constants
         /// The order price
         /// </summary>
         public const string Price = "price";
-
-        /// <summary>
-        /// The order quantity
-        /// </summary>
-        public const string Quantity = "quantity";
 
         /// <summary>
         /// Key names for <see cref="ListingOrder"/>

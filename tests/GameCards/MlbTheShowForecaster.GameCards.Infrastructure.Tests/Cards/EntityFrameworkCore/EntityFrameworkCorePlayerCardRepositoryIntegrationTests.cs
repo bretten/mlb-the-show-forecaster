@@ -2,6 +2,7 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Cards.EntityFrameworkCore;
+using DotNet.Testcontainers.Builders;
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Testcontainers.PostgreSql;
@@ -25,6 +26,11 @@ public class EntityFrameworkCorePlayerCardRepositoryIntegrationTests : IAsyncLif
                 .WithUsername("postgres")
                 .WithPassword("password99")
                 .WithPortBinding(5432, true)
+                .WithWaitStrategy(Wait.ForUnixContainer()
+                    .UntilPortIsAvailable(5432, o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                    .UntilCommandIsCompleted(["pg_isready", "-U", "postgres", "-d", "postgres"],
+                        o => o.WithTimeout(TimeSpan.FromMinutes(1)))
+                )
                 .Build();
         }
         catch (ArgumentException e)
@@ -146,7 +152,7 @@ public class EntityFrameworkCorePlayerCardRepositoryIntegrationTests : IAsyncLif
         var repo = new EntityFrameworkCorePlayerCardRepository(dbContext);
 
         // Act
-        var actual = await repo.GetByExternalId(Faker.FakeCardExternalId(Faker.FakeGuid1));
+        var actual = await repo.GetByExternalId(fakePlayerCard.Year, fakePlayerCard.ExternalId);
 
         // Assert
         Assert.NotNull(actual);
@@ -175,7 +181,7 @@ public class EntityFrameworkCorePlayerCardRepositoryIntegrationTests : IAsyncLif
         var repo = new EntityFrameworkCorePlayerCardRepository(assertDbContext);
 
         // Act
-        var actual = await repo.Exists(Faker.FakeCardExternalId(Faker.FakeGuid1));
+        var actual = await repo.Exists(fakePlayerCard.Year, fakePlayerCard.ExternalId);
 
         // Assert
         Assert.True(actual);
@@ -193,7 +199,7 @@ public class EntityFrameworkCorePlayerCardRepositoryIntegrationTests : IAsyncLif
         var repo = new EntityFrameworkCorePlayerCardRepository(dbContext);
 
         // Act
-        var actual = await repo.Exists(Faker.FakeCardExternalId(Faker.FakeGuid1));
+        var actual = await repo.Exists(SeasonYear.Create(2024), Faker.FakeCardExternalId(Faker.FakeGuid1));
 
         // Assert
         Assert.False(actual);

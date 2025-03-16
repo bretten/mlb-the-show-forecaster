@@ -57,7 +57,7 @@ public class PlayerCardTrackerTests
         // ExternalCard1 from MLB The Show
         var externalCard1 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId1.Value);
         // Query to get PlayerCard1
-        var query1 = new GetPlayerCardByExternalIdQuery(cardExternalId1);
+        var query1 = new GetPlayerCardByExternalIdQuery(seasonYear, cardExternalId1);
 
         // PlayerCard2 does not exist in the domain, so it will be created
         var cardExternalId2 = Faker.FakeCardExternalId(Faker.FakeGuid2);
@@ -65,7 +65,7 @@ public class PlayerCardTrackerTests
         // ExternalCard2 from MLB The Show
         var externalCard2 = Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId2.Value);
         // Query to get PlayerCard2
-        var query2 = new GetPlayerCardByExternalIdQuery(cardExternalId2);
+        var query2 = new GetPlayerCardByExternalIdQuery(seasonYear, cardExternalId2);
 
         // PlayerCard3 already exists in the domain, but it has a different boost status
         var cardExternalId3 = Faker.FakeCardExternalId(Faker.FakeGuid3);
@@ -74,7 +74,7 @@ public class PlayerCardTrackerTests
         var externalCard3 =
             Dtos.TestClasses.Faker.FakeMlbPlayerCard(cardExternalId: cardExternalId3.Value, boostReason: "Hit 5 HRs");
         // Query to get PlayerCard3
-        var query3 = new GetPlayerCardByExternalIdQuery(cardExternalId3);
+        var query3 = new GetPlayerCardByExternalIdQuery(seasonYear, cardExternalId3);
 
         // The card marketplace should return all external cards in MLB The Show
         var allExternalPlayerCards = new List<MlbPlayerCard>() { externalCard1, externalCard2, externalCard3 };

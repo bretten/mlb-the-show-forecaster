@@ -353,6 +353,10 @@ resource "aws_ecs_task_definition" "task_definition_marketplace_watcher" {
             value = local.mongodb_cs
           },
           {
+            name  = "ConnectionStrings__Redis"
+            value = local.redis_cs
+          },
+          {
             name  = "Messaging__RabbitMq__HostName"
             value = local.rabbitmq_dns_name
           },

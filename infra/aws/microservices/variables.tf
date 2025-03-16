@@ -178,6 +178,12 @@ variable "rabbitmq_pass" {
   sensitive   = true
 }
 
+variable "redis_pass" {
+  description = "redis password"
+  type        = string
+  sensitive   = true
+}
+
 # Config
 variable "container_registry_url" {
   description = "Container registry containing the application images"

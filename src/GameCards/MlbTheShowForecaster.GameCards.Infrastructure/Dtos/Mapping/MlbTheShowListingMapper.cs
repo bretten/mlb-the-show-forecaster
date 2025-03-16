@@ -32,11 +32,12 @@ public sealed class MlbTheShowListingMapper : IMlbTheShowListingMapper
     /// <summary>
     /// Maps a <see cref="ListingDto{T}"/> to a <see cref="CardListing"/>
     /// </summary>
+    /// <param name="year">The year of MLB The Show</param>
     /// <param name="listing">The <see cref="ListingDto{T}"/> to map</param>
     /// <returns><see cref="CardListing"/></returns>
-    public CardListing Map(ListingDto<ItemDto> listing)
+    public CardListing Map(SeasonYear year, ListingDto<ItemDto> listing)
     {
-        return new CardListing(listing.ListingName,
+        return new CardListing(year, listing.ListingName,
             BestBuyPrice: NaturalNumber.Create(listing.BestBuyPrice),
             BestSellPrice: NaturalNumber.Create(listing.BestSellPrice),
             CardExternalId: CardExternalId.Create(listing.Item.Uuid.Value ??
@@ -145,10 +146,19 @@ public sealed class MlbTheShowListingMapper : IMlbTheShowListingMapper
                         $"Listing order date could not be parsed: {x.Date}");
                 }
             }).GroupBy(x => new { x.Date, x.Price })
-            .Select(x =>
+            .SelectMany(x =>
             {
-                var quantity = NaturalNumber.Create(x.Count());
-                return new CardListingOrder(x.Key.Date, NaturalNumber.Create(x.Key.Price), quantity);
+                // Add a 0-based sequence number to each order that has the same price and date so they can be differentiated
+                if (x.Count() == 1)
+                {
+                    // No duplicates, so create one with a sequence of 0
+                    return x.Select(y =>
+                        new CardListingOrder(y.Date, NaturalNumber.Create(y.Price), NaturalNumber.Create(0)));
+                }
+
+                // Use the index in Select to set the sequence for duplicates
+                return x.Select((y, index) =>
+                    new CardListingOrder(y.Date, NaturalNumber.Create(y.Price), NaturalNumber.Create(index)));
             }).ToList();
     }
 }

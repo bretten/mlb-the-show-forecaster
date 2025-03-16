@@ -22,9 +22,9 @@ public sealed class ListingEntityTypeConfiguration : IEntityTypeConfiguration<Li
         builder.HasKey(e => e.Id)
             .HasName(Constants.Listings.Keys.PrimaryKey);
 
-        // Index for querying by the card's external ID
-        builder.HasIndex(e => e.CardExternalId, Constants.Listings.Indexes.ExternalId)
-            .HasMethod("btree");
+        // Unique constraint and index for Year and External ID
+        builder.HasAlternateKey(nameof(Listing.Year), nameof(Listing.CardExternalId))
+            .HasName(Constants.Listings.Keys.YearAndExternalId);
 
         var columnOrder = 0;
 
@@ -33,6 +33,14 @@ public sealed class ListingEntityTypeConfiguration : IEntityTypeConfiguration<Li
             .HasColumnType("uuid")
             .HasColumnName(Constants.Listings.Id)
             .HasColumnOrder(columnOrder++);
+
+        builder.Property(e => e.Year)
+            .IsRequired()
+            .HasColumnType("smallint")
+            .HasColumnName(Constants.Listings.Year)
+            .HasColumnOrder(columnOrder++)
+            .HasConversion(v => v.Value,
+                v => SeasonYear.Create(v));
 
         builder.Property(e => e.CardExternalId)
             .IsRequired()

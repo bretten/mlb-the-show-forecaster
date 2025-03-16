@@ -11,7 +11,7 @@ public class ListingMapperTests
     public void Map_CardListingDto_ReturnsListing()
     {
         // Arrange
-        var cardListing = new CardListing(
+        var cardListing = new CardListing(SeasonYear.Create(2024),
             "listingName",
             BestBuyPrice: NaturalNumber.Create(10),
             BestSellPrice: NaturalNumber.Create(20),
@@ -27,11 +27,23 @@ public class ListingMapperTests
             {
                 new CardListingOrder(new DateTime(2025, 1, 17, 10, 20, 0),
                     Price: NaturalNumber.Create(10),
-                    Quantity: NaturalNumber.Create(20)
+                    SequenceNumber: NaturalNumber.Create(0)
+                ),
+                new CardListingOrder(new DateTime(2025, 1, 17, 10, 20, 0),
+                    Price: NaturalNumber.Create(10),
+                    SequenceNumber: NaturalNumber.Create(1)
                 ),
                 new CardListingOrder(new DateTime(2025, 1, 17, 10, 21, 0),
                     Price: NaturalNumber.Create(100),
-                    Quantity: NaturalNumber.Create(200)
+                    SequenceNumber: NaturalNumber.Create(0)
+                ),
+                new CardListingOrder(new DateTime(2025, 1, 17, 10, 21, 0),
+                    Price: NaturalNumber.Create(100),
+                    SequenceNumber: NaturalNumber.Create(1)
+                ),
+                new CardListingOrder(new DateTime(2025, 1, 17, 10, 21, 0),
+                    Price: NaturalNumber.Create(100),
+                    SequenceNumber: NaturalNumber.Create(2)
                 ),
             }
         );
@@ -41,6 +53,7 @@ public class ListingMapperTests
         var actual = mapper.Map(cardListing);
 
         // Assert
+        Assert.Equal(2024, actual.Year.Value);
         Assert.Equal("listingName", cardListing.ListingName);
         Assert.Equal(10, actual.BuyPrice.Value);
         Assert.Equal(20, actual.SellPrice.Value);
@@ -54,13 +67,15 @@ public class ListingMapperTests
         Assert.Equal(15, actual.HistoricalPricesChronologically[1].BuyPrice.Value);
         Assert.Equal(25, actual.HistoricalPricesChronologically[1].SellPrice.Value);
 
-        Assert.Equal(2, actual.OrdersChronologically.Count);
-        Assert.Equal(new DateTime(2025, 1, 17, 10, 20, 0), actual.OrdersChronologically[0].Date);
-        Assert.Equal(10, actual.OrdersChronologically[0].Price.Value);
-        Assert.Equal(20, actual.OrdersChronologically[0].Quantity.Value);
-        Assert.Equal(new DateTime(2025, 1, 17, 10, 21, 0), actual.OrdersChronologically[1].Date);
-        Assert.Equal(100, actual.OrdersChronologically[1].Price.Value);
-        Assert.Equal(200, actual.OrdersChronologically[1].Quantity.Value);
+        Assert.Equal(5, actual.OrdersChronologically.Count);
+
+        var orders1 = actual.OrdersChronologically.Where(x =>
+            x.Price == NaturalNumber.Create(10) && x.Date == new DateTime(2025, 1, 17, 10, 20, 0));
+        Assert.Equal(2, orders1.Count());
+
+        var orders2 = actual.OrdersChronologically.Where(x =>
+            x.Price == NaturalNumber.Create(100) && x.Date == new DateTime(2025, 1, 17, 10, 21, 0));
+        Assert.Equal(3, orders2.Count());
     }
 
     [Fact]
@@ -88,7 +103,7 @@ public class ListingMapperTests
         // Arrange
         var order = new CardListingOrder(new DateTime(2025, 1, 17, 10, 20, 0),
             Price: NaturalNumber.Create(10),
-            Quantity: NaturalNumber.Create(20)
+            SequenceNumber: NaturalNumber.Create(0)
         );
         var mapper = new ListingMapper();
 
@@ -98,6 +113,5 @@ public class ListingMapperTests
         // Assert
         Assert.Equal(new DateTime(2025, 1, 17, 10, 20, 0), actual.Date);
         Assert.Equal(10, actual.Price.Value);
-        Assert.Equal(20, actual.Quantity.Value);
     }
 }

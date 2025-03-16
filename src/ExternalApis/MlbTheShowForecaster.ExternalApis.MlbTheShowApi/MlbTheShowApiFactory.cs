@@ -25,6 +25,7 @@ public sealed class MlbTheShowApiFactory : IMlbTheShowApiFactory
             Year.Season2022 => GetClient(Constants.BaseUrl2022),
             Year.Season2023 => GetClient(Constants.BaseUrl2023),
             Year.Season2024 => GetClient(Constants.BaseUrl2024),
+            Year.Season2025 => GetClient(Constants.BaseUrl2025),
             _ => throw new UnsupportedMlbTheShowYearException($"MLB The Show does not support the year {year}")
         };
     }

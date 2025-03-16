@@ -90,6 +90,21 @@ resource "aws_cloudwatch_log_metric_filter" "metric_card_price_tracker_job_healt
   }
 }
 
+# Tracks health of the card listing importer job
+resource "aws_cloudwatch_log_metric_filter" "metric_card_listing_importer_job_health" {
+  name           = "Card Listing Importer Job Health"
+  pattern        = "\"Finished job CardListingImporterJob\""
+  log_group_name = aws_cloudwatch_log_group.logs_marketplace.name
+
+  metric_transformation {
+    name          = "Finished CardListingImporter"
+    namespace     = "${var.resource_prefix}-metrics"
+    value         = "1"
+    default_value = "0"
+    unit          = "Count"
+  }
+}
+
 # Tracks health of the roster updater job
 resource "aws_cloudwatch_log_metric_filter" "metric_roster_updater_job_health" {
   name           = "Roster Updater Job Health"
@@ -140,6 +155,11 @@ locals {
     {
       name      = aws_cloudwatch_log_metric_filter.metric_card_price_tracker_job_health.metric_transformation[0].name,
       namespace = aws_cloudwatch_log_metric_filter.metric_card_price_tracker_job_health.metric_transformation[0].namespace,
+      period    = 3600 + 1800
+    },
+    {
+      name      = aws_cloudwatch_log_metric_filter.metric_card_listing_importer_job_health.metric_transformation[0].name,
+      namespace = aws_cloudwatch_log_metric_filter.metric_card_listing_importer_job_health.metric_transformation[0].namespace,
       period    = 3600 + 1800
     },
     {

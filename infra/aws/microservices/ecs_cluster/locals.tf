@@ -21,6 +21,11 @@ locals {
     "${module.storage[0].service_discovery_name_rabbitmq}.${aws_service_discovery_private_dns_namespace.private_dns_namespace.name}"
   : "")
 
+  redis_dns_name = (var.use_storage ?
+    "${module.storage[0].service_discovery_name_redis}.${aws_service_discovery_private_dns_namespace.private_dns_namespace.name}"
+  : "")
+
   pgsql_cs   = "Server=${local.pgsql_dns_name};Username=${var.pgsql_user};Password=${var.pgsql_pass};Port=5432;Database=${var.pgsql_db_name};"
   mongodb_cs = "mongodb://${var.mongodb_user}:${var.mongodb_pass}@${local.mongodb_dns_name}:27017/?authSource=admin"
+  redis_cs   = "${local.redis_dns_name},password=${var.redis_pass}"
 }

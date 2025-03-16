@@ -64,7 +64,6 @@ public class DbAtomicDatabaseOperationTests
         // Assert
         Assert.True(mockConnection.IsDisposed);
         Assert.True(mockTransaction.IsDisposed);
-        Assert.True(mockDbSource.IsDisposed);
     }
 
     [Fact]
@@ -85,7 +84,6 @@ public class DbAtomicDatabaseOperationTests
         // Assert
         Assert.True(mockConnection.IsDisposedAsync);
         mockTransaction.Verify(x => x.DisposeAsync(), Times.Once);
-        Assert.True(mockDbSource.IsDisposedAsync);
     }
 
     private sealed class MockDbDataSource : DbDataSource

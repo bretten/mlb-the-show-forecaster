@@ -230,6 +230,7 @@ public sealed class FakeMlbTheShowApi : IMlbTheShowApi
             Year.Season2022 => Constants.BaseUrl2022,
             Year.Season2023 => Constants.BaseUrl2023,
             Year.Season2024 => Constants.BaseUrl2024,
+            Year.Season2025 => Constants.BaseUrl2025,
             _ => throw new UnsupportedMlbTheShowYearException($"MLB The Show does not support the year {_year}")
         };
     }

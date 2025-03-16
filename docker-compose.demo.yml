@@ -25,15 +25,18 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - RunMigrations=true
       - Urls=http://*:5003
+      - Jobs__Seasons__0=2024
       - Api__Performance__BaseAddress=http://mlb-the-show-forecaster-performance-tracker:5002
       - Forecasting__PlayerMatcher__BaseAddress=http://mlb-the-show-forecaster-player-tracker:5001
       - ConnectionStrings__Cards=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
       - ConnectionStrings__Forecasts=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
       - ConnectionStrings__Marketplace=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
       - ConnectionStrings__TrendsMongoDb=mongodb://root:example@mongo:27017/?authSource=admin
+      - ConnectionStrings__Redis=redis,password=mypassword
       - Messaging__RabbitMq__HostName=rabbitmq
       - Messaging__RabbitMq__UserName=guest
       - Messaging__RabbitMq__Password=guest
+      - CardPriceTracker__UseWebsiteForHistoricalPrices=true
     depends_on:
       postgres-db:
         condition: service_healthy
@@ -48,6 +51,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - RunMigrations=true
       - Urls=http://*:5002
+      - Jobs__Seasons__0=2024
       - ConnectionStrings__PlayerSeasons=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
       - Messaging__RabbitMq__HostName=rabbitmq
       - Messaging__RabbitMq__UserName=guest
@@ -64,6 +68,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - RunMigrations=true
       - Urls=http://*:5001
+      - Jobs__Seasons__0=2024
       - ConnectionStrings__Players=Server=postgres-db;Username=postgres;Password=postgres;Port=5432;Database=mlb_forecaster_test;
       - Messaging__RabbitMq__HostName=rabbitmq
       - Messaging__RabbitMq__UserName=guest
@@ -123,6 +128,24 @@ services:
       - backend
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  redis:
+    image: redis/redis-stack:7.4.0-v3
+    restart: always
+    environment:
+      REDIS_ARGS: --requirepass mypassword --appendonly yes
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    networks:
+      - public # So the data can be debugged via a client
+      - backend
+    healthcheck:
+      test: redis-cli -a mypassword ping
       interval: 10s
       retries: 5
       start_period: 30s

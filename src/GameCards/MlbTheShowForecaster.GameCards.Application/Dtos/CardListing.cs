@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
+﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 
@@ -8,6 +7,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// <summary>
 /// Represents a Listing from the MLB The Show
 /// </summary>
+/// <param name="Year">The year of MLB The Show</param>
 /// <param name="ListingName">The name of the Listing</param>
 /// <param name="BestBuyPrice">The current, best buy price</param>
 /// <param name="BestSellPrice">The current, best sell price</param>
@@ -15,6 +15,7 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 /// <param name="HistoricalPrices">The prices on the card for previous days</param>
 /// <param name="RecentOrders">Recent orders</param>
 public readonly record struct CardListing(
+    SeasonYear Year,
     string ListingName,
     NaturalNumber BestBuyPrice,
     NaturalNumber BestSellPrice,
@@ -31,50 +32,4 @@ public readonly record struct CardListing(
     /// <returns>True if the prices are different than the <see cref="Listing"/></returns>
     public bool HasNewPrices(Listing domainListing) =>
         BestBuyPrice != domainListing.BuyPrice || BestSellPrice != domainListing.SellPrice;
-
-    /// <summary>
-    /// Returns true if this <see cref="CardListing"/> has historical prices that the domain <see cref="Listing"/>
-    /// does not have, otherwise false
-    /// </summary>
-    /// <param name="domainListing">The domain <see cref="Listing"/></param>
-    /// <returns>True if there are new historical prices for the <see cref="Listing"/></returns>
-    public bool HasNewHistoricalPrices(Listing domainListing) => HistoricalPrices
-        .Any(x => !domainListing.HistoricalPrices.Select(y => y.Date).Contains(x.Date));
-
-    /// <summary>
-    /// Returns true if this <see cref="CardListing"/> has orders that the domain <see cref="Listing"/>
-    /// does not have, otherwise false
-    /// </summary>
-    /// <param name="domainListing">The domain <see cref="Listing"/></param>
-    /// <returns>True if there are new orders for the <see cref="Listing"/></returns>
-    public bool HasNewOrders(Listing domainListing) => RecentOrders.Any(x =>
-        domainListing.Orders.Any(y =>
-            x.Date == y.Date && x.Price.Value == y.Price.Value && x.Quantity.Value > y.Quantity.Value) ||
-        !domainListing.Orders.Any(y => x.Date == y.Date && x.Price.Value == y.Price.Value));
-
-    /// <summary>
-    /// Returns new historical prices for the <see cref="Listing"/>
-    /// </summary>
-    /// <param name="domainListing">The domain <see cref="Listing"/></param>
-    /// <returns>The new historical prices for the <see cref="Listing"/></returns>
-    public IReadOnlyList<CardListingPrice> GetNewHistoricalPrices(Listing domainListing)
-    {
-        return HistoricalPrices
-            .Where(x => !domainListing.HistoricalPrices.Select(y => y.Date).Contains(x.Date))
-            .ToImmutableList();
-    }
-
-    /// <summary>
-    /// Returns new orders for the <see cref="Listing"/>
-    /// </summary>
-    /// <param name="domainListing">The domain <see cref="Listing"/></param>
-    /// <returns>The new orders for the <see cref="Listing"/></returns>
-    public IReadOnlyList<CardListingOrder> GetNewOrders(Listing domainListing)
-    {
-        return RecentOrders.Where(x =>
-                domainListing.Orders.Any(y =>
-                    x.Date == y.Date && x.Price.Value == y.Price.Value && x.Quantity.Value > y.Quantity.Value) ||
-                !domainListing.Orders.Any(y => x.Date == y.Date && x.Price.Value == y.Price.Value))
-            .ToImmutableList();
-    }
 };

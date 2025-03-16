@@ -36,24 +36,28 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                     b.Property<int>("BuyPrice")
                         .HasColumnType("integer")
                         .HasColumnName("buy_price")
-                        .HasColumnOrder(2);
+                        .HasColumnOrder(3);
 
                     b.Property<Guid>("CardExternalId")
                         .HasColumnType("uuid")
                         .HasColumnName("card_external_id")
-                        .HasColumnOrder(1);
+                        .HasColumnOrder(2);
 
                     b.Property<int>("SellPrice")
                         .HasColumnType("integer")
                         .HasColumnName("sell_price")
-                        .HasColumnOrder(3);
+                        .HasColumnOrder(4);
+
+                    b.Property<ushort>("Year")
+                        .HasColumnType("smallint")
+                        .HasColumnName("year")
+                        .HasColumnOrder(1);
 
                     b.HasKey("Id")
                         .HasName("listings_pkey");
 
-                    b.HasIndex(new[] { "CardExternalId" }, "listings_card_external_id_idx");
-
-                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "CardExternalId" }, "listings_card_external_id_idx"), "btree");
+                    b.HasAlternateKey("Year", "CardExternalId")
+                        .HasName("listings_year_card_external_id_key");
 
                     b.ToTable("listings", "game_cards");
                 });
@@ -82,15 +86,22 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                     b.HasKey("listing_id", "Date")
                         .HasName("listing_historical_prices_pkey");
 
+                    b.HasIndex(new[] { "listing_id" }, "listing_historical_prices_listing_id_idx");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex(new[] { "listing_id" }, "listing_historical_prices_listing_id_idx"), "btree");
+
                     b.ToTable("listing_historical_prices", "game_cards");
                 });
 
             modelBuilder.Entity("com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects.ListingOrder", b =>
                 {
-                    b.Property<string>("hash")
-                        .HasColumnType("text")
-                        .HasColumnName("hash")
+                    b.Property<long>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id")
                         .HasColumnOrder(0);
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("id"));
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("timestamp with time zone")
@@ -102,16 +113,11 @@ namespace com.brettnamba.MlbTheShowForecaster.GameCards.Infrastructure.Marketpla
                         .HasColumnName("price")
                         .HasColumnOrder(3);
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantity")
-                        .HasColumnOrder(4);
-
                     b.Property<Guid?>("listing_id")
                         .HasColumnType("uuid")
                         .HasColumnOrder(1);
 
-                    b.HasKey("hash")
+                    b.HasKey("id")
                         .HasName("listing_orders_pkey");
 
                     b.HasIndex(new[] { "listing_id" }, "listing_orders_listing_id_idx");

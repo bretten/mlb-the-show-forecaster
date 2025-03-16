@@ -77,12 +77,13 @@ public static class Faker
         );
     }
 
-    public static CardListing FakeCardListing(string listingName = "listingName1", int bestBuyPrice = 0,
+    public static CardListing FakeCardListing(ushort year = 2024, string name = "listingName1", int bestBuyPrice = 0,
         int bestSellPrice = 0, Guid? cardExternalId = null, IReadOnlyList<CardListingPrice>? historicalPrices = null,
         IReadOnlyList<CardListingOrder>? completedOrders = null)
     {
         return new CardListing(
-            ListingName: listingName,
+            Year: SeasonYear.Create(year),
+            ListingName: name,
             BestBuyPrice: NaturalNumber.Create(bestBuyPrice),
             BestSellPrice: NaturalNumber.Create(bestSellPrice),
             CardExternalId: Domain.Tests.Cards.TestClasses.Faker.FakeCardExternalId(cardExternalId),
@@ -101,12 +102,12 @@ public static class Faker
         );
     }
 
-    public static CardListingOrder FakeCompletedOrder(DateTime? date = null, int price = 0, int quantity = 0)
+    public static CardListingOrder FakeCompletedOrder(DateTime? date = null, int price = 0, int sequenceNumber = 0)
     {
         return new CardListingOrder(
             Date: date ?? new DateTime(2025, 1, 16, 10, 20, 0, DateTimeKind.Utc),
             Price: NaturalNumber.Create(price),
-            Quantity: NaturalNumber.Create(quantity)
+            SequenceNumber: NaturalNumber.Create(sequenceNumber)
         );
     }
 

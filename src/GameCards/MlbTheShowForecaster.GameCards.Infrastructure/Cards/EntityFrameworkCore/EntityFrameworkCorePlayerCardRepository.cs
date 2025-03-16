@@ -59,23 +59,25 @@ public sealed class EntityFrameworkCorePlayerCardRepository : IPlayerCardReposit
     /// <summary>
     /// Returns a <see cref="PlayerCard"/> for the specified <see cref="CardExternalId"/>
     /// </summary>
+    /// <param name="season">The season of the <see cref="PlayerCard"/></param>
     /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="PlayerCard"/></param>
     /// <returns>The corresponding <see cref="PlayerCard"/></returns>
-    public async Task<PlayerCard?> GetByExternalId(CardExternalId externalId)
+    public async Task<PlayerCard?> GetByExternalId(SeasonYear season, CardExternalId externalId)
     {
         return await _dbContext.PlayerCardsWithHistoricalRatings()
-            .FirstOrDefaultAsync(x => x.ExternalId == externalId);
+            .FirstOrDefaultAsync(x => x.Year == season && x.ExternalId == externalId);
     }
 
     /// <summary>
     /// Checks if a <see cref="PlayerCard"/> exists
     /// </summary>
+    /// <param name="season">The season of the <see cref="PlayerCard"/></param>
     /// <param name="externalId">The <see cref="CardExternalId"/> of the <see cref="PlayerCard"/></param>
     /// <returns>True if the <see cref="PlayerCard"/> exists, otherwise false</returns>
-    public async Task<bool> Exists(CardExternalId externalId)
+    public async Task<bool> Exists(SeasonYear season, CardExternalId externalId)
     {
         return await _dbContext.PlayerCards
             .AsNoTracking()
-            .AnyAsync(x => x.ExternalId == externalId);
+            .AnyAsync(x => x.Year == season && x.ExternalId == externalId);
     }
 }

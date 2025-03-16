@@ -32,6 +32,11 @@ public class JobController : Controller
     private const string CardPriceTracker = nameof(CardPriceTrackerJob);
 
     /// <summary>
+    /// Job ID for <see cref="CardListingImporterJob"/>
+    /// </summary>
+    private const string CardListingImporter = nameof(CardListingImporterJob);
+
+    /// <summary>
     /// Job ID for <see cref="IRosterUpdateOrchestrator"/>
     /// </summary>
     private const string RosterUpdateOrchestrator = nameof(RosterUpdaterJob);
@@ -70,6 +75,10 @@ public class JobController : Controller
             case CardPriceTracker:
                 _ = Task.Run(async () => await _jobManager.Run<CardPriceTrackerJob, CardPriceTrackerJobResult>(s, ct),
                     ct);
+                break;
+            case CardListingImporter:
+                _ = Task.Run(
+                    async () => await _jobManager.Run<CardListingImporterJob, CardListingImporterJobResult>(s, ct), ct);
                 break;
             case RosterUpdateOrchestrator:
                 _ = Task.Run(async () => await _jobManager.Run<RosterUpdaterJob, RosterUpdaterJobResult>(s, ct), ct);
