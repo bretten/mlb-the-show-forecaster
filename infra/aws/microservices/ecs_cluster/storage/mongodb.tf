@@ -11,8 +11,8 @@ resource "aws_ecs_task_definition" "task_definition_mongodb" {
   family                   = "${var.resource_prefix}-mongodb"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "256"
-  memory                   = "512"
+  cpu                      = "512"
+  memory                   = "1024"
   task_role_arn            = null
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false

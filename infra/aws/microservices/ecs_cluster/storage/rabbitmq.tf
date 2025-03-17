@@ -23,6 +23,10 @@ resource "aws_ecs_task_definition" "task_definition_rabbitmq" {
         essential = true
         name      = "${var.resource_prefix}-rabbitmq"
         image     = "rabbitmq:3-management"
+        command = [
+          "sh", "-c",
+          "echo '[rabbitmq_management,rabbitmq_prometheus,rabbitmq_shovel,rabbitmq_shovel_management].' > /etc/rabbitmq/enabled_plugins && rabbitmq-server"
+        ]
         logConfiguration = {
           logDriver = "awslogs"
           options = {
