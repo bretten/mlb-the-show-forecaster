@@ -39,6 +39,16 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
     private readonly IMlbTheShowListingMapper _listingMapper;
 
     /// <summary>
+    /// PST timezone
+    /// </summary>
+    private readonly TimeZoneInfo _pst = TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
+
+    /// <summary>
+    /// EST timezone
+    /// </summary>
+    private readonly TimeZoneInfo _est = TimeZoneInfo.FindSystemTimeZoneById("America/New_York");
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="context"><see cref="IBrowsingContext"/> for <see cref="AngleSharp"/></param>
@@ -155,11 +165,7 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
             var price = int.Parse(parsedPrice);
 
             // Parse the date string which is in the format 1/16/2025 3:38AM PST
-            var dateString = cells[1].TextContent.Trim().Replace(" PST", "").Replace(" PDT", "");
-            var rawDateTime = DateTime.ParseExact(dateString, "M/d/yyyy h:mmtt", CultureInfo.InvariantCulture);
-
-            var tzInfo = TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles");
-            var dateOffset = new DateTimeOffset(rawDateTime, tzInfo.BaseUtcOffset);
+            var dateOffset = ParseDate(cells[1].TextContent.Trim());
 
             // Exclude seconds
             var utcDate = new DateTime(dateOffset.UtcDateTime.Year, dateOffset.UtcDateTime.Month,
@@ -168,6 +174,38 @@ public sealed class MlbTheShowComCardMarketplace : ICardMarketplace
 
             return new ListingOrderDto(utcDate.ToString("MM/dd/yyyy HH:mm:ss"), price.ToString());
         }).ToList();
+    }
+
+    /// <summary>
+    /// The format of the dates on the website
+    /// </summary>
+    private const string WebsiteDateFormat = "M/d/yyyy h:mmtt";
+
+    /// <summary>
+    /// Parses a date string
+    /// </summary>
+    /// <param name="dateString">The raw date string</param>
+    /// <returns><see cref="DateTimeOffset"/></returns>
+    /// <exception cref="UnknownTimezoneException">Thrown when the timezone is unknown</exception>
+    private DateTimeOffset ParseDate(string dateString)
+    {
+        if (dateString.Contains("PST") || dateString.Contains("PDT"))
+        {
+            var date = dateString.Replace(" PST", "").Replace(" PDT", "");
+            var rawDateTime = DateTime.ParseExact(date, WebsiteDateFormat, CultureInfo.InvariantCulture);
+
+            return new DateTimeOffset(rawDateTime, _pst.BaseUtcOffset);
+        }
+
+        if (dateString.Contains("EST") || dateString.Contains("EDT"))
+        {
+            var date = dateString.Replace(" EST", "").Replace(" EDT", "");
+            var rawDateTime = DateTime.ParseExact(date, WebsiteDateFormat, CultureInfo.InvariantCulture);
+
+            return new DateTimeOffset(rawDateTime, _est.BaseUtcOffset);
+        }
+
+        throw new UnknownTimezoneException(dateString);
     }
 
     /// <summary>

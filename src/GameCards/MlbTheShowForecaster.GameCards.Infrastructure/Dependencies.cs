@@ -193,7 +193,8 @@ public static class Dependencies
                             .HandleResult(doc =>
                             {
                                 var isSuccessStatusCode = (int)doc.StatusCode >= 200 && (int)doc.StatusCode <= 299;
-                                return !isSuccessStatusCode;
+                                var containsMarket = doc.QuerySelectorAll("div[class='section-market-info']");
+                                return !isSuccessStatusCode || containsMarket.Length == 0;
                             })
                     })
                     .AddTimeout(TimeSpan.FromMinutes(20))
