@@ -33,6 +33,7 @@ It is built with:
  - PostgreSQL operational db
  - MongoDB reporting db (for front-end consumption)
  - RabbitMQ message broker
+ - Redis event store
 
 ## How is it deployed?
 All the .NET apps are containerized and deployed to AWS Elastic Container Service via a Github Actions CD [pipeline](.github/workflows/cd-release.yml). The microservices live in their own VPC, with no public access. The gateway app provides access to these microservices via a load balancer that handles all incoming traffic. Authentication is handled with AWS Cognito.
