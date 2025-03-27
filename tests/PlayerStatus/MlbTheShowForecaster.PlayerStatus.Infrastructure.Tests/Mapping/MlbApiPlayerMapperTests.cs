@@ -66,6 +66,7 @@ public class MlbApiPlayerMapperTests
     [InlineData("2B", Position.SecondBase)]
     [InlineData("3B", Position.ThirdBase)]
     [InlineData("SS", Position.Shortstop)]
+    [InlineData("IF", Position.Infield)]
     [InlineData("LF", Position.LeftField)]
     [InlineData("CF", Position.CenterField)]
     [InlineData("RF", Position.RightField)]

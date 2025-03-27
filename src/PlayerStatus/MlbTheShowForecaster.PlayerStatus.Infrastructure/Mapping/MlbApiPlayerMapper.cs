@@ -57,6 +57,7 @@ public sealed class MlbApiPlayerMapper : IMlbApiPlayerMapper
             case "PH":
             case "PR":
             case "TWP":
+            case "IF":
                 return (Position)TypeDescriptor.GetConverter(typeof(Position)).ConvertFrom(positionAbbreviation)!;
             default:
                 throw new InvalidMlbApiPositionException(
