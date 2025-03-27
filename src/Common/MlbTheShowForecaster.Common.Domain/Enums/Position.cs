@@ -41,6 +41,11 @@ public enum Position
     [Display(Name = "SS")] Shortstop,
 
     /// <summary>
+    /// Infield (IF)
+    /// </summary>
+    [Display(Name = "IF")] Infield,
+
+    /// <summary>
     /// Left field (LF)
     /// </summary>
     [Display(Name = "LF")] LeftField,
