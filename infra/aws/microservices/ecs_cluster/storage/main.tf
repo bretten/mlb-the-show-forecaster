@@ -2,6 +2,9 @@
 resource "aws_efs_file_system" "efs_storage" {
   creation_token = "${var.resource_prefix}-storage-fs"
 
+  throughput_mode                 = "provisioned"
+  provisioned_throughput_in_mibps = 5
+
   tags = var.root_tags
 }
 
