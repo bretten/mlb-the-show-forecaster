@@ -13,6 +13,20 @@ variable "root_tags" {
   type        = map(string)
 }
 
+variable "account_id" {
+  description = "Account ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "main_bucket" {
+  description = "Main bucket"
+  type = object({
+    arn    = string
+    bucket = string
+  })
+}
+
 variable "task_def_gateway_image" {
   description = "The container image for the gateway app"
   type        = string

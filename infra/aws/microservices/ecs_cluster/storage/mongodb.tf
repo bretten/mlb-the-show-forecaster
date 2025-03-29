@@ -124,7 +124,7 @@ resource "aws_service_discovery_service" "discovery_service_mongodb" {
 # mongodb service
 resource "aws_ecs_service" "ecs_service_mongodb" {
   name            = "${var.resource_prefix}-mongodb"
-  cluster         = var.main_cluster_id
+  cluster         = var.main_cluster.id
   task_definition = aws_ecs_task_definition.task_definition_mongodb.arn
   desired_count   = 1
 

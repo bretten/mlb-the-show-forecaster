@@ -48,10 +48,15 @@ module "load_balancer" {
 
 # ECS cluster that runs .NET services as containers
 module "ecs_cluster" {
-  source                             = "./ecs_cluster"
-  aws_region                         = var.aws_region
-  resource_prefix                    = var.resource_prefix
-  root_tags                          = var.root_tags
+  source          = "./ecs_cluster"
+  aws_region      = var.aws_region
+  resource_prefix = var.resource_prefix
+  root_tags       = var.root_tags
+  account_id      = data.aws_caller_identity.current.account_id
+  main_bucket = {
+    arn    = aws_s3_bucket.main_bucket.arn
+    bucket = aws_s3_bucket.main_bucket.bucket
+  }
   task_def_gateway_image             = "${var.container_registry_url}/gateway:${var.image_tag}"
   task_def_player_tracker_image      = "${var.container_registry_url}/player-tracker:${var.image_tag}"
   task_def_performance_tracker_image = "${var.container_registry_url}/performance-tracker:${var.image_tag}"

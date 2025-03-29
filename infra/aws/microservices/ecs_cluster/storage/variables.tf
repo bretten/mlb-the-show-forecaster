@@ -13,6 +13,20 @@ variable "root_tags" {
   type        = map(string)
 }
 
+variable "account_id" {
+  description = "Account ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "main_bucket" {
+  description = "Main bucket"
+  type = object({
+    arn    = string
+    bucket = string
+  })
+}
+
 variable "task_execution_role_arn" {
   description = "Execution role"
   type        = string
@@ -23,9 +37,13 @@ variable "private_dns_namespace_id" {
   type        = string
 }
 
-variable "main_cluster_id" {
-  description = "Main cluster ID"
-  type        = string
+variable "main_cluster" {
+  description = "Main cluster"
+  type = object({
+    id   = string
+    arn  = string
+    name = string
+  })
 }
 
 variable "security_group_id_private" {

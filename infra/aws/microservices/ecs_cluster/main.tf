@@ -9,13 +9,19 @@ module "storage" {
   # If == 1, then use the module. Otherwise, exclude it
   count = var.use_storage == true ? 1 : 0
 
-  source                    = "./storage"
-  aws_region                = var.aws_region
-  resource_prefix           = var.resource_prefix
-  root_tags                 = var.root_tags
-  task_execution_role_arn   = var.task_execution_role_arn
-  private_dns_namespace_id  = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
-  main_cluster_id           = aws_ecs_cluster.main.id
+  source                   = "./storage"
+  aws_region               = var.aws_region
+  resource_prefix          = var.resource_prefix
+  root_tags                = var.root_tags
+  account_id               = var.account_id
+  main_bucket              = var.main_bucket
+  task_execution_role_arn  = var.task_execution_role_arn
+  private_dns_namespace_id = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
+  main_cluster = {
+    id   = aws_ecs_cluster.main.id
+    arn  = aws_ecs_cluster.main.arn
+    name = aws_ecs_cluster.main.name
+  }
   security_group_id_private = var.security_group_id_private
   subnet_id_private         = var.subnet_id_private
   aspnetcore_environment    = var.aspnetcore_environment
