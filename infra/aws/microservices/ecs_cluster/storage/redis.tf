@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "task_definition_redis" {
         environment = [
           {
             name  = "REDIS_ARGS"
-            value = "--requirepass ${var.redis_pass} --appendonly yes"
+            value = "--requirepass ${var.redis_pass} --appendonly yes --appendfsync everysec"
           }
         ]
         environmentFiles = []
