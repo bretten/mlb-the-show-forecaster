@@ -12,7 +12,7 @@ resource "aws_ecs_task_definition" "task_definition_redis" {
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "1024"
-  memory                   = "2048"
+  memory                   = "8192"
   task_role_arn            = null
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false
@@ -60,7 +60,7 @@ resource "aws_ecs_task_definition" "task_definition_redis" {
         environment = [
           {
             name  = "REDIS_ARGS"
-            value = "--requirepass ${var.redis_pass} --appendonly yes"
+            value = "--requirepass ${var.redis_pass} --appendonly yes --appendfsync everysec"
           }
         ]
         environmentFiles = []
