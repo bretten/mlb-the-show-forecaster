@@ -123,6 +123,7 @@ public sealed class MongoDbTrendReporter : ITrendReporter
             _ when nameof(TrendReport.SellPriceChange24H).ToLower() == sf => nameof(TrendReport.SellPriceChange24H),
             _ when nameof(TrendReport.Score).ToLower() == sf => nameof(TrendReport.Score),
             _ when nameof(TrendReport.ScoreChange2W).ToLower() == sf => nameof(TrendReport.ScoreChange2W),
+            _ when nameof(TrendReport.Demand).ToLower() == sf => nameof(TrendReport.Demand),
             _ => nameof(TrendReport.CardName)
         };
 
