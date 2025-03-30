@@ -38,6 +38,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Npgsql;
 using Polly;
@@ -221,6 +222,7 @@ public static class Dependencies
             sp.GetRequiredService<IQuerySender>(),
             sp.GetRequiredService<ICommandSender>(),
             sp.GetRequiredService<IListingPriceSignificantChangeThreshold>(),
+            sp.GetRequiredService<ILogger<CardPriceTracker>>(),
             config.GetValue<int>(ConfigKeys.PricesAndOrdersBatchSize)));
     }
 

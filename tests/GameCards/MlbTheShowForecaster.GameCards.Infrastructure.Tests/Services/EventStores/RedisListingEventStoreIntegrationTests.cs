@@ -226,6 +226,24 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
 
     [Fact]
     [Trait("Category", "Integration")]
+    public async Task PeekListing_MissingListingState_ReturnsNull()
+    {
+        // Arrange
+        var year = SeasonYear.Create(2025);
+        var cardListing = Faker.FakeCardListing(year.Value);
+
+        var connection = await GetConnection();
+        var eventStore = new RedisListingEventStore(connection);
+
+        // Act
+        var actual = await eventStore.PeekListing(year, cardListing.CardExternalId);
+
+        // Assert
+        Assert.Null(actual);
+    }
+
+    [Fact]
+    [Trait("Category", "Integration")]
     public async Task PeekListing_AppendListingPricesAndOrders_ReturnsRecentListingState()
     {
         // Arrange
@@ -251,12 +269,13 @@ public class RedisListingEventStoreIntegrationTests : IAsyncLifetime
         var actual = await eventStore.PeekListing(year, cardListing.CardExternalId);
 
         // Assert
-        Assert.Equal(cardListing.ListingName, actual.ListingName);
-        Assert.Equal(cardListing.BestBuyPrice, actual.BestBuyPrice);
-        Assert.Equal(cardListing.BestSellPrice, actual.BestSellPrice);
-        Assert.Equal(cardListing.CardExternalId, actual.CardExternalId);
-        Assert.Equal(cardListing.HistoricalPrices, actual.HistoricalPrices);
-        Assert.Equal(cardListing.RecentOrders, actual.RecentOrders);
+        Assert.NotNull(actual);
+        Assert.Equal(cardListing.ListingName, actual.Value.ListingName);
+        Assert.Equal(cardListing.BestBuyPrice, actual.Value.BestBuyPrice);
+        Assert.Equal(cardListing.BestSellPrice, actual.Value.BestSellPrice);
+        Assert.Equal(cardListing.CardExternalId, actual.Value.CardExternalId);
+        Assert.Equal(cardListing.HistoricalPrices, actual.Value.HistoricalPrices);
+        Assert.Equal(cardListing.RecentOrders, actual.Value.RecentOrders);
     }
 
     private async Task<string> AddPriceToEventStore(IDatabase db, SeasonYear year, CardExternalId cardExternalId,

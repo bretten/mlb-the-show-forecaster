@@ -13,6 +13,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
+using Microsoft.Extensions.Logging;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
 
@@ -42,6 +43,11 @@ public sealed class CardPriceTracker : ICardPriceTracker
     private readonly IListingPriceSignificantChangeThreshold _listingPriceSignificantChangeThreshold;
 
     /// <summary>
+    /// Logger
+    /// </summary>
+    private readonly ILogger<CardPriceTracker> _logger;
+
+    /// <summary>
     /// Batch size for prices and orders
     /// </summary>
     private readonly int _batchSize;
@@ -53,15 +59,17 @@ public sealed class CardPriceTracker : ICardPriceTracker
     /// <param name="querySender">Sends queries to retrieve state from the system</param>
     /// <param name="commandSender">Sends commands to mutate the system</param>
     /// <param name="listingPriceSignificantChangeThreshold">The percentage change threshold that determines significant listing price changes</param>
+    /// <param name="logger">Logger</param>
     /// <param name="batchSize">Batch size for prices and orders</param>
     public CardPriceTracker(IListingEventStore listingEventStore, IQuerySender querySender,
         ICommandSender commandSender, IListingPriceSignificantChangeThreshold listingPriceSignificantChangeThreshold,
-        int batchSize)
+        ILogger<CardPriceTracker> logger, int batchSize)
     {
         _listingEventStore = listingEventStore;
         _querySender = querySender;
         _commandSender = commandSender;
         _listingPriceSignificantChangeThreshold = listingPriceSignificantChangeThreshold;
+        _logger = logger;
         _batchSize = batchSize;
     }
 
@@ -98,11 +106,17 @@ public sealed class CardPriceTracker : ICardPriceTracker
 
             // Get the pricing information from the external card marketplace
             var externalPrices = await _listingEventStore.PeekListing(year, domainPlayerCard.ExternalId);
+            if (externalPrices == null)
+            {
+                _logger.LogWarning(
+                    $"{nameof(CardPriceTracker)} - No listing state for {domainPlayerCard.Year.Value} - {domainPlayerCard.ExternalId.Value:D}");
+                return;
+            }
 
             // If the Listing doesn't exist in this domain yet, create it
             if (domainListing == null)
             {
-                await _commandSender.Send(new CreateListingCommand(externalPrices), cancellationToken);
+                await _commandSender.Send(new CreateListingCommand(externalPrices.Value), cancellationToken);
                 Interlocked.Increment(ref newListings);
 
                 var addedListing = await _querySender.Send(
@@ -116,11 +130,11 @@ public sealed class CardPriceTracker : ICardPriceTracker
             listings.TryAdd(domainPlayerCard.ExternalId, domainListing);
 
             // If there is new pricing information from the external source, update the domain Listing with the new data
-            if (externalPrices.HasNewPrices(domainListing))
+            if (externalPrices.Value.HasNewPrices(domainListing))
             {
                 await _commandSender.Send(
-                    new UpdateListingCommand(domainListing, externalPrices, _listingPriceSignificantChangeThreshold),
-                    cancellationToken
+                    new UpdateListingCommand(domainListing, externalPrices.Value,
+                        _listingPriceSignificantChangeThreshold), cancellationToken
                 );
                 Interlocked.Increment(ref updatedListings);
             }

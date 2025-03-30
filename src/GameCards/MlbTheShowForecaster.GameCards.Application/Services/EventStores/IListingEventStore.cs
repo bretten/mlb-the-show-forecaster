@@ -56,6 +56,6 @@ public interface IListingEventStore
     /// </summary>
     /// <param name="year">The year of the listing</param>
     /// <param name="cardExternalId">The <see cref="CardExternalId"/> to get the price for</param>
-    /// <returns><see cref="CardListing"/></returns>
-    Task<CardListing> PeekListing(SeasonYear year, CardExternalId cardExternalId);
+    /// <returns><see cref="CardListing"/> or null if it does not exist</returns>
+    Task<CardListing?> PeekListing(SeasonYear year, CardExternalId cardExternalId);
 }

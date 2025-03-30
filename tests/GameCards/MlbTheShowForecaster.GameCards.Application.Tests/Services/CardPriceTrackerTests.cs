@@ -4,6 +4,7 @@ using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.CreateListing;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListing;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Commands.UpdateListingsPricesAndOrders;
+using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetAllPlayerCards;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Queries.GetListingByCardExternalId;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services;
@@ -14,6 +15,7 @@ using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Cards.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.Entities;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Marketplace.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Domain.Tests.Cards.TestClasses;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.GameCards.Application.Tests.Services;
@@ -36,9 +38,10 @@ public class CardPriceTrackerTests
         var mockListingEventStore = Mock.Of<IListingEventStore>();
         var mockCommandSender = Mock.Of<ICommandSender>();
         var stubPriceChangeThreshold = Mock.Of<IListingPriceSignificantChangeThreshold>();
+        var mockLogger = Mock.Of<ILogger<CardPriceTracker>>();
 
         var tracker = new CardPriceTracker(mockListingEventStore, stubQuerySender.Object, mockCommandSender,
-            stubPriceChangeThreshold, 1000);
+            stubPriceChangeThreshold, mockLogger, 1000);
         var action = () => tracker.TrackCardPrices(year, cToken);
 
         // Act
@@ -83,11 +86,16 @@ public class CardPriceTrackerTests
         var domainListing3 =
             Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(year.Value, cardExternalId3.Value, 3, 30);
         var domainPlayerCard3 = Faker.FakePlayerCard(year: year.Value, externalId: cardExternalId3.Value);
+        // No listing state for PlayerCard4
+        var cardExternalId4 = Faker.FakeCardExternalId(Faker.FakeGuid4);
+        var domainPlayerCard4 = Faker.FakePlayerCard(year: year.Value, externalId: cardExternalId4.Value);
+        var domainListing4 =
+            Domain.Tests.Marketplace.TestClasses.Faker.FakeListing(year.Value, cardExternalId4.Value, 4, 40);
 
         // The query that returns all PlayerCards currently in the domain
         var getAllPlayerCardsQuery = new GetAllPlayerCardsQuery(year);
         var getAllPlayerCardsQueryResult = new List<PlayerCard>()
-            { domainPlayerCard1, domainPlayerCard2, domainPlayerCard3 };
+            { domainPlayerCard1, domainPlayerCard2, domainPlayerCard3, domainPlayerCard4 };
 
         // The card marketplace should return the current prices from the external source
         var stubListingEventStore = new Mock<IListingEventStore>();
@@ -97,6 +105,8 @@ public class CardPriceTrackerTests
             .ReturnsAsync(externalListing2);
         stubListingEventStore.Setup(x => x.PeekListing(year, cardExternalId3))
             .ReturnsAsync(externalListing3);
+        stubListingEventStore.Setup(x => x.PeekListing(year, cardExternalId4))
+            .ReturnsAsync((CardListing?)null);
 
         // Stub the behavior of the query handler
         var stubQuerySender = new Mock<IQuerySender>();
@@ -112,6 +122,9 @@ public class CardPriceTrackerTests
         var getListing3Query = new GetListingByCardExternalIdQuery(year, cardExternalId3, false);
         stubQuerySender.Setup(x => x.Send(getListing3Query, cToken))
             .ReturnsAsync(domainListing3);
+        var getListing4Query = new GetListingByCardExternalIdQuery(year, cardExternalId4, false);
+        stubQuerySender.Setup(x => x.Send(getListing4Query, cToken))
+            .ReturnsAsync(domainListing4);
 
         // The command sender should expect to send a create command for Listing1
         var mockCommandSender = Mock.Of<ICommandSender>();
@@ -124,9 +137,11 @@ public class CardPriceTrackerTests
         var notExpectedListing3UpdateCommand =
             new UpdateListingCommand(domainListing3, externalListing3, stubPriceChangeThreshold);
 
+        var mockLogger = new Mock<ILogger<CardPriceTracker>>();
+
         // Tracker
         var tracker = new CardPriceTracker(stubListingEventStore.Object, stubQuerySender.Object, mockCommandSender,
-            stubPriceChangeThreshold, 1000);
+            stubPriceChangeThreshold, mockLogger.Object, 1000);
 
         /*
          * Act
@@ -137,13 +152,13 @@ public class CardPriceTrackerTests
          * Assert
          */
         // There were 3 player cards in the domain
-        Assert.Equal(3, actual.TotalCards);
+        Assert.Equal(4, actual.TotalCards);
         // PlayerCard1 had no listing, so it was created
         Assert.Equal(1, actual.TotalNewListings);
         // PlayerCard2 had an existing listing, so it was updated
         Assert.Equal(1, actual.TotalUpdatedListings);
         // PlayerCard 3 had an up-to-date listing, so nothing was changed
-        Assert.Equal(1, actual.TotalUnchangedListings);
+        Assert.Equal(2, actual.TotalUnchangedListings);
 
         // Were all the domain PlayerCards retrieved?
         stubQuerySender.Verify(x => x.Send(getAllPlayerCardsQuery, cToken), Times.Once);
@@ -151,10 +166,21 @@ public class CardPriceTrackerTests
         stubQuerySender.Verify(x => x.Send(getListing1Query, cToken), Times.Exactly(2));
         stubQuerySender.Verify(x => x.Send(getListing2Query, cToken), Times.Once);
         stubQuerySender.Verify(x => x.Send(getListing3Query, cToken), Times.Once);
+        stubQuerySender.Verify(x => x.Send(getListing4Query, cToken), Times.Once);
         // Were the card prices retrieved from the external card marketplace?
         stubListingEventStore.Verify(x => x.PeekListing(year, cardExternalId1), Times.Once);
         stubListingEventStore.Verify(x => x.PeekListing(year, cardExternalId2), Times.Once);
         stubListingEventStore.Verify(x => x.PeekListing(year, cardExternalId3), Times.Once);
+        stubListingEventStore.Verify(x => x.PeekListing(year, cardExternalId4), Times.Once);
+        // The warning for the missing state for Listing4 should be logged
+        mockLogger.Verify(x => x.Log(LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((o, t) =>
+                    o.ToString()!.StartsWith(
+                        $"{nameof(CardPriceTracker)} - No listing state for {domainPlayerCard4.Year.Value} - {domainPlayerCard4.ExternalId.Value:D}")),
+                null,
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.AtLeastOnce);
         // Was a create command sent for Listing 1?
         Mock.Get(mockCommandSender).Verify(x => x.Send(expectedListing1Command, cToken), Times.Once);
         // Was a update command sent for Listing 2?
