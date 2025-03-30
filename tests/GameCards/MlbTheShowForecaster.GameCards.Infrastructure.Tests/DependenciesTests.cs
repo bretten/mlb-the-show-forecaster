@@ -100,6 +100,7 @@ public class DependenciesTests
         var s = new ServiceCollection();
 
         // Act
+        s.AddLogging();
         s.AddSingleton<ICalendar, Calendar>();
         s.AddGameCardsPriceTracker(config);
         s.AddSingleton(Mock.Of<IListingEventStore>());
@@ -142,6 +143,7 @@ public class DependenciesTests
         var s = new ServiceCollection();
 
         // Act
+        s.AddLogging();
         s.TryAddSingleton<ICalendar, Calendar>();
         s.AddGameCardsPriceTracker(config);
 

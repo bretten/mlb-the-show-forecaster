@@ -299,11 +299,16 @@ public sealed class RedisListingEventStore : IListingEventStore
     }
 
     /// <inheritdoc />
-    public async Task<CardListing> PeekListing(SeasonYear year, CardExternalId cardExternalId)
+    public async Task<CardListing?> PeekListing(SeasonYear year, CardExternalId cardExternalId)
     {
         var db = _redisConnection.GetDatabase();
 
         var strValue = await db.StringGetAsync(ListingKey(year, cardExternalId));
+        if (string.IsNullOrWhiteSpace(strValue))
+        {
+            return null;
+        }
+
         return JsonSerializer.Deserialize<CardListing>(strValue!);
     }
 
