@@ -59,6 +59,28 @@ resource "aws_iam_role_policy" "policy_register_load_balancer" {
   })
 }
 
+# Policy for allowing SSM agent on ECS tasks
+resource "aws_iam_role_policy" "policy_systems_manager" {
+  name = "mlbForecasterSsmAgent"
+  role = aws_iam_role.role_ecs_task_execution.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
 # Managed policy for executing ECS tasks
 resource "aws_iam_role_policy_attachment" "attachment_ecs_task_execution" {
   role       = aws_iam_role.role_ecs_task_execution.name

@@ -97,6 +97,9 @@ resource "aws_ecs_task_definition" "task_definition_postgresql" {
         systemControls = []
         ulimits        = []
         volumesFrom    = []
+        linuxParameters = {
+          "initProcessEnabled" = true
+        }
       },
     ]
   )

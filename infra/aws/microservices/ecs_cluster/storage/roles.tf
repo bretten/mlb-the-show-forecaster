@@ -76,17 +76,7 @@ resource "aws_iam_role_policy" "policy_backup_storage" {
         ]
         Effect   = "Allow"
         Resource = "*"
-      },
-      {
-        Action = [
-          "ssmmessages:CreateControlChannel",
-          "ssmmessages:CreateDataChannel",
-          "ssmmessages:OpenControlChannel",
-          "ssmmessages:OpenDataChannel"
-        ]
-        Effect   = "Allow"
-        Resource = "*"
-      },
+      }
     ]
   })
 }

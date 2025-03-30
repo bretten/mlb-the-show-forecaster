@@ -19,7 +19,7 @@ resource "aws_lambda_function" "lambda_upload_postgresql_backup" {
   function_name = "${var.resource_prefix}-upload-postgresql-backup"
   role          = aws_iam_role.role_backup.arn
   handler       = "lambda_upload_postgresql_backup.lambda_handler"
-  timeout       = 600
+  timeout       = 900
 
   environment {
     variables = {

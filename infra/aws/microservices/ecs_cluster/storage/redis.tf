@@ -77,6 +77,9 @@ resource "aws_ecs_task_definition" "task_definition_redis" {
         systemControls = []
         ulimits        = []
         volumesFrom    = []
+        linuxParameters = {
+          "initProcessEnabled" = true
+        }
       },
     ]
   )
