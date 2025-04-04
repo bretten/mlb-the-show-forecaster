@@ -1,6 +1,7 @@
 import boto3
 import os
 import socket
+import time
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from enum import Enum
@@ -55,6 +56,14 @@ def copy_status(file):
     exists = os.path.exists(file)
     print(f"exists: {exists}")
     if not exists:
+        return Status.READY
+
+    # Check if the backup is stale
+    file_modified_time = os.path.getmtime(file)
+    now = time.time()
+    hours_since_modified = (now - file_modified_time) / 60 / 60 # seconds -> minutes -> hours
+    if hours_since_modified > 12: # Stale, so begin again
+        print("---Backup stale")
         return Status.READY
 
     size = os.path.getsize(file)
