@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "task_definition_redis" {
   network_mode             = "awsvpc"
   cpu                      = "1024"
   memory                   = "8192"
-  task_role_arn            = null
+  task_role_arn            = var.task_role_arn
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false
 
@@ -68,11 +68,18 @@ resource "aws_ecs_task_definition" "task_definition_redis" {
           {
             sourceVolume  = "redis-volume"
             containerPath = "/data"
+          },
+          {
+            sourceVolume  = "redis-backups-volume"
+            containerPath = "/mnt/backup/redis"
           }
         ]
         systemControls = []
         ulimits        = []
         volumesFrom    = []
+        linuxParameters = {
+          "initProcessEnabled" = true
+        }
       },
     ]
   )
@@ -94,6 +101,20 @@ resource "aws_ecs_task_definition" "task_definition_redis" {
       }
     }
   }
+
+  volume {
+    name = "redis-backups-volume"
+
+    efs_volume_configuration {
+      file_system_id          = aws_efs_file_system.efs_storage.id
+      transit_encryption      = "ENABLED"
+      transit_encryption_port = 3000
+      authorization_config {
+        access_point_id = aws_efs_access_point.efs_access_storage_redis_backups.id
+      }
+    }
+  }
+
 
   tags = var.root_tags
 
@@ -127,7 +148,7 @@ resource "aws_service_discovery_service" "discovery_service_redis" {
 # redis service
 resource "aws_ecs_service" "ecs_service_redis" {
   name            = "${var.resource_prefix}-redis"
-  cluster         = var.main_cluster_id
+  cluster         = var.main_cluster.id
   task_definition = aws_ecs_task_definition.task_definition_redis.arn
   desired_count   = 1
 
@@ -135,7 +156,7 @@ resource "aws_ecs_service" "ecs_service_redis" {
   deployment_minimum_healthy_percent = 100
 
   enable_ecs_managed_tags           = true
-  enable_execute_command            = false
+  enable_execute_command            = true
   wait_for_steady_state             = false
   health_check_grace_period_seconds = 0
   platform_version                  = "LATEST"

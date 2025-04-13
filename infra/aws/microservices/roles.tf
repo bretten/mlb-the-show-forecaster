@@ -1,3 +1,26 @@
+
+# IAM Role that ECS Tasks assume
+resource "aws_iam_role" "role_ecs_task_role" {
+  name = "ecsTaskRole"
+  assume_role_policy = jsonencode(
+    {
+      Statement = [
+        {
+          Action = "sts:AssumeRole"
+          Effect = "Allow"
+          Principal = {
+            Service = "ecs-tasks.amazonaws.com"
+          }
+          Sid = ""
+        }
+      ]
+      Version = "2008-10-17"
+    }
+  )
+
+  tags = var.root_tags
+}
+
 # IAM Role for ECS Task Execution
 resource "aws_iam_role" "role_ecs_task_execution" {
   name = "ecsTaskExecutionRole"
@@ -11,15 +34,7 @@ resource "aws_iam_role" "role_ecs_task_execution" {
             Service = "ecs-tasks.amazonaws.com"
           }
           Sid = ""
-        },
-        {
-          Action = "sts:AssumeRole"
-          Effect = "Allow"
-          Principal = {
-            Service = "backup.amazonaws.com"
-          }
-          Sid = ""
-        },
+        }
       ]
       Version = "2008-10-17"
     }
@@ -67,14 +82,30 @@ resource "aws_iam_role_policy" "policy_register_load_balancer" {
   })
 }
 
+# Policy for allowing SSM agent on ECS tasks
+resource "aws_iam_role_policy" "policy_systems_manager" {
+  name = "mlbForecasterSsmAgent"
+  role = aws_iam_role.role_ecs_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "ssmmessages:CreateControlChannel",
+          "ssmmessages:CreateDataChannel",
+          "ssmmessages:OpenControlChannel",
+          "ssmmessages:OpenDataChannel"
+        ]
+        Effect   = "Allow"
+        Resource = "*"
+      },
+    ]
+  })
+}
+
 # Managed policy for executing ECS tasks
 resource "aws_iam_role_policy_attachment" "attachment_ecs_task_execution" {
   role       = aws_iam_role.role_ecs_task_execution.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
-# Managed policy for backups
-resource "aws_iam_role_policy_attachment" "attachment_backup" {
-  role       = aws_iam_role.role_ecs_task_execution.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
 }

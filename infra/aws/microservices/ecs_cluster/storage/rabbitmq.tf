@@ -140,7 +140,7 @@ resource "aws_service_discovery_service" "discovery_service_rabbitmq" {
 # rabbitmq service
 resource "aws_ecs_service" "ecs_service_rabbitmq" {
   name            = "${var.resource_prefix}-rabbitmq"
-  cluster         = var.main_cluster_id
+  cluster         = var.main_cluster.id
   task_definition = aws_ecs_task_definition.task_definition_rabbitmq.arn
   desired_count   = 1
 
