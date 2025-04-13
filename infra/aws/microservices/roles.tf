@@ -1,3 +1,26 @@
+
+# IAM Role that ECS Tasks assume
+resource "aws_iam_role" "role_ecs_task_role" {
+  name = "ecsTaskRole"
+  assume_role_policy = jsonencode(
+    {
+      Statement = [
+        {
+          Action = "sts:AssumeRole"
+          Effect = "Allow"
+          Principal = {
+            Service = "ecs-tasks.amazonaws.com"
+          }
+          Sid = ""
+        }
+      ]
+      Version = "2008-10-17"
+    }
+  )
+
+  tags = var.root_tags
+}
+
 # IAM Role for ECS Task Execution
 resource "aws_iam_role" "role_ecs_task_execution" {
   name = "ecsTaskExecutionRole"
@@ -62,7 +85,7 @@ resource "aws_iam_role_policy" "policy_register_load_balancer" {
 # Policy for allowing SSM agent on ECS tasks
 resource "aws_iam_role_policy" "policy_systems_manager" {
   name = "mlbForecasterSsmAgent"
-  role = aws_iam_role.role_ecs_task_execution.id
+  role = aws_iam_role.role_ecs_task_role.id
 
   policy = jsonencode({
     Version = "2012-10-17"

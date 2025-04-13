@@ -47,6 +47,11 @@ variable "task_def_marketplace_watcher_image" {
   type        = string
 }
 
+variable "task_role_arn" {
+  description = "Task role"
+  type        = string
+}
+
 variable "task_execution_role_arn" {
   description = "Execution role"
   type        = string

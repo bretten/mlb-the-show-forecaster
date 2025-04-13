@@ -13,7 +13,7 @@ resource "aws_ecs_task_definition" "task_definition_redis" {
   network_mode             = "awsvpc"
   cpu                      = "1024"
   memory                   = "8192"
-  task_role_arn            = var.task_execution_role_arn
+  task_role_arn            = var.task_role_arn
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false
 

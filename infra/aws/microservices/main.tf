@@ -61,6 +61,7 @@ module "ecs_cluster" {
   task_def_player_tracker_image      = "${var.container_registry_url}/player-tracker:${var.image_tag}"
   task_def_performance_tracker_image = "${var.container_registry_url}/performance-tracker:${var.image_tag}"
   task_def_marketplace_watcher_image = "${var.container_registry_url}/marketplace-watcher:${var.image_tag}"
+  task_role_arn                      = aws_iam_role.role_ecs_task_role.arn
   task_execution_role_arn            = aws_iam_role.role_ecs_task_execution.arn
   load_balancer_target_group_arn     = module.load_balancer.load_balancer_target_group_arn
   vpc_id                             = module.vpc.vpc_id

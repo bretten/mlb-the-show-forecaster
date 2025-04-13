@@ -27,6 +27,11 @@ variable "main_bucket" {
   })
 }
 
+variable "task_role_arn" {
+  description = "Task role"
+  type        = string
+}
+
 variable "task_execution_role_arn" {
   description = "Execution role"
   type        = string

@@ -15,6 +15,7 @@ module "storage" {
   root_tags                = var.root_tags
   account_id               = var.account_id
   main_bucket              = var.main_bucket
+  task_role_arn            = var.task_role_arn
   task_execution_role_arn  = var.task_execution_role_arn
   private_dns_namespace_id = aws_service_discovery_private_dns_namespace.private_dns_namespace.id
   main_cluster = {
