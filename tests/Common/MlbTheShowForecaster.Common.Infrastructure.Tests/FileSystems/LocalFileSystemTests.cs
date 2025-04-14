@@ -12,7 +12,7 @@ public class LocalFileSystemTests
         // Arrange
         const string path = "path.txt";
 
-        var fs = new LocalFileSystem();
+        var fs = new LocalFileSystem(new LocalFileSystem.Settings(""));
 
         var action = async () => await fs.RetrieveFile(path);
 
@@ -31,7 +31,7 @@ public class LocalFileSystemTests
         var path = Path.GetTempFileName();
         await File.WriteAllTextAsync(path, "file content");
 
-        var fs = new LocalFileSystem();
+        var fs = new LocalFileSystem(new LocalFileSystem.Settings(""));
 
         // Act
         var actual = await fs.RetrieveFile(path);
@@ -50,7 +50,7 @@ public class LocalFileSystemTests
         var destination = Path.GetTempFileName();
         const bool overwrite = false;
 
-        var fs = new LocalFileSystem();
+        var fs = new LocalFileSystem(new LocalFileSystem.Settings(""));
 
         var action = async () => await fs.StoreFile(stream, destination, overwrite);
 
@@ -70,7 +70,7 @@ public class LocalFileSystemTests
         var destination = Path.GetTempFileName();
         const bool overwrite = true;
 
-        var fs = new LocalFileSystem();
+        var fs = new LocalFileSystem(new LocalFileSystem.Settings(""));
 
         // Act
         await fs.StoreFile(stream, destination, overwrite);

@@ -17,19 +17,19 @@ public sealed class AwsS3FileSystem : IFileSystem
     private readonly IAmazonS3 _s3;
 
     /// <summary>
-    /// The bucket that represents this file system
+    /// Settings
     /// </summary>
-    private readonly string _bucketName;
+    private readonly Settings _settings;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="s3">S3 client</param>
-    /// <param name="bucketName">The bucket that represents this file system</param>
-    public AwsS3FileSystem(IAmazonS3 s3, string bucketName)
+    /// <param name="settings">Settings</param>
+    public AwsS3FileSystem(IAmazonS3 s3, Settings settings)
     {
         _s3 = s3;
-        _bucketName = bucketName;
+        _settings = settings;
     }
 
     /// <inheritdoc />
@@ -37,14 +37,14 @@ public sealed class AwsS3FileSystem : IFileSystem
     {
         var request = new GetObjectRequest()
         {
-            BucketName = _bucketName,
+            BucketName = _settings.Bucket,
             Key = path
         };
 
         var response = await _s3.GetObjectAsync(request);
         if (response == null || response.HttpStatusCode == HttpStatusCode.NotFound)
         {
-            throw new NoFileFoundException($"No S3 object found at key: {path} in bucket {_bucketName}");
+            throw new NoFileFoundException($"No S3 object found at key: {path} in bucket {_settings.Bucket}");
         }
 
         using var memoryStream = new MemoryStream();
@@ -64,7 +64,7 @@ public sealed class AwsS3FileSystem : IFileSystem
 
         var request = new PutObjectRequest
         {
-            BucketName = _bucketName,
+            BucketName = _settings.Bucket,
             Key = destinationPath,
             InputStream = stream,
             ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
@@ -82,10 +82,15 @@ public sealed class AwsS3FileSystem : IFileSystem
     {
         var request = new GetObjectMetadataRequest()
         {
-            BucketName = _bucketName,
+            BucketName = _settings.Bucket,
             Key = key
         };
         var response = await _s3.GetObjectMetadataAsync(request);
         return response != null && response.HttpStatusCode != HttpStatusCode.NotFound;
     }
+
+    /// <summary>
+    /// Settings
+    /// </summary>
+    public sealed record Settings(string Bucket);
 }

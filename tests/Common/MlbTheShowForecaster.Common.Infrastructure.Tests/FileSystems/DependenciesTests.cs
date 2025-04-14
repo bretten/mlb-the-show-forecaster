@@ -13,7 +13,8 @@ public class DependenciesTests
         // Arrange
         var settings = new Dictionary<string, string?>
         {
-            { Dependencies.ConfigKeys.Type, "Local" }
+            { Dependencies.ConfigKeys.Type, "Local" },
+            { Dependencies.ConfigKeys.RootPath, "/home" }
         };
         var config = GetConfig(settings);
 

@@ -8,6 +8,20 @@ namespace com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.FileSystems;
 /// </summary>
 public sealed class LocalFileSystem : IFileSystem
 {
+    /// <summary>
+    /// Settings
+    /// </summary>
+    private readonly Settings _settings;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="settings">Settings</param>
+    public LocalFileSystem(Settings settings)
+    {
+        _settings = settings;
+    }
+
     /// <inheritdoc />
     public async Task<FileItem> RetrieveFile(string path)
     {
@@ -27,10 +41,17 @@ public sealed class LocalFileSystem : IFileSystem
             throw new FileExistsAtDestinationException($"File already exists at {destinationPath}");
         }
 
+        destinationPath = Path.Combine(_settings.RootPath, destinationPath);
+
         // Create the directories if they don't exist
         new FileInfo(destinationPath).Directory?.Create();
 
         await using var fileStream = new FileStream(destinationPath, FileMode.Create, FileAccess.Write);
         await stream.CopyToAsync(fileStream);
     }
+
+    /// <summary>
+    /// Settings
+    /// </summary>
+    public sealed record Settings(string RootPath);
 }
