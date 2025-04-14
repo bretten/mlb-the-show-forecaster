@@ -16,6 +16,7 @@ public class AwsS3FileSystemTests
         // Arrange
         const string bucket = "bucket";
         const string path = "path";
+        var settings = new AwsS3FileSystem.Settings(bucket);
 
         var stubS3 = new Mock<IAmazonS3>();
         stubS3.Setup(x => x.GetObjectAsync(It.Is<GetObjectRequest>(y => y.BucketName == bucket && y.Key == path),
@@ -25,7 +26,7 @@ public class AwsS3FileSystemTests
                 HttpStatusCode = HttpStatusCode.NotFound
             });
 
-        var fs = new AwsS3FileSystem(stubS3.Object, bucket);
+        var fs = new AwsS3FileSystem(stubS3.Object, settings);
 
         var action = async () => await fs.RetrieveFile(path);
 
@@ -43,6 +44,7 @@ public class AwsS3FileSystemTests
         // Arrange
         const string bucket = "bucket";
         const string path = "path";
+        var settings = new AwsS3FileSystem.Settings(bucket);
 
         var stubS3 = new Mock<IAmazonS3>();
         stubS3.Setup(x => x.GetObjectAsync(It.Is<GetObjectRequest>(y => y.BucketName == bucket && y.Key == path),
@@ -52,7 +54,7 @@ public class AwsS3FileSystemTests
                 ResponseStream = new MemoryStream(Encoding.UTF8.GetBytes("file content"))
             });
 
-        var fs = new AwsS3FileSystem(stubS3.Object, bucket);
+        var fs = new AwsS3FileSystem(stubS3.Object, settings);
 
         // Act
         var actual = await fs.RetrieveFile(path);
@@ -70,6 +72,7 @@ public class AwsS3FileSystemTests
         const string bucket = "bucket";
         const string destinationPath = "dest.txt";
         const bool overwrite = false;
+        var settings = new AwsS3FileSystem.Settings(bucket);
 
         var stubS3 = new Mock<IAmazonS3>();
         stubS3.Setup(x =>
@@ -81,7 +84,7 @@ public class AwsS3FileSystemTests
                 HttpStatusCode = HttpStatusCode.NotFound
             });
 
-        var fs = new AwsS3FileSystem(stubS3.Object, bucket);
+        var fs = new AwsS3FileSystem(stubS3.Object, settings);
 
         var action = async () => await fs.StoreFile(new MemoryStream(), destinationPath, overwrite);
 
@@ -101,6 +104,7 @@ public class AwsS3FileSystemTests
         const string bucket = "bucket";
         const string destinationPath = "dest.txt";
         const bool overwrite = true;
+        var settings = new AwsS3FileSystem.Settings(bucket);
 
         var stubS3 = new Mock<IAmazonS3>();
         stubS3.Setup(x =>
@@ -112,7 +116,7 @@ public class AwsS3FileSystemTests
                 HttpStatusCode = HttpStatusCode.OK
             });
 
-        var fs = new AwsS3FileSystem(stubS3.Object, bucket);
+        var fs = new AwsS3FileSystem(stubS3.Object, settings);
 
         // Act
         await fs.StoreFile(stream, destinationPath, overwrite);
