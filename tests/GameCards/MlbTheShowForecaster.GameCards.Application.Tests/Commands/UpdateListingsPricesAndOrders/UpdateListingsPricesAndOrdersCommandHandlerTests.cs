@@ -72,7 +72,10 @@ public class UpdateListingsPricesAndOrdersCommandHandlerTests
 
         var mockListingRepository = Mock.Of<IListingRepository>();
 
-        var handler = new UpdateListingsPricesAndOrdersCommandHandler(stubEventStore.Object, mockListingRepository);
+        var mockListingDataSink = Mock.Of<IListingDataSink>();
+
+        var handler = new UpdateListingsPricesAndOrdersCommandHandler(stubEventStore.Object, mockListingRepository,
+            mockListingDataSink);
 
         // Act
         await handler.Handle(command, cToken);
@@ -83,5 +86,7 @@ public class UpdateListingsPricesAndOrdersCommandHandlerTests
 
         Mock.Get(mockListingRepository).Verify(x => x.Add(command.Listings, newOrderEvents.Orders, cToken), Times.Once);
         stubEventStore.Verify(x => x.AcknowledgeOrders(year, newOrderEvents.Checkpoint), Times.Once);
+
+        Mock.Get(mockListingDataSink).Verify(x => x.Write(command.Year, command.BatchSize), Times.Once);
     }
 }

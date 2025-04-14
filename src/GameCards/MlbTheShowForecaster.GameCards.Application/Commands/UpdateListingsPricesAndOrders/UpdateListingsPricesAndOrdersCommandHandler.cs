@@ -26,14 +26,22 @@ internal sealed class
     private readonly IListingRepository _repository;
 
     /// <summary>
+    /// Writes listings data to a data sink
+    /// </summary>
+    private readonly IListingDataSink _dataSink;
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="eventStore">The event store containing new prices and orders</param>
     /// <param name="repository">The <see cref="Listing"/> repository</param>
-    public UpdateListingsPricesAndOrdersCommandHandler(IListingEventStore eventStore, IListingRepository repository)
+    /// <param name="dataSink">Writes listings data to a data sink</param>
+    public UpdateListingsPricesAndOrdersCommandHandler(IListingEventStore eventStore, IListingRepository repository,
+        IListingDataSink dataSink)
     {
         _eventStore = eventStore;
         _repository = repository;
+        _dataSink = dataSink;
     }
 
     /// <summary>
@@ -53,5 +61,8 @@ internal sealed class
         var newOrderEvents = await _eventStore.PollNewOrders(command.Year, command.BatchSize);
         await _repository.Add(command.Listings, newOrderEvents.Orders, cancellationToken);
         await _eventStore.AcknowledgeOrders(command.Year, newOrderEvents.Checkpoint);
+
+        // Orders data sink
+        await _dataSink.Write(command.Year, command.BatchSize);
     }
 }
