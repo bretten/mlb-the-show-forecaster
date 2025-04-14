@@ -25,6 +25,7 @@
       <PackageReference Include="MongoDB.Driver" Version="2.29.0" />
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.2" />
       <PackageReference Include="NRedisStack" Version="0.13.2" />
+      <PackageReference Include="Parquet.Net" Version="5.1.1" />
     </ItemGroup>
 
     <ItemGroup>
