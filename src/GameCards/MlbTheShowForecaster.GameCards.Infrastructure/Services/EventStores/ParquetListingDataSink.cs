@@ -1,5 +1,6 @@
 using System.Globalization;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.FileSystems;
+using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.GameCards.Application.Services.EventStores;
 using Parquet;
@@ -25,21 +26,29 @@ public sealed class ParquetListingDataSink : IListingDataSink
     private readonly IFileSystem _fileSystem;
 
     /// <summary>
-    /// The number of Listing orders per Parquet file
+    /// Filters orders by date
     /// </summary>
-    private readonly int _countPerFile;
+    private readonly ICalendar _calendar;
+
+    /// <summary>
+    /// Settings
+    /// </summary>
+    private readonly Settings _settings;
 
     /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="redisConnection">Connects to the Listing data source in Redis</param>
     /// <param name="fileSystem">File system used to store the Parquet files</param>
-    /// <param name="countPerFile">The number of Listing orders per Parquet file</param>
-    public ParquetListingDataSink(IConnectionMultiplexer redisConnection, IFileSystem fileSystem, int countPerFile)
+    /// <param name="calendar">Filters orders by date</param>
+    /// <param name="settings">Settings</param>
+    public ParquetListingDataSink(IConnectionMultiplexer redisConnection, IFileSystem fileSystem, ICalendar calendar,
+        Settings settings)
     {
         _redisConnection = redisConnection;
         _fileSystem = fileSystem;
-        _countPerFile = countPerFile;
+        _calendar = calendar;
+        _settings = settings;
     }
 
     /// <summary>
@@ -81,6 +90,7 @@ public sealed class ParquetListingDataSink : IListingDataSink
 
         // Group the orders by date and store in Parquet files
         var ordersByDate = orders.GroupBy(x => DateOnly.FromDateTime(x.Date))
+            .Where(x => x.Key <= _calendar.Today().AddDays(-_settings.EndDateDaysBackOffset))
             .OrderBy(x => x.Key);
         foreach (var allOrdersForDay in ordersByDate)
         {
@@ -89,7 +99,7 @@ public sealed class ParquetListingDataSink : IListingDataSink
             // Make sure all orders for the day are in chronological order
             var allOrdersForDayChronological = allOrdersForDay.OrderBy(x => x.Date);
             // In batches, write to Parquet
-            foreach (var orderBatchForDay in allOrdersForDayChronological.Chunk(_countPerFile))
+            foreach (var orderBatchForDay in allOrdersForDayChronological.Chunk(_settings.CountPerFile))
             {
                 // Map the data to columns for Parquet
                 var externalIdColumn = new DataColumn(Schema.DataFields[0],
@@ -167,4 +177,11 @@ public sealed class ParquetListingDataSink : IListingDataSink
     /// Represents a listing order for Parquet
     /// </summary>
     private sealed record ParquetListingOrder(string Id, string CardExternalId, DateTime Date, int Price);
+
+    /// <summary>
+    /// Settings
+    /// </summary>
+    /// <param name="CountPerFile">The number of entries per Parquet file</param>
+    /// <param name="EndDateDaysBackOffset">How many days in the past to make the end date of the data. This prevents spreading data over smaller files throughout the day and instead waits until the day is complete</param>
+    public sealed record Settings(int CountPerFile, int EndDateDaysBackOffset);
 }

@@ -91,6 +91,8 @@ public class DependenciesTests
         // Arrange
         var settings = new Dictionary<string, string?>
         {
+            { Dependencies.ConfigKeys.DataSinkListingOrdersPerFileCount, "100" },
+            { Dependencies.ConfigKeys.DataSinkListingEndDateDaysBackOffset, "2" },
             { Dependencies.ConfigKeys.BuyPricePercentageChangeThreshold, "1" },
             { Dependencies.ConfigKeys.SellPricePercentageChangeThreshold, "2" },
             { Dependencies.ConfigKeys.UseWebsiteForHistoricalPrices, "false" },
@@ -116,8 +118,7 @@ public class DependenciesTests
             x.Lifetime == ServiceLifetime.Singleton);
         Assert.True(isListingEventStoreRegistered);
         var isListingDataSinkRegistered = s.Any(x =>
-            x.ServiceType == typeof(IListingDataSink) &&
-            x.ImplementationFactory!.GetType().GetGenericArguments().Last() == typeof(ParquetListingDataSink) &&
+            x.ServiceType == typeof(IListingDataSink) && x.ImplementationType == typeof(ParquetListingDataSink) &&
             x.Lifetime == ServiceLifetime.Singleton);
         Assert.True(isListingDataSinkRegistered);
 
@@ -154,6 +155,8 @@ public class DependenciesTests
         // Arrange
         var settings = new Dictionary<string, string?>
         {
+            { Dependencies.ConfigKeys.DataSinkListingOrdersPerFileCount, "100" },
+            { Dependencies.ConfigKeys.DataSinkListingEndDateDaysBackOffset, "2" },
             { Dependencies.ConfigKeys.BuyPricePercentageChangeThreshold, "1" },
             { Dependencies.ConfigKeys.SellPricePercentageChangeThreshold, "2" },
             { Dependencies.ConfigKeys.UseWebsiteForHistoricalPrices, "true" },

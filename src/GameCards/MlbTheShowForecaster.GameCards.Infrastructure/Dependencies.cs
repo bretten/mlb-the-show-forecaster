@@ -5,7 +5,6 @@ using System.Text.Json.Serialization;
 using AngleSharp;
 using AngleSharp.Dom;
 using com.brettnamba.MlbTheShowForecaster.Common.Application.Cqrs;
-using com.brettnamba.MlbTheShowForecaster.Common.Application.FileSystems;
 using com.brettnamba.MlbTheShowForecaster.Common.DateAndTime;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.SeedWork;
 using com.brettnamba.MlbTheShowForecaster.Common.Infrastructure.Configuration;
@@ -121,6 +120,11 @@ public static class Dependencies
         public const string DataSinkListingOrdersPerFileCount = "DataSink:ListingOrdersPerFile";
 
         /// <summary>
+        /// Config key for Listing data sink - the number of days back from today to exclude data
+        /// </summary>
+        public const string DataSinkListingEndDateDaysBackOffset = "DataSink:EndDateDaysBackOffset";
+
+        /// <summary>
         /// PlayerStatus API base address config key
         /// </summary>
         public const string PlayerStatusApiBaseAddress = "Forecasting:PlayerMatcher:BaseAddress";
@@ -222,10 +226,12 @@ public static class Dependencies
             ConnectionMultiplexer.Connect(config.GetRequiredConnectionString(ConfigKeys.RedisConnection)));
 
         services.TryAddSingleton<IListingEventStore, RedisListingEventStore>();
-        services.AddSingleton<IListingDataSink, ParquetListingDataSink>(sp =>
-            new ParquetListingDataSink(sp.GetRequiredService<IConnectionMultiplexer>(),
-                sp.GetRequiredService<IFileSystem>(),
-                config.GetRequiredValue<int>(ConfigKeys.DataSinkListingOrdersPerFileCount)));
+
+        var parquetSettings = new ParquetListingDataSink.Settings(
+            config.GetRequiredValue<int>(ConfigKeys.DataSinkListingOrdersPerFileCount),
+            config.GetRequiredValue<int>(ConfigKeys.DataSinkListingEndDateDaysBackOffset));
+        services.TryAddSingleton(parquetSettings);
+        services.TryAddSingleton<IListingDataSink, ParquetListingDataSink>();
 
         services.AddTransient<ICardPriceTracker, CardPriceTracker>(sp => new CardPriceTracker(
             sp.GetRequiredService<IListingEventStore>(),

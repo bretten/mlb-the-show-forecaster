@@ -285,7 +285,7 @@ resource "aws_ecs_task_definition" "task_definition_marketplace_watcher" {
   network_mode             = "awsvpc"
   cpu                      = "1024"
   memory                   = "2048"
-  task_role_arn            = null
+  task_role_arn            = var.task_role_arn
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false
 
