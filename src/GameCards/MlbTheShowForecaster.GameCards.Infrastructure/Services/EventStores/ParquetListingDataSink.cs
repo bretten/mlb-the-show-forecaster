@@ -135,6 +135,9 @@ public sealed class ParquetListingDataSink : IListingDataSink
                 await UpdateCheckpoint(LastAcknowledgedOrderSinkKey(year), lastItemId);
             }
         }
+
+        // Trim old data
+        await Trim(year);
     }
 
     /// <summary>
@@ -160,6 +163,24 @@ public sealed class ParquetListingDataSink : IListingDataSink
     {
         var db = _redisConnection.GetDatabase();
         await db.StringSetAsync(key, lastAcknowledgedId);
+    }
+
+    /// <summary>
+    /// Trims the Redis data source to remove old, unneeded data
+    /// </summary>
+    /// <param name="year">The season to trim data for</param>
+    private async Task Trim(SeasonYear year)
+    {
+        var db = _redisConnection.GetDatabase();
+
+        // Get the current Unix timestamp to determine the trim ID
+        var now = new DateTimeOffset(_calendar.Today().AddDays(-14), TimeOnly.MinValue, TimeSpan.Zero)
+            .ToUnixTimeMilliseconds();
+
+        // Trim everything chronologically before this ID
+        var id = $"{now}-0";
+
+        await db.ExecuteAsync("XTRIM", RedisListingEventStore.OrdersEventStoreKey(year), "MINID", id);
     }
 
     /// <summary>
