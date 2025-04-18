@@ -174,7 +174,8 @@ public sealed class ParquetListingDataSink : IListingDataSink
         var db = _redisConnection.GetDatabase();
 
         // Get the current Unix timestamp to determine the trim ID
-        var now = new DateTimeOffset(_calendar.Today().AddDays(-14), TimeOnly.MinValue, TimeSpan.Zero)
+        var daysBack = -1 * (_settings.EndDateDaysBackOffset + 7); // end date offset + a week
+        var now = new DateTimeOffset(_calendar.Today().AddDays(-daysBack), TimeOnly.MinValue, TimeSpan.Zero)
             .ToUnixTimeMilliseconds();
 
         // Trim everything chronologically before this ID
