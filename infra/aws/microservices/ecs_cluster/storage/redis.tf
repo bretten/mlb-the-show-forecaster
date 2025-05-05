@@ -11,8 +11,8 @@ resource "aws_ecs_task_definition" "task_definition_redis" {
   family                   = "${var.resource_prefix}-redis"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = "1024"
-  memory                   = "8192"
+  cpu                      = "512"
+  memory                   = "4096"
   task_role_arn            = var.task_role_arn
   execution_role_arn       = var.task_execution_role_arn
   skip_destroy             = false

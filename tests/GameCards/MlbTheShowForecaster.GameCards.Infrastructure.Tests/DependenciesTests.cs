@@ -91,6 +91,8 @@ public class DependenciesTests
         // Arrange
         var settings = new Dictionary<string, string?>
         {
+            { Dependencies.ConfigKeys.DataSinkListingOrdersPerFileCount, "100" },
+            { Dependencies.ConfigKeys.DataSinkListingEndDateDaysBackOffset, "2" },
             { Dependencies.ConfigKeys.BuyPricePercentageChangeThreshold, "1" },
             { Dependencies.ConfigKeys.SellPricePercentageChangeThreshold, "2" },
             { Dependencies.ConfigKeys.UseWebsiteForHistoricalPrices, "false" },
@@ -103,10 +105,29 @@ public class DependenciesTests
         s.AddLogging();
         s.AddSingleton<ICalendar, Calendar>();
         s.AddGameCardsPriceTracker(config);
+
+        /*
+         * Assert
+         */
+        // Assert redis services without resolving because that will start a connection
+        var isRedisConnectionRegistered = s.Any(x =>
+            x.ServiceType == typeof(IConnectionMultiplexer) && x.Lifetime == ServiceLifetime.Singleton);
+        Assert.True(isRedisConnectionRegistered);
+        var isListingEventStoreRegistered = s.Any(x =>
+            x.ServiceType == typeof(IListingEventStore) && x.ImplementationType == typeof(RedisListingEventStore) &&
+            x.Lifetime == ServiceLifetime.Singleton);
+        Assert.True(isListingEventStoreRegistered);
+        var isListingDataSinkRegistered = s.Any(x =>
+            x.ServiceType == typeof(IListingDataSink) && x.ImplementationType == typeof(ParquetListingDataSink) &&
+            x.Lifetime == ServiceLifetime.Singleton);
+        Assert.True(isListingDataSinkRegistered);
+
+        // Replace the event store so it doesn't try to resolve
+        s.AddSingleton(Mock.Of<IConnectionMultiplexer>());
         s.AddSingleton(Mock.Of<IListingEventStore>());
+        s.AddSingleton(Mock.Of<IListingDataSink>());
         var actual = s.BuildServiceProvider();
 
-        // Assert
         var threshold = actual.GetRequiredService<IListingPriceSignificantChangeThreshold>();
         Assert.Equal(ServiceLifetime.Singleton,
             s.First(x => x.ServiceType == typeof(IListingPriceSignificantChangeThreshold)).Lifetime);
@@ -134,6 +155,8 @@ public class DependenciesTests
         // Arrange
         var settings = new Dictionary<string, string?>
         {
+            { Dependencies.ConfigKeys.DataSinkListingOrdersPerFileCount, "100" },
+            { Dependencies.ConfigKeys.DataSinkListingEndDateDaysBackOffset, "2" },
             { Dependencies.ConfigKeys.BuyPricePercentageChangeThreshold, "1" },
             { Dependencies.ConfigKeys.SellPricePercentageChangeThreshold, "2" },
             { Dependencies.ConfigKeys.UseWebsiteForHistoricalPrices, "true" },
@@ -146,22 +169,12 @@ public class DependenciesTests
         s.AddLogging();
         s.TryAddSingleton<ICalendar, Calendar>();
         s.AddGameCardsPriceTracker(config);
+        s.AddSingleton(Mock.Of<IListingEventStore>());
+        s.AddSingleton(Mock.Of<IListingDataSink>());
 
         /*
          * Assert
          */
-        // Assert redis services without resolving because that will start a connection
-        var isRedisConnectionRegistered = s.Any(x =>
-            x.ServiceType == typeof(IConnectionMultiplexer) && x.Lifetime == ServiceLifetime.Singleton);
-        Assert.True(isRedisConnectionRegistered);
-        var isListingEventStoreRegistered = s.Any(x =>
-            x.ServiceType == typeof(IListingEventStore) && x.ImplementationType == typeof(RedisListingEventStore) &&
-            x.Lifetime == ServiceLifetime.Singleton);
-        Assert.True(isListingEventStoreRegistered);
-
-        // Replace the event store so it doesn't try to resolve
-        s.AddSingleton(Mock.Of<IConnectionMultiplexer>());
-        s.AddSingleton(Mock.Of<IListingEventStore>());
         var actual = s.BuildServiceProvider();
 
         // Make sure services are registered

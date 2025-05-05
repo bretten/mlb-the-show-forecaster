@@ -104,6 +104,26 @@ resource "aws_iam_role_policy" "policy_systems_manager" {
   })
 }
 
+# Policy for accessing S3
+resource "aws_iam_role_policy" "s3" {
+  name = "mlbForecasterS3"
+  role = aws_iam_role.role_ecs_task_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "s3:*"
+        Effect = "Allow"
+        Resource = [
+          aws_s3_bucket.main_bucket.arn,
+          "${aws_s3_bucket.main_bucket.arn}/*"
+        ]
+      }
+    ]
+  })
+}
+
 # Managed policy for executing ECS tasks
 resource "aws_iam_role_policy_attachment" "attachment_ecs_task_execution" {
   role       = aws_iam_role.role_ecs_task_execution.name
