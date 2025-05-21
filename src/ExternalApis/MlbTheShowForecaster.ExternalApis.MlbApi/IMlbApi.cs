@@ -1,4 +1,5 @@
-﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
+﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.RosterEntries;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.Stats;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Requests;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
 using Refit;
@@ -45,5 +46,31 @@ public interface IMlbApi
         var people = response.People ?? new List<PlayerSeasonStatsByGameDto>();
         var updatedPeople = people.Select(person => person with { SeasonYear = request.Season }).ToList();
         return new GetPlayerSeasonStatsByGameResponse(updatedPeople);
+    }
+
+    /// <summary>
+    /// Gets a player's roster status history
+    ///
+    /// Follows internal pattern of <see cref="GetPlayerSeasonStatsByGameInternal"/>
+    /// </summary>
+    /// <param name="request">The request containing the MLB ID of the player</param>
+    /// <returns>The player's roster status history</returns>
+    [Get("/v1/people/{request.PlayerMlbId}?hydrate=rosterEntries")]
+    internal Task<GetPlayerRosterEntriesResponse> GetPlayerRosterEntriesInternal(GetPlayerRosterEntriesRequest request);
+
+    /// <summary>
+    /// Gets a player's roster status history
+    /// </summary>
+    /// <param name="request">The request containing the MLB ID of the player</param>
+    /// <returns>The player's roster status history</returns>
+    public async Task<IEnumerable<RosterEntryDto>> GetPlayerRosterEntries(GetPlayerRosterEntriesRequest request)
+    {
+        var response = await GetPlayerRosterEntriesInternal(request);
+        if (response.Players == null || response.Players.Count == 0)
+        {
+            return new List<RosterEntryDto>();
+        }
+
+        return response.Players.First().RosterEntries.OrderBy(x => x.StatusDate);
     }
 }
