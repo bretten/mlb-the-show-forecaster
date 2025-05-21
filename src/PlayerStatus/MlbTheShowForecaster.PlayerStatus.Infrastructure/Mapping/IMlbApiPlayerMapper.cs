@@ -1,5 +1,6 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.RosterEntries;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping.Exceptions;
 
@@ -14,8 +15,9 @@ public interface IMlbApiPlayerMapper
     /// Should map a player's roster entry from the MLB API to <see cref="RosterEntry"/>
     /// </summary>
     /// <param name="dto">A player's MLB API roster entry</param>
+    /// <param name="rosterStatuses">The player's roster status history</param>
     /// <returns>The application level <see cref="RosterEntry"/></returns>
-    RosterEntry Map(PlayerDto dto);
+    RosterEntry Map(PlayerDto dto, IEnumerable<RosterEntryDto> rosterStatuses);
 
     /// <summary>
     /// Should map a position abbreviation from the MLB API to <see cref="Position"/>
@@ -40,4 +42,11 @@ public interface IMlbApiPlayerMapper
     /// <returns><see cref="ThrowArm"/></returns>
     /// <exception cref="InvalidMlbApiThrowArmCodeException">Thrown if the throw arm code is invalid</exception>
     public ThrowArm MapThrowArm(string throwArmCode);
+
+    /// <summary>
+    /// Should determine the player's active status by parsing through their roster status history
+    /// </summary>
+    /// <param name="statuses">The player's roster status history</param>
+    /// <returns>True if the player is currently active, otherwise false</returns>
+    public bool MapActiveStatus(IEnumerable<RosterEntryDto> statuses);
 }

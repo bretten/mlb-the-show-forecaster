@@ -1,4 +1,5 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.RosterEntries;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
 
@@ -28,6 +29,22 @@ public static class Faker
             ThrowArm = throwArm ?? new ArmSideDto("L", "Left"),
             CurrentTeam = team ?? new CurrentTeamDto(DefaultTeamMlbId),
             Active = active
+        };
+    }
+
+    public static RosterEntryDto FakeRosterEntryDto(string statusCode = "A", string statusDescription = "Active",
+        TeamDto? team = null, bool isActive = false, DateOnly startDate = default, DateOnly endDate = default,
+        DateOnly statusDate = default, bool isActiveFortyMan = false)
+    {
+        return new RosterEntryDto()
+        {
+            Status = new RosterEntryStatusDto(statusCode, statusDescription),
+            Team = team ?? new TeamDto(DefaultTeamMlbId, "Default"),
+            IsActive = isActive,
+            StartDate = startDate == default ? new DateOnly(2025, 5, 21) : startDate,
+            EndDate = endDate == default ? new DateOnly(2025, 5, 22) : endDate,
+            StatusDate = statusDate == default ? new DateOnly(2025, 5, 23) : statusDate,
+            IsActiveFortyMan = isActiveFortyMan
         };
     }
 }

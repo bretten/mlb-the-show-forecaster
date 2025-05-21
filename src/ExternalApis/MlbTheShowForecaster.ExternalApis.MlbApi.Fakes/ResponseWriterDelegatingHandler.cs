@@ -17,6 +17,11 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
     private readonly FakeMlbApiOptions _options;
 
     /// <summary>
+    /// Used to match the ID of the player in the people URL
+    /// </summary>
+    private const string PeopleIdPattern = @"people/(\d+)";
+
+    /// <summary>
     /// Used to match the stats URL and the ID of the player
     /// </summary>
     private const string StatsPattern = @"people/(\d+).*season=(\d+)";
@@ -47,7 +52,7 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
             var match = Regex.Match(requestUri, StatsPattern);
             var id = match.Success
                 ? match.Groups[1].Value
-                : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no stat ID");
+                : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no people ID");
             var season = match.Success
                 ? match.Groups[2].Value
                 : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no stat season");
@@ -61,6 +66,17 @@ public sealed class ResponseWriterDelegatingHandler : DelegatingHandler
         {
             var season = GetQueryParam(request.RequestUri, "season");
             Write(Paths.SeasonPlayers(Paths.Temp, season), Filters.FilterPlayers(content, _options.PlayerFilter));
+        }
+        else if (requestUri.Contains("hydrate=rosterEntries")) // Player roster entries
+        {
+            var match = Regex.Match(requestUri, PeopleIdPattern);
+            var id = match.Success
+                ? match.Groups[1].Value
+                : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no people ID");
+            if (_options.PlayerFilter == null || _options.PlayerFilter.Contains(int.Parse(id)))
+            {
+                Write(Paths.PlayerRosterEntries(Paths.Temp, id), content);
+            }
         }
 
         return response;
