@@ -171,9 +171,6 @@ public sealed class PlayerCard : Card
     {
         // Add the temporary rating to the history
         AddTemporaryHistoricalRating(date, null, temporaryOverallRating, PlayerCardAttributes);
-
-        // Raise domain events based on whether the rating increased or decreased
-        AssessOverallRatingChange(OverallRating, temporaryOverallRating, PlayerCardAttributes, date);
     }
 
     /// <summary>
