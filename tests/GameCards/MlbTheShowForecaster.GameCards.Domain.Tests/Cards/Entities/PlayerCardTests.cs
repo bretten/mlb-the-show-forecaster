@@ -294,13 +294,8 @@ public class PlayerCardTests
         var expectedRating = Faker.FakeTemporaryPlayerCardHistoricalRating(date, null, 70);
         Assert.Equal(expectedRating, card.HistoricalRatingsChronologically[0]);
 
-        // An improvement event should have been raised
-        Assert.Single(card.DomainEvents);
-        Assert.IsType<PlayerCardOverallRatingImprovedEvent>(card.DomainEvents[0]);
-        var e = card.DomainEvents[0] as PlayerCardOverallRatingImprovedEvent;
-        Assert.Equal(card.ExternalId, e!.CardExternalId);
-        Assert.Equal(60, e.PreviousOverallRating.Value);
-        Assert.Equal(70, e.NewOverallRating.Value);
+        // Temporary ratings should not raise domain events
+        Assert.Empty(card.DomainEvents);
     }
 
     [Fact]
@@ -327,13 +322,8 @@ public class PlayerCardTests
         var expectedRating = Faker.FakeTemporaryPlayerCardHistoricalRating(date, null, 80);
         Assert.Equal(expectedRating, card.HistoricalRatingsChronologically[0]);
 
-        // A decline event should have been raised
-        Assert.Single(card.DomainEvents);
-        Assert.IsType<PlayerCardOverallRatingDeclinedEvent>(card.DomainEvents[0]);
-        var e = card.DomainEvents[0] as PlayerCardOverallRatingDeclinedEvent;
-        Assert.Equal(card.ExternalId, e!.CardExternalId);
-        Assert.Equal(90, e.PreviousOverallRating.Value);
-        Assert.Equal(80, e.NewOverallRating.Value);
+        // Temporary ratings should not raise domain events
+        Assert.Empty(card.DomainEvents);
     }
 
     [Fact]
