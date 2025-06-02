@@ -1,8 +1,15 @@
 ﻿using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
+using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.RosterEntries;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Enums;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping.Exceptions;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.TestClasses;
+using Moq;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Tests.Mapping;
 
@@ -23,10 +30,20 @@ public class MlbApiPlayerMapperTests
             team: new CurrentTeamDto(140),
             active: true
         );
-        var mapper = new MlbApiPlayerMapper();
+        var rosterEntryDto = Faker.FakeRosterEntryDto(isActive: true, isActiveFortyMan: true);
+        var rosterStatusHistory = new List<RosterEntryDto>()
+        {
+            rosterEntryDto
+        };
+
+        var stubTeamProvider = new Mock<ITeamProvider>();
+        stubTeamProvider.Setup(x => x.GetBy(MlbId.Create(rosterEntryDto.Team.Id)))
+            .Returns(Team.Create(TeamInfo.SEA));
+
+        var mapper = new MlbApiPlayerMapper(stubTeamProvider.Object);
 
         // Act
-        var actual = mapper.Map(playerDto);
+        var actual = mapper.Map(playerDto, rosterStatusHistory);
 
         // Assert
         Assert.Equal(10, actual.MlbId.Value);
@@ -48,7 +65,7 @@ public class MlbApiPlayerMapperTests
     public void MapPosition_InvalidPositionAbbreviation_ThrowsException(string positionAbbreviation)
     {
         // Arrange
-        var mapper = new MlbApiPlayerMapper();
+        var mapper = new MlbApiPlayerMapper(Mock.Of<ITeamProvider>());
         Action action = () => mapper.MapPosition(positionAbbreviation);
 
         // Act
@@ -79,7 +96,7 @@ public class MlbApiPlayerMapperTests
         Position expectedPosition)
     {
         // Arrange
-        var mapper = new MlbApiPlayerMapper();
+        var mapper = new MlbApiPlayerMapper(Mock.Of<ITeamProvider>());
 
         // Act
         var actual = mapper.MapPosition(positionAbbreviation);
@@ -95,7 +112,7 @@ public class MlbApiPlayerMapperTests
     public void MapBatSide_InvalidBatSideCode_ThrowsException(string batSideCode)
     {
         // Arrange
-        var mapper = new MlbApiPlayerMapper();
+        var mapper = new MlbApiPlayerMapper(Mock.Of<ITeamProvider>());
         Action action = () => mapper.MapBatSide(batSideCode);
 
         // Act
@@ -113,7 +130,7 @@ public class MlbApiPlayerMapperTests
     public void MapBatSideCode_ValidBatSideCode_ReturnsBatSideEnum(string batSideCode, BatSide expectedBatSide)
     {
         // Arrange
-        var mapper = new MlbApiPlayerMapper();
+        var mapper = new MlbApiPlayerMapper(Mock.Of<ITeamProvider>());
 
         // Act
         var actual = mapper.MapBatSide(batSideCode);
@@ -129,7 +146,7 @@ public class MlbApiPlayerMapperTests
     public void MapThrowArm_InvalidThrowArmCode_ThrowsException(string throwArmCode)
     {
         // Arrange
-        var mapper = new MlbApiPlayerMapper();
+        var mapper = new MlbApiPlayerMapper(Mock.Of<ITeamProvider>());
         Action action = () => mapper.MapThrowArm(throwArmCode);
 
         // Act
@@ -147,12 +164,87 @@ public class MlbApiPlayerMapperTests
     public void MapThrowArm_ValidThrowArmCode_ReturnsThrowArmEnum(string throwArmCode, ThrowArm expectedThrowArm)
     {
         // Arrange
-        var mapper = new MlbApiPlayerMapper();
+        var mapper = new MlbApiPlayerMapper(Mock.Of<ITeamProvider>());
 
         // Act
         var actual = mapper.MapThrowArm(throwArmCode);
 
         // Assert
         Assert.Equal(expectedThrowArm, actual);
+    }
+
+    [Fact]
+    public void MapActiveStatus_MostRecentActiveAndMlbTeam_ReturnsTrue()
+    {
+        // Arrange
+        var rosterStatusHistory = new List<RosterEntryDto>()
+        {
+            Faker.FakeRosterEntryDto(statusCode: "I", statusDescription: "Inactive",
+                statusDate: new DateOnly(2025, 5, 20), isActive: true, isActiveFortyMan: true),
+            Faker.FakeRosterEntryDto(statusCode: "A", statusDescription: "Active",
+                statusDate: new DateOnly(2025, 5, 21), isActive: true, isActiveFortyMan: true),
+        };
+
+        var stubTeamProvider = new Mock<ITeamProvider>();
+        stubTeamProvider.Setup(x => x.GetBy(It.IsAny<MlbId>()))
+            .Returns(Team.Create(TeamInfo.SEA));
+
+        var mapper = new MlbApiPlayerMapper(stubTeamProvider.Object);
+
+        // Act
+        var actual = mapper.MapActiveStatus(rosterStatusHistory);
+
+        // Assert
+        Assert.True(actual);
+    }
+
+    [Fact]
+    public void MapActiveStatus_MostRecentActiveAndMilbTeam_ReturnsFalse()
+    {
+        // Arrange
+        var rosterStatusHistory = new List<RosterEntryDto>()
+        {
+            Faker.FakeRosterEntryDto(statusCode: "I", statusDescription: "Inactive",
+                statusDate: new DateOnly(2025, 5, 20), isActive: true, isActiveFortyMan: true),
+            Faker.FakeRosterEntryDto(statusCode: "A", statusDescription: "Active",
+                statusDate: new DateOnly(2025, 5, 21), isActive: true, isActiveFortyMan: true),
+        };
+
+        var stubTeamProvider = new Mock<ITeamProvider>();
+        stubTeamProvider.Setup(x => x.GetBy(It.IsAny<MlbId>()))
+            .Throws(new UnknownTeamMlbIdException("Unknown team"));
+
+        var mapper = new MlbApiPlayerMapper(stubTeamProvider.Object);
+
+        // Act
+        var actual = mapper.MapActiveStatus(rosterStatusHistory);
+
+        // Assert
+        Assert.False(actual);
+    }
+
+    [Fact]
+    public void MapActiveStatus_MostRecentInactive_ReturnsFalse()
+    {
+        // Arrange
+        var rosterStatusHistory = new List<RosterEntryDto>()
+        {
+            Faker.FakeRosterEntryDto(statusCode: "A", statusDescription: "Active",
+                statusDate: new DateOnly(2025, 5, 19), isActive: true, isActiveFortyMan: true),
+            Faker.FakeRosterEntryDto(statusCode: "I", statusDescription: "Inactive",
+                statusDate: new DateOnly(2025, 5, 20), isActive: true, isActiveFortyMan: true),
+        };
+
+        var stubTeamProvider = new Mock<ITeamProvider>();
+        stubTeamProvider.Setup(x => x.GetBy(It.IsAny<MlbId>()))
+            .Returns(Team.Create(TeamInfo.SEA));
+
+        var mapper = new MlbApiPlayerMapper(stubTeamProvider.Object);
+
+        // Act
+        var actual = mapper.MapActiveStatus(rosterStatusHistory);
+
+        // Assert
+        Assert.False(actual);
     }
 }

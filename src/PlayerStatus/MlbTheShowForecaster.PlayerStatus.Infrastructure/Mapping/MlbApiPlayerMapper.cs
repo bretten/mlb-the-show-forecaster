@@ -2,8 +2,11 @@
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.Enums;
 using com.brettnamba.MlbTheShowForecaster.Common.Domain.ValueObjects;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.RosterEntries;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Application.Dtos;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Players.ValueObjects;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Exceptions;
+using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Domain.Teams.Services;
 using com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping.Exceptions;
 
 namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mapping;
@@ -14,11 +17,26 @@ namespace com.brettnamba.MlbTheShowForecaster.PlayerStatus.Infrastructure.Mappin
 public sealed class MlbApiPlayerMapper : IMlbApiPlayerMapper
 {
     /// <summary>
+    /// Checks if the roster status team is a MLB team or MiLB team
+    /// </summary>
+    private readonly ITeamProvider _teamProvider;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="teamProvider">Checks if the roster status team is a MLB team or MiLB team</param>
+    public MlbApiPlayerMapper(ITeamProvider teamProvider)
+    {
+        _teamProvider = teamProvider;
+    }
+
+    /// <summary>
     /// Maps a player's roster entry from the MLB API to <see cref="RosterEntry"/>
     /// </summary>
     /// <param name="dto">A player's MLB API roster entry</param>
+    /// <param name="rosterStatuses">The player's roster status history</param>
     /// <returns>The application level <see cref="RosterEntry"/></returns>
-    public RosterEntry Map(PlayerDto dto)
+    public RosterEntry Map(PlayerDto dto, IEnumerable<RosterEntryDto> rosterStatuses)
     {
         return new RosterEntry(MlbId: MlbId.Create(dto.Id),
             FirstName: PersonName.Create(dto.FirstName),
@@ -29,7 +47,7 @@ public sealed class MlbApiPlayerMapper : IMlbApiPlayerMapper
             BatSide: MapBatSide(dto.BatSide.Code),
             ThrowArm: MapThrowArm(dto.ThrowArm.Code),
             CurrentTeamMlbId: MlbId.Create(dto.CurrentTeam.Id),
-            Active: dto.Active
+            Active: MapActiveStatus(rosterStatuses)
         );
     }
 
@@ -103,5 +121,37 @@ public sealed class MlbApiPlayerMapper : IMlbApiPlayerMapper
                 throw new InvalidMlbApiThrowArmCodeException(
                     $"Could not map throw arm code from the MLB API: {throwArmCode}");
         }
+    }
+
+    /// <summary>
+    /// Determines the player's active status by parsing through their roster status history
+    /// </summary>
+    /// <param name="statuses">The player's roster status history</param>
+    /// <returns>True if the player is currently active, otherwise false</returns>
+    public bool MapActiveStatus(IEnumerable<RosterEntryDto> statuses)
+    {
+        var list = statuses.ToList();
+        if (list.Count == 0)
+        {
+            return false;
+        }
+
+        var mostRecent = list.OrderByDescending(x => x.StatusDate).First();
+
+        // Check if the team is MLB or MiLB
+        try
+        {
+            _teamProvider.GetBy(MlbId.Create(mostRecent.Team.Id));
+        }
+        catch (UnknownTeamMlbIdException)
+        {
+            // The player is currently on a MiLB team
+            return false;
+        }
+
+        // If their most recent state is active, return true
+        return mostRecent.Status.Code == "A"
+               && mostRecent.IsActive
+               && mostRecent.IsActiveFortyMan;
     }
 }

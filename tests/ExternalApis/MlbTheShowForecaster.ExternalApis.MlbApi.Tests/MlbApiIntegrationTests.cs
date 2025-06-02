@@ -77,4 +77,40 @@ public class MlbApiIntegrationTests
         Assert.Equal(23, actualFirst.Stats.First(x => x.Group.DisplayName == "pitching").Splits.Count());
         Assert.Equal(157, actualFirst.Stats.First(x => x.Group.DisplayName == "fielding").Splits.Count());
     }
+
+    [Fact]
+    [Trait("Category", "Integration")]
+    public async Task GetPlayerRosterEntries_PlayerMlbId_ReturnsRosterEntriesForPlayer()
+    {
+        // Arrange
+        var request = new GetPlayerRosterEntriesRequest(660271);
+        var mlbApi = RestService.For<IMlbApi>(Constants.BaseUrl,
+            new RefitSettings
+            {
+                ContentSerializer = new SystemTextJsonContentSerializer(
+                    new JsonSerializerOptions()
+                    {
+                        Converters = { new JsonStringEnumConverter() }
+                    }
+                )
+            });
+
+        // Act
+        var actual = (await mlbApi.GetPlayerRosterEntries(request)).ToList();
+
+        // Assert
+        Assert.NotNull(actual);
+        Assert.True(actual.Count >= 3);
+        Assert.Equal("ASG", actual[0].Status.Code);
+        Assert.Equal(new DateOnly(2018, 3, 28), actual[0].StatusDate);
+        Assert.Equal(404, actual[0].Team.Id);
+
+        Assert.Equal("FA", actual[1].Status.Code);
+        Assert.Equal(new DateOnly(2023, 11, 2), actual[1].StatusDate);
+        Assert.Equal(108, actual[1].Team.Id);
+
+        // Status code and date can change for roster entry as of 2025-05-19
+        Assert.Equal(new DateOnly(2023, 12, 11), actual[2].StartDate);
+        Assert.Equal(119, actual[2].Team.Id);
+    }
 }

@@ -34,4 +34,12 @@ public static class Paths
     /// <param name="season">The season</param>
     public static string SeasonPlayers(string root, string season) =>
         Path.Combine(root, "players", season, "all_players.json");
+
+    /// <summary>
+    /// Path for writing individual player roster entries
+    /// </summary>
+    /// <param name="root">The root path</param>
+    /// <param name="mlbId">MLB ID of a player</param>
+    public static string PlayerRosterEntries(string root, string mlbId) =>
+        Path.Combine(root, "roster_entries", $"{mlbId}.json");
 }

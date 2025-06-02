@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Dtos.RosterEntries;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Requests;
 using com.brettnamba.MlbTheShowForecaster.ExternalApis.MlbApi.Responses;
 using Refit;
@@ -70,6 +71,23 @@ public sealed class FakeMlbApi : IMlbApi
         var json = await File.ReadAllTextAsync(Paths.PlayerStats(Paths.Fakes, request.Season.ToString(),
             request.PlayerMlbId.ToString()));
         var response = JsonSerializer.Deserialize<GetPlayerSeasonStatsByGameResponse>(json)!;
+        return await Task.FromResult(response);
+    }
+
+    public async Task<GetPlayerRosterEntriesResponse> GetPlayerRosterEntriesInternal(
+        GetPlayerRosterEntriesRequest request)
+    {
+        if (!_options.UseLocalFiles)
+        {
+            var rosterEntries = await _api.GetPlayerRosterEntries(request);
+            return new GetPlayerRosterEntriesResponse(new List<PlayerRosterEntryDto>()
+            {
+                new PlayerRosterEntryDto(request.PlayerMlbId, "None", "None", rosterEntries.ToList())
+            });
+        }
+
+        var json = await File.ReadAllTextAsync(Paths.PlayerRosterEntries(Paths.Fakes, request.PlayerMlbId.ToString()));
+        var response = JsonSerializer.Deserialize<GetPlayerRosterEntriesResponse>(json)!;
         return await Task.FromResult(response);
     }
 }

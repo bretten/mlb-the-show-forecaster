@@ -21,6 +21,11 @@ public sealed class ResponseFilterDelegatingHandler : DelegatingHandler
     private readonly ConcurrentDictionary<string, int> _snapshotDateProgress = new ConcurrentDictionary<string, int>();
 
     /// <summary>
+    /// Used to match the ID of the player in the people URL
+    /// </summary>
+    private const string PeopleIdPattern = @"people/(\d+)";
+
+    /// <summary>
     /// Constructor
     /// </summary>
     /// <param name="innerHandler"><inheritdoc /></param>
@@ -50,15 +55,19 @@ public sealed class ResponseFilterDelegatingHandler : DelegatingHandler
         {
             if (_options.SnapshotDates == null) return response;
 
-            var match = Regex.Match(requestUri, @"people/(\d+)");
+            var match = Regex.Match(requestUri, PeopleIdPattern);
             var id = match.Success
                 ? match.Groups[1].Value
-                : throw new ArgumentException($"{nameof(ResponseWriterDelegatingHandler)} no stat ID");
+                : throw new ArgumentException($"{nameof(ResponseFilterDelegatingHandler)} no people ID");
             _snapshotDateProgress.TryAdd(id, 0);
 
             var currentIndex = _snapshotDateProgress[id];
             response.Content = new StringContent(Filters.FilterStats(content, GetSnapshotDate(currentIndex)));
             _snapshotDateProgress[id]++;
+        }
+        else if (requestUri.Contains("hydrate=rosterEntries")) // Player roster entries
+        {
+            response.Content = new StringContent(Filters.FilterPlayers(content, _options.PlayerFilter));
         }
 
         return response;
