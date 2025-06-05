@@ -13,7 +13,7 @@ public sealed class OverallRating : ValueObject
     /// <summary>
     /// The minimum allowed value
     /// </summary>
-    private const int MinValue = 40;
+    private const int MinValue = 30;
 
     /// <summary>
     /// The maximum allowed value
