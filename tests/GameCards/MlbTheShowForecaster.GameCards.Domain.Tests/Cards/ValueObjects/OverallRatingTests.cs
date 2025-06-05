@@ -34,7 +34,7 @@ public class OverallRatingTests
     public void Create_BelowMinValue_ThrowsException()
     {
         // Arrange
-        const int rating = 39;
+        const int rating = 29;
         var action = () => OverallRating.Create(rating);
 
         // Act
