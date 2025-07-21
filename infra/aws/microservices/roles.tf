@@ -1,7 +1,7 @@
 
 # IAM Role that ECS Tasks assume
 resource "aws_iam_role" "role_ecs_task_role" {
-  name = "ecsTaskRole"
+  name = "mlbEcsTaskRole"
   assume_role_policy = jsonencode(
     {
       Statement = [
@@ -23,7 +23,7 @@ resource "aws_iam_role" "role_ecs_task_role" {
 
 # IAM Role for ECS Task Execution
 resource "aws_iam_role" "role_ecs_task_execution" {
-  name = "ecsTaskExecutionRole"
+  name = "mlbEcsTaskExecutionRole"
   assume_role_policy = jsonencode(
     {
       Statement = [
@@ -45,7 +45,7 @@ resource "aws_iam_role" "role_ecs_task_execution" {
 
 # Policy for creating log groups
 resource "aws_iam_role_policy" "policy_create_log_group" {
-  name = "ecsCreateLogGroup"
+  name = "mlbEcsCreateLogGroup"
   role = aws_iam_role.role_ecs_task_execution.id
 
   policy = jsonencode({
@@ -62,7 +62,7 @@ resource "aws_iam_role_policy" "policy_create_log_group" {
 
 # Policy for registering the load balancer
 resource "aws_iam_role_policy" "policy_register_load_balancer" {
-  name = "ecsRegisterLoadBalancer"
+  name = "mlbEcsRegisterLoadBalancer"
   role = aws_iam_role.role_ecs_task_execution.id
 
   policy = jsonencode({
