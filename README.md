@@ -41,7 +41,7 @@ docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml down
 Visit the demo [here](https://mlb-the-show-forecaster.brettnamba.com/).\
 _~~Note that ECS Fargate Spot instances are used to reduce demo costs, so the containers may be [stopped and started](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-capacity-providers.html#fargate-capacity-providers-termination)~~._
 
-From March 2025 (Opening Day) to June 2025, there was nearly a **quarter of a billion listing order rows** in the DB. To reduce the costs of order ingestion, the demo was turned into a static site with data up until **2025-06-06**.
+From March 2025 (Opening Day) to June 2025, there was over a **quarter of a billion listing order rows** in the DB. To reduce the costs of order ingestion, the demo was turned into a static site with data up until **2025-06-06**.
 
 ---
 
