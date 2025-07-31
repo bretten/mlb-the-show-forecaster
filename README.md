@@ -57,7 +57,8 @@ A demo has been prepared both online and via `docker compose`. There are two dem
 ## Docker compose
 To start it, from the root dir:
 ```shell
-docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml up --build -d
+docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml build --no-cache
+docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml up -d
 ```
 
 To stop it:

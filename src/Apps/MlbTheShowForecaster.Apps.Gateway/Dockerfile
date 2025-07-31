@@ -58,10 +58,11 @@ RUN if [ -z "$RELEASE_TAG" ]; then \
     fi
 
 # Parse the release ID from the Github API response and use it to download the zip containing the SPA files
+ARG SPA_RELEASE=prod
 RUN mkdir -p /assets && \
-    asset_id=$(jq -r '.assets[] | select(.name=="dist.zip") | .id' release.json) && \
+    asset_id=$(jq -r ".assets[] | select(.name==\"dist_${SPA_RELEASE}.zip\") | .id" release.json) && \
     if [ -z "$asset_id" ] || [ "$asset_id" = "null" ]; then \
-        echo "No dist.zip found" >&2; \
+        echo "No dist_${SPA_RELEASE}.zip found" >&2; \
         exit 1; \
     fi && \
     echo "Asset ID: $asset_id" && \

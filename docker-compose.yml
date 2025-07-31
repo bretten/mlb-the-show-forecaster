@@ -5,6 +5,7 @@
       dockerfile: src/Apps/MlbTheShowForecaster.Apps.Gateway/Dockerfile
       args:
         IS_DOCKER_COMPOSE: true
+        SPA_RELEASE: prod
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
     networks:
