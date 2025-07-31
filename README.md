@@ -15,6 +15,36 @@ A card's performance in-game is based on the actual player's real-life performan
 
 ---
 
+# How do I use it?
+See the [wiki](https://github.com/bretten/mlb-the-show-forecaster/wiki#how-do-i-use-it).
+
+---
+
+# How can I run it?
+A demo has been prepared both online and via `docker compose`. There are two demo users:
+- `user1` / `User1user1!` (`Admin` user group - **_can start jobs_**)
+- `user2` / `User2user2!` (`Viewer` user group - **_cannot start jobs_**)
+
+## Docker compose
+To start it, from the root dir:
+```shell
+docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml build --no-cache
+docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml up -d
+```
+
+To stop it:
+```shell
+docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml down
+```
+
+## Online
+Visit the demo [here](https://mlb-the-show-forecaster.brettnamba.com/).\
+_~~Note that ECS Fargate Spot instances are used to reduce demo costs, so the containers may be [stopped and started](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-capacity-providers.html#fargate-capacity-providers-termination)~~._
+
+From March 2025 (Opening Day) to June 2025, there was nearly a **quarter of a billion listing order rows** in the DB. To reduce the costs of order ingestion, the demo was turned into a static site with data up until **2025-06-06**.
+
+---
+
 # How does it work?
 The application monitors a player, their performance, and their corresponding card in **MLB The Show**. All relevant data for a player is combined to create a comparison between a player's real-world performance and the marketplace performance of their card in **MLB The Show**.
 
@@ -46,33 +76,3 @@ All the .NET apps are containerized and deployed to AWS Elastic Container Servic
 
 ## UI?
 The UI is built in React + Vite and its [repository is separate](https://github.com/bretten/mlb-the-show-forecaster-ui). The release pipeline for the UI publishes the React build files and the ASP.NET Core app then loads these as static files.
-
----
-
-# How do I use it?
-See the [wiki](https://github.com/bretten/mlb-the-show-forecaster/wiki#how-do-i-use-it).
-
----
-
-# How can I run it?
-A demo has been prepared both online and via `docker compose`. There are two demo users:
- - `user1` / `User1user1!` (`Admin` user group - **_can start jobs_**)
- - `user2` / `User2user2!` (`Viewer` user group - **_cannot start jobs_**)
-
-## Docker compose
-To start it, from the root dir:
-```shell
-docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml build --no-cache
-docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml up -d
-```
-
-To stop it:
-```shell
-docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml down
-```
-
-## Online
-Visit the demo [here](https://mlb-the-show-forecaster.brettnamba.com/).\
-_~~Note that ECS Fargate Spot instances are used to reduce demo costs, so the containers may be [stopped and started](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-capacity-providers.html#fargate-capacity-providers-termination)~~._
-
-From March 2025 (Opening Day) to June 2025, there was nearly a **quarter of a billion listing order rows** in the DB. To reduce the costs of order ingestion, the demo was turned into a static site with data up until **2025-06-06**.
