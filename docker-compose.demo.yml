@@ -92,6 +92,7 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "54320:5432"
+    command: -c statement_timeout=240000
     networks:
       - public # So the data can be debugged via a client
       - backend

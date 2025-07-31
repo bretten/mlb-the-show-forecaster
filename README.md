@@ -49,6 +49,11 @@ The UI is built in React + Vite and its [repository is separate](https://github.
 
 ---
 
+# How do I use it?
+See the [wiki](https://github.com/bretten/mlb-the-show-forecaster/wiki#how-do-i-use-it).
+
+---
+
 # How can I run it?
 A demo has been prepared both online and via `docker compose`. There are two demo users:
  - `user1` / `User1user1!` (`Admin` user group - **_can start jobs_**)
