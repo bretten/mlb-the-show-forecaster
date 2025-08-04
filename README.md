@@ -37,6 +37,21 @@ To stop it:
 docker compose -f .\docker-compose.yml -f .\docker-compose.demo.yml down
 ```
 
+### Required ports
+The docker compose files expect the following ports to be available:
+ - 54320 (PostgreSQL)
+ - 5672, 15672 (RabbitMQ)
+ - 27017 (MongoDB)
+ - 6379, 8001 (Redis)
+ - 5000 (MLB The Show Forecaster UI)
+
+If needed, you can change them [here](docker-compose.demo.yml). For the `mlb-the-show-forecaster-gateway` service, you need to update **two** places:
+ - `ports` section of the docker compose file
+ - `Urls` environment variable
+
+### Local docker compose demo
+The default URL is http://localhost:5000/ unless you changed the `mlb-the-show-forecaster-gateway` service in the [demo docker compose](docker-compose.demo.yml) file.
+
 ## Online
 Visit the demo [here](https://mlb-the-show-forecaster.brettnamba.com/).\
 _~~Note that ECS Fargate Spot instances are used to reduce demo costs, so the containers may be [stopped and started](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-capacity-providers.html#fargate-capacity-providers-termination)~~._
